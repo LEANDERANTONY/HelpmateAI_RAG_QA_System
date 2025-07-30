@@ -6,8 +6,8 @@ HelpmateAI is a Retrieval-Augmented Generation (RAG) system designed to answer c
 Can we build a smart QA assistant that reads and understands research papers/ policy documents to return precise, context-rich answers to domain-specific queries?
 
 ## 📄 Data
-- This system was tested on a real-world **life insurance policy document**, available here:  
-📘 [Principal-Sample-Life-Insurance-Policy.pdf](Principal-Sample-Life-Insurance-Policy.pdf)
+- This system was tested on a real-world **life insurance policy document**, available here:
+[Principal-Sample-Life-Insurance-Policy.pdf](Principal-Sample-Life-Insurance-Policy.pdf)
 - Chunked and embedded using sentence transformers
 
 ## ⚙️ Approach
