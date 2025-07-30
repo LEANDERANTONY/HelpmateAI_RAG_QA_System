@@ -20,6 +20,16 @@ Can we build a smart QA assistant that reads and understands research papers/ po
 - 90%+ retrieval accuracy in top-3 matches (via reranking)
 - Meaningful multi-sentence generated answers
 
+## 📷 Sample Outputs
+
+### 🔍 Search Layer
+<img src="images/search_layer_output_1.jpg" width="300"/>
+<img src="images/search_layer_output_2.jpg" width="300"/>
+
+### 💬 Generation Layer
+<img src="images/generation_layer_output_1.jpg" width="300"/>
+<img src="images/generation_layer_output_2.jpg" width="300"/>
+
 ## 📄 Documentation
 See the detailed process and challenges in [HelpmateAI_RAG_Project_Documentation.pdf](HelpmateAI_RAG_Project_Documentation.pdf)
 
