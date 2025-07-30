@@ -3,10 +3,10 @@
 HelpmateAI is a Retrieval-Augmented Generation (RAG) system designed to answer complex questions from long research documents using OpenAI LLMs.
 
 ## 🧠 Problem Statement
-Can we build a smart QA assistant that reads and understands research papers to return precise, context-rich answers to domain-specific queries?
+Can we build a smart QA assistant that reads and understands research papers/ policy documents to return precise, context-rich answers to domain-specific queries?
 
 ## 📄 Data
-- Research PDFs (biomedical focus)
+- Insurance policy document
 - Chunked and embedded using sentence transformers
 
 ## ⚙️ Approach
