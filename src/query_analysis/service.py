@@ -20,6 +20,36 @@ class QueryAnalyzer:
         lowered = question.lower()
         emphasized_terms = re.findall(r'"([^"]+)"', question)
         clause_terms = re.findall(r"\b\d+(?:\.\d+)+\b", question)
+        summary_cues = (
+            "main aim",
+            "main focus",
+            "main idea",
+            "main conclusion",
+            "primary topic",
+            "primary subject",
+            "key themes",
+            "key issue",
+            "future research directions",
+            "future work",
+            "next steps",
+            "what did the thesis conclude",
+            "what does the paper say about",
+            "what challenge",
+            "what major challenge",
+            "why does the paper argue",
+            "summarize",
+            "overview",
+        )
+
+        if any(term in lowered for term in summary_cues):
+            return QueryProfile(
+                query_type="summary_lookup",
+                preferred_content_types=["general", "benefit", "definition"],
+                emphasized_terms=emphasized_terms,
+                clause_terms=clause_terms,
+                asks_for_definition=False,
+                asks_for_process=False,
+            )
 
         if any(term in lowered for term in ("what is", "what does", "how is", "define", "means")):
             if any(term in lowered for term in ("define", "means", "what is", "what does")):

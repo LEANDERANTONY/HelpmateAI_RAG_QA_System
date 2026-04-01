@@ -1,0 +1,17 @@
+[
+  {
+    "question": "What urinary biomarker panel did this paper validate?"
+  },
+  {
+    "question": "What MRI segmentation model was trained in this study?"
+  },
+  {
+    "question": "What legal framework for AI regulation was proposed by the authors?"
+  },
+  {
+    "question": "What chemotherapy regimen was recommended for treatment?"
+  },
+  {
+    "question": "What was the whole-slide histopathology magnification used in the experiments?"
+  }
+]

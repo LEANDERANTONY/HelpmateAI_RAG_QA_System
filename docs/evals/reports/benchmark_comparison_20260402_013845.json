@@ -1,0 +1,499 @@
+{
+  "local_retrieval": {
+    "dataset_size": 13,
+    "top_k_page_hit_rate": 0.8461538461538461,
+    "mean_reciprocal_rank": 0.7051282051282051,
+    "settings": {
+      "chunk_size": 1200,
+      "chunk_overlap": 180,
+      "dense_top_k": 10,
+      "lexical_top_k": 10,
+      "fused_top_k": 12,
+      "final_top_k": 4
+    },
+    "results": [
+      {
+        "question": "What is the cashless facility under this policy?",
+        "expected_pages": [
+          "Page 4"
+        ],
+        "found_pages": [
+          "Page 4",
+          "Page 93",
+          "Page 44",
+          "Page 44"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "What is the cashless facility under this policy?",
+        "strategy_notes": [
+          "Query classified as definition_lookup.",
+          "Router selected chunk_first with confidence 0.90.",
+          "Query type definition_lookup prefers chunk-level grounding.",
+          "Preferred content types: definition, policy_admin, provider_or_facility.",
+          "Chunk-first retrieval path used for exact grounding."
+        ]
+      },
+      {
+        "question": "How is the grace period defined and how long is it for monthly versus other premium payment modes?",
+        "expected_pages": [
+          "Page 6",
+          "Page 85"
+        ],
+        "found_pages": [
+          "Page 6",
+          "Page 85",
+          "Page 43",
+          "Page 3"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "How is the grace period defined and how long is it for monthly versus other premium payment modes?",
+        "strategy_notes": [
+          "Query classified as definition_lookup.",
+          "Router selected chunk_first with confidence 0.90.",
+          "Query type definition_lookup prefers chunk-level grounding.",
+          "Preferred content types: definition, policy_admin, provider_or_facility.",
+          "Chunk-first retrieval path used for exact grounding."
+        ]
+      },
+      {
+        "question": "What counts as maternity expenses in this policy?",
+        "expected_pages": [
+          "Page 8"
+        ],
+        "found_pages": [
+          "Page 8",
+          "Page 36",
+          "Page 35",
+          "Page 36"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "What counts as maternity expenses in this policy?",
+        "strategy_notes": [
+          "Query classified as general_lookup.",
+          "Router selected hybrid_both with confidence 0.55.",
+          "Signals were mixed, so both retrieval paths will run.",
+          "Preferred content types: general, benefit.",
+          "Both retrieval paths ran and their evidence was merged.",
+          "Top routed section: Medical Expenses means those expenses that an Insured Person has."
+        ]
+      },
+      {
+        "question": "How does the policy define a network provider?",
+        "expected_pages": [
+          "Page 9"
+        ],
+        "found_pages": [
+          "Page 9",
+          "Page 18",
+          "Page 91",
+          "Page 92"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "How does the policy define a network provider?",
+        "strategy_notes": [
+          "Query classified as definition_lookup.",
+          "Router selected chunk_first with confidence 0.90.",
+          "Query type definition_lookup prefers chunk-level grounding.",
+          "Preferred content types: definition, policy_admin, provider_or_facility.",
+          "Chunk-first retrieval path used for exact grounding."
+        ]
+      },
+      {
+        "question": "How does the policy define a pre-existing disease?",
+        "expected_pages": [
+          "Page 9"
+        ],
+        "found_pages": [
+          "Page 9",
+          "Page 40",
+          "Page 70",
+          "Page 40"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "How does the policy define a pre-existing disease?",
+        "strategy_notes": [
+          "Query classified as definition_lookup.",
+          "Router selected chunk_first with confidence 0.90.",
+          "Query type definition_lookup prefers chunk-level grounding.",
+          "Preferred content types: definition, policy_admin, provider_or_facility.",
+          "Chunk-first retrieval path used for exact grounding."
+        ]
+      },
+      {
+        "question": "What does renewal mean in this policy wording?",
+        "expected_pages": [
+          "Page 10"
+        ],
+        "found_pages": [
+          "Page 10",
+          "Page 3",
+          "Page 84",
+          "Page 15"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "What does renewal mean in this policy wording?",
+        "strategy_notes": [
+          "Query classified as definition_lookup.",
+          "Router selected chunk_first with confidence 0.80.",
+          "Query type definition_lookup prefers chunk-level grounding.",
+          "Preferred content types: definition, policy_admin, provider_or_facility.",
+          "Chunk-first retrieval path used for exact grounding."
+        ]
+      },
+      {
+        "question": "How many days of pre-hospitalization and post-hospitalization expenses are covered?",
+        "expected_pages": [
+          "Page 22",
+          "Page 23"
+        ],
+        "found_pages": [
+          "Page 10",
+          "Page 29",
+          "Page 9",
+          "Page 98"
+        ],
+        "matched": false,
+        "reciprocal_rank": 0.0,
+        "query_used": "How many days of pre-hospitalization and post-hospitalization expenses are covered?",
+        "strategy_notes": [
+          "Query classified as benefit_lookup.",
+          "Router selected chunk_first with confidence 0.90.",
+          "Query type benefit_lookup prefers chunk-level grounding.",
+          "Preferred content types: benefit, definition, policy_admin.",
+          "Chunk-first retrieval path used for exact grounding."
+        ]
+      },
+      {
+        "question": "What waiting period applies to pre-existing diseases?",
+        "expected_pages": [
+          "Page 70"
+        ],
+        "found_pages": [
+          "Page 40",
+          "Page 70",
+          "Page 70",
+          "Page 10"
+        ],
+        "matched": true,
+        "reciprocal_rank": 0.5,
+        "query_used": "What waiting period applies to pre-existing diseases?",
+        "strategy_notes": [
+          "Query classified as waiting_period_lookup.",
+          "Router selected chunk_first with confidence 0.80.",
+          "Query type waiting_period_lookup prefers chunk-level grounding.",
+          "Preferred content types: waiting_period, definition, benefit.",
+          "Chunk-first retrieval path used for exact grounding."
+        ]
+      },
+      {
+        "question": "What is the named ailment waiting period and where is the disease list described?",
+        "expected_pages": [
+          "Page 70",
+          "Page 71"
+        ],
+        "found_pages": [
+          "Page 10",
+          "Page 40",
+          "Page 41",
+          "Page 38"
+        ],
+        "matched": false,
+        "reciprocal_rank": 0.0,
+        "query_used": "What is the named ailment waiting period and where is the disease list described?",
+        "strategy_notes": [
+          "Query classified as waiting_period_lookup.",
+          "Router selected chunk_first with confidence 0.90.",
+          "Query type waiting_period_lookup prefers chunk-level grounding.",
+          "Preferred content types: waiting_period, definition, benefit.",
+          "Chunk-first retrieval path used for exact grounding."
+        ]
+      },
+      {
+        "question": "What is the 30-day waiting period in this health policy?",
+        "expected_pages": [
+          "Page 71",
+          "Page 72"
+        ],
+        "found_pages": [
+          "Page 41",
+          "Page 10",
+          "Page 72",
+          "Page 33"
+        ],
+        "matched": true,
+        "reciprocal_rank": 0.3333333333333333,
+        "query_used": "What is the 30-day waiting period in this health policy?",
+        "strategy_notes": [
+          "Query classified as waiting_period_lookup.",
+          "Router selected chunk_first with confidence 0.90.",
+          "Query type waiting_period_lookup prefers chunk-level grounding.",
+          "Preferred content types: waiting_period, definition, benefit.",
+          "Chunk-first retrieval path used for exact grounding."
+        ]
+      },
+      {
+        "question": "What happens if an installment premium is not received within the grace period?",
+        "expected_pages": [
+          "Page 85"
+        ],
+        "found_pages": [
+          "Page 85",
+          "Page 6",
+          "Page 3",
+          "Page 84"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "What happens if an installment premium is not received within the grace period?",
+        "strategy_notes": [
+          "Query classified as process_lookup.",
+          "Router selected chunk_first with confidence 0.80.",
+          "Query type process_lookup prefers chunk-level grounding.",
+          "Preferred content types: claims_procedure, policy_admin, benefit.",
+          "Chunk-first retrieval path used for exact grounding."
+        ]
+      },
+      {
+        "question": "How can an insured person avail cashless treatment at a network provider?",
+        "expected_pages": [
+          "Page 90"
+        ],
+        "found_pages": [
+          "Page 90",
+          "Page 91",
+          "Page 91",
+          "Page 90"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "How can an insured person avail cashless treatment at a network provider?",
+        "strategy_notes": [
+          "Query classified as process_lookup.",
+          "Router selected chunk_first with confidence 0.80.",
+          "Query type process_lookup prefers chunk-level grounding.",
+          "Preferred content types: claims_procedure, policy_admin, benefit.",
+          "Chunk-first retrieval path used for exact grounding."
+        ]
+      },
+      {
+        "question": "How is co-payment applied during claim assessment?",
+        "expected_pages": [
+          "Page 96"
+        ],
+        "found_pages": [
+          "Page 4",
+          "Page 42",
+          "Page 96",
+          "Page 20"
+        ],
+        "matched": true,
+        "reciprocal_rank": 0.3333333333333333,
+        "query_used": "How is co-payment applied during claim assessment?",
+        "strategy_notes": [
+          "Query classified as process_lookup.",
+          "Router selected chunk_first with confidence 0.80.",
+          "Query type process_lookup prefers chunk-level grounding.",
+          "Preferred content types: claims_procedure, policy_admin, benefit.",
+          "Chunk-first retrieval path used for exact grounding."
+        ]
+      }
+    ]
+  },
+  "local_negative": {
+    "dataset_size": 5,
+    "abstention_rate": 1.0,
+    "results": [
+      {
+        "question": "What is the life insurance death benefit amount under this policy?",
+        "abstained": true,
+        "answer_preview": "Unsupported by the retrieved evidence.",
+        "note": "The evidence does not specify the life insurance death benefit amount under the policy.",
+        "supported": false
+      },
+      {
+        "question": "Does this document provide homeowners flood insurance coverage?",
+        "abstained": true,
+        "answer_preview": "No.",
+        "note": "The evidence provided pertains to health insurance coverage, and there is no mention of homeowners flood insurance coverage.",
+        "supported": false
+      },
+      {
+        "question": "What is the deductible for car collision damage claims?",
+        "abstained": true,
+        "answer_preview": "Not provided.",
+        "note": "The evidence does not mention the deductible for car collision damage claims specifically.",
+        "supported": false
+      },
+      {
+        "question": "What employee stock options are included in this policy?",
+        "abstained": true,
+        "answer_preview": "Unsupported by the retrieved evidence.",
+        "note": "There is no information regarding employee stock options in the provided evidence.",
+        "supported": false
+      },
+      {
+        "question": "What tuition reimbursement benefits does this plan include?",
+        "abstained": true,
+        "answer_preview": "Unsupported by the retrieved evidence.",
+        "note": "The provided evidence does not mention any tuition reimbursement benefits.",
+        "supported": false
+      }
+    ]
+  },
+  "openai_file_search": {
+    "dataset_size": 13,
+    "vector_store_id": "vs_69cd66bbc0ac8191b40d728ce6898e49",
+    "snippet_fragment_match_rate": 0.6923076923076923,
+    "results": [
+      {
+        "question": "What is the cashless facility under this policy?",
+        "matched_fragment": true,
+        "snippets": [
+          "as may be prescribed \r\nfrom time to time. Any terms and conditions related to electronic \r\ntransactions shall be within the approved Policy Terms and Conditions\r\n6. OTHER TERMS AND CLAUSES \r\n6.1. Claims procedure and management\r\nThis section explains about procedures involved to file a valid Claim by the \r\nInsured Person and related processes involved to manage the Claim by the \r\nCompany. \r\n6.1.1.",
+          "The following is the process for \r\navailing Cashless Facility:- \r\n(i) Submission of Pre-authorization Form:APre-authorization \r\nform which is available on the Company's Website or with the \r\nNetwork Provider, has to be duly filled and signed by the \r\nInsured Person and the treating Medical Practitioner, as \r\napplicable, which has to be submitted electronically by the \r\nNetwork Provider to the Comp",
+          "So also the coverage details may also be gone through and in the absence of any \r\ncommunication from you within 30 days from the date of receipt of the policy, it \r\nwould be construed that the policy issued is correct and the claims if any arise under \r\nthe policy will be dealt with based on proposal /policy details.\r\n2. DEFINITIONS\r\n2.1. Standard Definitions:\r\n2.1.1. Accidental / Accident is a su",
+          "b. The company shall not be responsible for any disputes arising \r\nbetween the Insured Person and the empanelled Provider. \r\nc. The network under this benefit, does not constitute medical \r\nadvice of any kind and it is not intended to be, and should not \r\nbe, used to diagnose or identify treatment for a medical or \r\nmental health condition.\r\n3.2.32 Women Care \r\nThe Company shall indemnify the Out-",
+          "maximum up to the Sum Insured, as specified in the Policy \r\nSchedule, provided that the Hospitalization is for a minimum \r\nperiod of 2 or more consecutive hours and was prescribed in \r\nwriting, by a Medical Practitioner, and the Medical Expenses \r\nincurred are Reasonable and Customary Charges that were \r\nMedically Necessary.\r\nNote: Above mentioned minimum period of 2 or more hours is \r\nnot applica"
+        ]
+      },
+      {
+        "question": "How is the grace period defined and how long is it for monthly versus other premium payment modes?",
+        "matched_fragment": true,
+        "snippets": [
+          "iii. At the end of the policy period, the policy shall terminate and can be \r\nrenewed within the Grace Period of 30 days to maintain continuity of \r\nbenefits without break in policy. Coverage is not available during the \r\ngrace period.\r\niv. No loading shall apply on renewals based on individual claims \r\nexperience\r\n5.11. Withdrawal of Policy\r\ni. In the likelihood of this product being withdrawn in",
+          "Dental Treatment means a treatment related to teeth or structures \r\nsupporting teeth including examinations, fillings (where \r\nappropriate), crowns, extractions and surgery.\r\n2.1.15. Disclosure to Information Norm: The Policy shall be void and all \r\npremium paid thereon shall be forfeited to the Company, in the event \r\nof misrepresentation, mis-description or non- d is c l o s u r e o f a n y \r\nma",
+          "Half Yearly or Quarterly or Monthly, as mentioned in the Policy \r\nSchedule/ Certificate of Insurance, the following Conditions shall apply \r\n(notwithstanding any terms contrary elsewhere in the policy)\r\n1. Grace Period of fifteen days where premium payment mode is \r\nmonthly and thirty days in all other cases would be given to pay the \r\ninstallment premium due for the policy \r\n2. During such grace ",
+          "The grace period for payment of \r\nthe premium for all types of insurance policies shall be: fifteen days \r\nwhere premium payment mode is monthly and thirty days in all other \r\ncases. \r\nProvided the insurers shall offer coverage during the grace period, if \r\nthe premium is paid in installments during the policy period.\r\n2.1.19. Hospital (not applicable for Overseas Travel Insurance) means \r\nany ins",
+          "A co-payment \r\ndoes not reduce the sum insured.\r\n2.1.10. Cumulative Bonus mean any increase or addition in the Sum \r\nInsured granted by the insurer without an associated increase in \r\npremium.\r\n2.1.11. Day Care Centre means any institution established for day care \r\ntreatment of illness and/or injuries or a medical setup within a \r\nhospital and which has been registered with the local a u t h o r "
+        ]
+      },
+      {
+        "question": "What counts as maternity expenses in this policy?",
+        "matched_fragment": false,
+        "snippets": [
+          "(v) Any unutilized sessions cannot be carried forward to \r\nthe next Policy Year34\r\nUltimate Care -CHIHLIP25044V012425\r\n3.2.14 Concierge/ Geriatric Care\r\nIf this Optional Benefit is opted then the Company shall provide the \r\nfollowing services through the Company\u2019s network to the Insured \r\nPerson during the Policy Period:\r\ni. Emergency Doctor on Call\r\nii. Access to 24*7 Help Desk \r\niii. Fortnightly",
+          "2.1.25. ICU Charges (Intensive care Unit) means the amount charged by a \r\nHospital towards ICU expenses which shall include the expenses for \r\nICU bed, general medical support services provided to any ICU \r\npatient including monitoring devices, critical care nursing and \r\nintensivist charges.7\r\nUltimate Care -CHIHLIP25044V012425\r\n2.1.26. Maternity expenses shall include\ufffea. Medical treatment expens",
+          "(vi) Clause 4.1 (b) (15) under Permanent Exclusions, is superseded \r\nto the extent covered under this Benefit.35\r\nUltimate Care -CHIHLIP25044V012425\r\n3.2.16 New Born Baby Cover\r\nThe Company shall indemnify the Hospitalization Expenses within \r\n\u2018Maternity Cover\u2019 Sum Insured up to 90 days, as specified in the \r\nPolicy Schedule incurred towards newly born baby of an Insured \r\nPerson whose claim under",
+          "URIC ACID, TREADMILLTEST\r\n2 Above 10 Lakhs46\r\nUltimate Care -CHIHLIP25044V012425\r\nmaximum up to the amount, as specified in the Policy Schedule, \r\nprovided that the Hospitalization was prescribed in writing, by a \r\nMedical Practitioner, and the Medical Expenses incurred are \r\nReasonable and Customary Charges that were Medically Necessary.\r\nConditions applicable to this Benefit are:\r\na) AClaim will",
+          "For this to be considered a medical necessity, it must \r\nbe certified by the attending Medical Practitioner.\r\n6. Hazardous orAdventure sports: (Code- Excl09)\r\nExpenses related to any treatment necessitated due to \r\nparticipation as a professional in hazardous or adventure \r\nsports, including but not limited to, para-jumping, \r\nrock climbing, mountaineering, rafting, motor racing, horse \r\nracing or"
+        ]
+      },
+      {
+        "question": "How does the policy define a network provider?",
+        "matched_fragment": true,
+        "snippets": [
+          "2.1.25. ICU Charges (Intensive care Unit) means the amount charged by a \r\nHospital towards ICU expenses which shall include the expenses for \r\nICU bed, general medical support services provided to any ICU \r\npatient including monitoring devices, critical care nursing and \r\nintensivist charges.7\r\nUltimate Care -CHIHLIP25044V012425\r\n2.1.26. Maternity expenses shall include\ufffea. Medical treatment expens",
+          "2.1.31. Migration means a facility provided to policyholders (including all \r\nmembers under family cover and group policies), to transfer the 8\r\nUltimate Care -CHIHLIP25044V012425\r\ncredits gained for pre-existing diseases and specific waiting periods \r\nfrom one health insurance policy to another with the same insurer.\r\n2.1.32. Network Provider (not applicable for Overseas Travel \r\nInsurance)means ",
+          "(III) no woman shall act as a surrogate mother by providing her \r\nown gametes; \r\n(IV) no woman shall act as a surrogate mother more than once in \r\nher lifetime: Provided that the number of attempts for \r\nsurrogacy procedures on the surrogate mother shall be such as \r\nmay be prescribed; and \r\n(V) a certificate of medical and psychological fitness for \r\nsurrogacy and surrogacy procedures from a regi",
+          "c) In the event that the cost of Hospitalization exceeds the \r\nauthorized limit, the Network Provider shall request the \r\nCompany / Assistance Service Provider for an \r\nenhancement of Authorization Limit stating details of \r\nspecific circumstances which have led to the need for \r\nincrease in the previously authorized limit. The \r\nCompany / Assistance Service Provider will verify the \r\neligibility ",
+          "The following is the process for \r\navailing Cashless Facility:- \r\n(i) Submission of Pre-authorization Form:APre-authorization \r\nform which is available on the Company's Website or with the \r\nNetwork Provider, has to be duly filled and signed by the \r\nInsured Person and the treating Medical Practitioner, as \r\napplicable, which has to be submitted electronically by the \r\nNetwork Provider to the Comp"
+        ]
+      },
+      {
+        "question": "How does the policy define a pre-existing disease?",
+        "matched_fragment": true,
+        "snippets": [
+          "2.1.31. Migration means a facility provided to policyholders (including all \r\nmembers under family cover and group policies), to transfer the 8\r\nUltimate Care -CHIHLIP25044V012425\r\ncredits gained for pre-existing diseases and specific waiting periods \r\nfrom one health insurance policy to another with the same insurer.\r\n2.1.32. Network Provider (not applicable for Overseas Travel \r\nInsurance)means ",
+          "d. Coverage under the policy after the expiry of 36 months \r\nfor any pre-existing disease is subject to the same being \r\ndeclared at the time of application and accepted by \r\nInsurer. \r\n(ii) Named Ailment Waiting Period: Code- Excl02\r\na. Expenses related to the treatment of the listed \r\nConditions, surgeries/treatments shall be excluded \r\nuntil the expiry of 24 months of continuous coverage, \r\nas ",
+          "v) If the eldest member exits the floater plan, then the floater \r\npremium will be calculated as per the original entry age of the \r\nnext eldest member in the Policy amongst the remaining \r\nmembers and locked until a claim is paid. \r\nvi) If a floater plan splits into multiple individual policies, then the \r\nCompany shall carry forward the locked age at which the \r\nfloater policies were taken by in",
+          "For which medical advice or treatment was recommended by, \r\nor received from, a physician, not more than 36 months prior to \r\nthe date of commencement of the policy.\r\n2.1.39. Pre-hospitalization Medical Expenses means Medical Expenses \r\nincurred during pre-defined number of days preceding the \r\nhospitalization of the Insured Person, provided that :\r\ni. Such Medical Expenses are incurred for the sa",
+          "i. Single Private AC Room If the Policy Schedule states \u2018Single \r\nPrivate AC Room\u2019 as eligible Room Category, it means the \r\nmaximum eligible Room Category in case of Hospitalization \r\nof the Insured Person payable by the Company is limited for \r\nstay in a Single Private AC Room. \r\nii. Twin Sharing Room If the Policy Schedule states \u2018Twin \r\nSharing Room\u2019 as eligible Room Category, it means the 39\r"
+        ]
+      },
+      {
+        "question": "What does renewal mean in this policy wording?",
+        "matched_fragment": true,
+        "snippets": [
+          "Migration\r\nThe Insured Person will have the option to migrate the policy to other health \r\ninsurance products/plans offered by the Company by applying for migration \r\nof the policy at least 30 days before the policy renewal date as per IRDAI \r\nguidelines on Migration. If such person is presently covered and has been \r\ncontinuously covered without any lapses under any health \r\ninsurance product/pla",
+          "iii. At the end of the policy period, the policy shall terminate and can be \r\nrenewed within the Grace Period of 30 days to maintain continuity of \r\nbenefits without break in policy. Coverage is not available during the \r\ngrace period.\r\niv. No loading shall apply on renewals based on individual claims \r\nexperience\r\n5.11. Withdrawal of Policy\r\ni. In the likelihood of this product being withdrawn in",
+          "For which medical advice or treatment was recommended by, \r\nor received from, a physician, not more than 36 months prior to \r\nthe date of commencement of the policy.\r\n2.1.39. Pre-hospitalization Medical Expenses means Medical Expenses \r\nincurred during pre-defined number of days preceding the \r\nhospitalization of the Insured Person, provided that :\r\ni. Such Medical Expenses are incurred for the sa",
+          "incurred by the Company will \r\nalso be deducted before refunding of premium. \r\n(d) The Company may cancel the Policy at any time on grounds of mis\uffferepresentations, non-disclosure of material facts, fraud by the Insured \r\nPerson, by giving 15 days' written notice. There would be no refund of \r\npremium on cancellation on grounds of mis-representations, \r\nnon-disclosure of material facts or fraud.\r\nN",
+          "(ii) The entire Cumulative Bonus will be forfeited if the Policy is \r\nnot continued / renewed on or before Policy Period End Date 26\r\nUltimate Care -CHIHLIP25044V012425\r\nor the expiry of the Grace Period whichever is later.\r\n(iii) The Cumulative Bonus shall be applicable on an annual basis \r\nsubject to continuation of the Policy.\r\n(iv) If the Insured Persons in the expiring policy are covered on \r"
+        ]
+      },
+      {
+        "question": "How many days of pre-hospitalization and post-hospitalization expenses are covered?",
+        "matched_fragment": false,
+        "snippets": [
+          "maximum up to the Sum Insured, as specified in the Policy \r\nSchedule, provided that the Hospitalization is for a minimum \r\nperiod of 2 or more consecutive hours and was prescribed in \r\nwriting, by a Medical Practitioner, and the Medical Expenses \r\nincurred are Reasonable and Customary Charges that were \r\nMedically Necessary.\r\nNote: Above mentioned minimum period of 2 or more hours is \r\nnot applica",
+          "3.1.8 Medi Voucher\r\nThe Company shall provide 2 pharmacy vouchers of specified \r\namount on 1st renewal of Policy with the Company.\r\n3.2. OPTIONALBENEFITS\r\n3.2.1 Pre-Post Hospitalization Expenses Modification\r\nBy choosing this Benefit, \u2018Pre-Hospitalization Medical Expenses and \r\nPost-Hospitalization Medical Expenses\u2019 under the Policy shall be \r\nmodified to number of days as specified in the Policy ",
+          "URIC ACID, TREADMILLTEST\r\n2 Above 10 Lakhs46\r\nUltimate Care -CHIHLIP25044V012425\r\nmaximum up to the amount, as specified in the Policy Schedule, \r\nprovided that the Hospitalization was prescribed in writing, by a \r\nMedical Practitioner, and the Medical Expenses incurred are \r\nReasonable and Customary Charges that were Medically Necessary.\r\nConditions applicable to this Benefit are:\r\na) AClaim will",
+          "3.2.36 Durable Medical Equipment \r\nThe Company will indemnify up to the amount specified in the Policy \r\nSchedule subject to deductible, for the Reasonable and Customary \r\ncharges necessarily incurred by the Insured Person, for procuring, \r\nfitting or hiring instruments, apparatuses or devices which are \r\nmedically prescribed at the time of discharge as a medical aid and not \r\nlimited to compressi",
+          "(vii) Base Sum Insured and Plus Benefit (if applicable) shall be \r\nconsidered while calculating \u2018unlimited Automatic \r\nRecharge\u2019.\r\n(viii) Any unutilized Recharge cannot be carried forward to any \r\nsubsequent Policy Year.\r\n3.1.5 Health Services\r\n The Company shall provide the following Services: \r\n Health Portal: The insured may access health related information and \r\nservices such as Doctor on cha"
+        ]
+      },
+      {
+        "question": "What waiting period applies to pre-existing diseases?",
+        "matched_fragment": true,
+        "snippets": [
+          "d. Coverage under the policy after the expiry of 36 months \r\nfor any pre-existing disease is subject to the same being \r\ndeclared at the time of application and accepted by \r\nInsurer. \r\n(ii) Named Ailment Waiting Period: Code- Excl02\r\na. Expenses related to the treatment of the listed \r\nConditions, surgeries/treatments shall be excluded \r\nuntil the expiry of 24 months of continuous coverage, \r\nas ",
+          "v) If the eldest member exits the floater plan, then the floater \r\npremium will be calculated as per the original entry age of the \r\nnext eldest member in the Policy amongst the remaining \r\nmembers and locked until a claim is paid. \r\nvi) If a floater plan splits into multiple individual policies, then the \r\nCompany shall carry forward the locked age at which the \r\nfloater policies were taken by in",
+          "i. Single Private AC Room If the Policy Schedule states \u2018Single \r\nPrivate AC Room\u2019 as eligible Room Category, it means the \r\nmaximum eligible Room Category in case of Hospitalization \r\nof the Insured Person payable by the Company is limited for \r\nstay in a Single Private AC Room. \r\nii. Twin Sharing Room If the Policy Schedule states \u2018Twin \r\nSharing Room\u2019 as eligible Room Category, it means the 39\r",
+          "For which medical advice or treatment was recommended by, \r\nor received from, a physician, not more than 36 months prior to \r\nthe date of commencement of the policy.\r\n2.1.39. Pre-hospitalization Medical Expenses means Medical Expenses \r\nincurred during pre-defined number of days preceding the \r\nhospitalization of the Insured Person, provided that :\r\ni. Such Medical Expenses are incurred for the sa",
+          "subject to following conditions:38\r\nUltimate Care -CHIHLIP25044V012425\r\n(i) If the Insured Person takes Medical Treatment:\r\n- in hospitals other than those listed in Annexure \u2013 III; or \r\n- in hospitals listed in Annexure \u2013 III but on \r\nreimbursement basis instead of cashless;\r\nthen the Policyholder/Insured Person shall bear a Co-Payment \r\nof 20% on each and every Claim arising in such regard, whic"
+        ]
+      },
+      {
+        "question": "What is the named ailment waiting period and where is the disease list described?",
+        "matched_fragment": true,
+        "snippets": [
+          "d. Coverage under the policy after the expiry of 36 months \r\nfor any pre-existing disease is subject to the same being \r\ndeclared at the time of application and accepted by \r\nInsurer. \r\n(ii) Named Ailment Waiting Period: Code- Excl02\r\na. Expenses related to the treatment of the listed \r\nConditions, surgeries/treatments shall be excluded \r\nuntil the expiry of 24 months of continuous coverage, \r\nas ",
+          "For which medical advice or treatment was recommended by, \r\nor received from, a physician, not more than 36 months prior to \r\nthe date of commencement of the policy.\r\n2.1.39. Pre-hospitalization Medical Expenses means Medical Expenses \r\nincurred during pre-defined number of days preceding the \r\nhospitalization of the Insured Person, provided that :\r\ni. Such Medical Expenses are incurred for the sa",
+          "v) If the eldest member exits the floater plan, then the floater \r\npremium will be calculated as per the original entry age of the \r\nnext eldest member in the Policy amongst the remaining \r\nmembers and locked until a claim is paid. \r\nvi) If a floater plan splits into multiple individual policies, then the \r\nCompany shall carry forward the locked age at which the \r\nfloater policies were taken by in",
+          "3.2.10 Instant Cover\r\nNotwithstanding anything to the contrary in the Policy, by choosing \r\nthis Optional Benefit the Company shall waive off the applicable \r\nPED waiting period on Diabetes/ Hypertension/ Hyperlipidemia/ \r\nAsthma /Obesity / Hypothyroidism/Coronary Artery Disease (PTCA\r\nprior 1 year) at the time of issuance of first Policy with the Company \r\nand coverage shall start from the 31st d",
+          "i. Single Private AC Room If the Policy Schedule states \u2018Single \r\nPrivate AC Room\u2019 as eligible Room Category, it means the \r\nmaximum eligible Room Category in case of Hospitalization \r\nof the Insured Person payable by the Company is limited for \r\nstay in a Single Private AC Room. \r\nii. Twin Sharing Room If the Policy Schedule states \u2018Twin \r\nSharing Room\u2019 as eligible Room Category, it means the 39\r"
+        ]
+      },
+      {
+        "question": "What is the 30-day waiting period in this health policy?",
+        "matched_fragment": true,
+        "snippets": [
+          "d. Coverage under the policy after the expiry of 36 months \r\nfor any pre-existing disease is subject to the same being \r\ndeclared at the time of application and accepted by \r\nInsurer. \r\n(ii) Named Ailment Waiting Period: Code- Excl02\r\na. Expenses related to the treatment of the listed \r\nConditions, surgeries/treatments shall be excluded \r\nuntil the expiry of 24 months of continuous coverage, \r\nas ",
+          "Benign Prostatic Hypertrophy\r\n4. Cataract\r\n5. Dilatation and Curettage\r\n6. Fissure / Fistula in anus, Hemorrhoids / Piles, \r\nPilonidal Sinus, Gastric and Duodenal Ulcers\r\n7. Surgery of Genito-urinary system unless \r\nnecessitated by malignancy\r\n8. All types of Hernia & Hydrocele \r\n9. Hysterectomy for menorrhagia or Fibromyoma \r\nor prolapse of uterus unless necessitated by \r\nmalignancy\r\n10. Internal",
+          "3.2.10 Instant Cover\r\nNotwithstanding anything to the contrary in the Policy, by choosing \r\nthis Optional Benefit the Company shall waive off the applicable \r\nPED waiting period on Diabetes/ Hypertension/ Hyperlipidemia/ \r\nAsthma /Obesity / Hypothyroidism/Coronary Artery Disease (PTCA\r\nprior 1 year) at the time of issuance of first Policy with the Company \r\nand coverage shall start from the 31st d",
+          "maximum up to the Sum Insured, as specified in the Policy \r\nSchedule, provided that the Hospitalization is for a minimum \r\nperiod of 2 or more consecutive hours and was prescribed in \r\nwriting, by a Medical Practitioner, and the Medical Expenses \r\nincurred are Reasonable and Customary Charges that were \r\nMedically Necessary.\r\nNote: Above mentioned minimum period of 2 or more hours is \r\nnot applica",
+          "(vii) In case one or more Insured Person travel is cancelled due to \r\nunavoidable circumstances post confirming to activate the \r\nCover Pause Benefit and before travelling outside India and \r\nsame was informed by Policyholder to the Company, then the \r\nCover Pause Benefit will be deactivated.\r\n3.2.8 Grace Period cover\r\nNotwithstanding anything to the contrary in the Policy, if this \r\nOptional Bene"
+        ]
+      },
+      {
+        "question": "What happens if an installment premium is not received within the grace period?",
+        "matched_fragment": false,
+        "snippets": [
+          "iii. At the end of the policy period, the policy shall terminate and can be \r\nrenewed within the Grace Period of 30 days to maintain continuity of \r\nbenefits without break in policy. Coverage is not available during the \r\ngrace period.\r\niv. No loading shall apply on renewals based on individual claims \r\nexperience\r\n5.11. Withdrawal of Policy\r\ni. In the likelihood of this product being withdrawn in",
+          "Half Yearly or Quarterly or Monthly, as mentioned in the Policy \r\nSchedule/ Certificate of Insurance, the following Conditions shall apply \r\n(notwithstanding any terms contrary elsewhere in the policy)\r\n1. Grace Period of fifteen days where premium payment mode is \r\nmonthly and thirty days in all other cases would be given to pay the \r\ninstallment premium due for the policy \r\n2. During such grace ",
+          "Dental Treatment means a treatment related to teeth or structures \r\nsupporting teeth including examinations, fillings (where \r\nappropriate), crowns, extractions and surgery.\r\n2.1.15. Disclosure to Information Norm: The Policy shall be void and all \r\npremium paid thereon shall be forfeited to the Company, in the event \r\nof misrepresentation, mis-description or non- d is c l o s u r e o f a n y \r\nma",
+          "(ii) The entire Cumulative Bonus will be forfeited if the Policy is \r\nnot continued / renewed on or before Policy Period End Date 26\r\nUltimate Care -CHIHLIP25044V012425\r\nor the expiry of the Grace Period whichever is later.\r\n(iii) The Cumulative Bonus shall be applicable on an annual basis \r\nsubject to continuation of the Policy.\r\n(iv) If the Insured Persons in the expiring policy are covered on \r",
+          "A co-payment \r\ndoes not reduce the sum insured.\r\n2.1.10. Cumulative Bonus mean any increase or addition in the Sum \r\nInsured granted by the insurer without an associated increase in \r\npremium.\r\n2.1.11. Day Care Centre means any institution established for day care \r\ntreatment of illness and/or injuries or a medical setup within a \r\nhospital and which has been registered with the local a u t h o r "
+        ]
+      },
+      {
+        "question": "How can an insured person avail cashless treatment at a network provider?",
+        "matched_fragment": true,
+        "snippets": [
+          "as may be prescribed \r\nfrom time to time. Any terms and conditions related to electronic \r\ntransactions shall be within the approved Policy Terms and Conditions\r\n6. OTHER TERMS AND CLAUSES \r\n6.1. Claims procedure and management\r\nThis section explains about procedures involved to file a valid Claim by the \r\nInsured Person and related processes involved to manage the Claim by the \r\nCompany. \r\n6.1.1.",
+          "The following is the process for \r\navailing Cashless Facility:- \r\n(i) Submission of Pre-authorization Form:APre-authorization \r\nform which is available on the Company's Website or with the \r\nNetwork Provider, has to be duly filled and signed by the \r\nInsured Person and the treating Medical Practitioner, as \r\napplicable, which has to be submitted electronically by the \r\nNetwork Provider to the Comp",
+          "- Responsibility of mapping device with CHIL system is \r\nof the insured/customer \r\n- Number of days completing 10,000 steps (8000 steps \r\nfor Insured Person of age 60 years and above) or more \r\nthat are accumulated in last 2 months of the Policy \r\nPeriod would not be considered for discount on renewal \r\npremium. The same shall carry forward and will be \r\nconsidered in next policy period.\r\n- In cas",
+          "b. The company shall not be responsible for any disputes arising \r\nbetween the Insured Person and the empanelled Provider. \r\nc. The network under this benefit, does not constitute medical \r\nadvice of any kind and it is not intended to be, and should not \r\nbe, used to diagnose or identify treatment for a medical or \r\nmental health condition.\r\n3.2.32 Women Care \r\nThe Company shall indemnify the Out-",
+          "Vaporisation of the prostrate (Green laser treatment or \r\nholmium laser treatment) \r\nK. IONM - (Intra Operative Neuro Monitoring) \r\nL. Stem cell therapy: Hematopoietic stem cells for bone \r\nmarrow transplant for haematological conditions to be \r\ncovered.\r\n(iv) Pre-Hospitalization Medical Expenses 22\r\nUltimate Care -CHIHLIP25044V012425\r\nThe Company will indemnify the Insured Person for Medical \r\nEx"
+        ]
+      },
+      {
+        "question": "How is co-payment applied during claim assessment?",
+        "matched_fragment": false,
+        "snippets": [
+          "(ii) The Deductible shall be applicable on an aggregate basis for \r\nall Claims made by the Insured Person in a Policy Year. \r\n(iii) Illustration for applicability of Deductible in the same Policy \r\nYear:\r\n (Amount in Rs.)\r\nCase Sum \r\nInsured\r\nDeductible Claim 1 Claim 2 Claim 3 Payable 1 Payable 2 Payable 3\r\n1 25,00,00\r\n0\r\n10,00,000 750,000 12,50,0\r\n00\r\n10,00,0\r\n00\r\n10,00,00\r\n0\r\n10,00,00\r\n0\r\n-41\r\nU",
+          "Either Optional Benefit - 'Instant Cover' or 'PED Wait Period \r\nModification' can be opted but not both.\r\n3.2.26 Named Ailment Wait Period Modification\r\nNotwithstanding anything to the contrary in the Policy, by choosing \r\nthis Optional Benefit, the applicable waiting period of 24 months for 40\r\nUltimate Care -CHIHLIP25044V012425\r\nClaims related to Names ailments shall be modified to specific time",
+          "Insured dependent child\u2019s maximum entry age should be up to \r\n25 years for availing this Benefit.\r\nSubject to the following conditions:\r\n(i) Discount shall be offered on base plan premium excluding \r\nOptional Benefits (if applicable) and/ or add-ons (if \r\napplicable).\r\n(ii) This benefit can be opted where child is covered under the \r\nPolicy with us.\r\n3.2.22 Spouse Care\r\nIf this Optional Benefit op",
+          "the treatment for the same shall be taken immediately \r\nwithin thirty (30) days following damage, then the \r\nCompany will indemnify up to the amount specified in the\r\nPolicy Schedule.\r\nOptional Benefit is not payable if: \r\n(i) injury caused during participation in professional \r\n/Adventurous sports;\r\n(ii) the damage was caused by normal wear and tear;\r\n (iii) the damage was caused by tooth brushin",
+          "- The Company will accept bills/invoices which are made in the \r\nInsured Person\u2019s name only. \r\n- The Company may seek any other document as required to assess the \r\nClaim. \r\n- Only in the event that original bills, receipts, prescriptions, reports or \r\nother documents have already been given to any other insurance \r\nCompany, the Company will accept properly verified photocopies of \r\nsuch documents"
+        ]
+      }
+    ]
+  }
+}

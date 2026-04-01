@@ -1,0 +1,52 @@
+[
+  {
+    "question": "What is the main focus of the pancreas8 paper?",
+    "expected_pages": ["Page 1"],
+    "expected_fragments": ["multimodal data fusion", "cancer biomarker discovery", "deep learning"]
+  },
+  {
+    "question": "Why does the paper argue that multimodal fusion is needed in oncology?",
+    "expected_pages": ["Page 4"],
+    "expected_fragments": ["single modalities offer a limited view", "disease heterogeneity", "treatment response"]
+  },
+  {
+    "question": "What three fusion stages does the paper describe?",
+    "expected_pages": ["Page 6", "Page 19"],
+    "expected_fragments": ["early", "intermediate", "late"]
+  },
+  {
+    "question": "How does the paper describe early fusion?",
+    "expected_pages": ["Page 6"],
+    "expected_fragments": ["concatenating feature vectors", "single model"]
+  },
+  {
+    "question": "What is one advantage and one limitation of late fusion according to the paper?",
+    "expected_pages": ["Page 6"],
+    "expected_fragments": ["different model for each modality", "handle situations when some modalities are missing", "ignores possible synergies"]
+  },
+  {
+    "question": "What examples of multimodal data types does the paper mention for oncology?",
+    "expected_pages": ["Page 1", "Page 5"],
+    "expected_fragments": ["molecular", "histopathology", "radiology", "clinical records"]
+  },
+  {
+    "question": "What major challenge does the paper identify around matched multimodal datasets?",
+    "expected_pages": ["Page 8"],
+    "expected_fragments": ["lack of large golden labelled cohorts", "matched multimodal data", "privacy concerns"]
+  },
+  {
+    "question": "What challenge does the paper identify for clinical adoption of deep learning models?",
+    "expected_pages": ["Page 8"],
+    "expected_fragments": ["lack of well-defined methods for model interpretation", "confidence or uncertainty measures", "clinically relevant"]
+  },
+  {
+    "question": "What role do DREAM and Kaggle competitions play according to the paper?",
+    "expected_pages": ["Page 5", "Page 9"],
+    "expected_fragments": ["community-driven competitions", "standardised multimodal data", "effective concept"]
+  },
+  {
+    "question": "What does the paper say about OMOP in relation to multimodal data?",
+    "expected_pages": ["Page 9"],
+    "expected_fragments": ["OMOP", "harmonising EHR data", "across institutes and countries"]
+  }
+]

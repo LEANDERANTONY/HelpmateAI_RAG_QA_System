@@ -7,3 +7,9 @@ def test_query_analyzer_classifies_waiting_period_queries():
     assert profile.query_type == "waiting_period_lookup"
     assert "waiting_period" in profile.preferred_content_types
     assert "4.1" in profile.clause_terms
+
+
+def test_query_analyzer_classifies_summary_questions():
+    profile = QueryAnalyzer.analyze("What is the main aim of this thesis?")
+
+    assert profile.query_type == "summary_lookup"

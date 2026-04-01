@@ -1,0 +1,47 @@
+[
+  {
+    "question": "What was the goal of the pancreas7 study?",
+    "expected_pages": ["Page 11", "Page 3"],
+    "expected_fragments": ["identify pancreatic cancer", "computed tomography", "constructing a convolutional neural network classifier"]
+  },
+  {
+    "question": "What CNN architecture did the paper use?",
+    "expected_pages": ["Page 4", "Page 5"],
+    "expected_fragments": ["three convolutional layers", "fully connected layer", "dropout rate of 0.5"]
+  },
+  {
+    "question": "What CT phases were included in the datasets?",
+    "expected_pages": ["Page 5", "Page 6"],
+    "expected_fragments": ["plain scan", "venous phase", "arterial phase"]
+  },
+  {
+    "question": "How many patients and images were included in total?",
+    "expected_pages": ["Page 6"],
+    "expected_fragments": ["1195", "7245", "539", "656"]
+  },
+  {
+    "question": "How many pancreatic cancer patients and control patients were used in the binary classification experiments?",
+    "expected_pages": ["Page 7", "Page 8"],
+    "expected_fragments": ["222 patients", "190 patients", "3494 CT images", "3751 CT images"]
+  },
+  {
+    "question": "What binary classification accuracy did the CNN achieve across the three CT phases?",
+    "expected_pages": ["Page 7", "Page 8"],
+    "expected_fragments": ["95.47%", "95.76%", "95.15%"]
+  },
+  {
+    "question": "How did the CNN compare with gastroenterologists and trainees on plain scan accuracy?",
+    "expected_pages": ["Page 8"],
+    "expected_fragments": ["0.954747", "0.922", "0.736"]
+  },
+  {
+    "question": "Which phase had the highest sensitivity for head and neck pancreatic malignancies in the ternary classifier?",
+    "expected_pages": ["Page 9", "Page 10"],
+    "expected_fragments": ["arterial phase", "0.852390", "head and neck"]
+  },
+  {
+    "question": "Why did the authors say plain phase could be sufficient for the binary classifier?",
+    "expected_pages": ["Page 11"],
+    "expected_fragments": ["relatively same sensitivity", "easier access", "lower radiation"]
+  }
+]

@@ -34,12 +34,29 @@ class ChunkRecord:
 
 
 @dataclass
+class SectionRecord:
+    section_id: str
+    document_id: str
+    title: str
+    summary: str
+    text: str
+    page_labels: list[str] = field(default_factory=list)
+    section_path: list[str] = field(default_factory=list)
+    clause_ids: list[str] = field(default_factory=list)
+    metadata: dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass
 class IndexRecord:
     document_id: str
     fingerprint: str
     collection_name: str
     storage_path: str
     chunk_count: int
+    section_count: int
     embedding_model: str
     chunk_size: int
     chunk_overlap: int
@@ -71,6 +88,7 @@ class RetrievalResult:
     candidates: list[RetrievalCandidate]
     cache_hit: bool = False
     retrieval_version: str = "v1"
+    route_used: str = "chunk_first"
     query_used: str = ""
     query_variants: list[str] = field(default_factory=list)
     metadata_filters: dict[str, Any] = field(default_factory=dict)
@@ -83,6 +101,7 @@ class RetrievalResult:
             "candidates": [candidate.to_dict() for candidate in self.candidates],
             "cache_hit": self.cache_hit,
             "retrieval_version": self.retrieval_version,
+            "route_used": self.route_used,
             "query_used": self.query_used,
             "query_variants": list(self.query_variants),
             "metadata_filters": dict(self.metadata_filters),

@@ -54,6 +54,9 @@ def ingest_document(path: str | Path) -> DocumentRecord:
     fingerprint = _file_fingerprint(file_path)
     document_id = fingerprint[:16]
     enriched_pages, outline = enrich_pages_with_structure(pages)
+    for page in enriched_pages:
+        section_path = page.get("section_path", [])
+        page["section_id"] = "|".join(section_path) if section_path else page.get("page_label", "Document")
     return DocumentRecord(
         document_id=document_id,
         file_name=file_path.name,

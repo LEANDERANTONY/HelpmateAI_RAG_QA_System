@@ -1,0 +1,481 @@
+{
+  "local_retrieval": {
+    "dataset_size": 12,
+    "top_k_page_hit_rate": 0.8333333333333334,
+    "mean_reciprocal_rank": 0.5902777777777778,
+    "settings": {
+      "chunk_size": 1200,
+      "chunk_overlap": 180,
+      "dense_top_k": 10,
+      "lexical_top_k": 10,
+      "fused_top_k": 12,
+      "final_top_k": 4
+    },
+    "results": [
+      {
+        "question": "What is the main aim of this thesis?",
+        "expected_pages": [
+          "Page 20"
+        ],
+        "found_pages": [
+          "Page 20",
+          "Page 5",
+          "Page 20",
+          "Page 20"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "What is the main aim of this thesis?",
+        "strategy_notes": [
+          "Query classified as summary_lookup.",
+          "Router selected section_first with confidence 0.80.",
+          "Summary-style query type prefers section-level routing.",
+          "Preferred content types: general, benefit, definition.",
+          "Section-first retrieval path narrowed the search before chunk ranking."
+        ]
+      },
+      {
+        "question": "What were the three main research objectives of the study?",
+        "expected_pages": [
+          "Page 20"
+        ],
+        "found_pages": [
+          "Page 50",
+          "Page 90",
+          "Page 90",
+          "Page 20"
+        ],
+        "matched": true,
+        "reciprocal_rank": 0.25,
+        "query_used": "What were the three main research objectives of the study?",
+        "strategy_notes": [
+          "Query classified as general_lookup.",
+          "Router selected hybrid_both with confidence 0.55.",
+          "Signals were mixed, so both retrieval paths will run.",
+          "Preferred content types: general, benefit.",
+          "Both retrieval paths ran and their evidence was merged.",
+          "Top routed section: Research Aim."
+        ]
+      },
+      {
+        "question": "How many CT patients were used in the processed cohort and how were they split?",
+        "expected_pages": [
+          "Page 21",
+          "Page 40"
+        ],
+        "found_pages": [
+          "Page 40",
+          "Page 54",
+          "Page 21",
+          "Page 91"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "How many CT patients were used in the processed cohort and how were they split?",
+        "strategy_notes": [
+          "Query classified as process_lookup.",
+          "Router selected chunk_first with confidence 0.90.",
+          "Query type process_lookup prefers chunk-level grounding.",
+          "Preferred content types: claims_procedure, policy_admin, benefit.",
+          "Chunk-first retrieval path used for exact grounding."
+        ]
+      },
+      {
+        "question": "What was the baseline bias AUC and what did extreme standardization reduce it to?",
+        "expected_pages": [
+          "Page 4",
+          "Page 42",
+          "Page 73"
+        ],
+        "found_pages": [
+          "Page 89",
+          "Page 74",
+          "Page 56",
+          "Page 56"
+        ],
+        "matched": false,
+        "reciprocal_rank": 0.0,
+        "query_used": "What was the baseline bias AUC and what did extreme standardization reduce it to?",
+        "strategy_notes": [
+          "Query classified as general_lookup.",
+          "Router selected hybrid_both with confidence 0.55.",
+          "Signals were mixed, so both retrieval paths will run.",
+          "Preferred content types: general, benefit.",
+          "Both retrieval paths ran and their evidence was merged.",
+          "Top routed section: Method Bias."
+        ]
+      },
+      {
+        "question": "What CT model architecture was used in the thesis?",
+        "expected_pages": [
+          "Page 45"
+        ],
+        "found_pages": [
+          "Page 62",
+          "Page 45",
+          "Page 61",
+          "Page 116"
+        ],
+        "matched": true,
+        "reciprocal_rank": 0.5,
+        "query_used": "What CT model architecture was used in the thesis?",
+        "strategy_notes": [
+          "Query classified as general_lookup.",
+          "Router selected hybrid_both with confidence 0.55.",
+          "Signals were mixed, so both retrieval paths will run.",
+          "Preferred content types: general, benefit.",
+          "Both retrieval paths ran and their evidence was merged.",
+          "Top routed section: Model Architecture."
+        ]
+      },
+      {
+        "question": "What seven urinary biomarker features were used for the biomarker model?",
+        "expected_pages": [
+          "Page 45",
+          "Page 61",
+          "Page 65"
+        ],
+        "found_pages": [
+          "Page 80",
+          "Page 46",
+          "Page 45",
+          "Page 81"
+        ],
+        "matched": true,
+        "reciprocal_rank": 0.3333333333333333,
+        "query_used": "What seven urinary biomarker features were used for the biomarker model?",
+        "strategy_notes": [
+          "Query classified as general_lookup.",
+          "Router selected hybrid_both with confidence 0.55.",
+          "Signals were mixed, so both retrieval paths will run.",
+          "Preferred content types: general, benefit.",
+          "Both retrieval paths ran and their evidence was merged.",
+          "Top routed section: Biomarker Classification Model Results."
+        ]
+      },
+      {
+        "question": "How many biomarker samples were used and what was the train validation test split?",
+        "expected_pages": [
+          "Page 61"
+        ],
+        "found_pages": [
+          "Page 80",
+          "Page 61",
+          "Page 81",
+          "Page 75"
+        ],
+        "matched": true,
+        "reciprocal_rank": 0.5,
+        "query_used": "How many biomarker samples were used and what was the train validation test split?",
+        "strategy_notes": [
+          "Query classified as general_lookup.",
+          "Router selected hybrid_both with confidence 0.55.",
+          "Signals were mixed, so both retrieval paths will run.",
+          "Preferred content types: general, benefit.",
+          "Both retrieval paths ran and their evidence was merged.",
+          "Top routed section: Biomarker Classification Model Results."
+        ]
+      },
+      {
+        "question": "What AUC did the biomarker MLP achieve and how did it compare with the original study?",
+        "expected_pages": [
+          "Page 4",
+          "Page 81"
+        ],
+        "found_pages": [
+          "Page 81",
+          "Page 94",
+          "Page 87",
+          "Page 89"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "What AUC did the biomarker MLP achieve and how did it compare with the original study?",
+        "strategy_notes": [
+          "Query classified as general_lookup.",
+          "Router selected hybrid_both with confidence 0.55.",
+          "Signals were mixed, so both retrieval paths will run.",
+          "Preferred content types: general, benefit.",
+          "Both retrieval paths ran and their evidence was merged.",
+          "Top routed section: (CT)."
+        ]
+      },
+      {
+        "question": "What did the thesis conclude about multimodal fusion under synthetic pairing?",
+        "expected_pages": [
+          "Page 4",
+          "Page 83",
+          "Page 84"
+        ],
+        "found_pages": [
+          "Page 66",
+          "Page 83",
+          "Page 21",
+          "Page 49"
+        ],
+        "matched": true,
+        "reciprocal_rank": 0.5,
+        "query_used": "What did the thesis conclude about multimodal fusion under synthetic pairing?",
+        "strategy_notes": [
+          "Query classified as summary_lookup.",
+          "Router selected section_first with confidence 0.90.",
+          "Summary-style query type prefers section-level routing.",
+          "Preferred content types: general, benefit, definition.",
+          "Section-first retrieval path narrowed the search before chunk ranking."
+        ]
+      },
+      {
+        "question": "What happened in the label-mismatch control when the CT weight was 0.3 versus 0.7?",
+        "expected_pages": [
+          "Page 83",
+          "Page 84"
+        ],
+        "found_pages": [
+          "Page 84",
+          "Page 84",
+          "Page 92",
+          "Page 83"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "What happened in the label-mismatch control when the CT weight was 0.3 versus 0.7?",
+        "strategy_notes": [
+          "Query classified as general_lookup.",
+          "Router selected hybrid_both with confidence 0.55.",
+          "Signals were mixed, so both retrieval paths will run.",
+          "Preferred content types: general, benefit.",
+          "Both retrieval paths ran and their evidence was merged.",
+          "Top routed section: Bias-Aware Controls."
+        ]
+      },
+      {
+        "question": "How was multimodal fusion implemented in the thesis?",
+        "expected_pages": [
+          "Page 66"
+        ],
+        "found_pages": [
+          "Page 66",
+          "Page 8",
+          "Page 83",
+          "Page 32"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "How was multimodal fusion implemented in the thesis?",
+        "strategy_notes": [
+          "Query classified as general_lookup.",
+          "Router selected hybrid_both with confidence 0.55.",
+          "Signals were mixed, so both retrieval paths will run.",
+          "Preferred content types: general, benefit.",
+          "Both retrieval paths ran and their evidence was merged.",
+          "Top routed section: Multimodal Fusion Implementation."
+        ]
+      },
+      {
+        "question": "What kinds of future work or next steps does the thesis suggest?",
+        "expected_pages": [
+          "Page 10"
+        ],
+        "found_pages": [
+          "Page 96",
+          "Page 88",
+          "Page 23",
+          "Page 1"
+        ],
+        "matched": false,
+        "reciprocal_rank": 0.0,
+        "query_used": "What future research directions or subsequent actions does the thesis propose?",
+        "strategy_notes": [
+          "Query classified as general_lookup.",
+          "Router selected hybrid_both with confidence 0.55.",
+          "Signals were mixed, so both retrieval paths will run.",
+          "Preferred content types: general, benefit.",
+          "Both retrieval paths ran and their evidence was merged.",
+          "Top routed section: APPENDIX A: RESEARCH PROPOSAL.",
+          "Adaptive re-retrieval used a rewritten query variant.",
+          "Best retrieval came from rewritten query: What future research directions or subsequent actions does the thesis propose?"
+        ]
+      }
+    ]
+  },
+  "local_negative": {
+    "dataset_size": 5,
+    "abstention_rate": 1.0,
+    "results": [
+      {
+        "question": "What is the auto insurance deductible discussed in the thesis?",
+        "abstained": true,
+        "answer_preview": "Unsupported by the retrieved evidence.",
+        "note": "The evidence provided does not include information about the auto insurance deductible discussed in the thesis.",
+        "supported": false
+      },
+      {
+        "question": "What stock market prediction model did the thesis use?",
+        "abstained": true,
+        "answer_preview": "Unsupported by the retrieved evidence.",
+        "note": "The provided evidence does not specify the stock market prediction model used in the thesis.",
+        "supported": false
+      },
+      {
+        "question": "Does the thesis present a treatment plan for diabetes management?",
+        "abstained": true,
+        "answer_preview": "No treatment plan for diabetes management is presented.",
+        "note": "The provided evidence discusses topics related to pancreatic cancer diagnosis, medical imaging AI, and bias detection, but does not mention diabetes management.",
+        "supported": false
+      },
+      {
+        "question": "What is the housing price dataset used in the experiments?",
+        "abstained": true,
+        "answer_preview": "Unsupported by the retrieved evidence.",
+        "note": "The evidence does not provide specific information about the housing price dataset.",
+        "supported": false
+      },
+      {
+        "question": "What legal argument does the thesis make about patent law?",
+        "abstained": true,
+        "answer_preview": "Unsupported by the retrieved evidence.",
+        "note": "The evidence provided does not contain information regarding the legal argument about patent law.",
+        "supported": false
+      }
+    ]
+  },
+  "openai_file_search": {
+    "dataset_size": 12,
+    "vector_store_id": "vs_69cd6eb7c7f0819195484eb4c0ed3a96",
+    "snippet_fragment_match_rate": 0.6666666666666666,
+    "results": [
+      {
+        "question": "What is the main aim of this thesis?",
+        "matched_fragment": false,
+        "snippets": [
+          "1.3 Challenges in Multimodal Learning and Dataset Bias\r\nConceptually, multimodal learning leverages the fact that different data sources capture \r\ndifferent aspects of disease, so combining them can improve diagnostic reliability relative to \r\nany single modality. Imaging reveals structural and anatomical patterns; biomarkers reflect \r\nmolecular and systemic signals that may appear before any visi",
+          "1.4 Methodological Perspective and Research Focus\r\nAlthough multimodal AI holds genuine promise for early detection, the literature includes \r\nstudies whose reported gains may be inflated by unaddressed bias. Models may exploit scanner \r\nor protocol differences that correlate with class labels, producing strong metrics that do not \r\nnecessarily reflect disease biology.\r\nFusion results can also be ",
+          "Adding on this, (Debernardi \r\net al., 2023) showed that these same biomarkers, when combined with plasma CA19-9 and \r\npatient age (PancRISK model), was able to detect PDAC up to two years before clinical \r\ndiagnosis with an AUC of 0.89.97\r\n2.3 Multi-Modal and Hybrid Approaches\r\n(Dinesh et al., 2023) explored this direction by combining CNN-based imaging analysis with \r\nYOLO-driven biomarker detect",
+          "A BIAS-AWARE MULTI-MODAL DEEP LEARNING FRAMEWORK FOR PANCREATIC CANCER \r\nDETECTION USING CT IMAGING AND URINARY BIOMARKERS\r\nLEANDER ANTONY A\r\nFinal Thesis Report\r\nFebruary 2026i\r\nDEDICATION\r\nThis dissertation is dedicated to my family for their unwavering support, encouragement, and \r\npatience throughout my academic journey and to my friend Siddharth, whose encouragement \r\nwas pivotal in pushing m",
+          "This \r\ndelay in diagnosis severely limits treatment options and reduces patient survival rates.\r\nTraditionally, diagnosis is done with the help of various imaging techniques such as CT, MRI \r\nscans, and endoscopic ultrasound. These methods, though sound in assessing tumour spread \r\nand growth, are limited in their capacity to detect cancerous tissue at an early stage, as there is \r\na good chance o"
+        ]
+      },
+      {
+        "question": "What were the three main research objectives of the study?",
+        "matched_fragment": true,
+        "snippets": [
+          "1.4 Methodological Perspective and Research Focus\r\nAlthough multimodal AI holds genuine promise for early detection, the literature includes \r\nstudies whose reported gains may be inflated by unaddressed bias. Models may exploit scanner \r\nor protocol differences that correlate with class labels, producing strong metrics that do not \r\nnecessarily reflect disease biology.\r\nFusion results can also be ",
+          "A BIAS-AWARE MULTI-MODAL DEEP LEARNING FRAMEWORK FOR PANCREATIC CANCER \r\nDETECTION USING CT IMAGING AND URINARY BIOMARKERS\r\nLEANDER ANTONY A\r\nFinal Thesis Report\r\nFebruary 2026i\r\nDEDICATION\r\nThis dissertation is dedicated to my family for their unwavering support, encouragement, and \r\npatience throughout my academic journey and to my friend Siddharth, whose encouragement \r\nwas pivotal in pushing m",
+          "3.11 Alignment with Research Objectives\r\nThe methodology described in this chapter directly addresses the three research objectives \r\nestablished in,\r\nObjective 1 (Bias-Aware Data Foundation) is addressed through systematic data acquisition \r\nand preprocessing for both CT and biomarker datasets, including leakage control and bias\ufffeaware preparation steps. \r\nObjective 2 (Unimodal Model Development a",
+          "Adding on this, (Debernardi \r\net al., 2023) showed that these same biomarkers, when combined with plasma CA19-9 and \r\npatient age (PancRISK model), was able to detect PDAC up to two years before clinical \r\ndiagnosis with an AUC of 0.89.97\r\n2.3 Multi-Modal and Hybrid Approaches\r\n(Dinesh et al., 2023) explored this direction by combining CNN-based imaging analysis with \r\nYOLO-driven biomarker detect",
+          "3.8.4 Statistical Robustness\r\nStatistical robustness was assessed primarily through repeated multi-seed analyses (including \r\nfusion sanity checks across seeds 0-4 and label-mismatch controls). Bootstrap confidence \r\nintervals were not part of the current notebook implementation; therefore, uncertainty is \r\ninterpreted through variability across seeds and controls.\r\n3.9 Implementation Details\r\nExp"
+        ]
+      },
+      {
+        "question": "How many CT patients were used in the processed cohort and how were they split?",
+        "matched_fragment": true,
+        "snippets": [
+          "The high sensitivity (0.925) \r\nis particularly relevant for screening applications.\r\nFourth, the fusion experiments demonstrated a methodologically sound framework for \r\ncombining imaging and biomarker modalities, but the results were dominated by the CT \r\nmodel\u2019s strong (potentially biased) predictions. Decision-level fusion was CT-weight\ufffedependent, and feature-level fusion collapsed to CT-only p",
+          "The proposed \r\napproach integrates two complementary data modalities, CT imaging for spatial and structural \r\ninformation and urinary biomarkers for molecular and functional insights within an \r\nexperimental design that prioritizes transparency and dataset bias analysis\r\nThe research follows a systematic pipeline comprising six stages: \r\n\u25cf Data acquisition from publicly available repositories. \r\n\u25cf",
+          "These \r\noutcomes are important because they highlight the gap between benchmark accuracy numbers \r\nand the requirements of clinically deployable systems. They also reinforce why the bias-aware, \r\ntransparency-first philosophy that guided this work was the right call.\r\n6.2 Achievement of Research Objectives\r\nEach of the three research objectives from Chapter 1 is revisited below.\r\n6.2.1 Objective 1",
+          "For this project run, the processed CT cohort comprised 122 patients (40 cancer, 82 control). \r\nThe preprocessing script indexed 24,627 slices and retained 23,319 slices after script-level \r\nquality control, with 1,308 slices dropped. These retained slices formed the baseline input to \r\nthe notebook pipeline.\r\nThe core challenge is that the cancer and control datasets come from different instituti",
+          "Together, these objectives emphasize clinical relevance, methodological validity, and \r\ntransparent reporting rather than metric-driven optimization alone. Detailed procedures used to \r\ncarry out these objectives are provided in Chapter 3, with implementation specific details \r\npresented in Chapter 4.\r\n1.6 Research Questions\r\nHow does dataset bias influence CT-based pancreatic cancer detection mod"
+        ]
+      },
+      {
+        "question": "What was the baseline bias AUC and what did extreme standardization reduce it to?",
+        "matched_fragment": true,
+        "snippets": [
+          "CT volumes were converted to 8-bit grayscale PNG slices using soft-tissue windowing \r\n(window level = 50 HU, window width = 400 HU) and resized to 224x224. Series selection \r\nused NBIA digest Series UID mappings when available; otherwise, the largest CT series with \r\nat least 20 slices was selected.\r\nScript-level quality control removed technically invalid or low-value slices using file-size and \r",
+          "The biomarker dataset originally included a third class (benign \r\nconditions), which was collapsed into the non-cancer category for this study. Extending the \r\nframework to multi-class classification would increase clinical relevance but would also require \r\nsubstantially larger training sets.\r\nAbsence of clinical validation: All experiments were conducted in a retrospective \r\ncomputational settin",
+          "Perfect AUC was observed \r\nunder both label-matched and label-mismatch conditions across all five random seeds. That \r\ninvariance under label mismatch is the key finding: it demonstrates conclusively that the \r\ndownstream classifier relies entirely on the CT embeddings and effectively ignores the \r\nbiomarker features. The problem stems from a combination of dimensional imbalance, the \r\nstrong disc",
+          "41\r\nhistogram shape to include local intensity patterns and spatial correlations that histogram \r\nmatching does not address.\r\nAttempt 2, Forced Standardization: The second approach applied forced z-score normalization \r\nto the entire image, scaling all pixel values to zero mean and unit variance before rescaling to \r\na target range. This approach achieved a bias AUC of 0.876, again failing to mean",
+          "59\r\npixels) yielded an AUC of 0.876, as the different proportions of zero-valued background pixels \r\nbetween datasets continued to influence the overall pixel mean.\r\nThe successful approach, extreme standardization, targeted only body-region pixels (those \r\nexceeding an intensity threshold of 5) and normalized them to a fixed distribution with mean \r\n128 and standard deviation 40. By explicitly ma"
+        ]
+      },
+      {
+        "question": "What CT model architecture was used in the thesis?",
+        "matched_fragment": true,
+        "snippets": [
+          "47\r\n4.4.1 CT Classification Model (ResNet50)\r\nArchitecture and Initialization: The CT classification model was built on ResNet50 (He et al., \r\n2016) with weights pretrained on ImageNet (IMAGENET1K_V2). The architecture comprises \r\na 50-layer residual network organized into four convolutional stages with bottleneck blocks, \r\nfollowed by global average pooling that produces a 2048-dimensional embedd",
+          "60\r\n5.3 CT Classification Model Results\r\nThe CT classification model was built on a ResNet50 backbone pretrained on ImageNet, with \r\nthe final fully connected layer replaced to output two classes (cancer and control). The model \r\nwas trained on the bias-mitigated, orientation-corrected, and body-segmented images (the \r\nct_cropped dataset) using patient-level splitting with a stratified 70/30 train",
+          "101\r\n7.2 Model Architecture \r\nThe proposed model consists of two parallel deep learning branches, one for each modality:\r\n\u2022 Imaging Pathway: A pretrained ResNet50 CNN will be used for feature extraction,\r\nlower-level layers pretrained on ImageNet will be retained, while higher layers will be \r\nfine-tuned on the CT dataset. The output will be flattened and passed through a dense \r\nlayer that result",
+          "K-Means with k = 2 revealed a clear domain split between the two source datasets, confirming \r\nthe presence of systematic acquisition differences even after intensity standardization. Analysis \r\nwith k = 6 identified finer substructure, including an outlier cancer cluster (cluster 0) containing \r\nimages with distinct properties. These outlier images were removed during dataset filtering. \r\nDomain ",
+          "Stage \r\nvalues were harmonized by mapping Roman numerals (I-IV) to integers, metadata columns \r\nwere separated from numeric variables, and missing values were handled using a conditional \r\nstrategy: KNN imputation (k=5) when high missingness was detected, otherwise mean \r\nimputation.\r\nAfter imputation, numeric biomarker variables were standardized with z-score normalization \r\nand exported as clean"
+        ]
+      },
+      {
+        "question": "What seven urinary biomarker features were used for the biomarker model?",
+        "matched_fragment": true,
+        "snippets": [
+          "Stage \r\nvalues were harmonized by mapping Roman numerals (I-IV) to integers, metadata columns \r\nwere separated from numeric variables, and missing values were handled using a conditional \r\nstrategy: KNN imputation (k=5) when high missingness was detected, otherwise mean \r\nimputation.\r\nAfter imputation, numeric biomarker variables were standardized with z-score normalization \r\nand exported as clean",
+          "46\r\nWithin the notebook, binary classification labels were defined by grouping PDAC cases \r\n(diagnosis = 3) as cancer and non-cancer cases (diagnosis values 1 and 2, representing healthy \r\ncontrols and benign conditions) as the negative class. Seven features were selected for the \r\nclassification task: age, plasma CA19-9, creatinine, LYVE1, REG1B, TFF1, and REG1A. The \r\nresulting feature matrix co",
+          "K-Means with k = 2 revealed a clear domain split between the two source datasets, confirming \r\nthe presence of systematic acquisition differences even after intensity standardization. Analysis \r\nwith k = 6 identified finer substructure, including an outlier cancer cluster (cluster 0) containing \r\nimages with distinct properties. These outlier images were removed during dataset filtering. \r\nDomain ",
+          "66\r\ninvestigation rather than immediate treatment. The F1 of 0.779 reflects this precision\u2013recall \r\nbalance.\r\nThe overall accuracy of 0.822 is influenced by the class imbalance in the test set (66% non\ufffecancer, 34% cancer). The AUC, being threshold-independent, provides a more reliable \r\nsummary of model performance across all operating points.\r\n5.4.2 Comparison with Original Study\r\nThe biomarker p",
+          "65\r\n5.4 Biomarker Classification Model Results\r\nThe biomarker classification model was implemented as a two-layer MLP (7 \u2192 64 \u2192 32 \u2192 \r\n2) trained on seven urinary and blood-based features from the (Debernardi et al., 2020)\r\ndataset. Unlike the CT model, the biomarker model operated on a single, well-curated dataset \r\nwith no cross-institutional elements, providing a cleaner assessment of classific"
+        ]
+      },
+      {
+        "question": "How many biomarker samples were used and what was the train validation test split?",
+        "matched_fragment": false,
+        "snippets": [
+          "46\r\nWithin the notebook, binary classification labels were defined by grouping PDAC cases \r\n(diagnosis = 3) as cancer and non-cancer cases (diagnosis values 1 and 2, representing healthy \r\ncontrols and benign conditions) as the negative class. Seven features were selected for the \r\nclassification task: age, plasma CA19-9, creatinine, LYVE1, REG1B, TFF1, and REG1A. The \r\nresulting feature matrix co",
+          "65\r\n5.4 Biomarker Classification Model Results\r\nThe biomarker classification model was implemented as a two-layer MLP (7 \u2192 64 \u2192 32 \u2192 \r\n2) trained on seven urinary and blood-based features from the (Debernardi et al., 2020)\r\ndataset. Unlike the CT model, the biomarker model operated on a single, well-curated dataset \r\nwith no cross-institutional elements, providing a cleaner assessment of classific",
+          "The proposed \r\napproach integrates two complementary data modalities, CT imaging for spatial and structural \r\ninformation and urinary biomarkers for molecular and functional insights within an \r\nexperimental design that prioritizes transparency and dataset bias analysis\r\nThe research follows a systematic pipeline comprising six stages: \r\n\u25cf Data acquisition from publicly available repositories. \r\n\u25cf",
+          "6.4 Contributions to Knowledge\r\nThe dissertation makes four main contributions:\r\nBias detection and mitigation pipeline for cross-dataset medical imaging: The study provides a \r\ndocumented, stepwise template for identifying and reducing scanner-specific intensity bias in \r\ncross-institutional CT studies. The pipeline includes quantitative bias detection using simple \r\nclassifiers on low-level imag",
+          "Together, these objectives emphasize clinical relevance, methodological validity, and \r\ntransparent reporting rather than metric-driven optimization alone. Detailed procedures used to \r\ncarry out these objectives are provided in Chapter 3, with implementation specific details \r\npresented in Chapter 4.\r\n1.6 Research Questions\r\nHow does dataset bias influence CT-based pancreatic cancer detection mod"
+        ]
+      },
+      {
+        "question": "What AUC did the biomarker MLP achieve and how did it compare with the original study?",
+        "matched_fragment": false,
+        "snippets": [
+          "However, residual domain structure persisted in deep feature \r\nrepresentations, indicating that pixel-level normalization alone is not enough to fully eliminate \r\nacquisition-level confounds. Fully eliminating the bias probably requires either architectural 79\r\ninterventions like domain-adversarial training, or more fundamentally collecting data under \r\nharmonized acquisition protocols in the firs",
+          "66\r\ninvestigation rather than immediate treatment. The F1 of 0.779 reflects this precision\u2013recall \r\nbalance.\r\nThe overall accuracy of 0.822 is influenced by the class imbalance in the test set (66% non\ufffecancer, 34% cancer). The AUC, being threshold-independent, provides a more reliable \r\nsummary of model performance across all operating points.\r\n5.4.2 Comparison with Original Study\r\nThe biomarker p",
+          "Additional preprocessing stages, including orientation correction, body segmentation with \r\nelliptical template, and bounding-box cropping, further reduced peripheral elements. \r\nUnsupervised domain analysis using K-Means clustering on ResNet50 embeddings confirmed, \r\nhowever, that deep representations retain a domain-aligned partition even after pixel-level \r\nstandardization. This residual struct",
+          "The biomarker dataset originally included a third class (benign \r\nconditions), which was collapsed into the non-cancer category for this study. Extending the \r\nframework to multi-class classification would increase clinical relevance but would also require \r\nsubstantially larger training sets.\r\nAbsence of clinical validation: All experiments were conducted in a retrospective \r\ncomputational settin",
+          "Perfect AUC was observed \r\nunder both label-matched and label-mismatch conditions across all five random seeds. That \r\ninvariance under label mismatch is the key finding: it demonstrates conclusively that the \r\ndownstream classifier relies entirely on the CT embeddings and effectively ignores the \r\nbiomarker features. The problem stems from a combination of dimensional imbalance, the \r\nstrong disc"
+        ]
+      },
+      {
+        "question": "What did the thesis conclude about multimodal fusion under synthetic pairing?",
+        "matched_fragment": true,
+        "snippets": [
+          "Perfect AUC was observed \r\nunder both label-matched and label-mismatch conditions across all five random seeds. That \r\ninvariance under label mismatch is the key finding: it demonstrates conclusively that the \r\ndownstream classifier relies entirely on the CT embeddings and effectively ignores the \r\nbiomarker features. The problem stems from a combination of dimensional imbalance, the \r\nstrong disc",
+          "However, residual domain structure persisted in deep feature \r\nrepresentations, indicating that pixel-level normalization alone is not enough to fully eliminate \r\nacquisition-level confounds. Fully eliminating the bias probably requires either architectural 79\r\ninterventions like domain-adversarial training, or more fundamentally collecting data under \r\nharmonized acquisition protocols in the firs",
+          "A BIAS-AWARE MULTI-MODAL DEEP LEARNING FRAMEWORK FOR PANCREATIC CANCER \r\nDETECTION USING CT IMAGING AND URINARY BIOMARKERS\r\nLEANDER ANTONY A\r\nFinal Thesis Report\r\nFebruary 2026i\r\nDEDICATION\r\nThis dissertation is dedicated to my family for their unwavering support, encouragement, and \r\npatience throughout my academic journey and to my friend Siddharth, whose encouragement \r\nwas pivotal in pushing m",
+          "3.7 Multimodal Fusion Methodology\r\n3.7.1 The Synthetic Pairing Challenge\r\nThe most significant constraint on multimodal fusion in this research is the absence of paired \r\npatient data, no individual in the CT dataset has corresponding biomarker measurements and \r\nvice versa. Traditional multimodal learning assumes that each sample contains aligned \r\nobservations from all modalities for the same su",
+          "The tendency to report only best case results, often from a single random seed or a single \r\nhyperparameter configuration, further inflates the apparent effectiveness of multimodal \r\napproaches. Publication bias compounds this problem: studies reporting null or negative fusion \r\nresults are less likely to be published, creating a distorted literature in which multimodal fusion \r\nappears universall"
+        ]
+      },
+      {
+        "question": "What happened in the label-mismatch control when the CT weight was 0.3 versus 0.7?",
+        "matched_fragment": true,
+        "snippets": [
+          "69\r\n0.7. The results were highly stable across the five random seeds, indicating robustness to the \r\nstochastic nature of synthetic pairing.\r\nThe label-mismatch controls provide the most informative diagnostic signal. At wCT = 0.3, \r\nwhere the biomarker model dominates the fused prediction, the mismatch AUC collapsed to \r\n0.352 substantially below chance. This collapse confirms that when biomarker",
+          "Perfect AUC was observed \r\nunder both label-matched and label-mismatch conditions across all five random seeds. That \r\ninvariance under label mismatch is the key finding: it demonstrates conclusively that the \r\ndownstream classifier relies entirely on the CT embeddings and effectively ignores the \r\nbiomarker features. The problem stems from a combination of dimensional imbalance, the \r\nstrong disc",
+          "68\r\n5.5 Multimodal Fusion Results\r\nThe multimodal fusion experiments aimed to demonstrate the methodological framework for \r\ncombining CT imaging and biomarker modalities, rather than to claim externally validated \r\nclinical performance. As noted in Chapter 4, the CT and biomarker datasets were drawn from \r\ndifferent patient cohorts, necessitating synthetic pairing through label-matched random \r\na",
+          "70\r\nruns at 1.000 and a small drop in one mismatch seed. This pattern still indicates strong CT \r\ndominance and warrants careful interpretation.\r\nThe persistence of perfect AUC under label-mismatch conditions is a critical finding. In a \r\nfunctioning multimodal system, shuffling biomarker labels should reduce performance if \r\nbiomarker features contribute materially. Here, the mismatch condition d",
+          "52\r\nbiomarkers, and vice versa). If fusion derives genuine benefit from cross-modal information, \r\nperformance should degrade substantially under mismatched pairing.\r\nDecision-Level Fusion: Decision-level fusion combines the predicted cancer probabilities from \r\neach unimodal model using a weighted average. For each synthetic pair, the fused probability \r\nis computed as given by equation (3.1)\r\nwh"
+        ]
+      },
+      {
+        "question": "How was multimodal fusion implemented in the thesis?",
+        "matched_fragment": true,
+        "snippets": [
+          "3.11 Alignment with Research Objectives\r\nThe methodology described in this chapter directly addresses the three research objectives \r\nestablished in,\r\nObjective 1 (Bias-Aware Data Foundation) is addressed through systematic data acquisition \r\nand preprocessing for both CT and biomarker datasets, including leakage control and bias\ufffeaware preparation steps. \r\nObjective 2 (Unimodal Model Development a",
+          "3.7 Multimodal Fusion Methodology\r\n3.7.1 The Synthetic Pairing Challenge\r\nThe most significant constraint on multimodal fusion in this research is the absence of paired \r\npatient data, no individual in the CT dataset has corresponding biomarker measurements and \r\nvice versa. Traditional multimodal learning assumes that each sample contains aligned \r\nobservations from all modalities for the same su",
+          "All analyses use publicly available datasets. For CT, the processed cohort used in this project \r\ncontains 122 patients (40 PDAC, 82 controls). Biomarker modelling uses the Debernardi et al. \r\n(2020) dataset with 590 samples and seven selected features, with data governance aligned to \r\noriginal usage terms.\r\nOne important limitation to flag upfront, there is no patient-level alignment between the",
+          "3.8.4 Statistical Robustness\r\nStatistical robustness was assessed primarily through repeated multi-seed analyses (including \r\nfusion sanity checks across seeds 0-4 and label-mismatch controls). Bootstrap confidence \r\nintervals were not part of the current notebook implementation; therefore, uncertainty is \r\ninterpreted through variability across seeds and controls.\r\n3.9 Implementation Details\r\nExp",
+          "A BIAS-AWARE MULTI-MODAL DEEP LEARNING FRAMEWORK FOR PANCREATIC CANCER \r\nDETECTION USING CT IMAGING AND URINARY BIOMARKERS\r\nLEANDER ANTONY A\r\nFinal Thesis Report\r\nFebruary 2026i\r\nDEDICATION\r\nThis dissertation is dedicated to my family for their unwavering support, encouragement, and \r\npatience throughout my academic journey and to my friend Siddharth, whose encouragement \r\nwas pivotal in pushing m"
+        ]
+      },
+      {
+        "question": "What kinds of future work or next steps does the thesis suggest?",
+        "matched_fragment": false,
+        "snippets": [
+          "Extending the framework to clinically realistic \r\nmulti-class problems would require substantially larger and more diverse datasets.\r\nAbsence of prospective clinical validation: All experiments were conducted retrospectively on \r\npublicly available data. No prospective evaluation, radiologist comparison study, or clinical \r\nworkflow integration was performed. Moving from retrospective computationa",
+          "Each of these extensions would increase the clinical utility of the \r\nframework but would require larger, more richly annotated datasets than are currently available \r\nin public repositories. The biomarker model\u2019s three-class capability, demonstrated in the \r\noriginal (Debernardi et al., 2020) study, provides a natural starting point for this extension on \r\nthe biomarker side.\r\n6.6.4 Prospective V",
+          "While protocol uniformity \r\nrequires institutional coordination and is a longer-term goal, its impact on the reliability of AI\ufffeassisted diagnosis would be substantial. It would reduce the burden on computational methods \r\nrequired for reducing bias and enable more confident evaluation of model performance, because \r\nobserved classification ability would be far less likely to reflect acquisition el",
+          "Together, these objectives emphasize clinical relevance, methodological validity, and \r\ntransparent reporting rather than metric-driven optimization alone. Detailed procedures used to \r\ncarry out these objectives are provided in Chapter 3, with implementation specific details \r\npresented in Chapter 4.\r\n1.6 Research Questions\r\nHow does dataset bias influence CT-based pancreatic cancer detection mod",
+          "Residual domain bias in CT classification: The extreme standardization method dealt with \r\npixel-level bias effectively, but it did not wipe out domain structure from deep feature \r\nrepresentations. The CT model\u2019s near-perfect performance therefore remains ambiguous: it \r\ncould reflect genuine pathological feature learning, residual domain shortcut exploitation, or \r\nsome mixture of both. Without "
+        ]
+      }
+    ]
+  }
+}

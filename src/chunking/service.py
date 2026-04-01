@@ -51,8 +51,10 @@ def chunk_document(document: DocumentRecord, chunk_size: int, chunk_overlap: int
         text = page.get("text", "")
         section_heading = page.get("section_heading", "")
         section_path = page.get("section_path", [])
+        section_id = page.get("section_id", "")
         clause_ids = page.get("clause_ids", [])
         content_type = page.get("content_type", "general")
+        section_kind = page.get("section_heading", "").lower()
         blocks = _semantic_blocks(text) or [text]
         for block in blocks:
             for text_chunk in _split_text(block, chunk_size=chunk_size, chunk_overlap=chunk_overlap):
@@ -70,9 +72,11 @@ def chunk_document(document: DocumentRecord, chunk_size: int, chunk_overlap: int
                             "document_id": document.document_id,
                             "section_heading": section_heading,
                             "section_path": section_path,
+                            "section_id": section_id,
                             "clause_ids": clause_ids,
                             "primary_clause_id": clause_ids[0] if clause_ids else "",
                             "content_type": content_type,
+                            "section_kind": section_kind,
                         },
                     )
                 )

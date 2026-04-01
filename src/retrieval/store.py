@@ -5,7 +5,7 @@ from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
 
-from src.schemas import ChunkRecord, IndexRecord
+from src.schemas import ChunkRecord, IndexRecord, SectionRecord
 
 
 class ChromaIndexStore:
@@ -37,11 +37,15 @@ class ChromaIndexStore:
     def _chunks_path(self, fingerprint: str) -> Path:
         return self._index_dir(fingerprint) / "chunks.json"
 
+    def _sections_path(self, fingerprint: str) -> Path:
+        return self._index_dir(fingerprint) / "sections.json"
+
     def load_index_record(self, fingerprint: str) -> IndexRecord | None:
         meta_path = self._meta_path(fingerprint)
         if not meta_path.exists():
             return None
         payload = json.loads(meta_path.read_text(encoding="utf-8"))
+        payload.setdefault("section_count", 0)
         return IndexRecord(**payload)
 
     def load_chunks(self, fingerprint: str) -> list[ChunkRecord]:
@@ -51,17 +55,25 @@ class ChromaIndexStore:
         payload = json.loads(chunks_path.read_text(encoding="utf-8"))
         return [ChunkRecord(**item) for item in payload]
 
+    def load_sections(self, fingerprint: str) -> list[SectionRecord]:
+        sections_path = self._sections_path(fingerprint)
+        if not sections_path.exists():
+            return []
+        payload = json.loads(sections_path.read_text(encoding="utf-8"))
+        return [SectionRecord(**item) for item in payload]
+
     def get_or_create_index(
         self,
         fingerprint: str,
         document_id: str,
         chunks: list[ChunkRecord],
+        sections: list[SectionRecord],
         embedding_model: str,
         chunk_size: int,
         chunk_overlap: int,
     ) -> IndexRecord:
         existing = self.load_index_record(fingerprint)
-        if existing is not None:
+        if existing is not None and self._chunks_path(fingerprint).exists() and self._sections_path(fingerprint).exists():
             existing.reused = True
             return existing
 
@@ -78,11 +90,21 @@ class ChromaIndexStore:
             name=collection_name,
             embedding_function=self._embedding_function(),
         )
+        section_collection = client.get_or_create_collection(
+            name=f"{collection_name}-sections",
+            embedding_function=self._embedding_function(),
+        )
         chroma_metadatas = [self._sanitize_metadata_for_chroma(chunk.metadata) for chunk in chunks]
         collection.upsert(
             ids=[chunk.chunk_id for chunk in chunks],
             documents=[chunk.text for chunk in chunks],
             metadatas=chroma_metadatas,
+        )
+        section_metadatas = [self._sanitize_metadata_for_chroma(section.metadata) for section in sections]
+        section_collection.upsert(
+            ids=[section.section_id for section in sections],
+            documents=[f"{section.title}\n\n{section.summary}".strip() for section in sections],
+            metadatas=section_metadatas,
         )
 
         index_record = IndexRecord(
@@ -91,6 +113,7 @@ class ChromaIndexStore:
             collection_name=collection_name,
             storage_path=str(index_dir / "chroma"),
             chunk_count=len(chunks),
+            section_count=len(sections),
             embedding_model=embedding_model,
             chunk_size=chunk_size,
             chunk_overlap=chunk_overlap,
@@ -100,6 +123,10 @@ class ChromaIndexStore:
         self._meta_path(fingerprint).write_text(json.dumps(asdict(index_record), indent=2), encoding="utf-8")
         self._chunks_path(fingerprint).write_text(
             json.dumps([chunk.to_dict() for chunk in chunks], indent=2),
+            encoding="utf-8",
+        )
+        self._sections_path(fingerprint).write_text(
+            json.dumps([section.to_dict() for section in sections], indent=2),
             encoding="utf-8",
         )
         return index_record
@@ -136,6 +163,33 @@ class ChromaIndexStore:
             items.append(
                 {
                     "chunk_id": chunk_id,
+                    "text": results.get("documents", [[]])[0][idx],
+                    "metadata": results.get("metadatas", [[]])[0][idx],
+                    "distance": results.get("distances", [[]])[0][idx],
+                }
+            )
+        return items
+
+    def dense_query_sections(self, fingerprint: str, question: str, top_k: int) -> list[dict]:
+        index = self.load_index_record(fingerprint)
+        if index is None:
+            return []
+        import chromadb
+
+        client = chromadb.PersistentClient(
+            path=index.storage_path,
+            settings=self._client_settings(),
+        )
+        collection = client.get_collection(
+            name=f"{index.collection_name}-sections",
+            embedding_function=self._embedding_function(),
+        )
+        results = collection.query(query_texts=[question], n_results=top_k)
+        items: list[dict] = []
+        for idx, section_id in enumerate(results.get("ids", [[]])[0]):
+            items.append(
+                {
+                    "section_id": section_id,
                     "text": results.get("documents", [[]])[0][idx],
                     "metadata": results.get("metadatas", [[]])[0][idx],
                     "distance": results.get("distances", [[]])[0][idx],

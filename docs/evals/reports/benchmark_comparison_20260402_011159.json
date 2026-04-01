@@ -1,0 +1,314 @@
+{
+  "local_retrieval": {
+    "dataset_size": 9,
+    "top_k_page_hit_rate": 0.8888888888888888,
+    "mean_reciprocal_rank": 0.6111111111111112,
+    "settings": {
+      "chunk_size": 1200,
+      "chunk_overlap": 180,
+      "dense_top_k": 10,
+      "lexical_top_k": 10,
+      "fused_top_k": 12,
+      "final_top_k": 4
+    },
+    "results": [
+      {
+        "question": "What was the goal of the pancreas7 study?",
+        "expected_pages": [
+          "Page 11",
+          "Page 3"
+        ],
+        "found_pages": [
+          "Page 11",
+          "Page 10",
+          "Page 1",
+          "Page 10"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "What objectives did the pancreas7 study aim to achieve?",
+        "strategy_notes": [
+          "Initial hybrid retrieval run completed.",
+          "Query classified as general_lookup.",
+          "Preferred content types: general, benefit.",
+          "Adaptive re-retrieval used a rewritten query variant.",
+          "Adaptive re-retrieval used a rewritten query variant.",
+          "Best retrieval came from rewritten query: What objectives did the pancreas7 study aim to achieve?"
+        ]
+      },
+      {
+        "question": "What CNN architecture did the paper use?",
+        "expected_pages": [
+          "Page 4",
+          "Page 5"
+        ],
+        "found_pages": [
+          "Page 1",
+          "Page 3",
+          "Page 12",
+          "Page 5"
+        ],
+        "matched": true,
+        "reciprocal_rank": 0.25,
+        "query_used": "Which convolutional neural network structure is presented in the study?",
+        "strategy_notes": [
+          "Initial hybrid retrieval run completed.",
+          "Query classified as general_lookup.",
+          "Preferred content types: general, benefit.",
+          "Adaptive re-retrieval used a rewritten query variant.",
+          "Adaptive re-retrieval used a rewritten query variant.",
+          "Best retrieval came from rewritten query: Which convolutional neural network structure is presented in the study?"
+        ]
+      },
+      {
+        "question": "What CT phases were included in the datasets?",
+        "expected_pages": [
+          "Page 5",
+          "Page 6"
+        ],
+        "found_pages": [
+          "Page 7",
+          "Page 5",
+          "Page 1",
+          "Page 3"
+        ],
+        "matched": true,
+        "reciprocal_rank": 0.5,
+        "query_used": "What CT phases were included in the datasets?",
+        "strategy_notes": [
+          "Initial hybrid retrieval run completed.",
+          "Query classified as general_lookup.",
+          "Preferred content types: general, benefit."
+        ]
+      },
+      {
+        "question": "How many patients and images were included in total?",
+        "expected_pages": [
+          "Page 6"
+        ],
+        "found_pages": [
+          "Page 3",
+          "Page 3",
+          "Page 1",
+          "Page 6"
+        ],
+        "matched": true,
+        "reciprocal_rank": 0.25,
+        "query_used": "How many patients and images were included in total?",
+        "strategy_notes": [
+          "Initial hybrid retrieval run completed.",
+          "Query classified as general_lookup.",
+          "Preferred content types: general, benefit."
+        ]
+      },
+      {
+        "question": "How many pancreatic cancer patients and control patients were used in the binary classification experiments?",
+        "expected_pages": [
+          "Page 7",
+          "Page 8"
+        ],
+        "found_pages": [
+          "Page 1",
+          "Page 7",
+          "Page 11",
+          "Page 3"
+        ],
+        "matched": true,
+        "reciprocal_rank": 0.5,
+        "query_used": "How many pancreatic cancer patients and control patients were used in the binary classification experiments?",
+        "strategy_notes": [
+          "Initial hybrid retrieval run completed.",
+          "Query classified as general_lookup.",
+          "Preferred content types: general, benefit."
+        ]
+      },
+      {
+        "question": "What binary classification accuracy did the CNN achieve across the three CT phases?",
+        "expected_pages": [
+          "Page 7",
+          "Page 8"
+        ],
+        "found_pages": [
+          "Page 7",
+          "Page 9",
+          "Page 7",
+          "Page 2"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "What binary classification accuracy did the CNN achieve across the three CT phases?",
+        "strategy_notes": [
+          "Initial hybrid retrieval run completed.",
+          "Query classified as general_lookup.",
+          "Preferred content types: general, benefit."
+        ]
+      },
+      {
+        "question": "How did the CNN compare with gastroenterologists and trainees on plain scan accuracy?",
+        "expected_pages": [
+          "Page 8"
+        ],
+        "found_pages": [
+          "Page 7",
+          "Page 9",
+          "Page 7",
+          "Page 2"
+        ],
+        "matched": false,
+        "reciprocal_rank": 0.0,
+        "query_used": "How did the CNN compare with gastroenterologists and trainees on plain scan accuracy?",
+        "strategy_notes": [
+          "Initial hybrid retrieval run completed.",
+          "Query classified as general_lookup.",
+          "Preferred content types: general, benefit."
+        ]
+      },
+      {
+        "question": "Which phase had the highest sensitivity for head and neck pancreatic malignancies in the ternary classifier?",
+        "expected_pages": [
+          "Page 9",
+          "Page 10"
+        ],
+        "found_pages": [
+          "Page 10",
+          "Page 8",
+          "Page 11",
+          "Page 7"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "Which phase had the highest sensitivity for head and neck pancreatic malignancies in the ternary classifier?",
+        "strategy_notes": [
+          "Initial hybrid retrieval run completed.",
+          "Query classified as general_lookup.",
+          "Preferred content types: general, benefit."
+        ]
+      },
+      {
+        "question": "Why did the authors say plain phase could be sufficient for the binary classifier?",
+        "expected_pages": [
+          "Page 11"
+        ],
+        "found_pages": [
+          "Page 11",
+          "Page 7",
+          "Page 2",
+          "Page 9"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "Why did the authors say plain phase could be sufficient for the binary classifier?",
+        "strategy_notes": [
+          "Initial hybrid retrieval run completed.",
+          "Query classified as general_lookup.",
+          "Preferred content types: general, benefit."
+        ]
+      }
+    ]
+  },
+  "local_negative": {
+    "dataset_size": 5,
+    "abstention_rate": 0.8,
+    "results": [
+      {
+        "question": "What urinary biomarker panel did this paper validate?",
+        "abstained": true,
+        "answer_preview": "Not provided.",
+        "note": "The document does not mention any urinary biomarker panel validated in the study.",
+        "supported": false
+      },
+      {
+        "question": "What MRI segmentation model was trained in this study?",
+        "abstained": false,
+        "answer_preview": "The study trained a deep learning-based pancreatic ductal adenocarcinoma model.\n\nReferences:\n- [1] pancreas7.pdf - Page 10\n- [2] pancreas7.pdf - Page 2\n- [3] pancreas7.pdf - Page 10\n- [4] pancreas7.pdf - Page 5",
+        "note": "The evidence clearly states that a deep learning-based model was developed for pancreatic cancer detection from computed tomography images [Source 2].",
+        "supported": true
+      },
+      {
+        "question": "What legal framework for AI regulation was proposed by the authors?",
+        "abstained": true,
+        "answer_preview": "Unsupported by the retrieved evidence.",
+        "note": "The provided evidence does not include any details about a proposed legal framework for AI regulation.",
+        "supported": false
+      },
+      {
+        "question": "What chemotherapy regimen was recommended for treatment?",
+        "abstained": true,
+        "answer_preview": "Unsupported by the retrieved evidence.",
+        "note": "The evidence does not provide specific information about the recommended chemotherapy regimen.",
+        "supported": false
+      },
+      {
+        "question": "What was the whole-slide histopathology magnification used in the experiments?",
+        "abstained": true,
+        "answer_preview": "Unsupported by the retrieved evidence.",
+        "note": "The provided evidence does not specify the whole-slide histopathology magnification used in the experiments.",
+        "supported": false
+      }
+    ]
+  },
+  "openai_file_search": {
+    "dataset_size": 9,
+    "vector_store_id": "vs_69cd74f88f848191a784868fc7c3966c",
+    "snippet_fragment_match_rate": 0.1111111111111111,
+    "results": [
+      {
+        "question": "What was the goal of the pancreas7 study?",
+        "matched_fragment": false,
+        "snippets": []
+      },
+      {
+        "question": "What CNN architecture did the paper use?",
+        "matched_fragment": false,
+        "snippets": []
+      },
+      {
+        "question": "What CT phases were included in the datasets?",
+        "matched_fragment": false,
+        "snippets": []
+      },
+      {
+        "question": "How many patients and images were included in total?",
+        "matched_fragment": false,
+        "snippets": []
+      },
+      {
+        "question": "How many pancreatic cancer patients and control patients were used in the binary classification experiments?",
+        "matched_fragment": false,
+        "snippets": []
+      },
+      {
+        "question": "What binary classification accuracy did the CNN achieve across the three CT phases?",
+        "matched_fragment": false,
+        "snippets": []
+      },
+      {
+        "question": "How did the CNN compare with gastroenterologists and trainees on plain scan accuracy?",
+        "matched_fragment": false,
+        "snippets": []
+      },
+      {
+        "question": "Which phase had the highest sensitivity for head and neck pancreatic malignancies in the ternary classifier?",
+        "matched_fragment": true,
+        "snippets": [
+          "Therefore, distribution bias might have\r\ninfluenced the entire study, and further studies are needed to clarify this issue. A third\r\nlimitation is that although the binary classifier achieved the same accuracy as the\r\ngastroenterologists, the classifications were based on the information obtained from a\r\nsingle image. We speculate that if the physicians were given additional information,\r\nsuch as ",
+          "Table 3 Performance of the binary classifiers\r\nPlain scan Arterial phase Venous phase \u03c7\r\n2\r\n value P value\r\nAccuracy 0.954747 0.957580 0.951549 0.346 0.841\r\nSpecificity 0.982710 0.975695 0.978692 0.149 0.928\r\nSensitivity 0.915758 0.940808 0.922756 0.914 0.633\r\nTable 4 Diagnostic accuracy of the binary classifiers in plain scan: Convolutional neural network vs gastroenterologists and trainees\r\nDoct",
+          "We built three datasets\r\nfrom our images according to the image phases, evaluated our approach in terms of\r\nbinary classification and ternary classification using 10-fold cross validation, and\r\nmeasured the effectiveness of the model with regard to the accuracy, sensitivity, and\r\nspecificity.\r\nResearch results\r\nIn the binary classifiers, the performance of plain, arterial and venous phase showed\r\n",
+          "The gastroenterologist group\r\nwas found to have significantly higher accuracy (92.2% vs 73.6%, P < 0.05), specificity\r\n(92.1% vs 79.2%, P < 0.05), and sensitivity (92.3% vs 72.5%, P < 0.001) than trainees.\r\nAs described in the methods section, ten board-certified gastroenterologists and 15\r\ntrainees participated in the study, and their image classification accuracy was\r\ncompared with that of the d",
+          "However, the difference between CNN and gastroenterologists was not significant (\u03c7\r\n2\r\n= 0.759, P = 0.384). Figure 3 demonstrates the receiver operating characteristic (ROC)\r\ncurves for the binary classification of the plain scan.\r\nPerformance of the deep convolutional neural network as a ternary classifier\r\nWe also trained a ternary classifier using our CNN model and evaluated it by 10-flod\r\ncros"
+        ]
+      },
+      {
+        "question": "Why did the authors say plain phase could be sufficient for the binary classifier?",
+        "matched_fragment": false,
+        "snippets": [
+          "It is distributed in\r\naccordance with the Creative\r\nCommons Attribution\r\nNonCommercial (CC BY-NC 4.0)\r\nlicense, which permits others to\r\ndistribute, remix, adapt, build\r\nupon this work non-commercially,\r\nand license their derivative works\r\non different terms, provided the\r\noriginal work is properly cited and\r\nthe use is non-commercial. See: htt\r\np://creativecommons.org/licenses\r\n/by-nc/4.0/\r\nManus",
+          "The overall diagnostic accuracy of the CNN was 95.47%, 95.76%, and 95.15% on the\r\nplain scan, arterial phase, and venous phase, respectively. The sensitivity of the CNN\r\n(known as recall in cancer detection - the correctly predicted malignant lesions divided\r\nby all the malignant lesions) was 91.58%, 94.08%, and 92.28% on the plain scan, arterial\r\nphase, and venous phase images, respectively. The ",
+          "Ma H et al. CNN classifier identifies pancreatic cancer\r\nWJG https://www.wjgnet.com 5162 September 14, 2020 Volume 26 Issue 34\r\ncancer, and 190 diagnosed with normal pancreas were included as a control group.\r\nThe characteristics of the enrolled participants, classified by the presence or absence of\r\npancreatic cancer, are shown in Table 2. The mean age was 63.8 \u00b1 8.7 years for cancer\r\ngroup (rang",
+          "We built three datasets\r\nfrom our images according to the image phases, evaluated our approach in terms of\r\nbinary classification and ternary classification using 10-fold cross validation, and\r\nmeasured the effectiveness of the model with regard to the accuracy, sensitivity, and\r\nspecificity.\r\nResearch results\r\nIn the binary classifiers, the performance of plain, arterial and venous phase showed\r\n",
+          "AIM\r\nTo identify pancreatic cancer in computed tomography (CT) images automatically\r\nby constructing a convolutional neural network (CNN) classifier.\r\nMETHODS\r\nA CNN model was constructed using a dataset of 3494 CT images obtained from\r\n222 patients with pathologically confirmed pancreatic cancer and 3751 CT images\r\nfrom 190 patients with normal pancreas from June 2017 to June 2018. We\r\nestablishe"
+        ]
+      }
+    ]
+  }
+}

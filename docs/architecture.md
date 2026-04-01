@@ -14,11 +14,12 @@ HelpmateAI is a Streamlit-first long-document QA app with backend-ready core ser
 1. ingest uploaded PDF or DOCX content
 2. infer lightweight document structure
 3. create metadata-rich chunks
-4. build or reuse a persisted Chroma index
-5. analyze the question and retrieve evidence
-6. rerank and adapt retrieval when evidence is weak
-7. generate a grounded answer with explicit support status
-8. cache safe answer results for repeated questions
+4. build or reuse persisted chunk and section indexes in Chroma
+5. analyze the question and route retrieval
+6. retrieve evidence through chunk-first, section-first, or hybrid retrieval
+7. rerank and adapt retrieval when evidence is weak
+8. generate a grounded answer with explicit support status
+9. cache safe answer results for repeated questions
 
 ## Ingestion And Structure Layer
 
@@ -53,12 +54,30 @@ Current chunk metadata includes:
 - `clause_ids`
 - `primary_clause_id`
 - `content_type`
+- `section_id`
+- `section_kind`
 
-This makes retrieval more explainable and creates a foundation for future section-first or clause-first retrieval.
+This metadata now powers the live dual-retrieval design rather than only acting as future scaffolding.
+
+## Section Layer
+
+HelpmateAI now builds `SectionRecord` objects on top of page and chunk metadata.
+
+Each section carries:
+
+- a stable `section_id`
+- cleaned section title
+- section summary
+- page labels
+- section path
+- clause ids
+- section-kind metadata such as `Abstract`, `Introduction`, `Results`, `Conclusion`, or `Future Work`
+
+This layer is especially important for theses and research papers, where broad questions often need section-level navigation before exact chunk retrieval.
 
 ## Retrieval Stack
 
-HelpmateAI currently uses a hybrid retrieval design:
+HelpmateAI currently uses a dual-path hybrid retrieval design:
 
 - dense retrieval from Chroma
 - lexical retrieval via TF-IDF scoring
@@ -66,15 +85,27 @@ HelpmateAI currently uses a hybrid retrieval design:
 - optional cross-encoder reranking
 - metadata-aware ranking preferences
 - adaptive query rewriting when evidence is weak
+- chunk-first retrieval for exact factual grounding
+- section-first retrieval for broad narrative questions
+- hybrid merge mode when the query is genuinely mixed
 
-The retrieval layer also performs lightweight query analysis so it can classify questions into broad modes such as:
+The retrieval layer performs lightweight query analysis so it can classify questions into broad modes such as:
 
 - `definition_lookup`
 - `waiting_period_lookup`
 - `process_lookup`
 - `benefit_lookup`
+- `summary_lookup`
 
-These classifications are used as soft preferences, not hard routing rules.
+These classifications are used as soft retrieval preferences.
+
+On top of that, HelpmateAI now has a lightweight query router that decides whether the question should use:
+
+- `chunk_first`
+- `section_first`
+- `hybrid_both`
+
+The router is primarily heuristic. A lightweight LLM-assisted tie-breaker is available only when the heuristic router is low-confidence. This is intentionally not a full multi-agent system.
 
 ## Answer Generation
 
@@ -119,6 +150,7 @@ This lets the team compare:
 - policy-style documents versus thesis-style documents
 - local RAG versus hosted retrieval
 - structural changes versus baseline behavior
+- dual-path retrieval behavior across policy, thesis, and research-paper documents
 
 ## Architectural Challenges Encountered
 
@@ -129,6 +161,8 @@ Important issues discovered during implementation:
 - Chroma accepts only scalar metadata values, so rich metadata must be sanitized for index writes
 - retrieval quality is stronger on structured policy documents than on long academic prose
 - query analysis is currently heuristic and still biased toward clause-like factual questions
+- academic-paper parsing is still imperfect, especially for front matter, appendices, and bibliography-heavy pages
+- the lightweight LLM router is useful as a tie-breaker, but it is not yet a universal quality boost
 
 ## Current Strengths
 
@@ -137,18 +171,21 @@ Important issues discovered during implementation:
 - explicit abstention
 - saved benchmark reports
 - document-intelligence layer already integrated into the live retrieval path
+- dual chunk-first and section-first retrieval paths are now live
+- section-aware summaries improved thesis and review-paper retrieval without hurting policy benchmarks
 
 ## Current Weaknesses
 
 - clause-level misses still happen when relevant content spans adjacent sections
 - narrative and synthesis-heavy questions are harder than factual clause lookups
-- section-first retrieval has not yet been implemented
+- academic paper section extraction still needs refinement for “main focus” and future-work style questions
 
 ## Likely Next Architecture Step
 
-The most justified next improvement is hierarchical retrieval:
+The most justified next improvements are:
 
-- retrieve the right section first
-- then retrieve the best clause or chunk inside that section
+- stronger academic-document parsing and section cleanup
+- better suppression of references, appendices, and front-matter noise
+- deeper section-aware reranking for broad paper and thesis questions
 
-That would build naturally on the structure and query-analysis layer already added to the repo.
+The architecture now supports these improvements without another major restructure.

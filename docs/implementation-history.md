@@ -158,13 +158,63 @@ What became harder:
 - future-work and interpretive questions
 - result-summary queries that are semantically distributed rather than concentrated in one clause block
 
+## 11. Dual Retrieval Paths
+
+Change:
+
+- added persisted section records and a second retrieval path built around section-first narrowing
+
+Challenge:
+
+- broad questions needed better document navigation, but chunk-first retrieval was already strong for factual and clause-heavy questions
+
+Improvement:
+
+- the architecture now supports:
+  - `chunk_first`
+  - `section_first`
+  - `hybrid_both`
+- broad and mixed questions can use section context without giving up raw chunk grounding for final answers
+
+## 12. Academic-Document Parsing And Section Summaries
+
+Change:
+
+- improved section construction with canonical heading detection, cleaner titles, and more useful section summaries
+
+Challenge:
+
+- theses and review papers contain front matter, bibliography clutter, and broader narrative sections that do not behave like policy clauses
+
+Improvement:
+
+- thesis and review-paper retrieval improved without degrading policy retrieval
+- section-aware ranking became more document-aware rather than simply page-aware
+
+## 13. Lightweight LLM Router
+
+Change:
+
+- added a small LLM-assisted tie-breaker router for low-confidence mixed queries
+
+Challenge:
+
+- heuristic routing alone still misclassified some broad narrative questions
+- a full agent system would have added unnecessary complexity
+
+Improvement:
+
+- ambiguous questions can now use a bounded LLM route decision
+- the system remains a deterministic staged pipeline overall, not a multi-agent architecture
+
 ## What This Means For The Next Step
 
 The architecture is now strong enough that the next improvement should not be another repo restructure.
 
 The most justified next steps are:
 
-- section-first or clause-first retrieval
+- stronger academic-document parsing
+- better suppression of references, appendices, and front-matter noise
 - section-summary embeddings
 - stronger query understanding for academic and report-style documents
 - harder benchmark sets spanning multiple document families

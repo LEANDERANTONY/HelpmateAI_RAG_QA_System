@@ -9,6 +9,7 @@ from src.config import Settings, get_settings
 from src.generation import AnswerGenerator
 from src.ingest import ingest_document
 from src.retrieval import ChromaIndexStore, HybridRetriever
+from src.sections import build_sections
 from src.schemas import AnswerResult, CacheStatus, DocumentRecord, IndexRecord, RetrievalResult
 
 
@@ -37,10 +38,12 @@ class HelpmatePipeline:
 
     def build_or_load_index(self, document: DocumentRecord) -> IndexRecord:
         chunks = chunk_document(document, self.settings.chunk_size, self.settings.chunk_overlap)
+        sections = build_sections(document)
         return self.store.get_or_create_index(
             fingerprint=document.fingerprint,
             document_id=document.document_id,
             chunks=chunks,
+            sections=sections,
             embedding_model=self.settings.embedding_model,
             chunk_size=self.settings.chunk_size,
             chunk_overlap=self.settings.chunk_overlap,

@@ -1,0 +1,17 @@
+[
+  {
+    "question": "What exact convolutional network accuracy did this review paper achieve on pancreatic CT classification?"
+  },
+  {
+    "question": "What seven urinary biomarker features were used in the experiments of this paper?"
+  },
+  {
+    "question": "What car-insurance dataset was integrated in the multimodal pipeline?"
+  },
+  {
+    "question": "What surgical treatment schedule does the paper recommend for PDAC patients?"
+  },
+  {
+    "question": "What theorem proof does the paper provide for kernel convergence?"
+  }
+]

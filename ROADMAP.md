@@ -15,11 +15,14 @@ Current baseline:
 - offline eval datasets and saved benchmark reports
 - OpenAI file-search comparison harness
 - lightweight document-intelligence layer for structure-aware retrieval
+- dual-path retrieval with section-first support
+- lightweight LLM-assisted route selection for low-confidence mixed queries
 
 Highest-priority active work:
 
 - improve retrieval on non-policy documents such as long academic prose
-- reduce clause-level misses through better section and clause targeting
+- improve academic-paper section parsing and front-matter/reference suppression
+- reduce remaining clause-level misses through better section and clause targeting
 - make retrieval reasoning more visible in the app
 - keep benchmark quality high across multiple document families
 
@@ -27,17 +30,17 @@ Status:
 
 - Active delivery focus
 
-## Next: Hierarchical Retrieval And Better Generalization
+## Next: Better Document Parsing And Retrieval Generalization
 
-- move from mostly page-first retrieval to section-first or clause-first retrieval
+- improve academic-paper and thesis section detection
 - add richer section summaries and section-level embeddings
-- improve query analysis beyond current heuristic classes
+- improve query analysis and router behavior beyond current heuristic classes
 - better support thesis, report, and research-paper style questions that require broader semantic synthesis
 - add tougher eval sets for narrative and cross-section questions
 
 Status:
 
-- Planned next architecture step
+- Planned next quality step on the current architecture
 
 ## Later: Product Hardening On The Current Stack
 

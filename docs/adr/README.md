@@ -8,6 +8,7 @@ Current ADRs:
 - `ADR-002-local-first-hybrid-rag-with-chroma-and-evals.md`
 - `ADR-003-structured-abstention-and-benchmark-driven-quality.md`
 - `ADR-004-document-intelligence-layer-for-structure-aware-retrieval.md`
+- `ADR-005-dual-retrieval-routing-with-lightweight-llm-tiebreaker.md`
 
 Usage notes:
 

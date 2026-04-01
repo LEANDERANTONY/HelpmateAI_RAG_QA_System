@@ -221,3 +221,75 @@ Current weaknesses:
 - retrieval is much stronger on structured policy documents than on long academic prose
 - section-level and cross-section narrative questions remain harder than factual clause lookups
 - Chroma telemetry remains noisy in terminal output even though it does not block runs
+
+## Day 11: Section-First Retrieval Layer
+
+- Added section records and persisted section indexes.
+- Added dual retrieval paths:
+  - `chunk_first`
+  - `section_first`
+  - `hybrid_both`
+- Added a lightweight query router to choose between those retrieval paths.
+- Added focused tests for section building and query routing.
+
+Challenges:
+
+- we needed broader-question support without sacrificing the already strong factual benchmark
+- replacing chunk retrieval entirely would have weakened clause-heavy policy questions
+- older indexes on disk did not contain sections and needed safe rebuild behavior
+
+Improvements:
+
+- kept exact chunk-grounded retrieval as the primary factual path
+- added section-first narrowing for synthesis-heavy questions
+- made routing behavior visible in retrieval notes and benchmark outputs
+
+## Day 12: Better Section Summaries And Academic-Document Handling
+
+- Improved section construction for theses and research papers.
+- Added:
+  - canonical heading detection
+  - cleaner section titles
+  - better section summaries
+  - suppression of common author-manuscript and reference-style noise
+- Added section-kind aware ranking preferences such as:
+  - `Abstract`
+  - `Introduction`
+  - `Results`
+  - `Conclusion`
+  - `Future Work`
+
+Challenges:
+
+- narrative documents do not behave like policy wording documents
+- broad questions such as “main aim” or “future work” can be misclassified as factual lookups
+- review papers often contain front matter and bibliography text that pollute section retrieval
+
+Improvements:
+
+- thesis benchmark improved from `0.75 / 0.5486` to `0.8333 / 0.5903`
+- the pancreas8 review-paper benchmark improved from `0.8 / 0.75` to `0.9 / 0.85` at the best section-summary stage
+- policy benchmark stability was preserved while narrative retrieval improved
+
+## Day 13: Lightweight LLM Router Trial And Latency Check
+
+- Added a lightweight LLM-assisted router as a tie-breaker for low-confidence mixed queries.
+- Added timing instrumentation to measure router overhead in the live pipeline.
+
+Challenges:
+
+- heuristic routing still struggled on some broad paper-style questions
+- it was unclear whether an LLM router would meaningfully help or just add latency
+
+Improvements and learnings:
+
+- the LLM router remained lightweight and bounded; it only selects a retrieval route
+- it is not a full agent and does not answer questions itself
+- latency impact is limited because it only runs on low-confidence cases
+- on one broad paper-style query, the router added about `1.37s` but reduced total runtime by avoiding a heavier `hybrid_both` path
+- on clean factual questions, the router is usually not the bottleneck
+
+Current caution:
+
+- the LLM router is useful as a tie-breaker, but it is not yet a guaranteed accuracy gain across every benchmark
+- document parsing quality is still the stronger next lever than adding more routing complexity

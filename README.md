@@ -10,7 +10,11 @@ HelpmateAI is a Streamlit-first long-document QA app for grounded answers over P
 - Build or reuse a persisted local Chroma index keyed by document fingerprint
 - Run hybrid retrieval with dense search, lexical search, fusion, and optional cross-encoder reranking
 - Apply metadata-aware retrieval, adaptive query rewriting, and weak-evidence re-retrieval when needed
-- Infer document structure, content types, and clause metadata for smarter semantic chunking and retrieval routing
+- Infer document structure, content types, section kinds, and clause metadata for smarter semantic chunking and retrieval routing
+- Use dual retrieval paths:
+  - `chunk_first` for exact factual and clause-style questions
+  - `section_first` for broader narrative or synthesis questions
+- Use a lightweight LLM-assisted router only when heuristic routing is low-confidence
 - Generate grounded answers with citations and surfaced supporting passages
 - Reuse conservative answer-cache entries when the document and question context still match
 - Evaluate retrieval quality with a small offline dataset under `docs/evals/`
@@ -23,6 +27,8 @@ This repository is now structured as an app project rather than a notebook-only 
 - `src/` contains the reusable ingestion, retrieval, generation, cache, and UI code
 - `src/structure/` infers section and clause context from documents
 - `src/query_analysis/` classifies questions so retrieval can prefer the right evidence type
+- `src/sections/` builds reusable section records and summaries for section-first retrieval
+- `src/query_router.py` chooses between retrieval paths without turning the app into a full agent system
 - `docs/` contains quickstart and architecture notes
 - `tests/` contains focused fast tests around reusable logic
 
@@ -59,6 +65,7 @@ Additional project history and architecture decisions live in:
 - Supported document types: `.pdf`, `.docx`
 - Retrieval-first long-document QA
 - Local-first indexing and caching
+- Dual-path retrieval with heuristic plus lightweight LLM routing
 
 Out of scope for this first structured build:
 
