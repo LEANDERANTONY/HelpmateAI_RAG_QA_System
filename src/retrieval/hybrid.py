@@ -4,6 +4,7 @@ from collections import defaultdict
 import re
 
 from src.config import Settings
+from src.query_analysis import QueryAnalyzer
 from src.schemas import ChunkRecord, RetrievalCandidate, RetrievalResult
 from src.retrieval.query_rewriter import QueryRewriter
 from src.retrieval.reranker import Reranker
@@ -16,15 +17,18 @@ class HybridRetriever:
         self.settings = settings
         self.reranker = Reranker(settings) if settings.reranker_enabled else None
         self.query_rewriter = QueryRewriter(settings)
+        self.query_analyzer = QueryAnalyzer()
 
     @staticmethod
     def _extract_metadata_filters(question: str) -> dict[str, list[str]]:
         lowered = question.lower()
         page_numbers = re.findall(r"\bpage(?:s)?\s+(\d+)\b", lowered)
         section_terms = re.findall(r'"([^"]+)"', question)
+        clause_terms = re.findall(r"\b\d+(?:\.\d+)+\b", question)
         return {
             "page_labels": [f"Page {page}" for page in page_numbers],
             "section_terms": section_terms,
+            "clause_terms": clause_terms,
         }
 
     @staticmethod
@@ -90,6 +94,37 @@ class HybridRetriever:
         return len(question_terms & heading_terms) / max(len(question_terms), 1)
 
     @staticmethod
+    def _section_path_score(question: str, section_path: list[str] | str) -> float:
+        if isinstance(section_path, str):
+            values = [section_path]
+        else:
+            values = section_path
+        joined = " ".join(values).lower()
+        if not joined:
+            return 0.0
+        question_terms = {
+            token for token in re.findall(r"[A-Za-z0-9]+", question.lower()) if len(token) > 3
+        }
+        section_terms = set(re.findall(r"[A-Za-z0-9]+", joined))
+        if not question_terms or not section_terms:
+            return 0.0
+        return len(question_terms & section_terms) / max(len(question_terms), 1)
+
+    @staticmethod
+    def _content_type_score(content_type: str, preferred_content_types: list[str]) -> float:
+        return 1.0 if content_type and content_type in preferred_content_types else 0.0
+
+    @staticmethod
+    def _clause_match_score(chunk_clause_ids: list[str] | str, clause_terms: list[str]) -> float:
+        if isinstance(chunk_clause_ids, str):
+            values = [chunk_clause_ids] if chunk_clause_ids else []
+        else:
+            values = chunk_clause_ids
+        if not values or not clause_terms:
+            return 0.0
+        return 1.0 if any(term in values for term in clause_terms) else 0.0
+
+    @staticmethod
     def _candidate_citation_label(candidate: RetrievalCandidate) -> str:
         source_file = candidate.metadata.get("source_file", "Document")
         page_label = candidate.metadata.get("page_label", "Document")
@@ -105,6 +140,7 @@ class HybridRetriever:
         metadata_filters: dict[str, list[str]],
         query_variants: list[str],
     ) -> RetrievalResult:
+        query_profile = self.query_analyzer.analyze(question)
         chunks = self.store.load_chunks(fingerprint)
         scoped_chunks = self._apply_metadata_filters(chunks, metadata_filters)
         dense_items = self.store.dense_query(fingerprint, question, top_k=dense_top_k)
@@ -127,7 +163,13 @@ class HybridRetriever:
                 continue
             keyword_boost = self._keyword_overlap_score(question, chunk.text) * 0.15
             heading_boost = self._section_heading_score(question, chunk.metadata.get("section_heading", "")) * 0.2
-            final_fused = fused_score + keyword_boost + heading_boost
+            section_path_boost = self._section_path_score(question, chunk.metadata.get("section_path", [])) * 0.12
+            content_type_boost = self._content_type_score(
+                str(chunk.metadata.get("content_type", "")),
+                query_profile.preferred_content_types,
+            ) * 0.18
+            clause_boost = self._clause_match_score(chunk.metadata.get("clause_ids", []), query_profile.clause_terms) * 0.2
+            final_fused = fused_score + keyword_boost + heading_boost + section_path_boost + content_type_boost + clause_boost
             candidates.append(
                 RetrievalCandidate(
                     chunk_id=chunk.chunk_id,
@@ -176,10 +218,16 @@ class HybridRetriever:
 
     def retrieve(self, fingerprint: str, question: str) -> RetrievalResult:
         metadata_filters = self._extract_metadata_filters(question)
+        query_profile = self.query_analyzer.analyze(question)
         initial_variants = [question]
-        notes: list[str] = ["Initial hybrid retrieval run completed."]
+        notes: list[str] = [
+            "Initial hybrid retrieval run completed.",
+            f"Query classified as {query_profile.query_type}.",
+        ]
         if metadata_filters.get("page_labels"):
             notes.append(f"Applied page filter: {', '.join(metadata_filters['page_labels'])}.")
+        if query_profile.preferred_content_types:
+            notes.append(f"Preferred content types: {', '.join(query_profile.preferred_content_types)}.")
 
         result = self._retrieve_once(
             fingerprint=fingerprint,

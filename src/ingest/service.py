@@ -4,6 +4,7 @@ import hashlib
 from pathlib import Path
 
 from src.schemas import DocumentRecord
+from src.structure import enrich_pages_with_structure
 
 
 def _file_fingerprint(path: Path) -> str:
@@ -52,6 +53,7 @@ def ingest_document(path: str | Path) -> DocumentRecord:
 
     fingerprint = _file_fingerprint(file_path)
     document_id = fingerprint[:16]
+    enriched_pages, outline = enrich_pages_with_structure(pages)
     return DocumentRecord(
         document_id=document_id,
         file_name=file_path.name,
@@ -60,6 +62,6 @@ def ingest_document(path: str | Path) -> DocumentRecord:
         fingerprint=fingerprint,
         char_count=len(full_text),
         page_count=page_count,
-        metadata={"pages": pages},
+        metadata={"pages": enriched_pages, "outline": outline},
         extracted_text=full_text,
     )

@@ -56,7 +56,7 @@ class Settings:
     embedding_model: str = os.getenv("HELPMATE_EMBEDDING_MODEL", "text-embedding-3-small")
     answer_model: str = os.getenv("HELPMATE_ANSWER_MODEL", "gpt-4o-mini")
     openai_api_key: str | None = os.getenv("OPENAI_API_KEY")
-    retrieval_version: str = os.getenv("HELPMATE_RETRIEVAL_VERSION", "v2")
+    retrieval_version: str = os.getenv("HELPMATE_RETRIEVAL_VERSION", "v3")
     generation_version: str = os.getenv("HELPMATE_GENERATION_VERSION", "v3")
     cache_similarity_threshold: float = _env_float("HELPMATE_CACHE_SIMILARITY_THRESHOLD", 0.94)
     weak_evidence_score_threshold: float = _env_float("HELPMATE_WEAK_EVIDENCE_SCORE_THRESHOLD", 0.03)

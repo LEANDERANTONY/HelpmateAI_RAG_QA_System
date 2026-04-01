@@ -10,6 +10,7 @@ HelpmateAI is a Streamlit-first long-document QA app for grounded answers over P
 - Build or reuse a persisted local Chroma index keyed by document fingerprint
 - Run hybrid retrieval with dense search, lexical search, fusion, and optional cross-encoder reranking
 - Apply metadata-aware retrieval, adaptive query rewriting, and weak-evidence re-retrieval when needed
+- Infer document structure, content types, and clause metadata for smarter semantic chunking and retrieval routing
 - Generate grounded answers with citations and surfaced supporting passages
 - Reuse conservative answer-cache entries when the document and question context still match
 - Evaluate retrieval quality with a small offline dataset under `docs/evals/`
@@ -20,6 +21,8 @@ This repository is now structured as an app project rather than a notebook-only 
 
 - `app.py` provides the Streamlit entrypoint
 - `src/` contains the reusable ingestion, retrieval, generation, cache, and UI code
+- `src/structure/` infers section and clause context from documents
+- `src/query_analysis/` classifies questions so retrieval can prefer the right evidence type
 - `docs/` contains quickstart and architecture notes
 - `tests/` contains focused fast tests around reusable logic
 
@@ -45,6 +48,11 @@ The original notebook remains in the repo as a historical reference skeleton, no
 `pyproject.toml` and `uv.lock` are the only dependency source of truth.
 
 More detail lives in [docs/quickstart.md](docs/quickstart.md) and [docs/architecture.md](docs/architecture.md).
+
+Additional project history and architecture decisions live in:
+
+- [docs/implementation-history.md](docs/implementation-history.md)
+- [docs/adr/README.md](docs/adr/README.md)
 
 ## Current Scope
 

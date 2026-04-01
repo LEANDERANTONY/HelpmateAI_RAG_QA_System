@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import re
+
 from src.schemas import ChunkRecord, DocumentRecord
 
 
@@ -21,6 +23,25 @@ def _split_text(text: str, chunk_size: int, chunk_overlap: int) -> list[str]:
     return chunks
 
 
+def _semantic_blocks(text: str) -> list[str]:
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    if not lines:
+        return []
+
+    blocks: list[list[str]] = []
+    current: list[str] = []
+    for line in lines:
+        starts_new_block = bool(re.match(r"^\d+(?:\.\d+)+\b", line)) or line.isupper()
+        if starts_new_block and current:
+            blocks.append(current)
+            current = [line]
+        else:
+            current.append(line)
+    if current:
+        blocks.append(current)
+    return ["\n".join(block) for block in blocks if block]
+
+
 def chunk_document(document: DocumentRecord, chunk_size: int, chunk_overlap: int) -> list[ChunkRecord]:
     pages = document.metadata.get("pages") or [{"page_label": "Document", "text": document.extracted_text}]
     records: list[ChunkRecord] = []
@@ -29,22 +50,31 @@ def chunk_document(document: DocumentRecord, chunk_size: int, chunk_overlap: int
         page_label = page.get("page_label", "Document")
         text = page.get("text", "")
         section_heading = page.get("section_heading", "")
-        for text_chunk in _split_text(text, chunk_size=chunk_size, chunk_overlap=chunk_overlap):
-            chunk_id = f"{document.document_id}-chunk-{chunk_index:04d}"
-            records.append(
-                ChunkRecord(
-                    chunk_id=chunk_id,
-                    document_id=document.document_id,
-                    text=text_chunk,
-                    chunk_index=chunk_index,
-                    page_label=page_label,
-                    metadata={
-                        "source_file": document.file_name,
-                        "page_label": page_label,
-                        "document_id": document.document_id,
-                        "section_heading": section_heading,
-                    },
+        section_path = page.get("section_path", [])
+        clause_ids = page.get("clause_ids", [])
+        content_type = page.get("content_type", "general")
+        blocks = _semantic_blocks(text) or [text]
+        for block in blocks:
+            for text_chunk in _split_text(block, chunk_size=chunk_size, chunk_overlap=chunk_overlap):
+                chunk_id = f"{document.document_id}-chunk-{chunk_index:04d}"
+                records.append(
+                    ChunkRecord(
+                        chunk_id=chunk_id,
+                        document_id=document.document_id,
+                        text=text_chunk,
+                        chunk_index=chunk_index,
+                        page_label=page_label,
+                        metadata={
+                            "source_file": document.file_name,
+                            "page_label": page_label,
+                            "document_id": document.document_id,
+                            "section_heading": section_heading,
+                            "section_path": section_path,
+                            "clause_ids": clause_ids,
+                            "primary_clause_id": clause_ids[0] if clause_ids else "",
+                            "content_type": content_type,
+                        },
+                    )
                 )
-            )
-            chunk_index += 1
+                chunk_index += 1
     return records

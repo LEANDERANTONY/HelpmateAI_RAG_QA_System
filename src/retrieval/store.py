@@ -78,10 +78,11 @@ class ChromaIndexStore:
             name=collection_name,
             embedding_function=self._embedding_function(),
         )
+        chroma_metadatas = [self._sanitize_metadata_for_chroma(chunk.metadata) for chunk in chunks]
         collection.upsert(
             ids=[chunk.chunk_id for chunk in chunks],
             documents=[chunk.text for chunk in chunks],
-            metadatas=[chunk.metadata for chunk in chunks],
+            metadatas=chroma_metadatas,
         )
 
         index_record = IndexRecord(
@@ -102,6 +103,18 @@ class ChromaIndexStore:
             encoding="utf-8",
         )
         return index_record
+
+    @staticmethod
+    def _sanitize_metadata_for_chroma(metadata: dict) -> dict:
+        sanitized: dict = {}
+        for key, value in metadata.items():
+            if isinstance(value, (str, int, float, bool)) or value is None:
+                sanitized[key] = value
+            elif isinstance(value, list):
+                sanitized[key] = " | ".join(str(item) for item in value)
+            else:
+                sanitized[key] = str(value)
+        return sanitized
 
     def dense_query(self, fingerprint: str, question: str, top_k: int) -> list[dict]:
         index = self.load_index_record(fingerprint)

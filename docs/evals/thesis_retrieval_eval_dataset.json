@@ -1,0 +1,62 @@
+[
+  {
+    "question": "What is the main aim of this thesis?",
+    "expected_pages": ["Page 20"],
+    "expected_fragments": ["develop and rigorously evaluate a bias-aware multimodal deep learning framework", "pancreatic cancer detection", "CT imaging and urinary biomarker data"]
+  },
+  {
+    "question": "What were the three main research objectives of the study?",
+    "expected_pages": ["Page 20"],
+    "expected_fragments": ["bias-aware data foundation", "unimodal diagnostic models", "multimodal fusion"]
+  },
+  {
+    "question": "How many CT patients were used in the processed cohort and how were they split?",
+    "expected_pages": ["Page 21", "Page 40"],
+    "expected_fragments": ["122 patients", "40 PDAC", "82 controls", "patient-level"]
+  },
+  {
+    "question": "What was the baseline bias AUC and what did extreme standardization reduce it to?",
+    "expected_pages": ["Page 4", "Page 42", "Page 73"],
+    "expected_fragments": ["0.866", "0.569", "extreme standardization"]
+  },
+  {
+    "question": "What CT model architecture was used in the thesis?",
+    "expected_pages": ["Page 45"],
+    "expected_fragments": ["ResNet50", "2048-dimensional embedding", "binary cancer versus control classification"]
+  },
+  {
+    "question": "What seven urinary biomarker features were used for the biomarker model?",
+    "expected_pages": ["Page 45", "Page 61", "Page 65"],
+    "expected_fragments": ["age", "plasma_CA19_9", "creatinine", "LYVE1", "REG1B", "TFF1", "REG1A"]
+  },
+  {
+    "question": "How many biomarker samples were used and what was the train validation test split?",
+    "expected_pages": ["Page 61"],
+    "expected_fragments": ["590 samples", "60% / 20% / 20%", "199", "391"]
+  },
+  {
+    "question": "What AUC did the biomarker MLP achieve and how did it compare with the original study?",
+    "expected_pages": ["Page 4", "Page 81"],
+    "expected_fragments": ["0.944", "0.936", "independent validation"]
+  },
+  {
+    "question": "What did the thesis conclude about multimodal fusion under synthetic pairing?",
+    "expected_pages": ["Page 4", "Page 83", "Page 84"],
+    "expected_fragments": ["CT-dominated", "synthetic pairing", "cannot replace matched patient data"]
+  },
+  {
+    "question": "What happened in the label-mismatch control when the CT weight was 0.3 versus 0.7?",
+    "expected_pages": ["Page 83", "Page 84"],
+    "expected_fragments": ["0.352", "0.993", "CT-driven"]
+  },
+  {
+    "question": "How was multimodal fusion implemented in the thesis?",
+    "expected_pages": ["Page 66"],
+    "expected_fragments": ["decision-level fusion", "feature-level fusion", "synthetic pairing", "five random seeds"]
+  },
+  {
+    "question": "What kinds of future work or next steps does the thesis suggest?",
+    "expected_pages": ["Page 10"],
+    "expected_fragments": ["Addressing the Domain Bias Problem", "Genuine Multimodal Evaluation", "Prospective Validation", "Technical Improvements"]
+  }
+]
