@@ -6,9 +6,9 @@ __pycache__/
 htmlcov/
 data/
 .env
-HealthInsurance_Policy.pdf
-Final_Thesis_Leander_Antony_A.pdf
-static/
+/HealthInsurance_Policy.pdf
+/Final_Thesis_Leander_Antony_A.pdf
+static/Final_Thesis_Leander_Antony_A.pdf
 *.pyc
 *.pyo
 *.pyd
