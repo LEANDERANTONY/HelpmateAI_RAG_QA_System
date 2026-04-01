@@ -1,0 +1,31 @@
+[project]
+name = "helpmateai-rag-qa-system"
+version = "0.1.0"
+description = "Streamlit-first grounded long-document QA app with hybrid retrieval and citation-aware answers."
+readme = "README.md"
+requires-python = ">=3.11,<3.12"
+dependencies = [
+    "chromadb==0.4.24",
+    "cryptography>=44,<46",
+    "numpy<2",
+    "openai>=1.30,<2",
+    "pypdf>=5,<6",
+    "python-docx>=1.1,<2",
+    "python-dotenv>=1.0,<2",
+    "scikit-learn>=1.2,<2",
+    "sentence-transformers>=2.2,<4",
+    "streamlit>=1.40,<2",
+]
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3,<9",
+]
+
+[tool.pytest.ini_options]
+pythonpath = ["."]
+testpaths = ["tests"]
+norecursedirs = [".venv", ".pytest_cache", ".pytest-tmp", "pytest-cache-files-*"]
+
+[tool.uv]
+package = false

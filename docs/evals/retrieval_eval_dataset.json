@@ -1,0 +1,62 @@
+[
+  {
+    "question": "What is the free look period in this policy?",
+    "expected_pages": ["Page 20", "Page 23"],
+    "expected_fragments": ["grace period", "failure to pay premium", "31 days"]
+  },
+  {
+    "question": "What happens if premiums are not paid on time?",
+    "expected_pages": ["Page 20", "Page 23", "Page 24"],
+    "expected_fragments": ["grace period", "failure to pay premium", "terminate"]
+  },
+  {
+    "question": "What does page 20 say about the free look period?",
+    "expected_pages": ["Page 20"],
+    "expected_fragments": ["grace period", "31 days"]
+  },
+  {
+    "question": "When does Member Life Insurance become effective?",
+    "expected_pages": ["Page 28", "Page 29", "Page 30", "Page 31"],
+    "expected_fragments": ["effective date", "actively at work", "proof of good health"]
+  },
+  {
+    "question": "How are beneficiaries described in this policy?",
+    "expected_pages": ["Page 47", "Page 48"],
+    "expected_fragments": ["beneficiary", "named", "order of precedence"]
+  },
+  {
+    "question": "What happens during the grace period?",
+    "expected_pages": ["Page 20", "Page 23"],
+    "expected_fragments": ["grace period", "31 days", "failure to pay premium"]
+  },
+  {
+    "question": "What statements are made about reinstatement?",
+    "expected_pages": ["Page 40", "Page 41"],
+    "expected_fragments": ["reinstated", "returns to active work", "six months"]
+  },
+  {
+    "question": "How are death benefit claims described?",
+    "expected_pages": ["Page 47", "Page 61", "Page 62"],
+    "expected_fragments": ["death benefits payable", "written proof", "notice of claim"]
+  },
+  {
+    "question": "What should the customer know about premium payments?",
+    "expected_pages": ["Page 20", "Page 21", "Page 22", "Page 23"],
+    "expected_fragments": ["payment responsibility", "premium", "due dates"]
+  },
+  {
+    "question": "What does the policy say about policy renewal?",
+    "expected_pages": ["Page 25"],
+    "expected_fragments": ["policy renewal", "policy anniversary"]
+  },
+  {
+    "question": "What are the individual purchase rights for a member?",
+    "expected_pages": ["Page 42", "Page 43"],
+    "expected_fragments": ["individual purchase", "proof of good health", "31 days"]
+  },
+  {
+    "question": "What are the conversion rights for dependents?",
+    "expected_pages": ["Page 44", "Page 45"],
+    "expected_fragments": ["dependent", "individual policy", "31 days"]
+  }
+]

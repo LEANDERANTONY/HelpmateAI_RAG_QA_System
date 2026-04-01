@@ -1,0 +1,67 @@
+[
+  {
+    "question": "What is the cashless facility under this policy?",
+    "expected_pages": ["Page 4"],
+    "expected_fragments": ["cashless facility", "directly made to the network provider", "pre-authorization"]
+  },
+  {
+    "question": "How is the grace period defined and how long is it for monthly versus other premium payment modes?",
+    "expected_pages": ["Page 6", "Page 85"],
+    "expected_fragments": ["grace period", "fifteen days", "thirty days"]
+  },
+  {
+    "question": "What counts as maternity expenses in this policy?",
+    "expected_pages": ["Page 8"],
+    "expected_fragments": ["childbirth", "caesarean sections", "medical termination of pregnancy"]
+  },
+  {
+    "question": "How does the policy define a network provider?",
+    "expected_pages": ["Page 9"],
+    "expected_fragments": ["network provider", "hospitals enlisted", "cashless facility"]
+  },
+  {
+    "question": "How does the policy define a pre-existing disease?",
+    "expected_pages": ["Page 9"],
+    "expected_fragments": ["pre-existing disease", "36 months", "medical advice or treatment"]
+  },
+  {
+    "question": "What does renewal mean in this policy wording?",
+    "expected_pages": ["Page 10"],
+    "expected_fragments": ["renewal", "mutual consent", "grace period"]
+  },
+  {
+    "question": "How many days of pre-hospitalization and post-hospitalization expenses are covered?",
+    "expected_pages": ["Page 22", "Page 23"],
+    "expected_fragments": ["60 days immediately prior", "90 days immediately after", "same illness or injury"]
+  },
+  {
+    "question": "What waiting period applies to pre-existing diseases?",
+    "expected_pages": ["Page 70"],
+    "expected_fragments": ["36 months of continuous coverage", "date of inception", "declared at the time of application"]
+  },
+  {
+    "question": "What is the named ailment waiting period and where is the disease list described?",
+    "expected_pages": ["Page 70", "Page 71"],
+    "expected_fragments": ["24 months of continuous coverage", "list of specific diseases", "claims arising due to an accident"]
+  },
+  {
+    "question": "What is the 30-day waiting period in this health policy?",
+    "expected_pages": ["Page 71", "Page 72"],
+    "expected_fragments": ["30 days from the first policy commencement date", "except claims arising due to an accident", "continuous coverage"]
+  },
+  {
+    "question": "What happens if an installment premium is not received within the grace period?",
+    "expected_pages": ["Page 85"],
+    "expected_fragments": ["policy will get cancelled", "all subsequent premium installments", "recover and deduct"]
+  },
+  {
+    "question": "How can an insured person avail cashless treatment at a network provider?",
+    "expected_pages": ["Page 90"],
+    "expected_fragments": ["pre-authorization form", "health card", "valid photo identification proof"]
+  },
+  {
+    "question": "How is co-payment applied during claim assessment?",
+    "expected_pages": ["Page 96"],
+    "expected_fragments": ["claim assessment", "co-payment", "admissible claim amount payable"]
+  }
+]

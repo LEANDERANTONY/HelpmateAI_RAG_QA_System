@@ -1,0 +1,444 @@
+{
+  "local_retrieval": {
+    "dataset_size": 12,
+    "top_k_page_hit_rate": 0.9166666666666666,
+    "mean_reciprocal_rank": 0.861111111111111,
+    "settings": {
+      "chunk_size": 1200,
+      "chunk_overlap": 180,
+      "dense_top_k": 10,
+      "lexical_top_k": 10,
+      "fused_top_k": 12,
+      "final_top_k": 4
+    },
+    "results": [
+      {
+        "question": "What is the free look period in this policy?",
+        "expected_pages": [
+          "Page 20",
+          "Page 23"
+        ],
+        "found_pages": [
+          "Page 20",
+          "Page 23",
+          "Page 33",
+          "Page 36"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "What is the free look period in this policy?",
+        "strategy_notes": [
+          "Initial hybrid retrieval run completed.",
+          "Adaptive re-retrieval used a rewritten query variant.",
+          "Adaptive re-retrieval used a rewritten query variant.",
+          "Rewritten queries did not outperform the original query."
+        ]
+      },
+      {
+        "question": "What happens if premiums are not paid on time?",
+        "expected_pages": [
+          "Page 20",
+          "Page 23",
+          "Page 24"
+        ],
+        "found_pages": [
+          "Page 24",
+          "Page 23",
+          "Page 21",
+          "Page 50"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "What happens if premiums are not paid on time?",
+        "strategy_notes": [
+          "Initial hybrid retrieval run completed."
+        ]
+      },
+      {
+        "question": "What does page 20 say about the free look period?",
+        "expected_pages": [
+          "Page 20"
+        ],
+        "found_pages": [
+          "Page 20",
+          "Page 20"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "What information is provided on page 20 regarding the free look period?",
+        "strategy_notes": [
+          "Initial hybrid retrieval run completed.",
+          "Applied page filter: Page 20.",
+          "Adaptive re-retrieval used a rewritten query variant.",
+          "Adaptive re-retrieval used a rewritten query variant.",
+          "Best retrieval came from rewritten query: What information is provided on page 20 regarding the free look period?"
+        ]
+      },
+      {
+        "question": "When does Member Life Insurance become effective?",
+        "expected_pages": [
+          "Page 28",
+          "Page 29",
+          "Page 30",
+          "Page 31"
+        ],
+        "found_pages": [
+          "Page 28",
+          "Page 32",
+          "Page 35",
+          "Page 49"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "When does Member Life Insurance become effective?",
+        "strategy_notes": [
+          "Initial hybrid retrieval run completed."
+        ]
+      },
+      {
+        "question": "How are beneficiaries described in this policy?",
+        "expected_pages": [
+          "Page 47",
+          "Page 48"
+        ],
+        "found_pages": [
+          "Page 47",
+          "Page 47",
+          "Page 46",
+          "Page 48"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "How are beneficiaries described in this policy?",
+        "strategy_notes": [
+          "Initial hybrid retrieval run completed.",
+          "Adaptive re-retrieval used a rewritten query variant.",
+          "Adaptive re-retrieval used a rewritten query variant.",
+          "Rewritten queries did not outperform the original query."
+        ]
+      },
+      {
+        "question": "What happens during the grace period?",
+        "expected_pages": [
+          "Page 20",
+          "Page 23"
+        ],
+        "found_pages": [
+          "Page 20",
+          "Page 20",
+          "Page 23",
+          "Page 6"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "What happens during the grace period?",
+        "strategy_notes": [
+          "Initial hybrid retrieval run completed."
+        ]
+      },
+      {
+        "question": "What statements are made about reinstatement?",
+        "expected_pages": [
+          "Page 40",
+          "Page 41"
+        ],
+        "found_pages": [
+          "Page 40",
+          "Page 41",
+          "Page 40",
+          "Page 41"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "What are the claims regarding reinstatement?",
+        "strategy_notes": [
+          "Initial hybrid retrieval run completed.",
+          "Adaptive re-retrieval used a rewritten query variant.",
+          "Adaptive re-retrieval used a rewritten query variant.",
+          "Best retrieval came from rewritten query: What are the claims regarding reinstatement?"
+        ]
+      },
+      {
+        "question": "How are death benefit claims described?",
+        "expected_pages": [
+          "Page 47",
+          "Page 61",
+          "Page 62"
+        ],
+        "found_pages": [
+          "Page 59",
+          "Page 54",
+          "Page 62",
+          "Page 60"
+        ],
+        "matched": true,
+        "reciprocal_rank": 0.3333333333333333,
+        "query_used": "How are claims for death benefits defined?",
+        "strategy_notes": [
+          "Initial hybrid retrieval run completed.",
+          "Adaptive re-retrieval used a rewritten query variant.",
+          "Adaptive re-retrieval used a rewritten query variant.",
+          "Best retrieval came from rewritten query: How are claims for death benefits defined?"
+        ]
+      },
+      {
+        "question": "What should the customer know about premium payments?",
+        "expected_pages": [
+          "Page 20",
+          "Page 21",
+          "Page 22",
+          "Page 23"
+        ],
+        "found_pages": [
+          "Page 20",
+          "Page 23",
+          "Page 6",
+          "Page 22"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "What should the customer know about premium payments?",
+        "strategy_notes": [
+          "Initial hybrid retrieval run completed.",
+          "Adaptive re-retrieval used a rewritten query variant.",
+          "Adaptive re-retrieval used a rewritten query variant.",
+          "Rewritten queries did not outperform the original query."
+        ]
+      },
+      {
+        "question": "What does the policy say about policy renewal?",
+        "expected_pages": [
+          "Page 25"
+        ],
+        "found_pages": [
+          "Page 25",
+          "Page 24",
+          "Page 6",
+          "Page 23"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "What does the policy say about policy renewal?",
+        "strategy_notes": [
+          "Initial hybrid retrieval run completed."
+        ]
+      },
+      {
+        "question": "What are the individual purchase rights for a member?",
+        "expected_pages": [
+          "Page 42",
+          "Page 43"
+        ],
+        "found_pages": [
+          "Page 42",
+          "Page 44",
+          "Page 7",
+          "Page 42"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "What are the individual purchase rights for a member?",
+        "strategy_notes": [
+          "Initial hybrid retrieval run completed."
+        ]
+      },
+      {
+        "question": "What are the conversion rights for dependents?",
+        "expected_pages": [
+          "Page 44",
+          "Page 45"
+        ],
+        "found_pages": [
+          "Page 59",
+          "Page 32",
+          "Page 27",
+          "Page 33"
+        ],
+        "matched": false,
+        "reciprocal_rank": 0.0,
+        "query_used": "What are the conversion entitlements available to dependents?",
+        "strategy_notes": [
+          "Initial hybrid retrieval run completed.",
+          "Adaptive re-retrieval used a rewritten query variant.",
+          "Adaptive re-retrieval used a rewritten query variant.",
+          "Best retrieval came from rewritten query: What are the conversion entitlements available to dependents?"
+        ]
+      }
+    ]
+  },
+  "local_negative": {
+    "dataset_size": 5,
+    "abstention_rate": 0.0,
+    "results": [
+      {
+        "question": "What is the policy's dental coverage waiting period?",
+        "abstained": false,
+        "answer_preview": "The provided evidence does not contain information about the dental coverage waiting period for the policy. Therefore, I cannot provide an answer to that question.\n\nReferences:\n- [1] Principal-Sample-Life-Insurance-Policy.pdf - Page 41\n- [2] Principa",
+        "note": "Evidence quality was weak, so the answer should be treated cautiously."
+      },
+      {
+        "question": "What stock options are included for employees under this policy?",
+        "abstained": false,
+        "answer_preview": "The provided evidence does not include any information about stock options for employees under this policy. Therefore, I cannot provide an answer based on the available documentation.\n\nReferences:\n- [1] Principal-Sample-Life-Insurance-Policy.pdf - Pa",
+        "note": "Evidence quality was weak, so the answer should be treated cautiously."
+      },
+      {
+        "question": "What is the auto insurance deductible for collision damage?",
+        "abstained": false,
+        "answer_preview": "The provided evidence does not include any information about the auto insurance deductible for collision damage. [Source 1, Source 2, Source 3, Source 4]\n\nReferences:\n- [1] Principal-Sample-Life-Insurance-Policy.pdf - Page 55\n- [2] Principal-Sample-L",
+        "note": "Evidence quality was weak, so the answer should be treated cautiously."
+      },
+      {
+        "question": "What are the hospital copays for outpatient surgery?",
+        "abstained": false,
+        "answer_preview": "The evidence provided does not contain any information regarding hospital copays for outpatient surgery. Therefore, I cannot provide an answer.\n\nReferences:\n- [1] Principal-Sample-Life-Insurance-Policy.pdf - Page 20\n- [2] Principal-Sample-Life-Insura",
+        "note": "Evidence quality was weak, so the answer should be treated cautiously."
+      },
+      {
+        "question": "Does this document describe homeowners flood coverage?",
+        "abstained": false,
+        "answer_preview": "The document does not describe homeowners flood coverage. \n\n[Source 1]\n\nReferences:\n- [1] Principal-Sample-Life-Insurance-Policy.pdf - Page 41\n- [2] Principal-Sample-Life-Insurance-Policy.pdf - Page 41\n- [3] Principal-Sample-Life-Insurance-Policy.pdf",
+        "note": "Evidence quality was weak, so the answer should be treated cautiously."
+      }
+    ]
+  },
+  "openai_file_search": {
+    "dataset_size": 12,
+    "vector_store_id": "vs_69cd545c79848191a6450f86d7fbb734",
+    "snippet_fragment_match_rate": 0.75,
+    "results": [
+      {
+        "question": "What is the free look period in this policy?",
+        "matched_fragment": false,
+        "snippets": [
+          "in good faith judgement and investigation, a Member or Dependent knew or should \r\nhave known, contains false or fraudulent elements under state or federal law.\r\nArticle 5 - Coverage While Outside of the United States\r\nIf a Member or Dependent is temporarily outside the United States, the Member or Dependent \r\nmay choose to continue his or her insurance, subject to premium payment for a period of s",
+          "For this \r\npurpose the period of time during which a reinstated Member's insurance was not in force:\r\na. will not be considered an interruption of continuous coverage; and\r\nb. will not be used to satisfy any provision of this Group Policy which pertains to a period of \r\ncontinuous coverage.\r\nIn addition, a longer reinstatement period may be allowed for an approved leave of absence taken \r\nin accor",
+          "In no event will the Period of Limited Activity requirement be waived for those Dependent \r\nspouses' who, on the date of termination of the Prior Policy had the option, under the terms \r\nof the Prior Policy, to convert their coverage, under the Prior Policy, to an individual \r\npolicy. \r\nNOTE: When insurance under this Group Policy replaces coverage under a Prior Policy \r\nand the Period of Limited ",
+          "f. Termination (Premium Waiver) This policy has been updated effective January 1, 2014\r\nPART IV - BENEFITS\r\nGC 6013 Section A - Member Life Insurance, Page 6\r\nCoverage During Disability will cease on the earliest of:\r\n(1) the date the Member's Total Disability ends; or\r\n(2) the date the Member fails to send The Principal any required proof of ADL Disability \r\nor Total Disability; or\r\n(3) the date ",
+          "b. Layoff or Approved Leave of Absence\r\nIf Active Work ends because a Member is on layoff or approved leave of absence, \r\ninsurance for that Member may be continued until the earliest of:\r\n(1) the date insurance would otherwise cease as provided in PART III, Section C, Article \r\n1 a. through g.; or\r\n(2) the date the layoff or approved leave of absence ends; or\r\n(3) the date the Member becomes elig"
+        ]
+      },
+      {
+        "question": "What happens if premiums are not paid on time?",
+        "matched_fragment": false,
+        "snippets": [
+          "Written notice will be given to the Policyholder at least 31 days before the \r\ndate of change.\r\nIf the Policyholder agrees to participate in the electronic services program of The Principal and, \r\nat a later date elects to withdraw from participation, such withdrawal may result in certain \r\nadministrative fees being charged to the Policyholder.\r\nArticle 4 - Premium Amount\r\nThe amount of premium to",
+          "The decisions of The Principal in such matters shall be \r\ncontrolling, binding and final as between The Principal and persons covered by this Group \r\nPolicy, subject to the Claims Procedures in PART IV, Section D.\r\nArticle 11 - Electronic Transactions\r\nAny transaction relating to this Group Policy may be conducted by electronic means if \r\nperformance of the transaction is consistent with applicabl",
+          "However, these provisions will not preclude the assertion at any time of defenses based upon the \r\nperson's ineligibility for insurance under this Group Policy or upon the provisions of this Group \r\nPolicy.\r\nIn addition, if an individual's age is misstated, The Principal may at any time adjust premium and \r\nbenefits to reflect the correct age.\r\nArticle 6 - Information to be Furnished\r\nThe Policyho",
+          "Upon \r\nreturn of such policy, The Principal will refund premiums paid, less dividends and \r\nless any outstanding policy loan balance.\r\nb. Proof of ADL Disability or Total Disability\r\nWritten proof of ADL Disability or Total Disability must be sent to The Principal within \r\none year of the date ADL Disability or Total Disability begins. Further proof that ADL \r\nDisability or Total Disability has no",
+          "Failure to give notice within the time specified will \r\nnot invalidate or reduce any claim if notice is given as soon as reasonably possible.\r\nArticle 2 - Claim Forms\r\nThe Principal, when it receives notice of claim, will provide appropriate claim forms for filing \r\nproof of loss. If the forms are not provided within 15 days after The Principal receives notice, \r\nthe person will be considered to h"
+        ]
+      },
+      {
+        "question": "What does page 20 say about the free look period?",
+        "matched_fragment": false,
+        "snippets": [
+          "In no event will the Period of Limited Activity requirement be waived for those Dependent \r\nspouses' who, on the date of termination of the Prior Policy had the option, under the terms \r\nof the Prior Policy, to convert their coverage, under the Prior Policy, to an individual \r\npolicy. \r\nNOTE: When insurance under this Group Policy replaces coverage under a Prior Policy \r\nand the Period of Limited ",
+          "For this \r\npurpose the period of time during which a reinstated Member's insurance was not in force:\r\na. will not be considered an interruption of continuous coverage; and\r\nb. will not be used to satisfy any provision of this Group Policy which pertains to a period of \r\ncontinuous coverage.\r\nIn addition, a longer reinstatement period may be allowed for an approved leave of absence taken \r\nin accor",
+          "(1) above, the maximum amount will be the \r\nMember Life Insurance benefit in force on the date of termination or the portion of \r\nMember Life Insurance that has terminated, less any individual policy amount \r\npurchased earlier under this Article 1, and less any Accelerated Benefit payment as \r\ndescribed in PART IV, Section A, Article 7.\r\n(2) If termination is as described in b. (2) above, the maxi",
+          "or\r\n(2) after the Member has been continuously insured under this Group Policy for at least \r\nfive years, his or her total Member Life Insurance terminates because this Group \r\nPolicy terminates or is amended to exclude the Member's insurance class; or\r\n(3) the Member's Coverage During Disability as described in PART IV, Section A, \r\nceases because Total Disability ends and he or she does not retu",
+          "f. Termination (Premium Waiver) This policy has been updated effective January 1, 2014\r\nPART IV - BENEFITS\r\nGC 6013 Section A - Member Life Insurance, Page 6\r\nCoverage During Disability will cease on the earliest of:\r\n(1) the date the Member's Total Disability ends; or\r\n(2) the date the Member fails to send The Principal any required proof of ADL Disability \r\nor Total Disability; or\r\n(3) the date "
+        ]
+      },
+      {
+        "question": "When does Member Life Insurance become effective?",
+        "matched_fragment": true,
+        "snippets": [
+          "This policy has been updated effective January 1, 2014\r\nPART III - INDIVIDUAL REQUIREMENTS AND RIGHTS\r\nGC 6007 Section B - Effective Dates, Page 1\r\nSection B - Effective Dates\r\nArticle 1 - Member Life Insurance\r\na. Actively at Work\r\nA Member's effective date for Member Life Insurance will be as explained in this article, if \r\nthe Member is Actively at Work on that date. If the Member is not Active",
+          "(2) If insurance is requested under this Group Policy by a Member that was eligible under \r\nthe Prior Policy, but elected to waive coverage under the Prior Policy.\r\n(3) If a Member has failed to provide required Proof of Good Health or has been refused \r\ninsurance under this Group Policy at any prior time.\r\n(4) If a Member elects to terminate insurance and, more than 31 days later, requests to be ",
+          "b. Effective Date for Initial Insurance When Proof of Good Health is RequiredThis policy has been updated effective January 1, 2014\r\nPART III - INDIVIDUAL REQUIREMENTS AND RIGHTS\r\nGC 6007 Section B - Effective Dates, Page 2\r\nInsurance for which Proof of Good Health is required (see e. below) will be in force on the \r\nlater of:\r\n(1) the date insurance would have been effective if Proof of Good Heal",
+          "If the Dependent does so, he or she will be eligible for reinstatement of coverage on \r\nthe day after completion of the 30 consecutive days of residence.\r\nThe reinstated coverage will be on the same basis as that being provided on the date coverage is \r\nreinstated. However, any restrictions on this coverage that were in effect before reinstatement \r\nwill continue to apply. If the Member or Depende",
+          "(2) A change in the Member's Scheduled Benefit amount because of a change in the \r\nSchedule of Insurance (as described in PART IV, Section A) by amendment to this \r\nGroup Policy for which Proof of Good Health is required (see e. above) will be \r\neffective on the later of:\r\n- the date the change would have been effective if Proof of Good Health had not \r\nbeen required; or\r\n- the date Proof of Good "
+        ]
+      },
+      {
+        "question": "How are beneficiaries described in this policy?",
+        "matched_fragment": true,
+        "snippets": [
+          "If a Member who was insured dies within the 31-day individual purchase period described in \r\nPART III, Section F, The Principal will pay his or her beneficiary the individual policy amount, \r\nif any, the Member had the right to purchase.\r\nNo payment will be made before The Principal receives Written proof of the Member's death.\r\nArticle 3 - Beneficiary\r\nA beneficiary should be named at the time a ",
+          "Article 6 - Loss of Speech and/or Hearing Benefit\r\nIf a Member sustains an injury, and as a result of such injury, one or more of the covered losses \r\nlisted below are incurred, The Principal will pay the following percentages of the Member's \r\nScheduled Benefit (or approved amount, if applicable) in force, provided all Benefit \r\nQualifications as described in Article 2 are met.This policy has bee",
+          "at the time of the injury, the Member's alcohol concentration exceeds \r\nthe legal limit allowed by the jurisdiction where the injury occurs; or\r\nh. the operation by the Member of a motor vehicle or motor boat if, at the time of the injury, \r\nthe Member's alcohol concentration exceeds the legal limit allowed by the jurisdiction \r\nwhere the injury occurs; or\r\ni. the use of any drug, narcotic, or hal",
+          "f. If Dependent Life Insurance is in force for a Dependent of the Member, a Member will be \r\ninsured with respect to a new Dependent (other than a newborn child) on the date the new \r\nDependent is acquired, provided the new Dependent is not then confined in a Hospital or \r\nSkilled Nursing Facility. Requests for insurance and Proof of Good Health are not required This policy has been updated effect",
+          "With the interest-bearing draft account, the balance will be available to the \r\nbeneficiary at any time, in total or in part, subject to the following terms:\r\na. withdrawals must be made by draft furnished by The Principal; and\r\nb. the draft amount must be at least $500 or more and may not exceed the account balance; \r\nand\r\nc. if the account balance falls below $500, the balance will be paid to th"
+        ]
+      },
+      {
+        "question": "What happens during the grace period?",
+        "matched_fragment": true,
+        "snippets": [
+          "The decisions of The Principal in such matters shall be \r\ncontrolling, binding and final as between The Principal and persons covered by this Group \r\nPolicy, subject to the Claims Procedures in PART IV, Section D.\r\nArticle 11 - Electronic Transactions\r\nAny transaction relating to this Group Policy may be conducted by electronic means if \r\nperformance of the transaction is consistent with applicabl",
+          "However, these provisions will not preclude the assertion at any time of defenses based upon the \r\nperson's ineligibility for insurance under this Group Policy or upon the provisions of this Group \r\nPolicy.\r\nIn addition, if an individual's age is misstated, The Principal may at any time adjust premium and \r\nbenefits to reflect the correct age.\r\nArticle 6 - Information to be Furnished\r\nThe Policyho",
+          "Written notice will be given to the Policyholder at least 31 days before the \r\ndate of change.\r\nIf the Policyholder agrees to participate in the electronic services program of The Principal and, \r\nat a later date elects to withdraw from participation, such withdrawal may result in certain \r\nadministrative fees being charged to the Policyholder.\r\nArticle 4 - Premium Amount\r\nThe amount of premium to",
+          "Article 5 - Contributions from Members\r\nMembers are not required to contribute a part of the premium for their Member insurance under \r\nthis Group Policy.\r\nMembers are required to contribute a part of the premium for their Dependent's insurance under \r\nthis Group Policy.This policy has been updated effective January 1, 2014\r\nPART II - POLICY ADMINISTRATION\r\nGC 6005 Section C - Policy Termination, ",
+          "f. Termination (Premium Waiver) This policy has been updated effective January 1, 2014\r\nPART IV - BENEFITS\r\nGC 6013 Section A - Member Life Insurance, Page 6\r\nCoverage During Disability will cease on the earliest of:\r\n(1) the date the Member's Total Disability ends; or\r\n(2) the date the Member fails to send The Principal any required proof of ADL Disability \r\nor Total Disability; or\r\n(3) the date "
+        ]
+      },
+      {
+        "question": "What statements are made about reinstatement?",
+        "matched_fragment": true,
+        "snippets": [
+          "and\r\n(3) proof of the child's incapacity is sent to The Principal within 31 days after the date the \r\nchild reaches the maximum age; and\r\n(4) further proof that the child remains incapable of self-support is provided when The \r\nPrincipal requests; and\r\n(5) the child undergoes examination by a Physician when The Principal requests. The \r\nPrincipal will pay for these examinations and will choose the",
+          "b. Layoff or Approved Leave of Absence\r\nIf Active Work ends because a Member is on layoff or approved leave of absence, \r\ninsurance for that Member may be continued until the earliest of:\r\n(1) the date insurance would otherwise cease as provided in PART III, Section C, Article \r\n1 a. through g.; or\r\n(2) the date the layoff or approved leave of absence ends; or\r\n(3) the date the Member becomes elig",
+          "For this \r\npurpose the period of time during which a reinstated Member's insurance was not in force:\r\na. will not be considered an interruption of continuous coverage; and\r\nb. will not be used to satisfy any provision of this Group Policy which pertains to a period of \r\ncontinuous coverage.\r\nIn addition, a longer reinstatement period may be allowed for an approved leave of absence taken \r\nin accor",
+          "If the Dependent does so, he or she will be eligible for reinstatement of coverage on \r\nthe day after completion of the 30 consecutive days of residence.\r\nThe reinstated coverage will be on the same basis as that being provided on the date coverage is \r\nreinstated. However, any restrictions on this coverage that were in effect before reinstatement \r\nwill continue to apply. If the Member or Depende",
+          "(2) A change in the Member's Scheduled Benefit amount because of a change in the \r\nSchedule of Insurance (as described in PART IV, Section A) by amendment to this \r\nGroup Policy for which Proof of Good Health is required (see e. above) will be \r\neffective on the later of:\r\n- the date the change would have been effective if Proof of Good Health had not \r\nbeen required; or\r\n- the date Proof of Good "
+        ]
+      },
+      {
+        "question": "How are death benefit claims described?",
+        "matched_fragment": true,
+        "snippets": [
+          "Unless a Beneficiary has been designated, payment will be to the Member if he or she survives \r\nthe Dependent. If the Member does not survive the Dependent and a beneficiary for Dependent \r\nLife has not been named, payment will be to the person named as beneficiary for Member Life \r\nInsurance. However, if the Member is suspected or charged with the Dependent's death, the \r\nDeath Benefits Payable m",
+          "If a Member who was insured dies within the 31-day individual purchase period described in \r\nPART III, Section F, The Principal will pay his or her beneficiary the individual policy amount, \r\nif any, the Member had the right to purchase.\r\nNo payment will be made before The Principal receives Written proof of the Member's death.\r\nArticle 3 - Beneficiary\r\nA beneficiary should be named at the time a ",
+          "Payment may then be made to any contingent beneficiary \r\nor to the executor or administrator of the Member's estate.\r\nb. Any benefit due a beneficiary who dies before the Member's death will be paid in equal \r\nshares to the Member's surviving beneficiaries.This policy has been updated effective January 1, 2014\r\nPART IV - BENEFITS\r\nGC 6013 Section A - Member Life Insurance, Page 3\r\nc. If a benefici",
+          "(1) above, the maximum amount will be the \r\nMember Life Insurance benefit in force on the date of termination or the portion of \r\nMember Life Insurance that has terminated, less any individual policy amount \r\npurchased earlier under this Article 1, and less any Accelerated Benefit payment as \r\ndescribed in PART IV, Section A, Article 7.\r\n(2) If termination is as described in b. (2) above, the maxi",
+          "if a Member has received any payments under the Accelerated Benefits provision as \r\ndescribed in Section A, Article 7, the Scheduled Benefit will be reduced by the amount of such \r\npayment.\r\n*The Scheduled Benefit is subject to the Proof of Good Health requirements as shown in PART \r\nIII, Section B, Article 1. Because of the Proof of Good Health requirements, the amount of \r\ninsurance approved by "
+        ]
+      },
+      {
+        "question": "What should the customer know about premium payments?",
+        "matched_fragment": true,
+        "snippets": [
+          "This policy has been updated effective January 1, 2014\r\nGC 6001 TABLE OF CONTENTS, PAGE 1\r\nTABLE OF CONTENTS\r\nPART I - DEFINITIONS\r\nPART II - POLICY ADMINISTRATION\r\nSection A \u2013 Contract\r\nEntire Contract Article 1\r\nPolicy Changes Article 2\r\nPolicyholder Eligibility Requirements Article 3\r\nPolicy Incontestability Article 4\r\nIndividual Incontestability Article 5\r\nInformation to be Furnished Article 6",
+          "The decisions of The Principal in such matters shall be \r\ncontrolling, binding and final as between The Principal and persons covered by this Group \r\nPolicy, subject to the Claims Procedures in PART IV, Section D.\r\nArticle 11 - Electronic Transactions\r\nAny transaction relating to this Group Policy may be conducted by electronic means if \r\nperformance of the transaction is consistent with applicabl",
+          "However, these provisions will not preclude the assertion at any time of defenses based upon the \r\nperson's ineligibility for insurance under this Group Policy or upon the provisions of this Group \r\nPolicy.\r\nIn addition, if an individual's age is misstated, The Principal may at any time adjust premium and \r\nbenefits to reflect the correct age.\r\nArticle 6 - Information to be Furnished\r\nThe Policyho",
+          "Written notice will be given to the Policyholder at least 31 days before the \r\ndate of change.\r\nIf the Policyholder agrees to participate in the electronic services program of The Principal and, \r\nat a later date elects to withdraw from participation, such withdrawal may result in certain \r\nadministrative fees being charged to the Policyholder.\r\nArticle 4 - Premium Amount\r\nThe amount of premium to",
+          "b. Member Accidental Death and Dismemberment Insurance\r\n$0.025 for each $1,000 of Member Life Insurance in force.\r\nc. Dependent Life Insurance \r\n$1.46 for each Member insured for Dependent Life Insurance.\r\nIf the Policyholder has at least two other eligible group insurance policies underwritten by The \r\nPrincipal, as determined by The Principal, the Policyholder may be eligible for a multiple poli"
+        ]
+      },
+      {
+        "question": "What does the policy say about policy renewal?",
+        "matched_fragment": true,
+        "snippets": [
+          "or be established as a legitimate nonprofit corporation within the meaning \r\nof the Internal Revenue Code; or\r\nb. fails to maintain the participation percentages requirements of PART II, Section A with \r\nrespect to eligible employees, excluding those for whom Proof of Good Health is not \r\nsatisfactory to The Principal; or\r\nc. fails to maintain three or more insured employees under this Group Polic",
+          "The Principal is obligated only as provided in \r\nthis Group Policy and is not bound by any trust or plan to which it is not a signatory party.\r\nArticle 2 - Policy Changes\r\nInsurance under this Group Policy runs annually to the Policy Anniversary, unless sooner \r\nterminated. No agent, employee, or person other than an officer of The Principal has authority to \r\nchange this Group Policy, and, to be ",
+          "Article 5 - Contributions from Members\r\nMembers are not required to contribute a part of the premium for their Member insurance under \r\nthis Group Policy.\r\nMembers are required to contribute a part of the premium for their Dependent's insurance under \r\nthis Group Policy.This policy has been updated effective January 1, 2014\r\nPART II - POLICY ADMINISTRATION\r\nGC 6005 Section C - Policy Termination, ",
+          "This policy has been updated effective January 1, 2014\r\nGC 6001 TABLE OF CONTENTS, PAGE 1\r\nTABLE OF CONTENTS\r\nPART I - DEFINITIONS\r\nPART II - POLICY ADMINISTRATION\r\nSection A \u2013 Contract\r\nEntire Contract Article 1\r\nPolicy Changes Article 2\r\nPolicyholder Eligibility Requirements Article 3\r\nPolicy Incontestability Article 4\r\nIndividual Incontestability Article 5\r\nInformation to be Furnished Article 6",
+          "For this \r\npurpose the period of time during which a reinstated Member's insurance was not in force:\r\na. will not be considered an interruption of continuous coverage; and\r\nb. will not be used to satisfy any provision of this Group Policy which pertains to a period of \r\ncontinuous coverage.\r\nIn addition, a longer reinstatement period may be allowed for an approved leave of absence taken \r\nin accor"
+        ]
+      },
+      {
+        "question": "What are the individual purchase rights for a member?",
+        "matched_fragment": true,
+        "snippets": [
+          "If the Dependent does so, he or she will be eligible for reinstatement of coverage on \r\nthe day after completion of the 30 consecutive days of residence.\r\nThe reinstated coverage will be on the same basis as that being provided on the date coverage is \r\nreinstated. However, any restrictions on this coverage that were in effect before reinstatement \r\nwill continue to apply. If the Member or Depende",
+          "b. Purchase Qualification\r\nA Dependent will qualify for individual purchase if:\r\n(1) Dependent Life Insurance, or any portion of it, terminates because he or she ceases to \r\nbe a Dependent as defined in PART I; or because the Member dies, ends Active \r\nWork, or ceases to be in a class eligible for such insurance; or\r\n(2) the Dependent spouse's Dependent Life Insurance terminates as described in PA",
+          "For this \r\npurpose the period of time during which a reinstated Member's insurance was not in force:\r\na. will not be considered an interruption of continuous coverage; and\r\nb. will not be used to satisfy any provision of this Group Policy which pertains to a period of \r\ncontinuous coverage.\r\nIn addition, a longer reinstatement period may be allowed for an approved leave of absence taken \r\nin accor",
+          "or\r\n(2) after the Member has been continuously insured under this Group Policy for at least \r\nfive years, his or her total Member Life Insurance terminates because this Group \r\nPolicy terminates or is amended to exclude the Member's insurance class; or\r\n(3) the Member's Coverage During Disability as described in PART IV, Section A, \r\nceases because Total Disability ends and he or she does not retu",
+          "(1) above, the maximum amount will be the \r\nMember Life Insurance benefit in force on the date of termination or the portion of \r\nMember Life Insurance that has terminated, less any individual policy amount \r\npurchased earlier under this Article 1, and less any Accelerated Benefit payment as \r\ndescribed in PART IV, Section A, Article 7.\r\n(2) If termination is as described in b. (2) above, the maxi"
+        ]
+      },
+      {
+        "question": "What are the conversion rights for dependents?",
+        "matched_fragment": true,
+        "snippets": [
+          "(1) above, the maximum amount will be the \r\nMember Life Insurance benefit in force on the date of termination or the portion of \r\nMember Life Insurance that has terminated, less any individual policy amount \r\npurchased earlier under this Article 1, and less any Accelerated Benefit payment as \r\ndescribed in PART IV, Section A, Article 7.\r\n(2) If termination is as described in b. (2) above, the maxi",
+          "In no event will the Period of Limited Activity requirement be waived for those Dependent \r\nspouses' who, on the date of termination of the Prior Policy had the option, under the terms \r\nof the Prior Policy, to convert their coverage, under the Prior Policy, to an individual \r\npolicy. \r\nNOTE: When insurance under this Group Policy replaces coverage under a Prior Policy \r\nand the Period of Limited ",
+          "f. If Dependent Life Insurance is in force for a Dependent of the Member, a Member will be \r\ninsured with respect to a new Dependent (other than a newborn child) on the date the new \r\nDependent is acquired, provided the new Dependent is not then confined in a Hospital or \r\nSkilled Nursing Facility. Requests for insurance and Proof of Good Health are not required This policy has been updated effect",
+          "The Policyholder must:\r\n(1) contribute at least 50% of the required premium for all Members (including disabled \r\nMembers, if any); and\r\nc. if the Member is to contribute part of the premium, maintain the following participation \r\npercentages with respect to eligible employees and Dependents, excluding those for whom \r\nProof of Good Health is not satisfactory to The Principal:\r\n(1) Employees:\r\n- a",
+          "Article 3 - Dependent Life InsuranceThis policy has been updated effective January 1, 2014\r\nPART III - INDIVIDUAL REQUIREMENTS AND RIGHTS\r\nGC 6008 Section C - Individual Terminations, Page 2\r\nA Member's insurance under this Group Policy for a Dependent will terminate on the earliest of:\r\na. the date his or her Member Life Insurance ceases; or\r\nb. the date Dependent Life Insurance is removed from t"
+        ]
+      }
+    ]
+  }
+}

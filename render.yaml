@@ -1,0 +1,15 @@
+services:
+  - type: web
+    name: helpmateai-rag-qa-system
+    runtime: docker
+    plan: free
+    autoDeploy: true
+    healthCheckPath: /
+    dockerfilePath: ./Dockerfile
+    envVars:
+      - key: PYTHONUNBUFFERED
+        value: "1"
+      - key: STREAMLIT_SERVER_HEADLESS
+        value: "true"
+      - key: HELPMATE_RERANKER_ENABLED
+        value: "true"
