@@ -20,7 +20,7 @@ HelpmateAI is a Streamlit-first long-document QA app for grounded answers over P
 - Evaluate retrieval quality with layered benchmarks under `docs/evals/`
   - custom retrieval hit-rate and MRR
   - abstention checks
-  - OpenAI hosted file-search comparison
+  - Vectara and OpenAI hosted retrieval comparison
   - `ragas` faithfulness, answer relevance, and context-precision scoring
 
 ## Product Direction

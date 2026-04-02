@@ -140,19 +140,8 @@ class VectaraBenchmark:
         corpus_key = self.get_or_create_corpus(document_path)
         results = []
         for item in dataset:
-            payload = {
-                "query": item["question"],
-                "search": {"limit": 5},
-                "stream_response": False,
-            }
-            response = self._request(
-                f"/corpora/{corpus_key}/query",
-                method="POST",
-                body=json.dumps(payload).encode("utf-8"),
-                headers={"Content-Type": "application/json"},
-            )
-            outputs = response.get("search_results", [])
-            snippets = [str(output.get("text", ""))[:400] for output in outputs]
+            search_result = self.search(document_path, item["question"], limit=5)
+            snippets = [result["text"] for result in search_result["results"]]
             matched = any(
                 expected_fragment.lower() in " ".join(snippets).lower()
                 for expected_fragment in item.get("expected_fragments", [])
@@ -174,3 +163,43 @@ class VectaraBenchmark:
             "results": results,
         }
 
+    def search(self, document_path: str | Path, question: str, *, limit: int = 5) -> dict:
+        if not self.available:
+            raise RuntimeError("VECTARA_API_KEY is not configured.")
+
+        corpus_key = self.get_or_create_corpus(document_path)
+        payload = {
+            "query": question,
+            "search": {"limit": limit},
+            "stream_response": False,
+        }
+        response = self._request(
+            f"/corpora/{corpus_key}/query",
+            method="POST",
+            body=json.dumps(payload).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+        )
+        outputs = response.get("search_results", [])
+        results = []
+        for index, output in enumerate(outputs, start=1):
+            part_metadata = output.get("part_metadata", {})
+            page = part_metadata.get("page")
+            title = part_metadata.get("title")
+            page_label = f"Vectara Result {index}"
+            if page is not None:
+                page_label = f"Page {page}"
+            results.append(
+                {
+                    "text": str(output.get("text", ""))[:400],
+                    "rank": index,
+                    "metadata": {
+                        "source": "vectara",
+                        "page_label": page_label,
+                        "title": title,
+                    },
+                }
+            )
+        return {
+            "corpus_key": corpus_key,
+            "results": results,
+        }

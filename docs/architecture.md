@@ -143,11 +143,13 @@ Current evaluation surfaces:
 - positive retrieval eval datasets
 - negative abstention eval datasets
 - saved JSON benchmark reports under `docs/evals/reports/`
-- OpenAI file-search comparison harness
+- Vectara retrieval comparison harness
+- OpenAI file-search comparison harness kept as a historical/reference baseline
 - `ragas` answer-quality evaluation:
   - faithfulness
   - answer relevancy
   - no-reference context precision
+- shared-answer `ragas` comparisons on top of OpenAI and Vectara retrieval contexts
 
 This lets the team compare:
 
@@ -171,6 +173,7 @@ Important issues discovered during implementation:
 - academic-paper parsing is still imperfect, especially for front matter, appendices, and bibliography-heavy pages
 - the lightweight LLM router is useful as a tie-breaker, but it is not yet a universal quality boost
 - `ragas` evaluation currently depends on OpenAI-backed evaluators and no-reference metrics, so it is useful but not yet a complete offline gold-answer harness
+- vendor factual-consistency APIs turned out to be too formatting-sensitive for our current answer style, so they are no longer part of the active benchmark policy
 
 ## Current Strengths
 

@@ -57,25 +57,42 @@ class OpenAIFileSearchBenchmark:
         self._save_registry(root, registry)
         return vector_store.id
 
+    def search(self, document_path: str | Path, question: str, *, max_num_results: int = 5) -> dict:
+        vector_store_id = self.get_or_create_vector_store(document_path)
+        response = self.client.vector_stores.search(
+            vector_store_id,
+            query=question,
+            max_num_results=max_num_results,
+            rewrite_query=True,
+        )
+        response_data = response.model_dump()
+        outputs = response_data.get("data", [])
+        snippets = []
+        for index, output in enumerate(outputs, start=1):
+            content = output.get("content", [])
+            snippet = " ".join(part.get("text", "") for part in content if isinstance(part, dict))
+            snippets.append(
+                {
+                    "text": snippet[:400],
+                    "rank": index,
+                    "metadata": {
+                        "source": "openai_file_search",
+                        "page_label": f"OpenAI Result {index}",
+                    },
+                }
+            )
+        return {
+            "vector_store_id": vector_store_id,
+            "results": snippets,
+        }
+
     def benchmark(self, dataset_path: str | Path, document_path: str | Path) -> dict:
         dataset = json.loads(Path(dataset_path).read_text(encoding="utf-8"))
         vector_store_id = self.get_or_create_vector_store(document_path)
-
         results = []
         for item in dataset:
-            response = self.client.vector_stores.search(
-                vector_store_id,
-                query=item["question"],
-                max_num_results=5,
-                rewrite_query=True,
-            )
-            response_data = response.model_dump()
-            outputs = response_data.get("data", [])
-            snippets = []
-            for output in outputs:
-                content = output.get("content", [])
-                snippet = " ".join(part.get("text", "") for part in content if isinstance(part, dict))
-                snippets.append(snippet[:400])
+            search_result = self.search(document_path, item["question"], max_num_results=5)
+            snippets = [result["text"] for result in search_result["results"]]
             matched = any(
                 expected_fragment.lower() in " ".join(snippets).lower()
                 for expected_fragment in item.get("expected_fragments", [])

@@ -337,3 +337,27 @@ Key takeaway:
 - retrieval and grounding remain decent on the review paper
 - the weaker area is answer relevance for broad paper-summary questions
 - that gives us a much sharper picture of what to improve next
+
+## Day 15: Vectara Benchmarking And Eval Policy Simplification
+
+- Added Vectara as an external retrieval benchmark.
+- Added a shared-answer comparison path so OpenAI and Vectara retrieval contexts could be judged under the same answer model.
+- Captured answer-quality comparison across:
+  - Helpmate
+  - Vectara retrieval plus shared answer model
+  - OpenAI retrieval plus shared answer model
+- Added benchmark summary documentation under:
+  - `docs/evals/benchmark_summary.md`
+
+Challenges:
+
+- Vectara factual-consistency scores were highly sensitive to our answer formatting and did not align well enough with the rest of the benchmark picture
+- full vendor answer-eval runs are slow because they combine retrieval, answer generation, and multiple evaluator passes
+- OpenAI File Search consistently lagged as an external baseline on the tested document families
+
+Improvements and decisions:
+
+- Vectara is now the primary external retrieval benchmark
+- OpenAI File Search remains in the repo as a historical/reference retrieval baseline
+- `ragas` is now the only answer-quality meter we use in routine benchmarking
+- vendor factual-consistency APIs are no longer part of the active benchmark decision loop

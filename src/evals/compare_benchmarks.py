@@ -6,8 +6,8 @@ from pathlib import Path
 from src.evals.openai_file_search_benchmark import OpenAIFileSearchBenchmark
 from src.evals.ragas_eval import RagasEvaluator
 from src.evals.retrieval_eval import _save_report, run_negative_eval, run_retrieval_eval
+from src.evals.vendor_answer_eval import VendorAnswerEvaluator
 from src.evals.vectara_benchmark import VectaraBenchmark
-from src.evals.vectara_eval import VectaraEvaluator
 
 
 def compare(document_path: str | Path, positive_dataset_path: str | Path, negative_dataset_path: str | Path) -> dict:
@@ -16,7 +16,7 @@ def compare(document_path: str | Path, positive_dataset_path: str | Path, negati
     ragas_summary = RagasEvaluator().evaluate(positive_dataset_path, document_path)
     openai_summary = OpenAIFileSearchBenchmark().benchmark(positive_dataset_path, document_path)
     vectara_summary = VectaraBenchmark().benchmark(positive_dataset_path, document_path)
-    vectara_eval_summary = VectaraEvaluator().evaluate(positive_dataset_path, document_path)
+    vendor_answer_summary = VendorAnswerEvaluator().evaluate(positive_dataset_path, document_path)
 
     payload = {
         "local_retrieval": local_summary,
@@ -24,7 +24,7 @@ def compare(document_path: str | Path, positive_dataset_path: str | Path, negati
         "ragas": ragas_summary,
         "openai_file_search": openai_summary,
         "vectara": vectara_summary,
-        "vectara_eval": vectara_eval_summary,
+        "vendor_answer_eval": vendor_answer_summary,
     }
     report_path = _save_report("benchmark_comparison", payload)
     payload["report_path"] = str(report_path)
