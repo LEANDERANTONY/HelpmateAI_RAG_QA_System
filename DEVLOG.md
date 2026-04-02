@@ -293,3 +293,47 @@ Current caution:
 
 - the LLM router is useful as a tie-breaker, but it is not yet a guaranteed accuracy gain across every benchmark
 - document parsing quality is still the stronger next lever than adding more routing complexity
+
+## Day 14: Layered Evaluation With Ragas
+
+- Added `ragas` as an open-source evaluation layer on top of the existing benchmark harness.
+- Added:
+  - `src/evals/ragas_eval.py`
+  - `tests/test_ragas_eval.py`
+  - `docs/evals/README.md`
+- Updated the benchmark comparison runner so saved reports now include:
+  - custom retrieval metrics
+  - negative abstention metrics
+  - OpenAI hosted retrieval baseline
+  - `ragas` answer faithfulness
+  - `ragas` answer relevancy
+  - `ragas` no-reference context precision
+
+Challenges:
+
+- the new `ragas` version in this environment did not work cleanly with the newer factory pattern, even though that is the direction recommended in the docs
+- the practical working bridge used LangChain wrappers, which are deprecated upstream but stable enough for the current repo
+- our existing eval datasets are retrieval-labeled, not gold-answer datasets, so we had to start with no-reference answer-quality metrics rather than full reference-based scoring
+- full comparison runs are now slower because they include extra LLM-evaluator passes
+
+Improvements:
+
+- we can now distinguish retrieval errors from answer-quality errors more clearly
+- broad academic-paper questions are easier to diagnose because `ragas` exposes cases where retrieval is acceptable but answer relevance is weak
+- benchmark reports are closer to a real evaluation matrix instead of a single score family
+
+Latest concrete example:
+
+- on `static/pancreas8.pdf`, the first combined report showed:
+  - local retrieval: `0.8 / 0.8`
+  - negative abstention: `1.0`
+  - OpenAI file search: `0.4`
+  - `ragas` faithfulness: `0.8429`
+  - `ragas` answer relevancy: `0.4885`
+  - `ragas` context precision: `0.8056`
+
+Key takeaway:
+
+- retrieval and grounding remain decent on the review paper
+- the weaker area is answer relevance for broad paper-summary questions
+- that gives us a much sharper picture of what to improve next

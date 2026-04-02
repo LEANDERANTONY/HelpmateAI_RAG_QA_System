@@ -17,7 +17,11 @@ HelpmateAI is a Streamlit-first long-document QA app for grounded answers over P
 - Use a lightweight LLM-assisted router only when heuristic routing is low-confidence
 - Generate grounded answers with citations and surfaced supporting passages
 - Reuse conservative answer-cache entries when the document and question context still match
-- Evaluate retrieval quality with a small offline dataset under `docs/evals/`
+- Evaluate retrieval quality with layered benchmarks under `docs/evals/`
+  - custom retrieval hit-rate and MRR
+  - abstention checks
+  - OpenAI hosted file-search comparison
+  - `ragas` faithfulness, answer relevance, and context-precision scoring
 
 ## Product Direction
 
@@ -59,6 +63,7 @@ Additional project history and architecture decisions live in:
 
 - [docs/implementation-history.md](docs/implementation-history.md)
 - [docs/adr/README.md](docs/adr/README.md)
+- [docs/evals/README.md](docs/evals/README.md)
 
 ## Current Scope
 

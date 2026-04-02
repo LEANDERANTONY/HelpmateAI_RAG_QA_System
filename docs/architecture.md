@@ -144,13 +144,20 @@ Current evaluation surfaces:
 - negative abstention eval datasets
 - saved JSON benchmark reports under `docs/evals/reports/`
 - OpenAI file-search comparison harness
+- `ragas` answer-quality evaluation:
+  - faithfulness
+  - answer relevancy
+  - no-reference context precision
 
 This lets the team compare:
 
 - policy-style documents versus thesis-style documents
 - local RAG versus hosted retrieval
+- retrieval quality versus answer quality
 - structural changes versus baseline behavior
 - dual-path retrieval behavior across policy, thesis, and research-paper documents
+
+The new `ragas` layer matters because some of our remaining weak spots are not pure retrieval failures. Broad research-paper questions can hit the right section but still produce weak or incomplete answers. That gap is now visible in benchmark reports instead of being inferred loosely.
 
 ## Architectural Challenges Encountered
 
@@ -163,6 +170,7 @@ Important issues discovered during implementation:
 - query analysis is currently heuristic and still biased toward clause-like factual questions
 - academic-paper parsing is still imperfect, especially for front matter, appendices, and bibliography-heavy pages
 - the lightweight LLM router is useful as a tie-breaker, but it is not yet a universal quality boost
+- `ragas` evaluation currently depends on OpenAI-backed evaluators and no-reference metrics, so it is useful but not yet a complete offline gold-answer harness
 
 ## Current Strengths
 

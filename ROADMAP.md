@@ -14,6 +14,7 @@ Current baseline:
 - answer caching and explicit abstention
 - offline eval datasets and saved benchmark reports
 - OpenAI file-search comparison harness
+- open-source `ragas` answer-quality evaluation
 - lightweight document-intelligence layer for structure-aware retrieval
 - dual-path retrieval with section-first support
 - lightweight LLM-assisted route selection for low-confidence mixed queries
@@ -24,6 +25,7 @@ Highest-priority active work:
 - improve academic-paper section parsing and front-matter/reference suppression
 - reduce remaining clause-level misses through better section and clause targeting
 - make retrieval reasoning more visible in the app
+- expand evaluation beyond retrieval hit-rate by using answer-quality signals and eventually gold-answer datasets
 - keep benchmark quality high across multiple document families
 
 Status:
@@ -37,6 +39,8 @@ Status:
 - improve query analysis and router behavior beyond current heuristic classes
 - better support thesis, report, and research-paper style questions that require broader semantic synthesis
 - add tougher eval sets for narrative and cross-section questions
+- add optional gold-answer datasets so answer-quality metrics can move beyond no-reference scoring
+- compare against additional managed retrieval baselines when credentials are available
 
 Status:
 
@@ -48,6 +52,7 @@ Status:
 - reduce noisy runtime behavior such as Chroma telemetry clutter
 - add a retrieval-debug or eval dashboard to the UI
 - add more operational smoke checks around indexing and benchmarking
+- expose benchmark summaries in the UI
 
 Status:
 

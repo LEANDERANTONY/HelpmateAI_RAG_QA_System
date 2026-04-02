@@ -20,6 +20,7 @@ dependencies = [
 [dependency-groups]
 dev = [
     "pytest>=8.3,<9",
+    "ragas>=0.3,<0.4",
 ]
 
 [tool.pytest.ini_options]
