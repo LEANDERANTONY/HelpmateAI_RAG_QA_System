@@ -115,6 +115,63 @@ def _section_summary(title: str, text: str) -> str:
     return excerpt[:900]
 
 
+def _document_overview_section(document: DocumentRecord, sections: list[SectionRecord]) -> SectionRecord | None:
+    style = str(document.metadata.get("document_style", "generic_longform"))
+    if style not in {"research_paper", "thesis_document"}:
+        return None
+
+    title_page = next((page for page in document.metadata.get("pages", []) if page.get("page_label") == "Page 1"), None)
+    abstract_section = next((section for section in sections if str(section.metadata.get("section_kind", "")).lower() == "abstract"), None)
+    intro_section = next(
+        (
+            section
+            for section in sections
+            if str(section.metadata.get("section_kind", "")).lower() in {"introduction", "background", "background and motivation"}
+        ),
+        None,
+    )
+
+    title_text = ""
+    if title_page:
+        lines = [_clean_line(line) for line in str(title_page.get("text", "")).splitlines() if _clean_line(line)]
+        useful = [line for line in lines[:6] if not _looks_like_noise(line) and not re.search(r"\d\)", line)]
+        title_text = " ".join(useful[:2])
+
+    parts = [part for part in [title_text, abstract_section.summary if abstract_section else "", intro_section.summary if intro_section else ""] if part]
+    if not parts:
+        return None
+
+    summary = " ".join(parts)[:1200]
+    page_labels: list[str] = []
+    for section in (abstract_section, intro_section):
+        if section:
+            for label in section.page_labels:
+                if label not in page_labels:
+                    page_labels.append(label)
+    if title_page and "Page 1" not in page_labels:
+        page_labels.insert(0, "Page 1")
+
+    return SectionRecord(
+        section_id=f"{document.document_id}-document-overview",
+        document_id=document.document_id,
+        title="Document Overview",
+        summary=summary,
+        text=summary,
+        page_labels=page_labels or ["Page 1"],
+        section_path=["Document Overview"],
+        clause_ids=[],
+        metadata={
+            "source_file": document.file_name,
+            "content_type": "overview",
+            "primary_page_label": page_labels[0] if page_labels else "Page 1",
+            "section_key": "document_overview",
+            "section_heading": "Document Overview",
+            "section_kind": "overview",
+            "document_style": style,
+        },
+    )
+
+
 def build_sections(document: DocumentRecord) -> list[SectionRecord]:
     pages = document.metadata.get("pages") or []
     grouped: OrderedDict[str, dict] = OrderedDict()
@@ -180,4 +237,7 @@ def build_sections(document: DocumentRecord) -> list[SectionRecord]:
                 },
             )
         )
+    overview = _document_overview_section(document, sections)
+    if overview is not None:
+        sections.insert(0, overview)
     return sections

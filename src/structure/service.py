@@ -112,6 +112,14 @@ def _is_heading(line: str) -> bool:
     if academic_match:
         title = academic_match.group("title")
         return not _is_sentence_like(title)
+    if (
+        len(words := compact.split()) <= 10
+        and compact[:1].isupper()
+        and compact[-1] not in ".?!"
+        and not any(char in compact for char in ",;")
+        and not _is_sentence_like(compact)
+    ):
+        return True
     if len(words := compact.split()) <= 12 and words[0][:1].isupper() and compact[-1] not in ".!?":
         title_case_ratio = sum(1 for word in words if word[:1].isupper() or word.lower() in {"and", "for", "of", "in", "to", "the"}) / max(len(words), 1)
         if title_case_ratio >= 0.8:

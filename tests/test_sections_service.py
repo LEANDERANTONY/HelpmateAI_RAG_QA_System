@@ -71,3 +71,47 @@ def test_build_sections_prefers_canonical_heading_and_clean_summary():
 
     assert section.title == "Abstract"
     assert "multimodal fusion for cancer diagnosis" in section.summary
+
+
+def test_build_sections_adds_document_overview_for_research_style_docs():
+    document = DocumentRecord(
+        document_id="doc789",
+        file_name="paper.pdf",
+        file_type="pdf",
+        source_path="paper.pdf",
+        fingerprint="ghi789",
+        char_count=500,
+        page_count=2,
+        metadata={
+            "document_style": "research_paper",
+            "pages": [
+                {
+                    "page_label": "Page 1",
+                    "text": "Multimodal data fusion for cancer biomarker discovery\nAbstract\nThis paper studies multimodal fusion in oncology.",
+                    "section_heading": "Abstract",
+                    "section_path": ["Abstract"],
+                    "section_id": "Abstract",
+                    "clause_ids": [],
+                    "content_type": "abstract",
+                    "section_kind": "abstract",
+                    "document_style": "research_paper",
+                },
+                {
+                    "page_label": "Page 2",
+                    "text": "Introduction\nThe paper explains why multiple modalities are needed.",
+                    "section_heading": "Introduction",
+                    "section_path": ["Introduction"],
+                    "section_id": "Introduction",
+                    "clause_ids": [],
+                    "content_type": "introduction",
+                    "section_kind": "introduction",
+                    "document_style": "research_paper",
+                },
+            ]
+        },
+    )
+
+    sections = build_sections(document)
+
+    assert sections[0].title == "Document Overview"
+    assert sections[0].metadata["section_kind"] == "overview"

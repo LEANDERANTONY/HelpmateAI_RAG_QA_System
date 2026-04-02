@@ -22,7 +22,7 @@ class SectionRetriever:
             return 0.0
 
         if any(term in lowered for term in ("main focus", "main aim", "research objectives", "primary topic")):
-            return 1.0 if section_kind in {"abstract", "introduction", "background"} else 0.0
+            return 1.0 if section_kind in {"overview", "abstract", "introduction", "background"} else 0.0
         if any(term in lowered for term in ("future work", "next steps", "future directions")):
             return 1.0 if section_kind in {"future work", "future directions", "conclusion", "conclusions", "discussion"} else 0.0
         if any(term in lowered for term in ("challenge", "limitations", "clinical adoption", "argue")):
