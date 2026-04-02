@@ -126,6 +126,63 @@ def apply_theme() -> None:
                 font-weight: 700;
                 margin-bottom: 0.35rem;
             }
+            .evidence-meta {
+                color: #c7d8ff !important;
+                font-size: 0.82rem;
+                margin-bottom: 0.55rem;
+                font-weight: 600;
+            }
+            .status-panel {
+                background: #ffffff;
+                border: 1px solid var(--surface-line);
+                border-radius: 20px;
+                padding: 1rem 1.05rem;
+                box-shadow: var(--shadow);
+                margin-bottom: 1rem;
+            }
+            .status-panel-dark {
+                background: linear-gradient(180deg, rgba(5, 12, 24, 0.98), rgba(9, 20, 38, 0.98));
+                border: 1px solid rgba(96, 165, 250, 0.18);
+            }
+            .status-title {
+                color: var(--ink) !important;
+                font-size: 1.05rem;
+                font-weight: 800;
+                margin-bottom: 0.8rem;
+            }
+            .status-title-light {
+                color: #eef4ff !important;
+            }
+            .status-row {
+                display: flex;
+                justify-content: space-between;
+                gap: 1rem;
+                padding: 0.35rem 0;
+                color: var(--muted) !important;
+                border-bottom: 1px dashed rgba(20, 32, 51, 0.08);
+            }
+            .status-row strong {
+                color: var(--ink) !important;
+                text-align: right;
+            }
+            .status-row-light {
+                color: #bdd2ff !important;
+                border-bottom: 1px dashed rgba(147, 197, 253, 0.12);
+            }
+            .status-row-light strong {
+                color: #ffffff !important;
+            }
+            .answer-badge {
+                display: inline-block;
+                background: rgba(37, 99, 235, 0.14);
+                color: #dbeafe;
+                border: 1px solid rgba(96, 165, 250, 0.25);
+                border-radius: 999px;
+                padding: 0.28rem 0.7rem;
+                font-size: 0.82rem;
+                margin-bottom: 0.9rem;
+                font-weight: 700;
+            }
             </style>
             """
         ),
