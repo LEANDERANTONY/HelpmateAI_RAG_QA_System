@@ -5,6 +5,16 @@ from src.schemas import RetrievalCandidate, SectionRecord
 
 class SectionRetriever:
     @staticmethod
+    def _document_style_score(question: str, document_style: str) -> float:
+        lowered = question.lower()
+        style = (document_style or "").lower()
+        if style == "policy_document":
+            return 0.2 if any(term in lowered for term in ("clause", "waiting period", "grace period", "cashless", "premium")) else 0.0
+        if style in {"research_paper", "thesis_document"}:
+            return 0.12 if any(term in lowered for term in ("main focus", "main aim", "research objectives", "future work", "challenge", "conclusion")) else 0.02
+        return 0.0
+
+    @staticmethod
     def _section_kind_score(question: str, section_kind: str) -> float:
         lowered = question.lower()
         section_kind = (section_kind or "").lower()
@@ -47,6 +57,7 @@ class SectionRetriever:
                 dense_scores.get(section_id, 0.0)
                 + lexical_scores.get(section_id, 0.0)
                 + 0.22 * self._section_kind_score(question, str(section.metadata.get("section_kind", "")))
+                + 0.05 * self._document_style_score(question, str(section.metadata.get("document_style", "")))
             )
             ranked.append(
                 RetrievalCandidate(

@@ -131,6 +131,27 @@ class HybridRetriever:
         return 0.0
 
     @staticmethod
+    def _document_style_score(question: str, document_style: str, route_hint: str | None = None) -> float:
+        lowered = question.lower()
+        style = (document_style or "").lower()
+        if not style:
+            return 0.0
+
+        if style == "policy_document":
+            if any(term in lowered for term in ("clause", "page ", "waiting period", "grace period", "premium", "cashless", "network provider", "sum insured")):
+                return 0.5
+            return 0.1 if route_hint == "chunk_first" else 0.0
+
+        if style in {"research_paper", "thesis_document"}:
+            if any(term in lowered for term in ("main focus", "main aim", "research objectives", "future work", "challenge", "conclusion", "what does the paper say", "what did the thesis conclude")):
+                return 0.18
+            if any(term in lowered for term in ("auc", "accuracy", "split", "how many", "architecture")):
+                return 0.08
+            return 0.04 if route_hint == "section_first" else 0.0
+
+        return 0.0
+
+    @staticmethod
     def _clause_match_score(chunk_clause_ids: list[str] | str, clause_terms: list[str]) -> float:
         values = [chunk_clause_ids] if isinstance(chunk_clause_ids, str) and chunk_clause_ids else chunk_clause_ids
         if not values or not clause_terms:
@@ -158,7 +179,12 @@ class HybridRetriever:
         clause_boost = self._clause_match_score(chunk.metadata.get("clause_ids", []), clause_terms) * 0.2
         section_boost = 0.16 if section_ids and chunk.metadata.get("section_id") in section_ids else 0.0
         section_kind_boost = self._section_kind_score(question, str(chunk.metadata.get("section_kind", ""))) * 0.18
-        final_fused = fused_score + keyword_boost + heading_boost + section_path_boost + content_type_boost + clause_boost + section_boost + section_kind_boost
+        document_style_boost = self._document_style_score(
+            question,
+            str(chunk.metadata.get("document_style", "")),
+            route_hint="chunk_first" if not section_ids else "section_first",
+        ) * 0.05
+        final_fused = fused_score + keyword_boost + heading_boost + section_path_boost + content_type_boost + clause_boost + section_boost + section_kind_boost + document_style_boost
         return RetrievalCandidate(
             chunk_id=chunk.chunk_id,
             text=chunk.text,

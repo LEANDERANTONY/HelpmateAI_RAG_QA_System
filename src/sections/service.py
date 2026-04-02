@@ -138,6 +138,8 @@ def build_sections(document: DocumentRecord) -> list[SectionRecord]:
                 "section_path": section_path,
                 "clause_ids": [],
                 "content_type": str(page.get("content_type", "general")),
+                "section_kind": str(page.get("section_kind", "")),
+                "document_style": str(page.get("document_style", document.metadata.get("document_style", "generic_longform"))),
                 "source_file": document.file_name,
             },
         )
@@ -173,7 +175,8 @@ def build_sections(document: DocumentRecord) -> list[SectionRecord]:
                     "primary_page_label": payload["page_labels"][0] if payload["page_labels"] else "Document",
                     "section_key": section_id,
                     "section_heading": title,
-                    "section_kind": title.lower(),
+                    "section_kind": payload["section_kind"] or title.lower(),
+                    "document_style": payload["document_style"],
                 },
             )
         )
