@@ -298,7 +298,7 @@ export function AppWorkspace() {
         </div>
 
         <div className="mt-8 grid gap-5">
-          <div className="surface-card">
+          <div className="surface-card surface-card-teal">
             <p className="eyebrow">Step 1</p>
             <h2 className="text-xl font-semibold text-white">Upload your document</h2>
             <p className="mt-2 text-sm leading-6 text-slate-300">
@@ -361,7 +361,7 @@ export function AppWorkspace() {
             </p>
 
             <div className="mt-5 grid gap-3 lg:grid-cols-2">
-              <div className="soft-panel">
+              <div className="soft-panel soft-panel-teal">
                 <span className="soft-panel-label">Document</span>
                 <p className="mt-3 text-lg font-medium text-white">
                   {document?.file_name ?? "Nothing loaded yet"}
@@ -372,7 +372,7 @@ export function AppWorkspace() {
                     : "Upload a file first"}
                 </p>
               </div>
-              <div className="soft-panel">
+              <div className="soft-panel soft-panel-teal">
                 <span className="soft-panel-label">Index</span>
                 <p className="mt-3 text-lg font-medium text-white">
                   {indexRecord ? "Ready" : "Pending"}
@@ -459,7 +459,7 @@ export function AppWorkspace() {
       <aside className="grid gap-6">
         <section className="glass-panel overflow-hidden p-6 md:p-7">
           <div className="grid gap-6">
-            <div className="workspace-answer-panel">
+            <div className="workspace-answer-panel workspace-answer-panel-teal">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div>
                   <p className="eyebrow">Answer</p>
@@ -548,7 +548,7 @@ export function AppWorkspace() {
               )}
             </div>
 
-            <div className="workspace-inspector-shell">
+            <div className="workspace-inspector-shell workspace-inspector-shell-teal">
               <div className="flex flex-wrap items-center gap-2">
                 <button
                   className={`inspector-tab ${inspectorTab === "evidence" ? "inspector-tab-active" : ""}`}
@@ -571,7 +571,7 @@ export function AppWorkspace() {
                   <div className="space-y-3">
                     {answer?.evidence?.length ? (
                       answer.evidence.slice(0, 4).map((candidate) => (
-                        <article className="soft-panel" key={candidate.chunk_id}>
+                        <article className="soft-panel soft-panel-teal" key={candidate.chunk_id}>
                           <div className="flex items-center justify-between gap-3">
                             <span className="soft-panel-label">
                               {candidate.citation_label || "Evidence"}
@@ -585,11 +585,6 @@ export function AppWorkspace() {
                           <p className="mt-3 overflow-hidden text-sm leading-6 text-slate-200 [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:6]">
                             {candidate.text}
                           </p>
-                          <div className="mt-3 grid gap-2 text-xs text-slate-400 sm:grid-cols-3">
-                            <span>Dense: {candidate.dense_score.toFixed(2)}</span>
-                            <span>Lexical: {candidate.lexical_score.toFixed(2)}</span>
-                            <span>Fused: {candidate.fused_score.toFixed(2)}</span>
-                          </div>
                         </article>
                       ))
                     ) : (

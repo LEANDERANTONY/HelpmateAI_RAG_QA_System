@@ -579,6 +579,14 @@ a {
     0 18px 40px rgba(0, 0, 0, 0.18);
 }
 
+.workspace-answer-panel-teal {
+  border-color: rgba(90, 209, 193, 0.18);
+  background:
+    radial-gradient(circle at top left, rgba(53, 182, 173, 0.12), transparent 34%),
+    radial-gradient(circle at top right, rgba(34, 112, 138, 0.1), transparent 30%),
+    linear-gradient(180deg, rgba(10, 34, 35, 0.48), rgba(8, 12, 18, 0.74));
+}
+
 .workspace-inspector-shell {
   border-radius: 1.5rem;
   border: 1px solid rgba(255, 255, 255, 0.08);
@@ -586,6 +594,13 @@ a {
     linear-gradient(180deg, rgba(255, 255, 255, 0.018), rgba(255, 255, 255, 0.008)),
     rgba(6, 7, 12, 0.7);
   padding: 1rem;
+}
+
+.workspace-inspector-shell-teal {
+  border-color: rgba(90, 209, 193, 0.16);
+  background:
+    radial-gradient(circle at top left, rgba(46, 148, 143, 0.1), transparent 34%),
+    linear-gradient(180deg, rgba(8, 28, 29, 0.52), rgba(6, 8, 12, 0.76));
 }
 
 .inspector-tab {
@@ -681,9 +696,23 @@ a {
     0 18px 44px rgba(0, 0, 0, 0.15);
 }
 
+.surface-card-teal {
+  border-color: rgba(90, 209, 193, 0.16);
+  background:
+    radial-gradient(circle at top left, rgba(46, 165, 155, 0.1), transparent 34%),
+    linear-gradient(180deg, rgba(10, 30, 30, 0.46), rgba(10, 11, 17, 0.88));
+}
+
 .soft-panel {
   border-radius: 1.3rem;
   padding: 1rem;
+}
+
+.soft-panel-teal {
+  border-color: rgba(90, 209, 193, 0.12);
+  background:
+    radial-gradient(circle at top left, rgba(46, 165, 155, 0.08), transparent 32%),
+    linear-gradient(180deg, rgba(8, 24, 25, 0.52), rgba(10, 11, 17, 0.78));
 }
 
 .sample-card {

@@ -17,3 +17,5 @@ Thumbs.db
 streamlit.log
 streamlit.err.log
 THREAD_HANDOFF.md
+tmp/
+static/UI/
