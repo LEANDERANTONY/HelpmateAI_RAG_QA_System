@@ -386,3 +386,91 @@ Improvements:
 - the app now does more onboarding and framing work for the user
 - benchmark and document-state visibility moved into the product surface instead of living only in repo docs
 - the docs now clearly reflect that Helpmate is in a strong enough technical place to invest in a proper frontend
+
+## Day 17: FastAPI And Next.js Product Shell
+
+- Added the first real `FastAPI` boundary in `backend/`.
+- Started the custom product UI in `frontend/` with `Next.js`.
+- Kept Streamlit available as the internal benchmark and inspection shell.
+
+Challenges:
+
+- the retrieval core had become stronger than the credibility of the original Streamlit-only surface
+- the product needed a cleaner public-facing workflow without disturbing the benchmarked backend behavior
+- the repo documentation still reflected an earlier Streamlit-first mindset
+
+Improvements:
+
+- the product now has a clear frontend/backend direction
+- the Python retrieval core remains reusable instead of being tied to one UI shell
+- the repo is better positioned for a more premium presentation layer
+
+## Day 18: Removed LLM Query Rewriting And Added Retrieval Guardrails
+
+- Removed model-based query rewriting from the retrieval path.
+- Replaced it with deterministic weak-evidence expansion in `src/retrieval/query_rewriter.py`.
+- Added evidence grading with:
+  - `strong`
+  - `weak`
+  - `unsupported`
+- Added direct retrieval guardrails so obviously irrelevant questions can fail before answer generation.
+
+Challenges:
+
+- model-based rewrite behavior was variable and made benchmark runs harder to interpret
+- broad-question rewrites sometimes helped one document but hurt another
+- irrelevant questions could still travel too far through the answer pipeline
+
+Improvements:
+
+- retrieval behavior is now simpler and more predictable
+- off-topic questions can now fail fast with a clean guardrail response
+- only the weak middle band triggers adaptive retrieval recovery
+
+## Day 19: Stronger Section-First Retrieval Without More Model Layers
+
+- Improved section summaries, aliases, and section-kind aware ranking.
+- Added deterministic section seeding for summary-style queries such as:
+  - `abstract`
+  - `introduction`
+  - `overview`
+  - `discussion`
+  - `conclusion`
+  - `future work`
+  - `recommendations`
+- Added index schema versioning so section representation changes rebuild cleanly.
+
+Challenges:
+
+- broad thesis and paper questions still struggled even after the earlier structure-aware upgrade
+- the next fix needed to generalize rather than overfit to one thesis or paper
+- Windows/Chroma index reuse can become brittle when index layout changes under active files
+
+Improvements:
+
+- thesis future-work retrieval now resolves through the stronger section path
+- `pancreas8` main-focus retrieval now resolves through the stronger section path
+- old index layout changes now have a safer rebuild path via schema-versioned storage
+
+## Day 20: Four-Document Benchmark Pass After Retrieval Simplification
+
+- Ran the full benchmark stack again across:
+  - health policy
+  - thesis
+  - `pancreas7`
+  - `pancreas8`
+- Updated the benchmark summary docs with the latest `ragas` comparisons for:
+  - Helpmate
+  - OpenAI retrieval + shared answer model
+  - Vectara retrieval + shared answer model
+
+Challenges:
+
+- the full benchmark suite is slow because each document triggers multiple eval families and vendor calls
+- long wrapper runs can outlive the local tool window even after the reports have already been written
+
+Improvements:
+
+- health-policy performance stayed stable after removing model-based rewrite logic
+- `pancreas8` improved materially under the stronger section-first retrieval path
+- thesis and `pancreas7` are now the clearest remaining retrieval-quality targets

@@ -1,6 +1,6 @@
 # Roadmap
 
-This roadmap reflects the current HelpmateAI state after the retrieval architecture work, benchmark-policy refinement, and the first product-polish pass in Streamlit.
+This roadmap reflects the current HelpmateAI state after the section-aware retrieval upgrade, benchmark-policy refinement, deterministic weak-evidence flow, and the move toward a `Next.js + FastAPI` product shell.
 
 ## Now: Frontend And Product Presentation
 
@@ -12,6 +12,7 @@ Current baseline:
 - local-first Chroma persistence
 - hybrid retrieval with reranking
 - answer caching and explicit abstention
+- retrieval guardrails with `strong` / `weak` / `unsupported` evidence states
 - offline eval datasets and saved benchmark reports
 - `ragas` answer-quality evaluation
 - Vectara as the primary external retrieval baseline
@@ -19,14 +20,16 @@ Current baseline:
 - lightweight document-intelligence layer for structure-aware retrieval
 - dual-path retrieval with section-first support
 - lightweight LLM-assisted route selection for low-confidence mixed queries
-- improved Streamlit UI with:
+- deterministic weak-evidence expansion instead of model-based query rewriting
+- `Next.js + FastAPI` app shell now started and being actively refined
+- retained Streamlit shell with:
   - document status panels
   - style-aware starter questions
   - benchmark summary surfaces
 
 Highest-priority active work:
 
-- move from the current Streamlit shell toward a stronger custom frontend
+- continue the move from the current Streamlit shell toward a stronger custom frontend
 - preserve the benchmarked Python retrieval core while improving product credibility
 - make the app feel more like a polished product than a research tool
 - keep benchmark quality high while the frontend evolves
@@ -37,8 +40,8 @@ Status:
 
 ## Next: Retrieval Refinement On The Current Core
 
-- improve academic-paper and thesis section detection
-- add richer section summaries and section-level embeddings
+- improve thesis and research-paper aim/method retrieval
+- refine section ranking for broad academic questions without reintroducing model-based rewrite variability
 - improve query analysis and router behavior beyond current heuristic classes
 - better support thesis, report, and research-paper style questions that require broader semantic synthesis
 - add tougher eval sets for narrative and cross-section questions
@@ -51,7 +54,7 @@ Status:
 
 ## Later: Frontend Hardening And API Extraction
 
-- extract cleaner API boundaries if the custom frontend needs them
+- harden the current FastAPI boundary as the frontend grows
 - improve deployment reliability for a split frontend/backend setup if adopted
 - keep benchmark and retrieval-debug views accessible in the product UI
 - reduce noisy runtime behavior such as Chroma telemetry clutter
@@ -71,19 +74,16 @@ Status:
 
 - deferred until the retrieval product and frontend are stronger
 
-## Future: Backend Extraction
+## Future: Product Hardening
 
-FastAPI remains the most likely extraction path when the product genuinely needs:
-
-- a custom frontend talking to backend endpoints
 - background indexing jobs
-- multi-user concurrency beyond Streamlit comfort
+- multi-user concurrency beyond local development comfort
 - non-Streamlit clients
-- better operational control over long-running tasks
+- stronger operational control over long-running eval and indexing tasks
 
 Status:
 
-- likely future phase, not yet started
+- future hardening phase after the new frontend stabilizes
 
 ## Separate Future Product: Dissertation Paraphrasing App
 

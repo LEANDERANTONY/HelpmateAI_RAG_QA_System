@@ -2,7 +2,7 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-HelpmateAI is a grounded long-document QA system for PDFs and DOCX files. It indexes documents locally, runs hybrid retrieval with reranking, and returns citation-aware answers with visible evidence. The current product shell is built in Streamlit, while the core retrieval and generation services are kept modular so the next major phase can move to a stronger custom frontend.
+HelpmateAI is a grounded long-document QA system for PDFs and DOCX files. It indexes documents locally, runs hybrid retrieval with reranking, and returns citation-aware answers with visible evidence. The product is now moving onto a `Next.js + FastAPI` surface while the Python retrieval and generation core stays modular and benchmark-driven.
 
 ## What It Does
 
@@ -14,6 +14,8 @@ HelpmateAI is a grounded long-document QA system for PDFs and DOCX files. It ind
   - `chunk_first` for exact factual and clause-style questions
   - `section_first` for broader narrative or synthesis questions
 - uses a lightweight LLM-assisted router only when heuristic routing is low-confidence
+- uses deterministic adaptive retrieval expansion for weak-evidence cases instead of LLM query rewriting
+- short-circuits obviously irrelevant questions with retrieval guardrails before generation
 - generates grounded answers with citations, evidence panels, and explicit supported/unsupported status
 - evaluates retrieval quality with a layered benchmark stack:
   - custom retrieval hit-rate and MRR
@@ -26,7 +28,9 @@ HelpmateAI is a grounded long-document QA system for PDFs and DOCX files. It ind
 
 The repo is no longer a notebook demo. It is a real app-shaped project with:
 
-- `app.py` as the current Streamlit entrypoint
+- `frontend/` as the evolving `Next.js` product UI
+- `backend/` as the FastAPI boundary over the Python core
+- `app.py` as the retained Streamlit research and benchmark shell
 - `src/` for reusable ingestion, retrieval, generation, cache, and UI logic
 - `src/structure/`, `src/query_analysis/`, `src/sections/`, and `src/query_router.py` for the document-intelligence and routing layers
 - `tests/` for focused fast checks around the core logic
@@ -50,11 +54,13 @@ The RAG core is already in a strong position:
 HelpmateAI is at the start of a new phase:
 
 - the backend retrieval system is stable enough to keep
-- the next major step is a stronger custom frontend
-- Streamlit remains useful for fast iteration, demos, and benchmark visibility, but it likely should not be the final presentation layer
+- the product shell is shifting to `Next.js + FastAPI`
+- Streamlit remains useful for fast iteration, demos, and benchmark visibility, but it is now a secondary shell rather than the main product direction
 
 ## Stack
 
+- Next.js
+- FastAPI
 - Streamlit
 - ChromaDB
 - OpenAI
@@ -64,11 +70,11 @@ HelpmateAI is at the start of a new phase:
 
 ## Quickstart
 
-1. Install dependencies with `uv`.
+1. Install Python dependencies with `uv` and frontend dependencies with `npm install` in [frontend](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\frontend).
 2. Set `OPENAI_API_KEY` in `.env` if you want live answer generation and evaluation.
-3. Run `streamlit run app.py`.
-4. Upload a document and build or reuse the local index.
-5. Ask grounded questions and inspect evidence, retrieval notes, and benchmark snapshots.
+3. Run the backend: `uv run uvicorn backend.main:app --reload --port 8001`.
+4. Run the frontend: `npm run dev` in [frontend](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\frontend).
+5. Optionally run `streamlit run app.py` for the internal benchmark/debug shell.
 
 `pyproject.toml` and `uv.lock` are the dependency source of truth.
 
@@ -89,11 +95,12 @@ HelpmateAI is at the start of a new phase:
 - retrieval-first long-document QA
 - local-first indexing and caching
 - dual-path retrieval with heuristic plus lightweight LLM routing
-- benchmark-aware product surface with document status and benchmark panels in the current UI
+- deterministic weak-evidence expansion instead of model-based query rewriting
+- benchmark-aware product surface in both the retained Streamlit shell and the newer frontend/backend app flow
 
 Out of scope for the current phase:
 
 - auth and quotas
 - hosted user persistence
 - paraphrasing/document-rewrite workflows
-- full FastAPI extraction
+- full production hardening for multi-user hosted deployment

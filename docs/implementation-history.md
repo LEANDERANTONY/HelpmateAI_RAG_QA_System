@@ -240,6 +240,74 @@ Improvement:
 - the app now reflects more of the real system maturity
 - the next major product step is clearer: a stronger custom frontend on top of the current Python core
 
+## 16. FastAPI And Next.js Transition
+
+Change:
+
+- started moving the product shell to `FastAPI + Next.js` while keeping Streamlit for internal benchmarking
+
+Challenge:
+
+- the retrieval core had become more mature than the existing frontend presentation
+- we needed a cleaner user-facing shell without rewriting the Python retrieval system again
+
+Improvement:
+
+- the project now has a clearer production-facing direction
+- the transport boundary is cleaner and more reusable than before
+
+## 17. Retrieval Simplification And Guardrails
+
+Change:
+
+- removed LLM query rewriting
+- replaced it with deterministic weak-evidence expansion and evidence-state guardrails
+
+Challenge:
+
+- model-based rewrite behavior introduced variability and made benchmark interpretation harder
+- obviously irrelevant questions could still travel too far through the answer path
+
+Improvement:
+
+- retrieval is more predictable
+- irrelevant questions now fail faster
+- the retrieval path depends less on extra model behavior and more on structural search logic
+
+## 18. Stronger Section-First Retrieval
+
+Change:
+
+- improved section summaries, aliases, section-kind signals, and section seeding for summary questions
+
+Challenge:
+
+- broad thesis and paper questions still underperformed even after the earlier structure-aware layer
+- the fix needed to generalize rather than become another document-specific set of boosts
+
+Improvement:
+
+- summary-style retrieval now has stronger deterministic support from section metadata
+- `pancreas8` improved materially
+- thesis future-work style questions became better supported
+
+## 19. Benchmark Refresh After Retrieval Simplification
+
+Change:
+
+- reran the full four-document benchmark suite after the section-retrieval and guardrail changes
+
+Challenge:
+
+- the suite is slow because each document combines multiple eval families and vendor comparisons
+- long wrapper processes can exceed local tool windows even when underlying reports complete
+
+Improvement:
+
+- confirmed no meaningful regression from removing model-based query rewriting
+- confirmed the strongest win on `pancreas8`
+- clarified that thesis and `pancreas7` are now the most justified retrieval-quality targets
+
 ## What This Means For The Next Step
 
 The architecture is now strong enough that the next improvement should not be another repo restructure.
@@ -247,6 +315,6 @@ The architecture is now strong enough that the next improvement should not be an
 The most justified next steps are now:
 
 - build a stronger custom frontend on top of the existing core
-- keep refining academic-document retrieval quality without another major architecture rewrite
+- keep refining thesis and paper retrieval quality without another major architecture rewrite
 - add harder benchmark sets spanning multiple document families
 - expose the backend more cleanly if the new frontend later needs an API boundary
