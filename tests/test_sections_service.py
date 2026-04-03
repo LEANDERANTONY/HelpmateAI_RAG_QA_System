@@ -115,3 +115,4 @@ def test_build_sections_adds_document_overview_for_research_style_docs():
 
     assert sections[0].title == "Document Overview"
     assert sections[0].metadata["section_kind"] == "overview"
+    assert "main focus" in " ".join(sections[0].metadata["section_aliases"]).lower()

@@ -361,3 +361,28 @@ Improvements and decisions:
 - OpenAI File Search remains in the repo as a historical/reference retrieval baseline
 - `ragas` is now the only answer-quality meter we use in routine benchmarking
 - vendor factual-consistency APIs are no longer part of the active benchmark decision loop
+
+## Day 16: Product-Surface Polish And Frontend Handoff Prep
+
+- Improved the Streamlit app surface with:
+  - document status panels
+  - index status context
+  - style-aware starter questions
+  - benchmark snapshot tab
+  - richer evidence presentation and retrieval debug details
+- Rebased the project documentation around the current system state:
+  - benchmarked RAG core
+  - simplified eval policy
+  - frontend as the next major phase
+
+Challenges:
+
+- the backend had become meaningfully stronger than the current UI presentation
+- the app still felt more like a research shell than a portfolio-grade product
+- several docs still reflected an earlier “Streamlit-first buildout” mindset instead of the current “backend strong, frontend next” state
+
+Improvements:
+
+- the app now does more onboarding and framing work for the user
+- benchmark and document-state visibility moved into the product surface instead of living only in repo docs
+- the docs now clearly reflect that Helpmate is in a strong enough technical place to invest in a proper frontend

@@ -1,38 +1,41 @@
 # Roadmap
 
-This roadmap reflects the current HelpmateAI state after the Streamlit refactor, benchmark harnesses, and document-intelligence upgrade.
+This roadmap reflects the current HelpmateAI state after the retrieval architecture work, benchmark-policy refinement, and the first product-polish pass in Streamlit.
 
-## Now: Stabilize The Retrieval Product
+## Now: Frontend And Product Presentation
 
 Current baseline:
 
-- Streamlit-first document QA application
+- strong document QA backend core
 - modular `src/` architecture
 - PDF and DOCX ingestion
 - local-first Chroma persistence
 - hybrid retrieval with reranking
 - answer caching and explicit abstention
 - offline eval datasets and saved benchmark reports
-- OpenAI file-search comparison harness
-- open-source `ragas` answer-quality evaluation
+- `ragas` answer-quality evaluation
+- Vectara as the primary external retrieval baseline
+- OpenAI retained as a historical/reference retrieval baseline
 - lightweight document-intelligence layer for structure-aware retrieval
 - dual-path retrieval with section-first support
 - lightweight LLM-assisted route selection for low-confidence mixed queries
+- improved Streamlit UI with:
+  - document status panels
+  - style-aware starter questions
+  - benchmark summary surfaces
 
 Highest-priority active work:
 
-- improve retrieval on non-policy documents such as long academic prose
-- improve academic-paper section parsing and front-matter/reference suppression
-- reduce remaining clause-level misses through better section and clause targeting
-- make retrieval reasoning more visible in the app
-- expand evaluation beyond retrieval hit-rate by using answer-quality signals and eventually gold-answer datasets
-- keep benchmark quality high across multiple document families
+- move from the current Streamlit shell toward a stronger custom frontend
+- preserve the benchmarked Python retrieval core while improving product credibility
+- make the app feel more like a polished product than a research tool
+- keep benchmark quality high while the frontend evolves
 
 Status:
 
-- Active delivery focus
+- active delivery focus
 
-## Next: Better Document Parsing And Retrieval Generalization
+## Next: Retrieval Refinement On The Current Core
 
 - improve academic-paper and thesis section detection
 - add richer section summaries and section-level embeddings
@@ -40,23 +43,22 @@ Status:
 - better support thesis, report, and research-paper style questions that require broader semantic synthesis
 - add tougher eval sets for narrative and cross-section questions
 - add optional gold-answer datasets so answer-quality metrics can move beyond no-reference scoring
-- compare against additional managed retrieval baselines when credentials are available
+- compare against additional managed retrieval baselines when credentials are available, if they add meaningful value beyond Vectara
 
 Status:
 
-- Planned next quality step on the current architecture
+- planned quality step on top of the current architecture
 
-## Later: Product Hardening On The Current Stack
+## Later: Frontend Hardening And API Extraction
 
-- improve deployment reliability on Docker/Render-style hosting
+- extract cleaner API boundaries if the custom frontend needs them
+- improve deployment reliability for a split frontend/backend setup if adopted
+- keep benchmark and retrieval-debug views accessible in the product UI
 - reduce noisy runtime behavior such as Chroma telemetry clutter
-- add a retrieval-debug or eval dashboard to the UI
-- add more operational smoke checks around indexing and benchmarking
-- expose benchmark summaries in the UI
 
 Status:
 
-- In progress, but secondary to retrieval quality
+- deferred until the new frontend direction is chosen and scoped
 
 ## Later: Auth And User Persistence
 
@@ -67,12 +69,13 @@ Status:
 
 Status:
 
-- Deferred until the retrieval product is stronger
+- deferred until the retrieval product and frontend are stronger
 
 ## Future: Backend Extraction
 
-FastAPI remains a future extraction path when the product genuinely needs:
+FastAPI remains the most likely extraction path when the product genuinely needs:
 
+- a custom frontend talking to backend endpoints
 - background indexing jobs
 - multi-user concurrency beyond Streamlit comfort
 - non-Streamlit clients
@@ -80,7 +83,7 @@ FastAPI remains a future extraction path when the product genuinely needs:
 
 Status:
 
-- Planned, not started
+- likely future phase, not yet started
 
 ## Separate Future Product: Dissertation Paraphrasing App
 
@@ -90,4 +93,4 @@ Status:
 
 Status:
 
-- Intentionally separate and deferred
+- intentionally separate and deferred

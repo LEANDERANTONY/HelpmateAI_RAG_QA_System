@@ -1,10 +1,11 @@
 from __future__ import annotations
 
-import json
 from pathlib import Path
 
 import streamlit as st
 
+from src.evals.report_loader import get_latest_benchmark_report
+from src.question_starters import get_question_starters
 from src.schemas import AnswerResult, DocumentRecord, IndexRecord
 
 
@@ -110,19 +111,24 @@ def render_document_status(document_record: DocumentRecord | None, index_record:
         )
 
 
-def _load_latest_report() -> tuple[dict | None, Path | None]:
-    reports_dir = Path(__file__).resolve().parents[2] / "docs" / "evals" / "reports"
-    if not reports_dir.exists():
-        return None, None
-    candidates = sorted(reports_dir.glob("benchmark_comparison_*.json"), key=lambda path: path.stat().st_mtime, reverse=True)
-    if not candidates:
-        return None, None
-    latest = candidates[0]
-    return json.loads(latest.read_text(encoding="utf-8")), latest
+def render_question_starters(document_record: DocumentRecord | None) -> str | None:
+    if document_record is None:
+        return None
+
+    style = (document_record.metadata or {}).get("document_style")
+    suggestions = get_question_starters(style)
+    st.markdown('<div class="section-card"><h3>Starter Questions</h3><p class="section-copy">These prompts adapt to the document style so you can pressure-test the index quickly.</p></div>', unsafe_allow_html=True)
+    selected: str | None = None
+    cols = st.columns(len(suggestions))
+    for idx, suggestion in enumerate(suggestions):
+        with cols[idx]:
+            if st.button(suggestion, key=f"starter_{style}_{idx}", use_container_width=True):
+                selected = suggestion
+    return selected
 
 
 def render_benchmark_panel() -> None:
-    report, report_path = _load_latest_report()
+    report, report_path = get_latest_benchmark_report()
     st.markdown('<div class="section-card"><h3>Benchmark Snapshot</h3><p class="section-copy">Latest saved comparison from the local benchmark harness.</p></div>', unsafe_allow_html=True)
     if report is None or report_path is None:
         st.info("No saved benchmark report is available yet.")
@@ -169,6 +175,10 @@ def render_benchmark_panel() -> None:
             - `ragas` is the active answer-quality meter for routine benchmarking.
             """
         )
+
+        summary_path = Path(__file__).resolve().parents[2] / "docs" / "evals" / "benchmark_summary.md"
+        if summary_path.exists():
+            st.markdown(summary_path.read_text(encoding="utf-8"))
 
 
 def render_answer(answer_result: AnswerResult | None) -> None:

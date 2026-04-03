@@ -4,7 +4,7 @@ import hashlib
 import json
 from pathlib import Path
 
-from src.schemas import AnswerResult, CacheStatus
+from src.schemas import AnswerResult, CacheStatus, RetrievalCandidate
 
 
 class AnswerCache:
@@ -33,11 +33,24 @@ class AnswerCache:
             return None
         payload = json.loads(path.read_text(encoding="utf-8"))
         cache_status = payload.get("cache_status", {})
+        evidence = [
+            RetrievalCandidate(
+                chunk_id=item["chunk_id"],
+                text=item["text"],
+                metadata=item.get("metadata", {}),
+                dense_score=item.get("dense_score", 0.0),
+                lexical_score=item.get("lexical_score", 0.0),
+                fused_score=item.get("fused_score", 0.0),
+                rerank_score=item.get("rerank_score"),
+                citation_label=item.get("citation_label", ""),
+            )
+            for item in payload.get("evidence", [])
+        ]
         return AnswerResult(
             question=payload["question"],
             answer=payload["answer"],
             citations=payload["citations"],
-            evidence=[],
+            evidence=evidence,
             supported=payload.get("supported", True),
             cache_status=CacheStatus(
                 index_reused=cache_status.get("index_reused", False),

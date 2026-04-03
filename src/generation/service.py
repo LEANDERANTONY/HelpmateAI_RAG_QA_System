@@ -73,6 +73,21 @@ class AnswerGenerator:
 
     def generate(self, question: str, retrieval_result: RetrievalResult) -> AnswerResult:
         evidence = retrieval_result.candidates
+        if retrieval_result.evidence_status == "unsupported":
+            return AnswerResult(
+                question=question,
+                answer="Unsupported by the retrieved evidence.",
+                citations=[],
+                evidence=evidence,
+                supported=False,
+                cache_status=CacheStatus(),
+                model_name="retrieval_guardrail",
+                note="Retrieved evidence was too weak or irrelevant to justify answer generation.",
+                citation_details=[],
+                retrieval_notes=retrieval_result.strategy_notes,
+                query_used=retrieval_result.query_used,
+                query_variants=retrieval_result.query_variants,
+            )
         if self.client is None:
             answer = self._fallback_answer(question, evidence)
             answer.retrieval_notes = retrieval_result.strategy_notes

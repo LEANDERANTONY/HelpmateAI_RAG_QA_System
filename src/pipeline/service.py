@@ -20,6 +20,7 @@ class HelpmatePipeline:
             self.settings.indexes_dir,
             embedding_model=self.settings.embedding_model,
             api_key=self.settings.openai_api_key,
+            index_schema_version=self.settings.index_schema_version,
         )
         self.retriever = HybridRetriever(self.store, self.settings)
         self.generator = AnswerGenerator(self.settings)

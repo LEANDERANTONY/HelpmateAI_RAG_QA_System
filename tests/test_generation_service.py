@@ -22,3 +22,19 @@ def test_fallback_generation_uses_evidence_when_api_key_missing():
     assert "waiting period" in answer.answer.lower()
     assert answer.citations == ["Page 4"]
     assert answer.supported is True
+
+
+def test_generation_short_circuits_when_retrieval_is_clearly_unsupported():
+    settings = Settings(openai_api_key=None)
+    generator = AnswerGenerator(settings)
+    retrieval = RetrievalResult(
+        question="What is the capital of France?",
+        candidates=[],
+        evidence_status="unsupported",
+    )
+
+    answer = generator.generate("What is the capital of France?", retrieval)
+
+    assert answer.supported is False
+    assert answer.model_name == "retrieval_guardrail"
+    assert "unsupported" in answer.answer.lower()

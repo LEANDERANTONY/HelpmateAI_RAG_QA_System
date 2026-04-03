@@ -1,0 +1,102 @@
+{
+  "thesis": [
+    {
+      "question": "What kinds of future work or next steps does the thesis suggest?",
+      "index_reused": true,
+      "route_used": "section_first",
+      "query_used": "What kinds of future work or next steps does the thesis suggest? future work recommendations discussion conclusion",
+      "query_variants": [
+        "What kinds of future work or next steps does the thesis suggest?",
+        "What kinds of future work or next steps does the thesis suggest? future work recommendations discussion conclusion",
+        "What kinds of future work or next steps does the thesis suggest? future directions recommendations limitations follow-up research"
+      ],
+      "evidence_status": "strong",
+      "best_score": 3.211385726928711,
+      "max_lexical_score": 0.4143898229353652,
+      "content_overlap_score": 0.0,
+      "found_pages": [
+        "Page 96",
+        "Page 90",
+        "Page 72",
+        "Page 72"
+      ],
+      "supported": false,
+      "model_name": "gpt-5.4-mini",
+      "answer_preview": "Unsupported by the retrieved evidence.",
+      "note": "The provided evidence only states that the thesis has a section on future work and that it will present concrete directions, but it does not include the actual future work recommendations. [Source 1]",
+      "strategy_notes": [
+        "Query classified as summary_lookup.",
+        "Router selected section_first with confidence 0.95.",
+        "Summary-style query type prefers section-level routing.",
+        "High-level narrative cues suggest section-first retrieval.",
+        "Preferred content types: general, benefit, definition.",
+        "Section-first retrieval path narrowed the search before chunk ranking.",
+        "Adaptive re-retrieval used a rewritten query variant.",
+        "Best retrieval came from rewritten query: What kinds of future work or next steps does the thesis suggest? future work recommendations discussion conclusion"
+      ]
+    }
+  ],
+  "pancreas8": [
+    {
+      "question": "What is the main focus of the pancreas8 paper?",
+      "index_reused": true,
+      "route_used": "section_first",
+      "query_used": "What is the main focus of the pancreas8 paper?",
+      "query_variants": [
+        "What is the main focus of the pancreas8 paper?"
+      ],
+      "evidence_status": "unsupported",
+      "best_score": -11.14663028717041,
+      "max_lexical_score": 0.0,
+      "content_overlap_score": 0.0,
+      "found_pages": [
+        "Page 12",
+        "Page 10"
+      ],
+      "supported": false,
+      "model_name": "retrieval_guardrail",
+      "answer_preview": "Unsupported by the retrieved evidence.",
+      "note": "Retrieved evidence was too weak or irrelevant to justify answer generation.",
+      "strategy_notes": [
+        "Query classified as summary_lookup.",
+        "Router selected section_first with confidence 0.95.",
+        "Summary-style query type prefers section-level routing.",
+        "Paper-level synthesis phrasing favors section-first retrieval.",
+        "Preferred content types: general, benefit, definition.",
+        "Section-first retrieval path narrowed the search before chunk ranking."
+      ]
+    }
+  ],
+  "offtopic_policy": [
+    {
+      "question": "What does this policy say about the capital of France and the moon landing?",
+      "index_reused": true,
+      "route_used": "chunk_first",
+      "query_used": "What does this policy say about the capital of France and the moon landing?",
+      "query_variants": [
+        "What does this policy say about the capital of France and the moon landing?"
+      ],
+      "evidence_status": "unsupported",
+      "best_score": -8.320103645324707,
+      "max_lexical_score": 0.04556926214011023,
+      "content_overlap_score": 0.0,
+      "found_pages": [
+        "Page 15",
+        "Page 15",
+        "Page 15",
+        "Page 15"
+      ],
+      "supported": false,
+      "model_name": "retrieval_guardrail",
+      "answer_preview": "Unsupported by the retrieved evidence.",
+      "note": "Retrieved evidence was too weak or irrelevant to justify answer generation.",
+      "strategy_notes": [
+        "Query classified as definition_lookup.",
+        "Router selected chunk_first with confidence 0.80.",
+        "Query type definition_lookup prefers chunk-level grounding.",
+        "Preferred content types: definition, policy_admin, provider_or_facility.",
+        "Chunk-first retrieval path used for exact grounding."
+      ]
+    }
+  ]
+}

@@ -14,6 +14,64 @@ from src.schemas import ChunkRecord, RetrievalCandidate, RetrievalResult, Sectio
 
 
 class HybridRetriever:
+    GENERIC_QUERY_TERMS = {
+        "about",
+        "according",
+        "answer",
+        "answers",
+        "argue",
+        "challenge",
+        "does",
+        "document",
+        "documents",
+        "focus",
+        "future",
+        "identify",
+        "identifies",
+        "kinds",
+        "main",
+        "mainly",
+        "mention",
+        "mentions",
+        "next",
+        "overall",
+        "paper",
+        "policy",
+        "question",
+        "recommend",
+        "recommends",
+        "research",
+        "say",
+        "says",
+        "steps",
+        "study",
+        "suggest",
+        "suggests",
+        "summary",
+        "summarize",
+        "that",
+        "these",
+        "thesis",
+        "this",
+        "those",
+        "tell",
+        "topic",
+        "what",
+        "work",
+    }
+    SUMMARY_SUPPORT_SECTION_KINDS = {
+        "overview",
+        "abstract",
+        "introduction",
+        "background",
+        "discussion",
+        "conclusion",
+        "conclusions",
+        "future work",
+        "future directions",
+        "final remarks",
+    }
+
     def __init__(self, store: ChromaIndexStore, settings: Settings):
         self.store = store
         self.settings = settings
@@ -22,6 +80,86 @@ class HybridRetriever:
         self.query_analyzer = QueryAnalyzer()
         self.query_router = QueryRouter(settings)
         self.section_retriever = SectionRetriever()
+
+    @staticmethod
+    def _evidence_score(candidate: RetrievalCandidate) -> float:
+        return candidate.rerank_score if candidate.rerank_score is not None else candidate.fused_score
+
+    @classmethod
+    def _significant_question_terms(cls, question: str) -> set[str]:
+        return {
+            token
+            for token in re.findall(r"[A-Za-z0-9]+", question.lower())
+            if len(token) > 3 and token not in cls.GENERIC_QUERY_TERMS
+        }
+
+    @classmethod
+    def _content_overlap_ratio(cls, question: str, candidates: list[RetrievalCandidate]) -> float:
+        significant_terms = cls._significant_question_terms(question)
+        if not significant_terms or not candidates:
+            return 0.0
+
+        candidate_terms: set[str] = set()
+        for candidate in candidates[:3]:
+            candidate_terms.update(re.findall(r"[A-Za-z0-9]+", candidate.text.lower()))
+            candidate_terms.update(
+                re.findall(
+                    r"[A-Za-z0-9]+",
+                    str(candidate.metadata.get("section_heading", "")).lower(),
+                )
+            )
+            candidate_terms.update(
+                re.findall(
+                    r"[A-Za-z0-9]+",
+                    " ".join(candidate.metadata.get("section_path", [])).lower()
+                    if isinstance(candidate.metadata.get("section_path", []), list)
+                    else str(candidate.metadata.get("section_path", "")).lower(),
+                )
+            )
+
+        return len(significant_terms & candidate_terms) / max(len(significant_terms), 1)
+
+    def _assess_evidence_status(
+        self,
+        question: str,
+        candidates: list[RetrievalCandidate],
+        query_type: str = "general_lookup",
+    ) -> tuple[str, float, float, float]:
+        if not candidates:
+            return "unsupported", 0.0, 0.0, 0.0
+
+        best_score = self._evidence_score(candidates[0])
+        max_lexical = max((candidate.lexical_score for candidate in candidates), default=0.0)
+        content_overlap = self._content_overlap_ratio(question, candidates)
+        section_kinds = {
+            str(candidate.metadata.get("section_kind", "")).lower()
+            for candidate in candidates[:4]
+            if candidate.metadata.get("section_kind")
+        }
+        summary_section_present = bool(section_kinds & self.SUMMARY_SUPPORT_SECTION_KINDS)
+
+        if (
+            best_score < self.settings.unsupported_evidence_score_threshold
+            and max_lexical < self.settings.unsupported_lexical_hit_threshold
+        ):
+            return "unsupported", best_score, max_lexical, content_overlap
+
+        if (
+            best_score < self.settings.weak_evidence_score_threshold
+            and self._significant_question_terms(question)
+            and content_overlap <= self.settings.unsupported_content_overlap_threshold
+        ):
+            if query_type == "summary_lookup" and summary_section_present:
+                return "weak", best_score, max_lexical, content_overlap
+            return "unsupported", best_score, max_lexical, content_overlap
+
+        if (
+            best_score < self.settings.weak_evidence_score_threshold
+            or max_lexical < self.settings.lexical_hit_threshold
+        ):
+            return "weak", best_score, max_lexical, content_overlap
+
+        return "strong", best_score, max_lexical, content_overlap
 
     @staticmethod
     def _extract_metadata_filters(question: str) -> dict[str, list[str]]:
@@ -257,6 +395,7 @@ class HybridRetriever:
         metadata_filters: dict[str, list[str]],
         preferred_content_types: list[str],
         clause_terms: list[str],
+        query_type: str = "general_lookup",
     ) -> tuple[list[RetrievalCandidate], list[RetrievalCandidate]]:
         sections = self.store.load_sections(fingerprint)
         if not sections:
@@ -282,6 +421,20 @@ class HybridRetriever:
             lexical_scores=lexical_scores,
             top_k=self.settings.section_fused_top_k,
         )
+        if query_type == "summary_lookup":
+            seeded_sections = self.section_retriever.seed_summary_sections(
+                question=question,
+                sections=sections,
+                top_k=max(self.settings.section_fused_top_k, 4),
+            )
+            section_by_id: dict[str, RetrievalCandidate] = {}
+            for candidate in ranked_sections + seeded_sections:
+                existing = section_by_id.get(candidate.chunk_id)
+                if existing is None or candidate.fused_score > existing.fused_score:
+                    section_by_id[candidate.chunk_id] = candidate
+            ranked_sections = sorted(section_by_id.values(), key=lambda candidate: candidate.fused_score, reverse=True)[
+                : max(self.settings.section_fused_top_k, 4)
+            ]
         top_section_ids = {candidate.metadata.get("section_id") for candidate in ranked_sections if candidate.metadata.get("section_id")}
         chunk_candidates = self._chunk_first_candidates(
             fingerprint=fingerprint,
@@ -316,14 +469,15 @@ class HybridRetriever:
         route_used: str,
         strategy_notes: list[str],
         candidates: list[RetrievalCandidate],
+        assessment_question: str | None = None,
+        query_type: str = "general_lookup",
     ) -> RetrievalResult:
         final_candidates = self._finalize_candidates(question, self._dedupe_candidates(candidates))
-        if not final_candidates:
-            weak_evidence = True
-        else:
-            best_score = final_candidates[0].rerank_score if final_candidates[0].rerank_score is not None else final_candidates[0].fused_score
-            max_lexical = max((candidate.lexical_score for candidate in final_candidates), default=0.0)
-            weak_evidence = bool(best_score < self.settings.weak_evidence_score_threshold or max_lexical < self.settings.lexical_hit_threshold)
+        evidence_status, best_score, max_lexical, content_overlap = self._assess_evidence_status(
+            assessment_question or question,
+            final_candidates,
+            query_type=query_type,
+        )
         return RetrievalResult(
             question=question,
             candidates=final_candidates,
@@ -334,7 +488,11 @@ class HybridRetriever:
             query_variants=query_variants,
             metadata_filters=metadata_filters,
             strategy_notes=strategy_notes,
-            weak_evidence=weak_evidence,
+            weak_evidence=evidence_status == "weak",
+            evidence_status=evidence_status,
+            best_score=best_score,
+            max_lexical_score=max_lexical,
+            content_overlap_score=content_overlap,
         )
 
     @staticmethod
@@ -354,8 +512,10 @@ class HybridRetriever:
         metadata_filters: dict[str, list[str]],
         query_variants: list[str],
         routing_decision: RoutingDecision,
+        query_profile_override=None,
+        assessment_question: str | None = None,
     ) -> RetrievalResult:
-        query_profile = self.query_analyzer.analyze(question)
+        query_profile = query_profile_override or self.query_analyzer.analyze(question)
         notes = [
             f"Query classified as {query_profile.query_type}.",
             f"Router selected {routing_decision.route} with confidence {routing_decision.confidence:.2f}.",
@@ -379,7 +539,17 @@ class HybridRetriever:
 
         if routing_decision.route == "chunk_first":
             notes.append("Chunk-first retrieval path used for exact grounding.")
-            return self._build_result(question, question, query_variants, metadata_filters, "chunk_first", notes, chunk_candidates)
+            return self._build_result(
+                question,
+                question,
+                query_variants,
+                metadata_filters,
+                "chunk_first",
+                notes,
+                chunk_candidates,
+                assessment_question=assessment_question,
+                query_type=query_profile.query_type,
+            )
 
         ranked_sections, section_chunk_candidates = self._section_first_candidates(
             fingerprint=fingerprint,
@@ -387,17 +557,38 @@ class HybridRetriever:
             metadata_filters=metadata_filters,
             preferred_content_types=query_profile.preferred_content_types,
             clause_terms=query_profile.clause_terms,
+            query_type=query_profile.query_type,
         )
 
         if routing_decision.route == "section_first":
             notes.append("Section-first retrieval path narrowed the search before chunk ranking.")
-            return self._build_result(question, question, query_variants, metadata_filters, "section_first", notes, section_chunk_candidates or chunk_candidates)
+            return self._build_result(
+                question,
+                question,
+                query_variants,
+                metadata_filters,
+                "section_first",
+                notes,
+                section_chunk_candidates or chunk_candidates,
+                assessment_question=assessment_question,
+                query_type=query_profile.query_type,
+            )
 
         notes.append("Both retrieval paths ran and their evidence was merged.")
         merged = chunk_candidates + section_chunk_candidates
         if ranked_sections:
             notes.append(f"Top routed section: {ranked_sections[0].metadata.get('section_heading', ranked_sections[0].chunk_id)}.")
-        return self._build_result(question, question, query_variants, metadata_filters, "hybrid_both", notes, merged)
+        return self._build_result(
+            question,
+            question,
+            query_variants,
+            metadata_filters,
+            "hybrid_both",
+            notes,
+            merged,
+            assessment_question=assessment_question,
+            query_type=query_profile.query_type,
+        )
 
     def retrieve(self, fingerprint: str, question: str) -> RetrievalResult:
         metadata_filters = self._extract_metadata_filters(question)
@@ -409,19 +600,27 @@ class HybridRetriever:
             metadata_filters=metadata_filters,
             query_variants=[question],
             routing_decision=routing_decision,
+            query_profile_override=query_profile,
+            assessment_question=question,
         )
 
-        if result.weak_evidence and self.settings.query_rewrite_enabled:
-            rewritten_queries = self.query_rewriter.rewrite(question)
+        if result.evidence_status == "weak" and self.settings.query_rewrite_enabled:
+            rewritten_queries = self.query_rewriter.rewrite(question, query_profile=query_profile)
             for rewritten_query in rewritten_queries[1:]:
-                challenger_profile = self.query_analyzer.analyze(rewritten_query)
-                challenger_route = self.query_router.route(rewritten_query, challenger_profile)
+                if query_profile.query_type == "summary_lookup":
+                    challenger_profile = query_profile
+                    challenger_route = routing_decision
+                else:
+                    challenger_profile = self.query_analyzer.analyze(rewritten_query)
+                    challenger_route = self.query_router.route(rewritten_query, challenger_profile)
                 challenger = self._retrieve_once(
                     fingerprint=fingerprint,
                     question=rewritten_query,
                     metadata_filters=metadata_filters,
                     query_variants=rewritten_queries,
                     routing_decision=challenger_route,
+                    query_profile_override=challenger_profile,
+                    assessment_question=question,
                 )
                 challenger.strategy_notes.append("Adaptive re-retrieval used a rewritten query variant.")
                 result = self._select_better_result(result, challenger)

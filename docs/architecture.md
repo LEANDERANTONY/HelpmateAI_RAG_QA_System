@@ -1,13 +1,15 @@
 # Architecture
 
-HelpmateAI is a Streamlit-first long-document QA app with backend-ready core services, local-first retrieval infrastructure, and benchmark-driven quality controls.
+HelpmateAI is a long-document QA system with backend-ready core services, local-first retrieval infrastructure, and benchmark-driven quality controls. Streamlit is the current presentation layer, but the core is intentionally modular so a stronger custom frontend can become the next product phase without another large backend rewrite.
 
 ## Runtime Shape
 
-- `app.py` is a thin Streamlit launcher.
-- `src/ui/` owns theming, rendering, and state wiring.
-- `src/pipeline/` coordinates ingestion, indexing, retrieval, and answer generation.
-- `src/ingest/`, `src/chunking/`, `src/retrieval/`, `src/generation/`, and `src/cache/` remain transport-agnostic so a later FastAPI extraction is possible.
+- `app.py` is the current thin Streamlit launcher
+- `src/ui/` owns theming, rendering, state wiring, and the current benchmark/document panels
+- `src/pipeline/` coordinates ingestion, indexing, retrieval, and answer generation
+- `src/ingest/`, `src/chunking/`, `src/retrieval/`, `src/generation/`, and `src/cache/` remain transport-agnostic
+
+This split now matters because the retrieval core is largely stable, while the next major change is expected to happen in the frontend layer rather than in the retrieval architecture.
 
 ## Main Pipeline
 
@@ -23,14 +25,13 @@ HelpmateAI is a Streamlit-first long-document QA app with backend-ready core ser
 
 ## Ingestion And Structure Layer
 
-The ingestion path now does more than text extraction.
-
-It captures:
+The ingestion path now captures more than raw text:
 
 - page labels
 - section headings
 - clause ids where detectable
 - section paths
+- section kinds
 - content-type hints such as:
   - `definition`
   - `waiting_period`
@@ -38,11 +39,11 @@ It captures:
   - `benefit`
   - `exclusion`
 
-This structure is inferred in `src/structure/` and then attached to page metadata before chunking.
+This structure is inferred in `src/structure/` and attached to page metadata before chunking.
 
-## Chunking Strategy
+## Chunking And Section Layer
 
-Chunking began as deterministic page-window chunking and has since been upgraded with semantic enrichment.
+Chunking started as deterministic page-window chunking and now includes semantic enrichment.
 
 Current chunk metadata includes:
 
@@ -57,15 +58,9 @@ Current chunk metadata includes:
 - `section_id`
 - `section_kind`
 
-This metadata now powers the live dual-retrieval design rather than only acting as future scaffolding.
+On top of this, HelpmateAI builds `SectionRecord` objects carrying:
 
-## Section Layer
-
-HelpmateAI now builds `SectionRecord` objects on top of page and chunk metadata.
-
-Each section carries:
-
-- a stable `section_id`
+- stable `section_id`
 - cleaned section title
 - section summary
 - page labels
@@ -99,17 +94,17 @@ The retrieval layer performs lightweight query analysis so it can classify quest
 
 These classifications are used as soft retrieval preferences.
 
-On top of that, HelpmateAI now has a lightweight query router that decides whether the question should use:
+On top of that, HelpmateAI has a lightweight query router that chooses between:
 
 - `chunk_first`
 - `section_first`
 - `hybrid_both`
 
-The router is primarily heuristic. A lightweight LLM-assisted tie-breaker is available only when the heuristic router is low-confidence. This is intentionally not a full multi-agent system.
+The router is primarily heuristic. A lightweight LLM-assisted tie-breaker is available only when the heuristic router is low-confidence. This remains a deterministic staged pipeline, not a full multi-agent system.
 
 ## Answer Generation
 
-Answer generation is grounded on retrieved evidence and now follows a structured output contract.
+Answer generation is grounded on retrieved evidence and uses a structured output contract.
 
 Important properties:
 
@@ -118,11 +113,9 @@ Important properties:
 - retrieval notes visible to the UI
 - conservative abstention when evidence is weak
 
-This design was added because unsupported answers needed stronger discipline than free-form answer text alone could provide.
-
 ## Caching
 
-Two conservative caches are active:
+Two conservative caches are active.
 
 Index cache:
 
@@ -136,15 +129,15 @@ Answer cache:
 
 ## Evaluation And Benchmarking
 
-Evaluation is now a first-class part of the architecture, not an afterthought.
+Evaluation is now a first-class part of the architecture.
 
 Current evaluation surfaces:
 
 - positive retrieval eval datasets
 - negative abstention eval datasets
 - saved JSON benchmark reports under `docs/evals/reports/`
-- Vectara retrieval comparison harness
-- OpenAI file-search comparison harness kept as a historical/reference baseline
+- Vectara retrieval comparison harness as the primary external baseline
+- OpenAI File Search comparison harness kept as a historical/reference baseline
 - `ragas` answer-quality evaluation:
   - faithfulness
   - answer relevancy
@@ -159,21 +152,17 @@ This lets the team compare:
 - structural changes versus baseline behavior
 - dual-path retrieval behavior across policy, thesis, and research-paper documents
 
-The new `ragas` layer matters because some of our remaining weak spots are not pure retrieval failures. Broad research-paper questions can hit the right section but still produce weak or incomplete answers. That gap is now visible in benchmark reports instead of being inferred loosely.
+## UI And Product Surface
 
-## Architectural Challenges Encountered
+The current Streamlit surface now includes:
 
-Important issues discovered during implementation:
+- document status and index status panels
+- style-aware starter questions
+- answer support badges
+- retrieval evidence cards with section/context hints
+- benchmark snapshots and benchmark-policy notes inside the app
 
-- early retrieval misses sometimes came from poor benchmark labels rather than poor retrieval
-- Chroma emits noisy telemetry warnings in the current environment
-- Chroma accepts only scalar metadata values, so rich metadata must be sanitized for index writes
-- retrieval quality is stronger on structured policy documents than on long academic prose
-- query analysis is currently heuristic and still biased toward clause-like factual questions
-- academic-paper parsing is still imperfect, especially for front matter, appendices, and bibliography-heavy pages
-- the lightweight LLM router is useful as a tie-breaker, but it is not yet a universal quality boost
-- `ragas` evaluation currently depends on OpenAI-backed evaluators and no-reference metrics, so it is useful but not yet a complete offline gold-answer harness
-- vendor factual-consistency APIs turned out to be too formatting-sensitive for our current answer style, so they are no longer part of the active benchmark policy
+This is enough for strong iteration and portfolio demos, but it also clarified the next major product need: a custom frontend would better match the maturity of the retrieval core.
 
 ## Current Strengths
 
@@ -182,21 +171,34 @@ Important issues discovered during implementation:
 - explicit abstention
 - saved benchmark reports
 - document-intelligence layer already integrated into the live retrieval path
-- dual chunk-first and section-first retrieval paths are now live
+- dual chunk-first and section-first retrieval paths are live
 - section-aware summaries improved thesis and review-paper retrieval without hurting policy benchmarks
+- evaluation policy is now simpler and more credible:
+  - Vectara as main external retrieval baseline
+  - OpenAI as historical/reference retrieval baseline
+  - `ragas` as the active answer-quality meter
 
 ## Current Weaknesses
 
 - clause-level misses still happen when relevant content spans adjacent sections
 - narrative and synthesis-heavy questions are harder than factual clause lookups
 - academic paper section extraction still needs refinement for “main focus” and future-work style questions
+- the current Streamlit frontend is still more functional than premium, and no longer fully reflects the strength of the backend core
 
-## Likely Next Architecture Step
+## Likely Next Product Step
 
-The most justified next improvements are:
+The most justified next improvements are now split into two tracks.
+
+Backend-quality track:
 
 - stronger academic-document parsing and section cleanup
 - better suppression of references, appendices, and front-matter noise
 - deeper section-aware reranking for broad paper and thesis questions
+
+Frontend/product track:
+
+- move to a more custom and credible frontend experience
+- keep the existing Python retrieval core intact
+- optionally extract API boundaries later if the custom frontend needs them
 
 The architecture now supports these improvements without another major restructure.

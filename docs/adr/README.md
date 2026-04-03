@@ -12,6 +12,11 @@ Current ADRs:
 
 Usage notes:
 
-- ADRs describe why a decision was made, not just what the code looks like today.
-- Later ADRs may refine or partially supersede earlier ones.
-- If the product direction changes materially, add a new ADR instead of rewriting history.
+- ADRs describe why a decision was made, not just what the code looks like today
+- later ADRs may refine or partially supersede earlier ones
+- if the product direction changes materially, add a new ADR instead of rewriting history
+
+Current state note:
+
+- the core RAG architecture described by these ADRs is still valid
+- the next likely ADR should be about frontend extraction or a custom web frontend phase, not another large retrieval-core rewrite

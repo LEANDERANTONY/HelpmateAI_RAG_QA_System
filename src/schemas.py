@@ -61,6 +61,7 @@ class IndexRecord:
     chunk_size: int
     chunk_overlap: int
     created_at: str
+    index_schema_version: str = "v1"
     reused: bool = False
 
     def to_dict(self) -> dict[str, Any]:
@@ -94,6 +95,10 @@ class RetrievalResult:
     metadata_filters: dict[str, Any] = field(default_factory=dict)
     strategy_notes: list[str] = field(default_factory=list)
     weak_evidence: bool = False
+    evidence_status: str = "strong"
+    best_score: float = 0.0
+    max_lexical_score: float = 0.0
+    content_overlap_score: float = 0.0
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -107,6 +112,10 @@ class RetrievalResult:
             "metadata_filters": dict(self.metadata_filters),
             "strategy_notes": list(self.strategy_notes),
             "weak_evidence": self.weak_evidence,
+            "evidence_status": self.evidence_status,
+            "best_score": self.best_score,
+            "max_lexical_score": self.max_lexical_score,
+            "content_overlap_score": self.content_overlap_score,
         }
 
 

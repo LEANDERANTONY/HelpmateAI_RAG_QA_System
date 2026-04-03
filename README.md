@@ -2,41 +2,56 @@
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-blue.svg)](LICENSE)
 
-HelpmateAI is a Streamlit-first long-document QA app for grounded answers over PDFs and DOCX files. It indexes documents locally, runs hybrid retrieval with reranking, and returns citation-aware answers with visible evidence.
+HelpmateAI is a grounded long-document QA system for PDFs and DOCX files. It indexes documents locally, runs hybrid retrieval with reranking, and returns citation-aware answers with visible evidence. The current product shell is built in Streamlit, while the core retrieval and generation services are kept modular so the next major phase can move to a stronger custom frontend.
 
 ## What It Does
 
-- Upload a long-form PDF or DOCX document
-- Build or reuse a persisted local Chroma index keyed by document fingerprint
-- Run hybrid retrieval with dense search, lexical search, fusion, and optional cross-encoder reranking
-- Apply metadata-aware retrieval, adaptive query rewriting, and weak-evidence re-retrieval when needed
-- Infer document structure, content types, section kinds, and clause metadata for smarter semantic chunking and retrieval routing
-- Use dual retrieval paths:
+- uploads long-form PDF and DOCX documents
+- builds or reuses a persisted local Chroma index keyed by document fingerprint
+- runs hybrid retrieval with dense search, lexical search, fusion, and optional reranking
+- infers document structure, section kinds, clause metadata, and content-type hints
+- uses dual retrieval paths:
   - `chunk_first` for exact factual and clause-style questions
   - `section_first` for broader narrative or synthesis questions
-- Use a lightweight LLM-assisted router only when heuristic routing is low-confidence
-- Generate grounded answers with citations and surfaced supporting passages
-- Reuse conservative answer-cache entries when the document and question context still match
-- Evaluate retrieval quality with layered benchmarks under `docs/evals/`
+- uses a lightweight LLM-assisted router only when heuristic routing is low-confidence
+- generates grounded answers with citations, evidence panels, and explicit supported/unsupported status
+- evaluates retrieval quality with a layered benchmark stack:
   - custom retrieval hit-rate and MRR
   - abstention checks
-  - Vectara and OpenAI hosted retrieval comparison
-  - `ragas` faithfulness, answer relevance, and context-precision scoring
+  - Vectara as the primary external retrieval baseline
+  - OpenAI File Search as a historical/reference retrieval baseline
+  - `ragas` as the main answer-quality metric
 
-## Product Direction
+## Current State
 
-This repository is now structured as an app project rather than a notebook-only demo:
+The repo is no longer a notebook demo. It is a real app-shaped project with:
 
-- `app.py` provides the Streamlit entrypoint
-- `src/` contains the reusable ingestion, retrieval, generation, cache, and UI code
-- `src/structure/` infers section and clause context from documents
-- `src/query_analysis/` classifies questions so retrieval can prefer the right evidence type
-- `src/sections/` builds reusable section records and summaries for section-first retrieval
-- `src/query_router.py` chooses between retrieval paths without turning the app into a full agent system
-- `docs/` contains quickstart and architecture notes
-- `tests/` contains focused fast tests around reusable logic
+- `app.py` as the current Streamlit entrypoint
+- `src/` for reusable ingestion, retrieval, generation, cache, and UI logic
+- `src/structure/`, `src/query_analysis/`, `src/sections/`, and `src/query_router.py` for the document-intelligence and routing layers
+- `tests/` for focused fast checks around the core logic
+- `docs/` for architecture, evaluation policy, roadmap, and history
 
-The original notebook remains in the repo as a historical reference skeleton, not as the primary implementation surface.
+The original notebook remains only as a historical reference.
+
+## Why It Is In A Good Spot
+
+The RAG core is already in a strong position:
+
+- it generalizes across policy documents, theses, and research papers
+- it competes well against external retrieval baselines
+- it has a cleaner evaluation story now:
+  - Vectara for external retrieval comparison
+  - `ragas` for answer-quality comparison
+- it has reached the point where frontend/product polish is a better next investment than another large retrieval-core rewrite
+
+## Current Product Direction
+
+HelpmateAI is at the start of a new phase:
+
+- the backend retrieval system is stable enough to keep
+- the next major step is a stronger custom frontend
+- Streamlit remains useful for fast iteration, demos, and benchmark visibility, but it likely should not be the final presentation layer
 
 ## Stack
 
@@ -45,36 +60,40 @@ The original notebook remains in the repo as a historical reference skeleton, no
 - OpenAI
 - scikit-learn
 - sentence-transformers
-- `uv` for project/dependency management
+- `uv` for project and dependency management
 
 ## Quickstart
 
-1. Create a virtual environment and install dependencies with `uv`.
-2. Set `OPENAI_API_KEY` if you want live grounded answer generation.
+1. Install dependencies with `uv`.
+2. Set `OPENAI_API_KEY` in `.env` if you want live answer generation and evaluation.
 3. Run `streamlit run app.py`.
 4. Upload a document and build or reuse the local index.
-5. Ask grounded questions and inspect citations/evidence.
+5. Ask grounded questions and inspect evidence, retrieval notes, and benchmark snapshots.
 
-`pyproject.toml` and `uv.lock` are the only dependency source of truth.
+`pyproject.toml` and `uv.lock` are the dependency source of truth.
 
-More detail lives in [docs/quickstart.md](docs/quickstart.md) and [docs/architecture.md](docs/architecture.md).
+## Important Docs
 
-Additional project history and architecture decisions live in:
-
+- [docs/architecture.md](docs/architecture.md)
+- [docs/evals/README.md](docs/evals/README.md)
+- [docs/evals/benchmark_summary.md](docs/evals/benchmark_summary.md)
+- [docs/frontend-reference.md](docs/frontend-reference.md)
 - [docs/implementation-history.md](docs/implementation-history.md)
 - [docs/adr/README.md](docs/adr/README.md)
-- [docs/evals/README.md](docs/evals/README.md)
+- [ROADMAP.md](ROADMAP.md)
+- [DEVLOG.md](DEVLOG.md)
 
 ## Current Scope
 
-- Supported document types: `.pdf`, `.docx`
-- Retrieval-first long-document QA
-- Local-first indexing and caching
-- Dual-path retrieval with heuristic plus lightweight LLM routing
+- supported document types: `.pdf`, `.docx`
+- retrieval-first long-document QA
+- local-first indexing and caching
+- dual-path retrieval with heuristic plus lightweight LLM routing
+- benchmark-aware product surface with document status and benchmark panels in the current UI
 
-Out of scope for this first structured build:
+Out of scope for the current phase:
 
 - auth and quotas
 - hosted user persistence
 - paraphrasing/document-rewrite workflows
-- FastAPI backend extraction
+- full FastAPI extraction

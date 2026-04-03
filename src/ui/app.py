@@ -6,7 +6,14 @@ import streamlit as st
 
 from src.config import get_settings
 from src.pipeline import HelpmatePipeline
-from src.ui.components import render_answer, render_benchmark_panel, render_document_status, render_intro, render_metric_cards
+from src.ui.components import (
+    render_answer,
+    render_benchmark_panel,
+    render_document_status,
+    render_intro,
+    render_metric_cards,
+    render_question_starters,
+)
 from src.ui.state import initialize_state
 from src.ui.theme import apply_theme
 
@@ -67,8 +74,16 @@ def main() -> None:
                     st.error(str(error))
 
         if st.session_state.document_record and st.session_state.index_record:
+            starter = render_question_starters(st.session_state.document_record)
+            if starter:
+                st.session_state.question_input = starter
             st.markdown('<div class="section-card"><h3>Ask A Question</h3><p class="section-copy">Answers stay grounded in the indexed document and surface citations.</p></div>', unsafe_allow_html=True)
-            question = st.text_area("Question", height=120, placeholder="What are the key exclusions, deadlines, or obligations described in this document?")
+            question = st.text_area(
+                "Question",
+                key="question_input",
+                height=120,
+                placeholder="What are the key exclusions, deadlines, or obligations described in this document?",
+            )
             if st.button("Generate Grounded Answer", use_container_width=True):
                 if not question.strip():
                     st.warning("Enter a question before generating an answer.")

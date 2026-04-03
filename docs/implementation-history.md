@@ -84,7 +84,7 @@ Improvement:
 
 Change:
 
-- added positive evals, negative evals, OpenAI file-search comparison, and saved reports
+- added positive evals, negative evals, external retrieval baselines, and saved reports
 
 Challenge:
 
@@ -94,7 +94,7 @@ Challenge:
 Improvement:
 
 - quality claims became measurable
-- the team could compare local RAG against a hosted baseline on the same document
+- the team could compare local RAG against external baselines on the same documents
 
 ## 7. Metadata-Aware Retrieval
 
@@ -207,14 +207,46 @@ Improvement:
 - ambiguous questions can now use a bounded LLM route decision
 - the system remains a deterministic staged pipeline overall, not a multi-agent architecture
 
+## 14. Benchmark Policy Simplification
+
+Change:
+
+- promoted Vectara to the main external retrieval baseline
+- kept OpenAI File Search as a historical/reference baseline
+- standardized routine answer-quality evaluation on `ragas`
+
+Challenge:
+
+- too many partially overlapping eval signals can make product decisions noisier instead of clearer
+- vendor factual-consistency APIs turned out to be very sensitive to answer formatting
+
+Improvement:
+
+- the evaluation story is now easier to interpret
+- retrieval benchmarking and answer-quality benchmarking have clearer roles
+
+## 15. Product-Surface Upgrade In Streamlit
+
+Change:
+
+- added document status panels, benchmark snapshots, and style-aware starter questions to the app
+
+Challenge:
+
+- the current backend quality was outgrowing the credibility of the frontend shell
+
+Improvement:
+
+- the app now reflects more of the real system maturity
+- the next major product step is clearer: a stronger custom frontend on top of the current Python core
+
 ## What This Means For The Next Step
 
 The architecture is now strong enough that the next improvement should not be another repo restructure.
 
-The most justified next steps are:
+The most justified next steps are now:
 
-- stronger academic-document parsing
-- better suppression of references, appendices, and front-matter noise
-- section-summary embeddings
-- stronger query understanding for academic and report-style documents
-- harder benchmark sets spanning multiple document families
+- build a stronger custom frontend on top of the existing core
+- keep refining academic-document retrieval quality without another major architecture rewrite
+- add harder benchmark sets spanning multiple document families
+- expose the backend more cleanly if the new frontend later needs an API boundary

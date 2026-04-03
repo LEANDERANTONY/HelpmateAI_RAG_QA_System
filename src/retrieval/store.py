@@ -9,11 +9,18 @@ from src.schemas import ChunkRecord, IndexRecord, SectionRecord
 
 
 class ChromaIndexStore:
-    def __init__(self, root_dir: str | Path, embedding_model: str, api_key: str | None = None):
+    def __init__(
+        self,
+        root_dir: str | Path,
+        embedding_model: str,
+        api_key: str | None = None,
+        index_schema_version: str = "v1",
+    ):
         self.root_dir = Path(root_dir)
         self.root_dir.mkdir(parents=True, exist_ok=True)
         self.embedding_model = embedding_model
         self.api_key = api_key
+        self.index_schema_version = index_schema_version
 
     def _embedding_function(self):
         if not self.api_key:
@@ -29,7 +36,7 @@ class ChromaIndexStore:
         return ChromaSettings(anonymized_telemetry=False)
 
     def _index_dir(self, fingerprint: str) -> Path:
-        return self.root_dir / fingerprint
+        return self.root_dir / self.index_schema_version / fingerprint
 
     def _meta_path(self, fingerprint: str) -> Path:
         return self._index_dir(fingerprint) / "index_meta.json"
@@ -39,6 +46,23 @@ class ChromaIndexStore:
 
     def _sections_path(self, fingerprint: str) -> Path:
         return self._index_dir(fingerprint) / "sections.json"
+
+    @staticmethod
+    def _section_search_document(section: SectionRecord) -> str:
+        aliases = section.metadata.get("section_aliases", [])
+        alias_text = " | ".join(aliases) if isinstance(aliases, list) else str(aliases)
+        path_text = " > ".join(section.section_path)
+        lead_excerpt = section.text[:700].strip()
+        tail_excerpt = section.text[-350:].strip() if len(section.text) > 700 else ""
+        parts = [
+            section.title,
+            path_text,
+            alias_text,
+            section.summary,
+            lead_excerpt,
+            tail_excerpt,
+        ]
+        return "\n\n".join(part for part in parts if part).strip()
 
     def load_index_record(self, fingerprint: str) -> IndexRecord | None:
         meta_path = self._meta_path(fingerprint)
@@ -73,7 +97,12 @@ class ChromaIndexStore:
         chunk_overlap: int,
     ) -> IndexRecord:
         existing = self.load_index_record(fingerprint)
-        if existing is not None and self._chunks_path(fingerprint).exists() and self._sections_path(fingerprint).exists():
+        if (
+            existing is not None
+            and existing.index_schema_version == self.index_schema_version
+            and self._chunks_path(fingerprint).exists()
+            and self._sections_path(fingerprint).exists()
+        ):
             existing.reused = True
             return existing
 
@@ -103,7 +132,7 @@ class ChromaIndexStore:
         section_metadatas = [self._sanitize_metadata_for_chroma(section.metadata) for section in sections]
         section_collection.upsert(
             ids=[section.section_id for section in sections],
-            documents=[f"{section.title}\n\n{section.summary}".strip() for section in sections],
+            documents=[self._section_search_document(section) for section in sections],
             metadatas=section_metadatas,
         )
 
@@ -118,6 +147,7 @@ class ChromaIndexStore:
             chunk_size=chunk_size,
             chunk_overlap=chunk_overlap,
             created_at=datetime.now(timezone.utc).isoformat(),
+            index_schema_version=self.index_schema_version,
             reused=False,
         )
         self._meta_path(fingerprint).write_text(json.dumps(asdict(index_record), indent=2), encoding="utf-8")

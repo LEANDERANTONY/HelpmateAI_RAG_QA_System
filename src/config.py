@@ -39,6 +39,7 @@ class Settings:
     uploads_dir: Path = ROOT_DIR / "data" / "uploads"
     indexes_dir: Path = ROOT_DIR / "data" / "indexes"
     cache_dir: Path = ROOT_DIR / "data" / "cache"
+    index_schema_version: str = os.getenv("HELPMATE_INDEX_SCHEMA_VERSION", "v3")
     chunk_size: int = _env_int("HELPMATE_CHUNK_SIZE", 1200)
     chunk_overlap: int = _env_int("HELPMATE_CHUNK_OVERLAP", 180)
     dense_top_k: int = _env_int("HELPMATE_DENSE_TOP_K", 10)
@@ -56,18 +57,20 @@ class Settings:
     reranker_enabled: bool = _env_bool("HELPMATE_RERANKER_ENABLED", True)
     reranker_model: str = os.getenv("HELPMATE_RERANKER_MODEL", "cross-encoder/ms-marco-MiniLM-L-6-v2")
     query_rewrite_enabled: bool = _env_bool("HELPMATE_QUERY_REWRITE_ENABLED", True)
-    query_rewrite_model: str = os.getenv("HELPMATE_QUERY_REWRITE_MODEL", "gpt-4o-mini")
     router_llm_enabled: bool = _env_bool("HELPMATE_ROUTER_LLM_ENABLED", True)
-    router_model: str = os.getenv("HELPMATE_ROUTER_MODEL", "gpt-4o-mini")
+    router_model: str = os.getenv("HELPMATE_ROUTER_MODEL", "gpt-5.4-nano")
     router_confidence_threshold: float = _env_float("HELPMATE_ROUTER_CONFIDENCE_THRESHOLD", 0.6)
     embedding_model: str = os.getenv("HELPMATE_EMBEDDING_MODEL", "text-embedding-3-small")
-    answer_model: str = os.getenv("HELPMATE_ANSWER_MODEL", "gpt-4o-mini")
+    answer_model: str = os.getenv("HELPMATE_ANSWER_MODEL", "gpt-5.4-mini")
     openai_api_key: str | None = os.getenv("OPENAI_API_KEY")
-    retrieval_version: str = os.getenv("HELPMATE_RETRIEVAL_VERSION", "v3")
-    generation_version: str = os.getenv("HELPMATE_GENERATION_VERSION", "v3")
+    retrieval_version: str = os.getenv("HELPMATE_RETRIEVAL_VERSION", "v4")
+    generation_version: str = os.getenv("HELPMATE_GENERATION_VERSION", "v4")
     cache_similarity_threshold: float = _env_float("HELPMATE_CACHE_SIMILARITY_THRESHOLD", 0.94)
     weak_evidence_score_threshold: float = _env_float("HELPMATE_WEAK_EVIDENCE_SCORE_THRESHOLD", 0.03)
+    unsupported_evidence_score_threshold: float = _env_float("HELPMATE_UNSUPPORTED_EVIDENCE_SCORE_THRESHOLD", 0.012)
     lexical_hit_threshold: float = _env_float("HELPMATE_LEXICAL_HIT_THRESHOLD", 0.02)
+    unsupported_lexical_hit_threshold: float = _env_float("HELPMATE_UNSUPPORTED_LEXICAL_HIT_THRESHOLD", 0.005)
+    unsupported_content_overlap_threshold: float = _env_float("HELPMATE_UNSUPPORTED_CONTENT_OVERLAP_THRESHOLD", 0.05)
 
     def ensure_dirs(self) -> None:
         evals_dir = self.docs_dir / "evals"

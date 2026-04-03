@@ -1,0 +1,1742 @@
+import { useState } from "react";
+
+const navLinks = [
+  { label: "Home", href: "#home" },
+  { label: "Features", href: "#features" },
+  { label: "Pricing", href: "#pricing" },
+  { label: "Testimonials", href: "#testimonials" },
+  { label: "FAQ", href: "#faq" },
+  { label: "Contact", href: "#contact" },
+];
+
+const features = [
+  {
+    id: 1,
+    icon: (
+      <svg
+        width="40"
+        height="40"
+        viewBox="0 0 40 40"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect
+          width="40"
+          height="40"
+          rx="12"
+          fill="#6366F1"
+          fillOpacity="0.15"
+        />
+        <path
+          d="M20 10L28 15V25L20 30L12 25V15L20 10Z"
+          stroke="#6366F1"
+          strokeWidth="2"
+          strokeLinejoin="round"
+        />
+        <circle cx="20" cy="20" r="4" fill="#6366F1" />
+      </svg>
+    ),
+    title: "AI-Powered Design",
+    description:
+      "Transform your Figma designs into production-ready React code instantly with our advanced AI engine.",
+  },
+  {
+    id: 2,
+    icon: (
+      <svg
+        width="40"
+        height="40"
+        viewBox="0 0 40 40"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect
+          width="40"
+          height="40"
+          rx="12"
+          fill="#8B5CF6"
+          fillOpacity="0.15"
+        />
+        <path
+          d="M13 20H27M20 13L27 20L20 27"
+          stroke="#8B5CF6"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+      </svg>
+    ),
+    title: "Instant Prototyping",
+    description:
+      "Go from concept to clickable prototype in minutes, not days. Iterate faster than ever before.",
+  },
+  {
+    id: 3,
+    icon: (
+      <svg
+        width="40"
+        height="40"
+        viewBox="0 0 40 40"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect
+          width="40"
+          height="40"
+          rx="12"
+          fill="#EC4899"
+          fillOpacity="0.15"
+        />
+        <rect
+          x="11"
+          y="11"
+          width="8"
+          height="8"
+          rx="2"
+          stroke="#EC4899"
+          strokeWidth="2"
+        />
+        <rect
+          x="21"
+          y="11"
+          width="8"
+          height="8"
+          rx="2"
+          stroke="#EC4899"
+          strokeWidth="2"
+        />
+        <rect
+          x="11"
+          y="21"
+          width="8"
+          height="8"
+          rx="2"
+          stroke="#EC4899"
+          strokeWidth="2"
+        />
+        <rect
+          x="21"
+          y="21"
+          width="8"
+          height="8"
+          rx="2"
+          stroke="#EC4899"
+          strokeWidth="2"
+        />
+      </svg>
+    ),
+    title: "Component Library",
+    description:
+      "Access hundreds of pre-built, customizable components that match your brand perfectly.",
+  },
+  {
+    id: 4,
+    icon: (
+      <svg
+        width="40"
+        height="40"
+        viewBox="0 0 40 40"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect
+          width="40"
+          height="40"
+          rx="12"
+          fill="#10B981"
+          fillOpacity="0.15"
+        />
+        <path
+          d="M14 20L18 24L26 16"
+          stroke="#10B981"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <circle cx="20" cy="20" r="9" stroke="#10B981" strokeWidth="2" />
+      </svg>
+    ),
+    title: "Production Ready",
+    description:
+      "Every generated application is optimized, accessible, and ready to deploy to production.",
+  },
+  {
+    id: 5,
+    icon: (
+      <svg
+        width="40"
+        height="40"
+        viewBox="0 0 40 40"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect
+          width="40"
+          height="40"
+          rx="12"
+          fill="#F59E0B"
+          fillOpacity="0.15"
+        />
+        <path
+          d="M20 11V20L25 25"
+          stroke="#F59E0B"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+        <circle cx="20" cy="20" r="9" stroke="#F59E0B" strokeWidth="2" />
+      </svg>
+    ),
+    title: "Real-Time Collaboration",
+    description:
+      "Work together with your team in real-time. Share, comment, and iterate together seamlessly.",
+  },
+  {
+    id: 6,
+    icon: (
+      <svg
+        width="40"
+        height="40"
+        viewBox="0 0 40 40"
+        fill="none"
+        xmlns="http://www.w3.org/2000/svg"
+      >
+        <rect
+          width="40"
+          height="40"
+          rx="12"
+          fill="#3B82F6"
+          fillOpacity="0.15"
+        />
+        <path
+          d="M15 20C15 17.2386 17.2386 15 20 15C22.7614 15 25 17.2386 25 20C25 22.7614 22.7614 25 20 25"
+          stroke="#3B82F6"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+        <path
+          d="M20 25V29M17 28L20 29L23 28"
+          stroke="#3B82F6"
+          strokeWidth="2"
+          strokeLinecap="round"
+          strokeLinejoin="round"
+        />
+        <path
+          d="M20 11V15"
+          stroke="#3B82F6"
+          strokeWidth="2"
+          strokeLinecap="round"
+        />
+      </svg>
+    ),
+    title: "Smart Integrations",
+    description:
+      "Connect with your favorite tools — GitHub, Vercel, Netlify, and more with one click.",
+  },
+];
+
+const pricingPlans = [
+  {
+    id: 1,
+    name: "Starter",
+    price: "Free",
+    period: "",
+    description: "Perfect for individuals and small projects",
+    color: "from-slate-700 to-slate-800",
+    buttonStyle: "bg-white text-slate-900 hover:bg-slate-100",
+    badge: null,
+    features: [
+      "3 projects",
+      "Basic AI generation",
+      "Community support",
+      "Export to HTML",
+      "1 team member",
+    ],
+  },
+  {
+    id: 2,
+    name: "Pro",
+    price: "$29",
+    period: "/month",
+    description: "For professionals and growing teams",
+    color: "from-indigo-600 to-purple-600",
+    buttonStyle: "bg-white text-indigo-700 hover:bg-indigo-50",
+    badge: "Most Popular",
+    features: [
+      "Unlimited projects",
+      "Advanced AI generation",
+      "Priority support",
+      "Export to React + Tailwind",
+      "5 team members",
+      "Custom components",
+      "Version history",
+    ],
+  },
+  {
+    id: 3,
+    name: "Enterprise",
+    price: "$99",
+    period: "/month",
+    description: "For large teams and organizations",
+    color: "from-slate-700 to-slate-800",
+    buttonStyle: "bg-white text-slate-900 hover:bg-slate-100",
+    badge: null,
+    features: [
+      "Unlimited projects",
+      "Enterprise AI generation",
+      "Dedicated support",
+      "All export formats",
+      "Unlimited team members",
+      "Custom integrations",
+      "SLA guarantee",
+      "Advanced analytics",
+    ],
+  },
+];
+
+const testimonials = [
+  {
+    id: 1,
+    name: "Sarah Johnson",
+    role: "Lead Designer at TechCorp",
+    avatar: "SJ",
+    avatarBg: "bg-indigo-500",
+    rating: 5,
+    text: "Anima has completely transformed our design-to-development workflow. What used to take weeks now takes hours. The AI-generated code is clean, maintainable, and pixel-perfect.",
+  },
+  {
+    id: 2,
+    name: "Marcus Chen",
+    role: "Frontend Engineer at StartupXYZ",
+    avatar: "MC",
+    avatarBg: "bg-purple-500",
+    rating: 5,
+    text: "I was skeptical at first, but the quality of the generated React code blew me away. It follows best practices, uses proper semantic HTML, and the Tailwind classes are spot on.",
+  },
+  {
+    id: 3,
+    name: "Emily Rodriguez",
+    role: "Product Manager at DesignStudio",
+    avatar: "ER",
+    avatarBg: "bg-pink-500",
+    rating: 5,
+    text: "Our team's productivity has increased by 300% since adopting Anima. The collaboration features are incredible and the prototypes we create are indistinguishable from the final product.",
+  },
+  {
+    id: 4,
+    name: "David Kim",
+    role: "CTO at InnovateTech",
+    avatar: "DK",
+    avatarBg: "bg-emerald-500",
+    rating: 5,
+    text: "The enterprise plan has been a game-changer for our organization. The dedicated support team is responsive and the custom integrations with our existing tools work flawlessly.",
+  },
+  {
+    id: 5,
+    name: "Lisa Thompson",
+    role: "UX Designer at CreativeAgency",
+    avatar: "LT",
+    avatarBg: "bg-amber-500",
+    rating: 5,
+    text: "Anima bridges the gap between design and development like nothing else I've used. My developers love the clean code output and I love that my designs are preserved perfectly.",
+  },
+  {
+    id: 6,
+    name: "James Wilson",
+    role: "Freelance Developer",
+    avatar: "JW",
+    avatarBg: "bg-blue-500",
+    rating: 5,
+    text: "As a freelancer, Anima has allowed me to take on more clients and deliver faster. The AI understands design intent and produces code that I'm proud to ship.",
+  },
+];
+
+const faqs = [
+  {
+    id: 1,
+    question: "What is Anima and how does it work?",
+    answer:
+      "Anima is an AI-powered web application builder that converts Figma designs into production-ready React and Tailwind CSS code. Simply connect your Figma account, select your design, and our AI engine will generate clean, maintainable code in seconds.",
+  },
+  {
+    id: 2,
+    question: "What frameworks and technologies does Anima support?",
+    answer:
+      "Anima currently supports React with Tailwind CSS as the primary output. We also support plain HTML/CSS, Vue.js, and are actively working on Angular and Svelte support. All generated code follows modern best practices and is production-ready.",
+  },
+  {
+    id: 3,
+    question: "How accurate is the AI-generated code?",
+    answer:
+      "Our AI achieves pixel-perfect accuracy for most designs. The generated code preserves fonts, colors, spacing, and layout exactly as designed in Figma. For complex animations and interactions, we provide a visual editor to fine-tune the output.",
+  },
+  {
+    id: 4,
+    question: "Can I customize the generated code?",
+    answer:
+      "Absolutely! The generated code is clean and well-structured, making it easy to customize. You can edit it directly in our built-in code editor or export it to your preferred IDE. All code is yours to modify as needed.",
+  },
+  {
+    id: 5,
+    question: "Is there a free trial available?",
+    answer:
+      "Yes! Our Starter plan is completely free and includes 3 projects with basic AI generation. No credit card required. You can upgrade to Pro or Enterprise at any time to unlock more features and unlimited projects.",
+  },
+  {
+    id: 6,
+    question: "How does team collaboration work?",
+    answer:
+      "Team members can be invited to projects where they can view, comment, and edit designs in real-time. The Pro plan supports up to 5 team members, while Enterprise offers unlimited seats with advanced permission controls.",
+  },
+  {
+    id: 7,
+    question: "What kind of support do you offer?",
+    answer:
+      "We offer community support for Starter users, priority email and chat support for Pro users, and dedicated account management with SLA guarantees for Enterprise customers. Our documentation and video tutorials are available to all users.",
+  },
+  {
+    id: 8,
+    question: "Can I export my projects?",
+    answer:
+      "Yes, you can export your projects as a complete React application with all assets, components, and configuration files. The exported project is ready to deploy to any hosting platform like Vercel, Netlify, or AWS.",
+  },
+];
+
+const stats = [
+  { id: 1, value: "50K+", label: "Developers" },
+  { id: 2, value: "2M+", label: "Projects Created" },
+  { id: 3, value: "99.9%", label: "Uptime" },
+  { id: 4, value: "4.9/5", label: "Average Rating" },
+];
+
+const integrations = [
+  { id: 1, name: "Figma", color: "bg-pink-100 text-pink-700" },
+  { id: 2, name: "GitHub", color: "bg-slate-100 text-slate-700" },
+  { id: 3, name: "Vercel", color: "bg-black text-white" },
+  { id: 4, name: "Netlify", color: "bg-teal-100 text-teal-700" },
+  { id: 5, name: "Storybook", color: "bg-orange-100 text-orange-700" },
+  { id: 6, name: "VS Code", color: "bg-blue-100 text-blue-700" },
+  { id: 7, name: "Slack", color: "bg-purple-100 text-purple-700" },
+  { id: 8, name: "Jira", color: "bg-indigo-100 text-indigo-700" },
+];
+
+const StarIcon = ({ filled }: { filled: boolean }) => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill={filled ? "#F59E0B" : "none"}
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M8 1L9.854 5.756L15 6.382L11.25 9.944L12.292 15L8 12.5L3.708 15L4.75 9.944L1 6.382L6.146 5.756L8 1Z"
+      stroke="#F59E0B"
+      strokeWidth="1.5"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const CheckIcon = () => (
+  <svg
+    width="16"
+    height="16"
+    viewBox="0 0 16 16"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+  >
+    <path
+      d="M3 8L6.5 11.5L13 5"
+      stroke="#6366F1"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+const ChevronIcon = ({ open }: { open: boolean }) => (
+  <svg
+    width="20"
+    height="20"
+    viewBox="0 0 20 20"
+    fill="none"
+    xmlns="http://www.w3.org/2000/svg"
+    className={`transition-transform duration-300 ${open ? "rotate-180" : ""}`}
+  >
+    <path
+      d="M5 7.5L10 12.5L15 7.5"
+      stroke="#6B7280"
+      strokeWidth="1.5"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    />
+  </svg>
+);
+
+export const Box = (): JSX.Element => {
+  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [openFaq, setOpenFaq] = useState<number | null>(null);
+  const [contactForm, setContactForm] = useState({
+    name: "",
+    email: "",
+    company: "",
+    message: "",
+  });
+  const [formSubmitted, setFormSubmitted] = useState(false);
+  const [emailSubscribe, setEmailSubscribe] = useState("");
+  const [subscribed, setSubscribed] = useState(false);
+  const [billingAnnual, setBillingAnnual] = useState(false);
+
+  const handleFaqToggle = (id: number) => {
+    setOpenFaq(openFaq === id ? null : id);
+  };
+
+  const handleContactChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
+    setContactForm({ ...contactForm, [e.target.name]: e.target.value });
+  };
+
+  const handleContactSubmit = (e: React.FormEvent) => {
+    e.preventDefault();
+    setFormSubmitted(true);
+    setContactForm({ name: "", email: "", company: "", message: "" });
+  };
+
+  const handleSubscribe = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (emailSubscribe) {
+      setSubscribed(true);
+      setEmailSubscribe("");
+    }
+  };
+
+  const getPrice = (plan: (typeof pricingPlans)[0]) => {
+    if (plan.price === "Free") return "Free";
+    const num = Number.parseInt(plan.price.replace("$", ""));
+    if (billingAnnual) {
+      return `$${Math.round(num * 0.8)}`;
+    }
+    return plan.price;
+  };
+
+  return (
+    <div className="min-h-screen bg-white font-sans" data-id="app-root">
+      {/* Navigation */}
+      <nav
+        className="fixed top-0 left-0 right-0 z-50 bg-white/95 backdrop-blur-sm border-b border-slate-100 shadow-sm"
+        data-id="navbar"
+        role="navigation"
+        aria-label="Main navigation"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="flex items-center justify-between h-16">
+            {/* Logo */}
+            <a
+              href="#home"
+              className="flex items-center gap-2"
+              aria-label="Anima Home"
+            >
+              <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                <svg
+                  width="18"
+                  height="18"
+                  viewBox="0 0 18 18"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path d="M9 2L15 6V12L9 16L3 12V6L9 2Z" fill="white" />
+                </svg>
+              </div>
+              <span className="text-xl font-bold text-slate-900 [font-family:'Inter-Bold',Helvetica]">
+                Anima
+              </span>
+            </a>
+
+            {/* Desktop Nav Links */}
+            <div className="hidden md:flex items-center gap-8">
+              {navLinks.map((link) => (
+                <a
+                  key={link.label}
+                  href={link.href}
+                  className="text-sm font-medium text-slate-600 hover:text-indigo-600 transition-colors duration-200 [font-family:'Inter-Medium',Helvetica]"
+                >
+                  {link.label}
+                </a>
+              ))}
+            </div>
+
+            {/* CTA Buttons */}
+            <div className="hidden md:flex items-center gap-3">
+              <button className="text-sm font-medium text-slate-700 hover:text-indigo-600 transition-colors px-4 py-2 [font-family:'Inter-Medium',Helvetica]">
+                Sign In
+              </button>
+              <button className="text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 transition-all px-5 py-2 rounded-lg shadow-sm [font-family:'Inter-SemiBold',Helvetica]">
+                Get Started Free
+              </button>
+            </div>
+
+            {/* Mobile Menu Button */}
+            <button
+              className="md:hidden p-2 rounded-lg text-slate-600 hover:bg-slate-100 transition-colors"
+              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
+              aria-label="Toggle mobile menu"
+              aria-expanded={mobileMenuOpen}
+            >
+              {mobileMenuOpen ? (
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M18 6L6 18M6 6L18 18"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              ) : (
+                <svg
+                  width="24"
+                  height="24"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M4 6H20M4 12H20M4 18H20"
+                    stroke="currentColor"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                  />
+                </svg>
+              )}
+            </button>
+          </div>
+        </div>
+
+        {/* Mobile Menu */}
+        {mobileMenuOpen && (
+          <div className="md:hidden bg-white border-t border-slate-100 px-4 py-4 space-y-3">
+            {navLinks.map((link) => (
+              <a
+                key={link.label}
+                href={link.href}
+                className="block text-sm font-medium text-slate-700 hover:text-indigo-600 py-2 transition-colors [font-family:'Inter-Medium',Helvetica]"
+                onClick={() => setMobileMenuOpen(false)}
+              >
+                {link.label}
+              </a>
+            ))}
+            <div className="pt-3 border-t border-slate-100 flex flex-col gap-2">
+              <button className="text-sm font-medium text-slate-700 py-2 text-left [font-family:'Inter-Medium',Helvetica]">
+                Sign In
+              </button>
+              <button className="text-sm font-semibold text-white bg-gradient-to-r from-indigo-600 to-purple-600 py-2.5 rounded-lg [font-family:'Inter-SemiBold',Helvetica]">
+                Get Started Free
+              </button>
+            </div>
+          </div>
+        )}
+      </nav>
+
+      {/* Hero Section */}
+      <section
+        id="home"
+        className="pt-24 pb-20 bg-gradient-to-br from-slate-50 via-indigo-50/30 to-purple-50/30 overflow-hidden"
+        data-id="hero-section"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-4xl mx-auto">
+            {/* Badge */}
+            <div className="inline-flex items-center gap-2 bg-indigo-50 border border-indigo-100 rounded-full px-4 py-1.5 mb-8">
+              <span className="w-2 h-2 rounded-full bg-indigo-500 animate-pulse"></span>
+              <span className="text-xs font-semibold text-indigo-700 [font-family:'Inter-SemiBold',Helvetica]">
+                Now with GPT-4 Powered Code Generation
+              </span>
+            </div>
+
+            {/* Headline */}
+            <h1 className="text-5xl sm:text-6xl lg:text-7xl font-extrabold text-slate-900 leading-tight mb-6 [font-family:'Inter-ExtraBold',Helvetica]">
+              Turn Figma Designs Into{" "}
+              <span className="bg-gradient-to-r from-indigo-600 to-purple-600 bg-clip-text text-transparent">
+                Production Code
+              </span>{" "}
+              Instantly
+            </h1>
+
+            {/* Subheadline */}
+            <p className="text-xl text-slate-600 leading-relaxed mb-10 max-w-2xl mx-auto [font-family:'Inter-Regular',Helvetica]">
+              Anima's AI transforms your Figma designs into pixel-perfect React
+              + Tailwind CSS applications. No more manual coding. Ship faster,
+              iterate smarter.
+            </p>
+
+            {/* CTA Buttons */}
+            <div className="flex flex-col sm:flex-row items-center justify-center gap-4 mb-16">
+              <button className="w-full sm:w-auto px-8 py-4 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold text-base rounded-xl shadow-lg shadow-indigo-200 transition-all duration-200 hover:shadow-xl hover:-translate-y-0.5 [font-family:'Inter-Bold',Helvetica]">
+                Start Building for Free
+              </button>
+              <button className="w-full sm:w-auto px-8 py-4 bg-white text-slate-800 font-semibold text-base rounded-xl border border-slate-200 hover:border-indigo-300 hover:text-indigo-700 shadow-sm transition-all duration-200 flex items-center justify-center gap-2 [font-family:'Inter-SemiBold',Helvetica]">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <circle
+                    cx="10"
+                    cy="10"
+                    r="9"
+                    stroke="#6366F1"
+                    strokeWidth="1.5"
+                  />
+                  <path d="M8 7L13 10L8 13V7Z" fill="#6366F1" />
+                </svg>
+                Watch Demo
+              </button>
+            </div>
+
+            {/* Stats */}
+            <div className="grid grid-cols-2 sm:grid-cols-4 gap-6 max-w-3xl mx-auto">
+              {stats.map((stat) => (
+                <div key={stat.id} className="text-center">
+                  <div className="text-3xl font-extrabold text-slate-900 [font-family:'Inter-ExtraBold',Helvetica]">
+                    {stat.value}
+                  </div>
+                  <div className="text-sm text-slate-500 mt-1 [font-family:'Inter-Regular',Helvetica]">
+                    {stat.label}
+                  </div>
+                </div>
+              ))}
+            </div>
+          </div>
+
+          {/* Hero Visual */}
+          <div className="mt-16 relative">
+            <div className="bg-white rounded-2xl shadow-2xl border border-slate-200 overflow-hidden max-w-5xl mx-auto">
+              {/* Browser Chrome */}
+              <div className="bg-slate-100 px-4 py-3 flex items-center gap-2 border-b border-slate-200">
+                <div className="w-3 h-3 rounded-full bg-red-400"></div>
+                <div className="w-3 h-3 rounded-full bg-yellow-400"></div>
+                <div className="w-3 h-3 rounded-full bg-green-400"></div>
+                <div className="flex-1 mx-4 bg-white rounded-md px-3 py-1 text-xs text-slate-400 [font-family:'Inter-Regular',Helvetica]">
+                  app.animaapp.com/project/my-design
+                </div>
+              </div>
+              {/* App Preview */}
+              <div className="bg-gradient-to-br from-indigo-50 to-purple-50 p-8 min-h-[320px] flex items-center justify-center">
+                <div className="w-full max-w-2xl">
+                  <div className="flex gap-4 mb-6">
+                    <div className="flex-1 bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+                      <div className="w-8 h-8 rounded-lg bg-indigo-100 mb-3"></div>
+                      <div className="h-3 bg-slate-200 rounded w-3/4 mb-2"></div>
+                      <div className="h-2 bg-slate-100 rounded w-full mb-1"></div>
+                      <div className="h-2 bg-slate-100 rounded w-5/6"></div>
+                    </div>
+                    <div className="flex-1 bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+                      <div className="w-8 h-8 rounded-lg bg-purple-100 mb-3"></div>
+                      <div className="h-3 bg-slate-200 rounded w-2/3 mb-2"></div>
+                      <div className="h-2 bg-slate-100 rounded w-full mb-1"></div>
+                      <div className="h-2 bg-slate-100 rounded w-4/5"></div>
+                    </div>
+                    <div className="flex-1 bg-white rounded-xl p-4 shadow-sm border border-slate-100">
+                      <div className="w-8 h-8 rounded-lg bg-pink-100 mb-3"></div>
+                      <div className="h-3 bg-slate-200 rounded w-3/4 mb-2"></div>
+                      <div className="h-2 bg-slate-100 rounded w-full mb-1"></div>
+                      <div className="h-2 bg-slate-100 rounded w-3/4"></div>
+                    </div>
+                  </div>
+                  <div className="bg-white rounded-xl p-5 shadow-sm border border-slate-100">
+                    <div className="flex items-center justify-between mb-4">
+                      <div className="h-4 bg-slate-200 rounded w-1/4"></div>
+                      <div className="h-7 bg-indigo-100 rounded-lg w-24"></div>
+                    </div>
+                    <div className="space-y-3">
+                      {[1, 2, 3].map((i) => (
+                        <div key={i} className="flex items-center gap-3">
+                          <div className="w-8 h-8 rounded-full bg-gradient-to-br from-indigo-200 to-purple-200 flex-shrink-0"></div>
+                          <div className="flex-1">
+                            <div className="h-2.5 bg-slate-200 rounded w-1/3 mb-1.5"></div>
+                            <div className="h-2 bg-slate-100 rounded w-2/3"></div>
+                          </div>
+                          <div className="h-6 bg-emerald-100 rounded-full w-16"></div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+            {/* Floating badges */}
+            <div className="absolute -left-4 top-1/3 bg-white rounded-xl shadow-lg border border-slate-100 px-4 py-3 hidden lg:flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-emerald-100 flex items-center justify-center">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M3 8L6.5 11.5L13 5"
+                    stroke="#10B981"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+              </div>
+              <div>
+                <div className="text-xs font-bold text-slate-800 [font-family:'Inter-Bold',Helvetica]">
+                  Code Generated
+                </div>
+                <div className="text-xs text-slate-500 [font-family:'Inter-Regular',Helvetica]">
+                  2.3s
+                </div>
+              </div>
+            </div>
+            <div className="absolute -right-4 top-1/4 bg-white rounded-xl shadow-lg border border-slate-100 px-4 py-3 hidden lg:flex items-center gap-2">
+              <div className="w-8 h-8 rounded-lg bg-indigo-100 flex items-center justify-center">
+                <svg
+                  width="16"
+                  height="16"
+                  viewBox="0 0 16 16"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M8 2L10 6H14L11 9L12 13L8 11L4 13L5 9L2 6H6L8 2Z"
+                    fill="#6366F1"
+                  />
+                </svg>
+              </div>
+              <div>
+                <div className="text-xs font-bold text-slate-800 [font-family:'Inter-Bold',Helvetica]">
+                  Pixel Perfect
+                </div>
+                <div className="text-xs text-slate-500 [font-family:'Inter-Regular',Helvetica]">
+                  100% accuracy
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Integrations Banner */}
+      <section
+        className="py-12 bg-slate-50 border-y border-slate-100"
+        data-id="integrations-section"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <p className="text-center text-sm font-semibold text-slate-400 uppercase tracking-widest mb-8 [font-family:'Inter-SemiBold',Helvetica]">
+            Integrates with your favorite tools
+          </p>
+          <div className="flex flex-wrap items-center justify-center gap-3">
+            {integrations.map((integration) => (
+              <span
+                key={integration.id}
+                className={`px-5 py-2 rounded-full text-sm font-semibold ${integration.color} [font-family:'Inter-SemiBold',Helvetica]`}
+              >
+                {integration.name}
+              </span>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Features Section */}
+      <section
+        id="features"
+        className="py-24 bg-white"
+        data-id="features-section"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Section Header */}
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <span className="text-sm font-semibold text-indigo-600 uppercase tracking-widest [font-family:'Inter-SemiBold',Helvetica]">
+              Features
+            </span>
+            <h2 className="mt-3 text-4xl font-extrabold text-slate-900 [font-family:'Inter-ExtraBold',Helvetica]">
+              Everything you need to build faster
+            </h2>
+            <p className="mt-4 text-lg text-slate-600 [font-family:'Inter-Regular',Helvetica]">
+              From design to deployment, Anima provides all the tools your team
+              needs to ship beautiful web applications.
+            </p>
+          </div>
+
+          {/* Features Grid */}
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
+            {features.map((feature) => (
+              <div
+                key={feature.id}
+                className="group bg-white rounded-2xl p-6 border border-slate-100 hover:border-indigo-200 hover:shadow-lg hover:shadow-indigo-50 transition-all duration-300"
+                data-id={`feature-card-${feature.id}`}
+              >
+                <div className="mb-4">{feature.icon}</div>
+                <h3 className="text-lg font-bold text-slate-900 mb-2 [font-family:'Inter-Bold',Helvetica]">
+                  {feature.title}
+                </h3>
+                <p className="text-sm text-slate-600 leading-relaxed [font-family:'Inter-Regular',Helvetica]">
+                  {feature.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* How It Works Section */}
+      <section
+        className="py-24 bg-gradient-to-br from-slate-900 to-indigo-950"
+        data-id="how-it-works-section"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <span className="text-sm font-semibold text-indigo-400 uppercase tracking-widest [font-family:'Inter-SemiBold',Helvetica]">
+              How It Works
+            </span>
+            <h2 className="mt-3 text-4xl font-extrabold text-white [font-family:'Inter-ExtraBold',Helvetica]">
+              From design to code in 3 steps
+            </h2>
+            <p className="mt-4 text-lg text-slate-400 [font-family:'Inter-Regular',Helvetica]">
+              Our streamlined workflow makes it effortless to go from Figma
+              design to deployed application.
+            </p>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 relative">
+            {/* Connector line */}
+            <div className="hidden md:block absolute top-12 left-1/3 right-1/3 h-0.5 bg-gradient-to-r from-indigo-500 to-purple-500 z-0"></div>
+
+            {[
+              {
+                step: "01",
+                title: "Connect Figma",
+                description:
+                  "Link your Figma account and select the design file you want to convert. Anima supports all Figma components and styles.",
+                icon: (
+                  <svg
+                    width="28"
+                    height="28"
+                    viewBox="0 0 28 28"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M10 7H14C15.6569 7 17 8.34315 17 10C17 11.6569 15.6569 13 14 13H10V7Z"
+                      fill="#EC4899"
+                    />
+                    <path
+                      d="M10 13H14C15.6569 13 17 14.3431 17 16C17 17.6569 15.6569 19 14 19H10V13Z"
+                      fill="#A855F7"
+                    />
+                    <path
+                      d="M10 19H13C14.6569 19 16 20.3431 16 22C16 23.6569 14.6569 25 13 25C11.3431 25 10 23.6569 10 22V19Z"
+                      fill="#F97316"
+                    />
+                    <path
+                      d="M17 7H20C21.6569 7 23 8.34315 23 10C23 11.6569 21.6569 13 20 13H17V7Z"
+                      fill="#3B82F6"
+                    />
+                    <circle cx="20" cy="16" r="3" fill="#10B981" />
+                  </svg>
+                ),
+              },
+              {
+                step: "02",
+                title: "AI Generates Code",
+                description:
+                  "Our AI analyzes your design and generates clean, semantic React + Tailwind CSS code that matches your design pixel-perfectly.",
+                icon: (
+                  <svg
+                    width="28"
+                    height="28"
+                    viewBox="0 0 28 28"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path
+                      d="M14 4L24 9V19L14 24L4 19V9L14 4Z"
+                      stroke="white"
+                      strokeWidth="1.5"
+                      strokeLinejoin="round"
+                    />
+                    <path
+                      d="M10 14L13 17L18 12"
+                      stroke="#6366F1"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                      strokeLinejoin="round"
+                    />
+                  </svg>
+                ),
+              },
+              {
+                step: "03",
+                title: "Deploy & Ship",
+                description:
+                  "Review, customize, and deploy your application with one click to Vercel, Netlify, or any hosting platform of your choice.",
+                icon: (
+                  <svg
+                    width="28"
+                    height="28"
+                    viewBox="0 0 28 28"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M14 4L20 10H16V18H12V10H8L14 4Z" fill="white" />
+                    <path
+                      d="M6 22H22"
+                      stroke="white"
+                      strokeWidth="2"
+                      strokeLinecap="round"
+                    />
+                  </svg>
+                ),
+              },
+            ].map((item, index) => (
+              <div
+                key={index}
+                className="relative z-10 bg-white/5 backdrop-blur-sm border border-white/10 rounded-2xl p-8 text-center hover:bg-white/10 transition-all duration-300"
+                data-id={`step-card-${index + 1}`}
+              >
+                <div className="w-16 h-16 rounded-2xl bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center mx-auto mb-6 shadow-lg shadow-indigo-900/50">
+                  {item.icon}
+                </div>
+                <div className="text-xs font-bold text-indigo-400 mb-2 [font-family:'Inter-Bold',Helvetica]">
+                  STEP {item.step}
+                </div>
+                <h3 className="text-xl font-bold text-white mb-3 [font-family:'Inter-Bold',Helvetica]">
+                  {item.title}
+                </h3>
+                <p className="text-slate-400 text-sm leading-relaxed [font-family:'Inter-Regular',Helvetica]">
+                  {item.description}
+                </p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Pricing Section */}
+      <section
+        id="pricing"
+        className="py-24 bg-slate-50"
+        data-id="pricing-section"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Section Header */}
+          <div className="text-center max-w-2xl mx-auto mb-12">
+            <span className="text-sm font-semibold text-indigo-600 uppercase tracking-widest [font-family:'Inter-SemiBold',Helvetica]">
+              Pricing
+            </span>
+            <h2 className="mt-3 text-4xl font-extrabold text-slate-900 [font-family:'Inter-ExtraBold',Helvetica]">
+              Simple, transparent pricing
+            </h2>
+            <p className="mt-4 text-lg text-slate-600 [font-family:'Inter-Regular',Helvetica]">
+              Choose the plan that fits your needs. Upgrade or downgrade at any
+              time.
+            </p>
+          </div>
+
+          {/* Billing Toggle */}
+          <div className="flex items-center justify-center gap-4 mb-12">
+            <span
+              className={`text-sm font-medium [font-family:'Inter-Medium',Helvetica] ${!billingAnnual ? "text-slate-900" : "text-slate-500"}`}
+            >
+              Monthly
+            </span>
+            <button
+              onClick={() => setBillingAnnual(!billingAnnual)}
+              className={`relative w-12 h-6 rounded-full transition-colors duration-300 ${billingAnnual ? "bg-indigo-600" : "bg-slate-300"}`}
+              aria-label="Toggle annual billing"
+              role="switch"
+              aria-checked={billingAnnual}
+            >
+              <span
+                className={`absolute top-1 w-4 h-4 bg-white rounded-full shadow transition-transform duration-300 ${billingAnnual ? "translate-x-7" : "translate-x-1"}`}
+              ></span>
+            </button>
+            <span
+              className={`text-sm font-medium [font-family:'Inter-Medium',Helvetica] ${billingAnnual ? "text-slate-900" : "text-slate-500"}`}
+            >
+              Annual
+              <span className="ml-2 text-xs font-bold text-emerald-600 bg-emerald-50 px-2 py-0.5 rounded-full [font-family:'Inter-Bold',Helvetica]">
+                Save 20%
+              </span>
+            </span>
+          </div>
+
+          {/* Pricing Cards */}
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 max-w-5xl mx-auto">
+            {pricingPlans.map((plan) => (
+              <div
+                key={plan.id}
+                className={`relative rounded-2xl overflow-hidden ${plan.badge ? "ring-2 ring-indigo-500 shadow-xl shadow-indigo-100" : "shadow-md"}`}
+                data-id={`pricing-card-${plan.id}`}
+              >
+                {plan.badge && (
+                  <div className="absolute top-0 left-0 right-0 bg-gradient-to-r from-indigo-600 to-purple-600 text-white text-xs font-bold text-center py-1.5 [font-family:'Inter-Bold',Helvetica]">
+                    {plan.badge}
+                  </div>
+                )}
+                <div
+                  className={`bg-gradient-to-br ${plan.color} p-8 ${plan.badge ? "pt-10" : ""}`}
+                >
+                  <h3 className="text-xl font-bold text-white mb-1 [font-family:'Inter-Bold',Helvetica]">
+                    {plan.name}
+                  </h3>
+                  <p className="text-slate-300 text-sm mb-6 [font-family:'Inter-Regular',Helvetica]">
+                    {plan.description}
+                  </p>
+                  <div className="flex items-end gap-1 mb-6">
+                    <span className="text-4xl font-extrabold text-white [font-family:'Inter-ExtraBold',Helvetica]">
+                      {getPrice(plan)}
+                    </span>
+                    {plan.period && (
+                      <span className="text-slate-300 text-sm mb-1 [font-family:'Inter-Regular',Helvetica]">
+                        {billingAnnual
+                          ? "/month, billed annually"
+                          : plan.period}
+                      </span>
+                    )}
+                  </div>
+                  <button
+                    className={`w-full py-3 rounded-xl font-bold text-sm transition-all duration-200 ${plan.buttonStyle} [font-family:'Inter-Bold',Helvetica]`}
+                  >
+                    {plan.price === "Free"
+                      ? "Get Started Free"
+                      : "Start Free Trial"}
+                  </button>
+                </div>
+                <div className="bg-white p-8">
+                  <ul className="space-y-3">
+                    {plan.features.map((feature, idx) => (
+                      <li key={idx} className="flex items-center gap-3">
+                        <CheckIcon />
+                        <span className="text-sm text-slate-700 [font-family:'Inter-Regular',Helvetica]">
+                          {feature}
+                        </span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Testimonials Section */}
+      <section
+        id="testimonials"
+        className="py-24 bg-white"
+        data-id="testimonials-section"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          {/* Section Header */}
+          <div className="text-center max-w-2xl mx-auto mb-16">
+            <span className="text-sm font-semibold text-indigo-600 uppercase tracking-widest [font-family:'Inter-SemiBold',Helvetica]">
+              Testimonials
+            </span>
+            <h2 className="mt-3 text-4xl font-extrabold text-slate-900 [font-family:'Inter-ExtraBold',Helvetica]">
+              Loved by designers and developers
+            </h2>
+            <p className="mt-4 text-lg text-slate-600 [font-family:'Inter-Regular',Helvetica]">
+              Join thousands of teams who have transformed their workflow with
+              Anima.
+            </p>
+          </div>
+
+          {/* Testimonials Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {testimonials.map((testimonial) => (
+              <div
+                key={testimonial.id}
+                className="bg-slate-50 rounded-2xl p-6 border border-slate-100 hover:shadow-md transition-shadow duration-300"
+                data-id={`testimonial-card-${testimonial.id}`}
+              >
+                {/* Stars */}
+                <div className="flex gap-1 mb-4">
+                  {Array.from({ length: 5 }).map((_, i) => (
+                    <StarIcon key={i} filled={i < testimonial.rating} />
+                  ))}
+                </div>
+                {/* Text */}
+                <p className="text-slate-700 text-sm leading-relaxed mb-6 [font-family:'Inter-Regular',Helvetica]">
+                  "{testimonial.text}"
+                </p>
+                {/* Author */}
+                <div className="flex items-center gap-3">
+                  <div
+                    className={`w-10 h-10 rounded-full ${testimonial.avatarBg} flex items-center justify-center text-white text-sm font-bold [font-family:'Inter-Bold',Helvetica]`}
+                  >
+                    {testimonial.avatar}
+                  </div>
+                  <div>
+                    <div className="text-sm font-bold text-slate-900 [font-family:'Inter-Bold',Helvetica]">
+                      {testimonial.name}
+                    </div>
+                    <div className="text-xs text-slate-500 [font-family:'Inter-Regular',Helvetica]">
+                      {testimonial.role}
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* FAQ Section */}
+      <section id="faq" className="py-24 bg-slate-50" data-id="faq-section">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-3xl mx-auto">
+            {/* Section Header */}
+            <div className="text-center mb-16">
+              <span className="text-sm font-semibold text-indigo-600 uppercase tracking-widest [font-family:'Inter-SemiBold',Helvetica]">
+                FAQ
+              </span>
+              <h2 className="mt-3 text-4xl font-extrabold text-slate-900 [font-family:'Inter-ExtraBold',Helvetica]">
+                Frequently asked questions
+              </h2>
+              <p className="mt-4 text-lg text-slate-600 [font-family:'Inter-Regular',Helvetica]">
+                Everything you need to know about Anima. Can't find the answer?
+                Contact our support team.
+              </p>
+            </div>
+
+            {/* FAQ Accordion */}
+            <div className="space-y-3">
+              {faqs.map((faq) => (
+                <div
+                  key={faq.id}
+                  className="bg-white rounded-xl border border-slate-200 overflow-hidden"
+                  data-id={`faq-item-${faq.id}`}
+                >
+                  <button
+                    className="w-full flex items-center justify-between px-6 py-5 text-left hover:bg-slate-50 transition-colors duration-200"
+                    onClick={() => handleFaqToggle(faq.id)}
+                    aria-expanded={openFaq === faq.id}
+                  >
+                    <span className="text-sm font-semibold text-slate-900 pr-4 [font-family:'Inter-SemiBold',Helvetica]">
+                      {faq.question}
+                    </span>
+                    <ChevronIcon open={openFaq === faq.id} />
+                  </button>
+                  {openFaq === faq.id && (
+                    <div className="px-6 pb-5">
+                      <p className="text-sm text-slate-600 leading-relaxed [font-family:'Inter-Regular',Helvetica]">
+                        {faq.answer}
+                      </p>
+                    </div>
+                  )}
+                </div>
+              ))}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* CTA Banner */}
+      <section
+        className="py-20 bg-gradient-to-r from-indigo-600 to-purple-700"
+        data-id="cta-section"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+          <h2 className="text-4xl font-extrabold text-white mb-4 [font-family:'Inter-ExtraBold',Helvetica]">
+            Ready to build something amazing?
+          </h2>
+          <p className="text-xl text-indigo-100 mb-10 max-w-2xl mx-auto [font-family:'Inter-Regular',Helvetica]">
+            Join 50,000+ developers and designers who are already building
+            faster with Anima.
+          </p>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
+            <button className="w-full sm:w-auto px-8 py-4 bg-white text-indigo-700 font-bold text-base rounded-xl hover:bg-indigo-50 transition-all duration-200 shadow-lg [font-family:'Inter-Bold',Helvetica]">
+              Start Building for Free
+            </button>
+            <button className="w-full sm:w-auto px-8 py-4 bg-transparent text-white font-semibold text-base rounded-xl border-2 border-white/40 hover:border-white hover:bg-white/10 transition-all duration-200 [font-family:'Inter-SemiBold',Helvetica]">
+              Schedule a Demo
+            </button>
+          </div>
+        </div>
+      </section>
+
+      {/* Contact Section */}
+      <section
+        id="contact"
+        className="py-24 bg-white"
+        data-id="contact-section"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 lg:grid-cols-2 gap-16 items-start">
+            {/* Left Column */}
+            <div>
+              <span className="text-sm font-semibold text-indigo-600 uppercase tracking-widest [font-family:'Inter-SemiBold',Helvetica]">
+                Contact
+              </span>
+              <h2 className="mt-3 text-4xl font-extrabold text-slate-900 mb-4 [font-family:'Inter-ExtraBold',Helvetica]">
+                Get in touch with us
+              </h2>
+              <p className="text-lg text-slate-600 mb-10 [font-family:'Inter-Regular',Helvetica]">
+                Have questions about Anima? We'd love to hear from you. Send us
+                a message and we'll respond as soon as possible.
+              </p>
+
+              <div className="space-y-6">
+                {[
+                  {
+                    icon: (
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M3 5C3 4.44772 3.44772 4 4 4H16C16.5523 4 17 4.44772 17 5V15C17 15.5523 16.5523 16 16 16H4C3.44772 16 3 15.5523 3 15V5Z"
+                          stroke="#6366F1"
+                          strokeWidth="1.5"
+                        />
+                        <path
+                          d="M3 5L10 11L17 5"
+                          stroke="#6366F1"
+                          strokeWidth="1.5"
+                          strokeLinecap="round"
+                        />
+                      </svg>
+                    ),
+                    label: "Email",
+                    value: "hello@animaapp.com",
+                  },
+                  {
+                    icon: (
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M10 2C6.68629 2 4 4.68629 4 8C4 12 10 18 10 18C10 18 16 12 16 8C16 4.68629 13.3137 2 10 2Z"
+                          stroke="#6366F1"
+                          strokeWidth="1.5"
+                        />
+                        <circle
+                          cx="10"
+                          cy="8"
+                          r="2"
+                          stroke="#6366F1"
+                          strokeWidth="1.5"
+                        />
+                      </svg>
+                    ),
+                    label: "Office",
+                    value: "123 Design Street, San Francisco, CA 94102",
+                  },
+                  {
+                    icon: (
+                      <svg
+                        width="20"
+                        height="20"
+                        viewBox="0 0 20 20"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M4 4C4 3.44772 4.44772 3 5 3H7.5L9 7L7.5 8.5C8.32843 10.1569 9.84315 11.6716 11.5 12.5L13 11L17 12.5V15C17 15.5523 16.5523 16 16 16C9.37258 16 4 10.6274 4 4Z"
+                          stroke="#6366F1"
+                          strokeWidth="1.5"
+                          strokeLinejoin="round"
+                        />
+                      </svg>
+                    ),
+                    label: "Phone",
+                    value: "+1 (555) 123-4567",
+                  },
+                ].map((item, index) => (
+                  <div key={index} className="flex items-start gap-4">
+                    <div className="w-10 h-10 rounded-xl bg-indigo-50 flex items-center justify-center flex-shrink-0">
+                      {item.icon}
+                    </div>
+                    <div>
+                      <div className="text-xs font-semibold text-slate-400 uppercase tracking-wide mb-1 [font-family:'Inter-SemiBold',Helvetica]">
+                        {item.label}
+                      </div>
+                      <div className="text-sm text-slate-700 [font-family:'Inter-Regular',Helvetica]">
+                        {item.value}
+                      </div>
+                    </div>
+                  </div>
+                ))}
+              </div>
+            </div>
+
+            {/* Right Column - Contact Form */}
+            <div className="bg-slate-50 rounded-2xl p-8 border border-slate-100">
+              {formSubmitted ? (
+                <div className="text-center py-12">
+                  <div className="w-16 h-16 rounded-full bg-emerald-100 flex items-center justify-center mx-auto mb-4">
+                    <svg
+                      width="32"
+                      height="32"
+                      viewBox="0 0 32 32"
+                      fill="none"
+                      xmlns="http://www.w3.org/2000/svg"
+                    >
+                      <path
+                        d="M6 16L12 22L26 10"
+                        stroke="#10B981"
+                        strokeWidth="2.5"
+                        strokeLinecap="round"
+                        strokeLinejoin="round"
+                      />
+                    </svg>
+                  </div>
+                  <h3 className="text-xl font-bold text-slate-900 mb-2 [font-family:'Inter-Bold',Helvetica]">
+                    Message Sent!
+                  </h3>
+                  <p className="text-slate-600 text-sm [font-family:'Inter-Regular',Helvetica]">
+                    Thank you for reaching out. We'll get back to you within 24
+                    hours.
+                  </p>
+                  <button
+                    onClick={() => setFormSubmitted(false)}
+                    className="mt-6 text-sm font-semibold text-indigo-600 hover:text-indigo-700 [font-family:'Inter-SemiBold',Helvetica]"
+                  >
+                    Send another message
+                  </button>
+                </div>
+              ) : (
+                <form onSubmit={handleContactSubmit} noValidate>
+                  <h3 className="text-xl font-bold text-slate-900 mb-6 [font-family:'Inter-Bold',Helvetica]">
+                    Send us a message
+                  </h3>
+                  <div className="space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                      <div>
+                        <label
+                          htmlFor="contact-name"
+                          className="block text-xs font-semibold text-slate-700 mb-1.5 [font-family:'Inter-SemiBold',Helvetica]"
+                        >
+                          Full Name *
+                        </label>
+                        <input
+                          id="contact-name"
+                          type="text"
+                          name="name"
+                          value={contactForm.name}
+                          onChange={handleContactChange}
+                          required
+                          placeholder="John Doe"
+                          className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all [font-family:'Inter-Regular',Helvetica]"
+                        />
+                      </div>
+                      <div>
+                        <label
+                          htmlFor="contact-email"
+                          className="block text-xs font-semibold text-slate-700 mb-1.5 [font-family:'Inter-SemiBold',Helvetica]"
+                        >
+                          Email Address *
+                        </label>
+                        <input
+                          id="contact-email"
+                          type="email"
+                          name="email"
+                          value={contactForm.email}
+                          onChange={handleContactChange}
+                          required
+                          placeholder="john@example.com"
+                          className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all [font-family:'Inter-Regular',Helvetica]"
+                        />
+                      </div>
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="contact-company"
+                        className="block text-xs font-semibold text-slate-700 mb-1.5 [font-family:'Inter-SemiBold',Helvetica]"
+                      >
+                        Company
+                      </label>
+                      <input
+                        id="contact-company"
+                        type="text"
+                        name="company"
+                        value={contactForm.company}
+                        onChange={handleContactChange}
+                        placeholder="Your company name"
+                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all [font-family:'Inter-Regular',Helvetica]"
+                      />
+                    </div>
+                    <div>
+                      <label
+                        htmlFor="contact-message"
+                        className="block text-xs font-semibold text-slate-700 mb-1.5 [font-family:'Inter-SemiBold',Helvetica]"
+                      >
+                        Message *
+                      </label>
+                      <textarea
+                        id="contact-message"
+                        name="message"
+                        value={contactForm.message}
+                        onChange={handleContactChange}
+                        required
+                        rows={5}
+                        placeholder="Tell us how we can help..."
+                        className="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent transition-all resize-none [font-family:'Inter-Regular',Helvetica]"
+                      />
+                    </div>
+                    <button
+                      type="submit"
+                      className="w-full py-3.5 bg-gradient-to-r from-indigo-600 to-purple-600 hover:from-indigo-700 hover:to-purple-700 text-white font-bold text-sm rounded-xl transition-all duration-200 shadow-sm hover:shadow-md [font-family:'Inter-Bold',Helvetica]"
+                    >
+                      Send Message
+                    </button>
+                  </div>
+                </form>
+              )}
+            </div>
+          </div>
+        </div>
+      </section>
+
+      {/* Newsletter Section */}
+      <section
+        className="py-16 bg-indigo-50 border-y border-indigo-100"
+        data-id="newsletter-section"
+      >
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="max-w-xl mx-auto text-center">
+            <h3 className="text-2xl font-extrabold text-slate-900 mb-2 [font-family:'Inter-ExtraBold',Helvetica]">
+              Stay in the loop
+            </h3>
+            <p className="text-slate-600 text-sm mb-6 [font-family:'Inter-Regular',Helvetica]">
+              Get the latest updates, tutorials, and product news delivered to
+              your inbox.
+            </p>
+            {subscribed ? (
+              <div className="flex items-center justify-center gap-2 text-emerald-600">
+                <svg
+                  width="20"
+                  height="20"
+                  viewBox="0 0 20 20"
+                  fill="none"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    d="M4 10L8 14L16 6"
+                    stroke="#10B981"
+                    strokeWidth="2"
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                  />
+                </svg>
+                <span className="text-sm font-semibold [font-family:'Inter-SemiBold',Helvetica]">
+                  You're subscribed! Thank you.
+                </span>
+              </div>
+            ) : (
+              <form
+                onSubmit={handleSubscribe}
+                className="flex gap-3 max-w-md mx-auto"
+              >
+                <input
+                  type="email"
+                  value={emailSubscribe}
+                  onChange={(e) => setEmailSubscribe(e.target.value)}
+                  required
+                  placeholder="Enter your email"
+                  className="flex-1 px-4 py-3 bg-white border border-slate-200 rounded-xl text-sm text-slate-900 placeholder-slate-400 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-transparent [font-family:'Inter-Regular',Helvetica]"
+                />
+                <button
+                  type="submit"
+                  className="px-6 py-3 bg-indigo-600 hover:bg-indigo-700 text-white font-semibold text-sm rounded-xl transition-colors [font-family:'Inter-SemiBold',Helvetica]"
+                >
+                  Subscribe
+                </button>
+              </form>
+            )}
+          </div>
+        </div>
+      </section>
+
+      {/* Footer */}
+      <footer className="bg-slate-900 text-slate-400 py-16" data-id="footer">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-10 mb-12">
+            {/* Brand */}
+            <div className="lg:col-span-2">
+              <div className="flex items-center gap-2 mb-4">
+                <div className="w-8 h-8 rounded-lg bg-gradient-to-br from-indigo-500 to-purple-600 flex items-center justify-center">
+                  <svg
+                    width="18"
+                    height="18"
+                    viewBox="0 0 18 18"
+                    fill="none"
+                    xmlns="http://www.w3.org/2000/svg"
+                  >
+                    <path d="M9 2L15 6V12L9 16L3 12V6L9 2Z" fill="white" />
+                  </svg>
+                </div>
+                <span className="text-xl font-bold text-white [font-family:'Inter-Bold',Helvetica]">
+                  Anima
+                </span>
+              </div>
+              <p className="text-sm leading-relaxed mb-6 [font-family:'Inter-Regular',Helvetica]">
+                The AI-powered platform that transforms Figma designs into
+                production-ready React applications. Build faster, ship smarter.
+              </p>
+              <div className="flex gap-3">
+                {[
+                  {
+                    label: "Twitter",
+                    icon: (
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M15 2C14.3 2.7 13.5 3.2 12.6 3.4C11.7 2.5 10.5 2 9.2 2C6.7 2 4.7 4 4.7 6.5C4.7 6.8 4.7 7.1 4.8 7.4C1.7 7.2 -0.1 5.6 1 3.5C1.5 4.3 2.3 4.9 3.2 5.1C2.8 3.9 3.5 2.6 4.7 2.2C4.1 3.1 4.1 4.3 4.7 5.2C3.8 4.8 3.1 4.1 2.8 3.2C2.5 4.5 3.1 5.9 4.3 6.6C3.5 6.6 2.8 6.3 2.2 5.8C2.3 7.2 3.3 8.4 4.7 8.7C3.9 8.9 3.1 8.8 2.4 8.5C2.8 9.8 4 10.7 5.4 10.8C4.2 11.7 2.7 12.2 1 12.2C0.7 12.2 0.3 12.2 0 12.1C1.5 13.1 3.2 13.6 5 13.6C9.2 13.6 12.5 10.3 12.5 6.1C12.5 5.9 12.5 5.8 12.5 5.6C13.4 5 14.2 4.2 15 3.3V2Z"
+                          fill="currentColor"
+                        />
+                      </svg>
+                    ),
+                  },
+                  {
+                    label: "GitHub",
+                    icon: (
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          fillRule="evenodd"
+                          clipRule="evenodd"
+                          d="M8 0C3.58 0 0 3.58 0 8C0 11.54 2.29 14.53 5.47 15.59C5.87 15.66 6.02 15.42 6.02 15.21C6.02 15.02 6.01 14.39 6.01 13.72C4 14.09 3.48 13.23 3.32 12.78C3.23 12.55 2.84 11.84 2.5 11.65C2.22 11.5 1.82 11.13 2.49 11.12C3.12 11.11 3.57 11.7 3.72 11.94C4.44 13.15 5.59 12.81 6.05 12.6C6.12 12.08 6.33 11.73 6.56 11.53C4.78 11.33 2.92 10.64 2.92 7.58C2.92 6.71 3.23 5.99 3.74 5.43C3.66 5.23 3.38 4.41 3.82 3.31C3.82 3.31 4.49 3.1 6.02 4.13C6.66 3.95 7.34 3.86 8.02 3.86C8.7 3.86 9.38 3.95 10.02 4.13C11.55 3.09 12.22 3.31 12.22 3.31C12.66 4.41 12.38 5.23 12.3 5.43C12.81 5.99 13.12 6.7 13.12 7.58C13.12 10.65 11.25 11.33 9.47 11.53C9.76 11.78 10.01 12.26 10.01 13.01C10.01 14.08 10 14.94 10 15.21C10 15.42 10.15 15.67 10.55 15.59C13.71 14.53 16 11.53 16 8C16 3.58 12.42 0 8 0Z"
+                          fill="currentColor"
+                        />
+                      </svg>
+                    ),
+                  },
+                  {
+                    label: "LinkedIn",
+                    icon: (
+                      <svg
+                        width="16"
+                        height="16"
+                        viewBox="0 0 16 16"
+                        fill="none"
+                        xmlns="http://www.w3.org/2000/svg"
+                      >
+                        <path
+                          d="M0 1.146C0 0.513 0.526 0 1.175 0H14.825C15.474 0 16 0.513 16 1.146V14.854C16 15.487 15.474 16 14.825 16H1.175C0.526 16 0 15.487 0 14.854V1.146ZM4.943 13.394V6.169H2.542V13.394H4.943ZM3.742 5.17C4.58 5.17 5.101 4.617 5.101 3.927C5.086 3.222 4.581 2.683 3.758 2.683C2.936 2.683 2.4 3.223 2.4 3.927C2.4 4.617 2.921 5.17 3.727 5.17H3.742ZM8.651 13.394V9.359C8.651 9.143 8.667 8.927 8.731 8.773C8.904 8.342 9.299 7.895 9.963 7.895C10.832 7.895 11.179 8.558 11.179 9.529V13.394H13.58V9.25C13.58 7.03 12.396 5.998 10.816 5.998C9.542 5.998 8.972 6.698 8.651 7.191V7.219H8.635C8.64 7.21 8.645 7.2 8.651 7.191V6.169H6.251C6.281 6.844 6.251 13.394 6.251 13.394H8.651Z"
+                          fill="currentColor"
+                        />
+                      </svg>
+                    ),
+                  },
+                ].map((social) => (
+                  <a
+                    key={social.label}
+                    href="#"
+                    aria-label={social.label}
+                    className="w-9 h-9 rounded-lg bg-slate-800 hover:bg-indigo-600 flex items-center justify-center transition-colors duration-200"
+                  >
+                    {social.icon}
+                  </a>
+                ))}
+              </div>
+            </div>
+
+            {/* Footer Links */}
+            {[
+              {
+                title: "Product",
+                links: [
+                  "Features",
+                  "Pricing",
+                  "Changelog",
+                  "Roadmap",
+                  "Documentation",
+                ],
+              },
+              {
+                title: "Company",
+                links: ["About", "Blog", "Careers", "Press", "Partners"],
+              },
+              {
+                title: "Legal",
+                links: [
+                  "Privacy Policy",
+                  "Terms of Service",
+                  "Cookie Policy",
+                  "Security",
+                ],
+              },
+            ].map((column) => (
+              <div key={column.title}>
+                <h4 className="text-sm font-bold text-white mb-4 [font-family:'Inter-Bold',Helvetica]">
+                  {column.title}
+                </h4>
+                <ul className="space-y-3">
+                  {column.links.map((link) => (
+                    <li key={link}>
+                      <a
+                        href="#"
+                        className="text-sm hover:text-white transition-colors duration-200 [font-family:'Inter-Regular',Helvetica]"
+                      >
+                        {link}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
+          </div>
+
+          {/* Footer Bottom */}
+          <div className="border-t border-slate-800 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <p className="text-xs text-slate-500 [font-family:'Inter-Regular',Helvetica]">
+              © 2026 Anima, Inc. All rights reserved.
+            </p>
+            <div className="flex items-center gap-6">
+              <a
+                href="#"
+                className="text-xs text-slate-500 hover:text-slate-300 transition-colors [font-family:'Inter-Regular',Helvetica]"
+              >
+                Privacy
+              </a>
+              <a
+                href="#"
+                className="text-xs text-slate-500 hover:text-slate-300 transition-colors [font-family:'Inter-Regular',Helvetica]"
+              >
+                Terms
+              </a>
+              <a
+                href="#"
+                className="text-xs text-slate-500 hover:text-slate-300 transition-colors [font-family:'Inter-Regular',Helvetica]"
+              >
+                Cookies
+              </a>
+            </div>
+          </div>
+        </div>
+      </footer>
+    </div>
+  );
+};

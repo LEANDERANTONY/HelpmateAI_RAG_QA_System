@@ -23,6 +23,20 @@ CANONICAL_HEADINGS = (
     "references",
 )
 
+SECTION_KIND_ALIASES: dict[str, list[str]] = {
+    "overview": ["overview", "main focus", "main aim", "objective", "objectives", "contribution", "study purpose"],
+    "abstract": ["abstract", "summary", "overview", "aim", "objective", "contribution"],
+    "introduction": ["introduction", "background", "motivation", "context"],
+    "background": ["background", "motivation", "context", "related work"],
+    "methodology": ["methods", "methodology", "approach", "implementation"],
+    "results": ["results", "findings", "outcomes", "evaluation"],
+    "discussion": ["discussion", "interpretation", "implications", "challenge", "limitation"],
+    "conclusion": ["conclusion", "conclusions", "takeaway", "final remarks", "summary"],
+    "future work": ["future work", "future directions", "next steps", "follow-up", "recommendations", "further research"],
+    "future directions": ["future directions", "future work", "next steps", "follow-up", "recommendations"],
+    "limitations": ["limitations", "challenge", "constraints", "barriers"],
+}
+
 
 def _clean_line(line: str) -> str:
     return " ".join(line.strip().split())
@@ -87,6 +101,19 @@ def _summary_sentences(text: str) -> list[str]:
     return [sentence.strip() for sentence in re.split(r"(?<=[.!?])\s+", normalized) if sentence.strip()]
 
 
+def _sentences_with_keywords(text: str, keywords: tuple[str, ...], limit: int = 3) -> list[str]:
+    sentences = _summary_sentences(text)
+    lowered_keywords = tuple(keyword.lower() for keyword in keywords)
+    picked: list[str] = []
+    for sentence in sentences:
+        lowered = sentence.lower()
+        if any(keyword in lowered for keyword in lowered_keywords):
+            picked.append(sentence)
+        if len(picked) >= limit:
+            break
+    return picked
+
+
 def _representative_excerpt(text: str, limit: int = 3) -> str:
     lines = [_clean_line(line) for line in text.splitlines() if _clean_line(line)]
     filtered: list[str] = []
@@ -106,6 +133,31 @@ def _section_summary(title: str, text: str) -> str:
         return title
 
     sentences = _summary_sentences(excerpt)
+    lowered_title = title.lower()
+    if lowered_title in {"future work", "future directions"}:
+        picked = _sentences_with_keywords(
+            excerpt,
+            ("future", "next step", "recommend", "follow-up", "further research", "validation", "prospective"),
+            limit=3,
+        )
+        if picked:
+            return " ".join(picked)[:900]
+    if lowered_title in {"discussion", "conclusion", "conclusions", "limitations"}:
+        picked = _sentences_with_keywords(
+            excerpt,
+            ("conclude", "challenge", "limitation", "implication", "future", "recommend"),
+            limit=3,
+        )
+        if picked:
+            return " ".join(picked)[:900]
+    if lowered_title in {"abstract", "introduction", "background", "document overview"}:
+        picked = _sentences_with_keywords(
+            excerpt,
+            ("aim", "objective", "focus", "study", "paper", "thesis", "investigate", "overview", "contribution"),
+            limit=3,
+        )
+        if picked:
+            return " ".join(picked)[:900]
     if len(sentences) >= 3 and title.lower() in {"discussion", "conclusion", "conclusions", "future work", "future directions"}:
         return " ".join(sentences[-2:])[:900]
     if len(sentences) >= 3 and title.lower() in {"abstract", "introduction", "background"}:
@@ -113,6 +165,20 @@ def _section_summary(title: str, text: str) -> str:
     if len(sentences) >= 4:
         return f"{sentences[0]} {sentences[-1]}"[:900]
     return excerpt[:900]
+
+
+def _section_aliases(title: str, section_kind: str, section_path: list[str]) -> list[str]:
+    aliases: list[str] = []
+    normalized_kind = section_kind.lower()
+    aliases.extend(SECTION_KIND_ALIASES.get(normalized_kind, []))
+    aliases.append(title)
+    aliases.extend(section_path)
+    seen: list[str] = []
+    for alias in aliases:
+        compact = _clean_line(alias).strip()
+        if compact and compact.lower() not in {item.lower() for item in seen}:
+            seen.append(compact)
+    return seen[:10]
 
 
 def _document_overview_section(document: DocumentRecord, sections: list[SectionRecord]) -> SectionRecord | None:
@@ -168,6 +234,7 @@ def _document_overview_section(document: DocumentRecord, sections: list[SectionR
             "section_heading": "Document Overview",
             "section_kind": "overview",
             "document_style": style,
+            "section_aliases": _section_aliases("Document Overview", "overview", ["Document Overview"]),
         },
     )
 
@@ -234,6 +301,11 @@ def build_sections(document: DocumentRecord) -> list[SectionRecord]:
                     "section_heading": title,
                     "section_kind": payload["section_kind"] or title.lower(),
                     "document_style": payload["document_style"],
+                    "section_aliases": _section_aliases(
+                        title,
+                        payload["section_kind"] or title.lower(),
+                        list(payload["section_path"]),
+                    ),
                 },
             )
         )

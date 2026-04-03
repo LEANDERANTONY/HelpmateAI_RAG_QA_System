@@ -1,0 +1,85 @@
+{
+  "pancreas8": {
+    "index_reused": true,
+    "rows": [
+      {
+        "question": "What is the main focus of the pancreas8 paper?",
+        "route_used": "section_first",
+        "query_used": "What does the pancreas8 paper study overall?",
+        "strategy_notes": [
+          "Query classified as summary_lookup.",
+          "Router selected section_first with confidence 0.95.",
+          "Summary-style query type prefers section-level routing.",
+          "Paper-level synthesis phrasing favors section-first retrieval.",
+          "Preferred content types: general, benefit, definition.",
+          "Section-first retrieval path narrowed the search before chunk ranking.",
+          "Adaptive re-retrieval used a rewritten query variant.",
+          "Best retrieval came from rewritten query: What does the pancreas8 paper study overall?"
+        ],
+        "found_pages": [
+          "Page 12",
+          "Page 12",
+          "Page 12",
+          "Page 15"
+        ],
+        "supported": false,
+        "answer_preview": "Insufficient evidence.",
+        "total_seconds": 26.512
+      },
+      {
+        "question": "What major challenge does the paper identify around matched multimodal datasets?",
+        "route_used": "section_first",
+        "query_used": "What is the main challenge the paper highlights about matched multimodal datasets?",
+        "strategy_notes": [
+          "Query classified as summary_lookup.",
+          "Router selected section_first with confidence 0.95.",
+          "Summary-style query type prefers section-level routing.",
+          "High-level narrative cues suggest section-first retrieval.",
+          "Paper-level synthesis phrasing favors section-first retrieval.",
+          "Preferred content types: general, benefit, definition.",
+          "Section-first retrieval path narrowed the search before chunk ranking.",
+          "Adaptive re-retrieval used a rewritten query variant.",
+          "Best retrieval came from rewritten query: What is the main challenge the paper highlights about matched multimodal datasets?"
+        ],
+        "found_pages": [
+          "Page 9",
+          "Page 5",
+          "Page 9",
+          "Page 5"
+        ],
+        "supported": false,
+        "answer_preview": "Not specified.",
+        "total_seconds": 12.091
+      }
+    ]
+  },
+  "thesis": {
+    "index_reused": true,
+    "rows": [
+      {
+        "question": "What kinds of future work or next steps does the thesis suggest?",
+        "route_used": "section_first",
+        "query_used": "What recommendations, limitations, or follow-up research does the thesis identify?",
+        "strategy_notes": [
+          "Query classified as summary_lookup.",
+          "Router selected section_first with confidence 0.95.",
+          "Summary-style query type prefers section-level routing.",
+          "High-level narrative cues suggest section-first retrieval.",
+          "Preferred content types: general, benefit, definition.",
+          "Section-first retrieval path narrowed the search before chunk ranking.",
+          "Adaptive re-retrieval used a rewritten query variant.",
+          "Best retrieval came from rewritten query: What recommendations, limitations, or follow-up research does the thesis identify?"
+        ],
+        "found_pages": [
+          "Page 96",
+          "Page 23",
+          "Page 90",
+          "Page 72"
+        ],
+        "supported": false,
+        "answer_preview": "Not enough evidence.",
+        "total_seconds": 9.617
+      }
+    ]
+  }
+}
