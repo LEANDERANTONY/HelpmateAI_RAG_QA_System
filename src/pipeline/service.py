@@ -11,6 +11,7 @@ from src.ingest import ingest_document
 from src.retrieval import ChromaIndexStore, HybridRetriever
 from src.sections import build_sections
 from src.schemas import AnswerResult, CacheStatus, DocumentRecord, IndexRecord, RetrievalResult
+from src.topology import DocumentTopologyService
 
 
 class HelpmatePipeline:
@@ -25,6 +26,7 @@ class HelpmatePipeline:
         self.retriever = HybridRetriever(self.store, self.settings)
         self.generator = AnswerGenerator(self.settings)
         self.answer_cache = AnswerCache(self.settings.cache_dir)
+        self.topology_service = DocumentTopologyService()
 
     def _persist_upload(self, source_path: str | Path) -> Path:
         source = Path(source_path)
@@ -40,11 +42,14 @@ class HelpmatePipeline:
     def build_or_load_index(self, document: DocumentRecord) -> IndexRecord:
         chunks = chunk_document(document, self.settings.chunk_size, self.settings.chunk_overlap)
         sections = build_sections(document)
+        synopses, topology_edges = self.topology_service.build(sections)
         return self.store.get_or_create_index(
             fingerprint=document.fingerprint,
             document_id=document.document_id,
             chunks=chunks,
             sections=sections,
+            synopses=synopses,
+            topology_edges=topology_edges,
             embedding_model=self.settings.embedding_model,
             chunk_size=self.settings.chunk_size,
             chunk_overlap=self.settings.chunk_overlap,

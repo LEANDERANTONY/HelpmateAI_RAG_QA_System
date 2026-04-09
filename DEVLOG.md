@@ -8,6 +8,40 @@ Historical note:
 - later entries add quality-control, benchmarking, and document-intelligence work on top of that baseline
 - the project is still evolving, so later entries refine earlier architectural assumptions without erasing them
 
+## Day 11: Document-Topology Retrieval Upgrade
+
+- Added a deterministic `RetrievalPlan` layer ahead of retrieval.
+- Added lightweight topology artifacts:
+  - section synopses
+  - topology edges
+  - generic region kinds
+- Added a dedicated synopsis collection alongside chunk and section collections in local Chroma storage.
+- Reworked retrieval to support:
+  - `chunk_first`
+  - `synopsis_first`
+  - soft local structural guidance
+  - soft multi-region retrieval with global fallback
+  - hard-region behavior only for explicit page, clause, or named-section references
+- Removed the active query rewriting layer from retrieval.
+- Added structure-aware retrieval metrics:
+  - `section_hit_rate`
+  - `region_hit_rate`
+  - `plan_accuracy`
+  - `global_fallback_recovery_rate`
+  - `multi_region_recall`
+
+Challenges:
+
+- planner mistakes can bias retrieval more than plain similarity-only search
+- synopsis quality had to stay factual and lightweight rather than lossy
+- distributed questions needed structural guidance without collapsing the current multi-page evidence behavior
+
+Improvements:
+
+- health-policy retrieval stayed stable through the upgrade
+- `pancreas7` and `pancreas8` remained strong under the new retrieval flow
+- thesis retrieval became more inspectable, with clearer planner and region metrics showing where future tuning is needed
+
 ## Day 1: Notebook-To-App Restructure
 
 - Refactored the repository from a notebook-first layout into a real app structure.

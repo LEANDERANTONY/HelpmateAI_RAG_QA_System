@@ -178,24 +178,112 @@ export default function Home() {
 
       <section className="landing-section mx-auto max-w-6xl px-6 pb-20 md:px-10">
         <div className="cta-ribbon reveal reveal-3">
-          <div>
-            <p className="eyebrow">Ready to try it?</p>
-            <h2 className="section-heading mt-4 text-3xl md:text-6xl">
-              Open a document and see how quickly the answers become usable.
-            </h2>
-            <p className="mt-5 max-w-2xl text-base leading-7 text-zinc-300 md:text-lg">
-              Helpmate is built for the moment when you need an answer fast, but
-              still want to know exactly where it came from.
-            </p>
-          </div>
+          <div className="workflow-artboard-shell">
+            <div className="workflow-artboard" aria-label="Helpmate workflow preview">
+              <div className="workflow-artboard-glow" />
+              <div className="workflow-artboard-vignette" />
+              <div className="workflow-artboard-orb workflow-artboard-orb-a" />
+              <div className="workflow-artboard-orb workflow-artboard-orb-b" />
 
-          <div className="mt-8 flex flex-wrap gap-4">
-            <Link className="primary-button w-auto px-7 py-4" href="/app">
-              Open workspace
-            </Link>
-            <a className="secondary-button w-auto px-7 py-4" href="#capabilities">
-              Why it works
-            </a>
+              <div className="workflow-artboard-sidebar">
+                <div className="workflow-artboard-brand">
+                  <span className="workflow-artboard-brand-dot" />
+                  <div>
+                    <p>Helpmate</p>
+                    <span>Document QA</span>
+                  </div>
+                </div>
+
+                <div className="workflow-artboard-nav">
+                  <span className="workflow-artboard-nav-item workflow-artboard-nav-item-active" />
+                  <span className="workflow-artboard-nav-item" />
+                  <span className="workflow-artboard-nav-item" />
+                  <span className="workflow-artboard-nav-item" />
+                </div>
+              </div>
+
+              <div className="workflow-artboard-main">
+                <div className="workflow-artboard-topline">
+                  <div className="workflow-artboard-pill-group">
+                    <span className="workflow-artboard-pill workflow-artboard-pill-active" />
+                    <span className="workflow-artboard-pill" />
+                    <span className="workflow-artboard-pill" />
+                  </div>
+                  <div className="workflow-artboard-topline-right">
+                    <div className="workflow-artboard-chip" />
+                    <div className="workflow-artboard-chip workflow-artboard-chip-faint" />
+                  </div>
+                </div>
+
+                <div className="workflow-artboard-canvas">
+                  <div className="workflow-artboard-stage workflow-artboard-stage-upload">
+                    <div className="workflow-artboard-stage-header">
+                      <span className="workflow-artboard-dotline" />
+                      <span className="workflow-artboard-stage-badge" />
+                    </div>
+                    <div className="workflow-artboard-line workflow-artboard-line-long" />
+                    <div className="workflow-artboard-line workflow-artboard-line-mid" />
+                    <div className="workflow-artboard-upload-row">
+                      <div className="workflow-artboard-button-muted" />
+                      <div className="workflow-artboard-button-primary" />
+                    </div>
+                  </div>
+
+                  <div className="workflow-artboard-bridge">
+                    <span className="workflow-artboard-bridge-node workflow-artboard-bridge-node-a" />
+                    <span className="workflow-artboard-bridge-line" />
+                    <span className="workflow-artboard-bridge-node workflow-artboard-bridge-node-b" />
+                    <span className="workflow-artboard-bridge-line workflow-artboard-bridge-line-short" />
+                    <span className="workflow-artboard-bridge-node workflow-artboard-bridge-node-c" />
+                  </div>
+
+                  <div className="workflow-artboard-stage-grid">
+                    <div className="workflow-artboard-stage workflow-artboard-stage-index">
+                      <span className="workflow-artboard-stage-badge" />
+                      <div className="workflow-artboard-meter">
+                        <div className="workflow-artboard-meter-fill workflow-artboard-meter-fill-a" />
+                      </div>
+                      <div className="workflow-artboard-meter">
+                        <div className="workflow-artboard-meter-fill workflow-artboard-meter-fill-b" />
+                      </div>
+                    </div>
+
+                    <div className="workflow-artboard-stage workflow-artboard-stage-answer">
+                      <span className="workflow-artboard-stage-badge" />
+                      <div className="workflow-artboard-answer-lines">
+                        <span className="workflow-artboard-line workflow-artboard-line-card" />
+                        <span className="workflow-artboard-line workflow-artboard-line-card-short" />
+                        <span className="workflow-artboard-line workflow-artboard-line-card" />
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="workflow-artboard-bridge workflow-artboard-bridge-lower">
+                    <span className="workflow-artboard-bridge-node workflow-artboard-bridge-node-b" />
+                    <span className="workflow-artboard-bridge-line workflow-artboard-bridge-line-wide" />
+                    <span className="workflow-artboard-bridge-node workflow-artboard-bridge-node-a" />
+                  </div>
+
+                  <div className="workflow-artboard-evidence">
+                    <div className="workflow-artboard-evidence-card">
+                      <span className="workflow-artboard-evidence-kicker" />
+                      <div className="workflow-artboard-line workflow-artboard-line-evidence" />
+                      <div className="workflow-artboard-line workflow-artboard-line-evidence-short" />
+                    </div>
+                    <div className="workflow-artboard-evidence-card workflow-artboard-evidence-card-secondary">
+                      <span className="workflow-artboard-evidence-kicker" />
+                      <div className="workflow-artboard-line workflow-artboard-line-evidence" />
+                      <div className="workflow-artboard-line workflow-artboard-line-evidence-short" />
+                    </div>
+                    <div className="workflow-artboard-evidence-card workflow-artboard-evidence-card-tertiary">
+                      <span className="workflow-artboard-evidence-kicker" />
+                      <div className="workflow-artboard-line workflow-artboard-line-evidence" />
+                      <div className="workflow-artboard-line workflow-artboard-line-evidence-short" />
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
           </div>
         </div>
       </section>

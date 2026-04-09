@@ -433,6 +433,444 @@ a {
   z-index: 1;
 }
 
+.workflow-artboard-shell {
+  display: flex;
+  justify-content: center;
+}
+
+.workflow-artboard {
+  position: relative;
+  width: 100%;
+  max-width: 680px;
+  aspect-ratio: 17 / 10;
+  overflow: hidden;
+  border-radius: 1.5rem;
+  border: 1px solid rgba(72, 193, 173, 0.18);
+  background:
+    linear-gradient(180deg, rgba(5, 12, 18, 0.96), rgba(2, 6, 10, 0.99)),
+    #05070d;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.02),
+    inset 0 1px 0 rgba(255, 255, 255, 0.04),
+    0 22px 60px rgba(0, 0, 0, 0.34);
+  -webkit-mask-image: radial-gradient(
+    ellipse at center,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 1) 70%,
+    rgba(0, 0, 0, 0.92) 83%,
+    rgba(0, 0, 0, 0) 100%
+  );
+  mask-image: radial-gradient(
+    ellipse at center,
+    rgba(0, 0, 0, 1) 0%,
+    rgba(0, 0, 0, 1) 70%,
+    rgba(0, 0, 0, 0.92) 83%,
+    rgba(0, 0, 0, 0) 100%
+  );
+}
+
+.workflow-artboard::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 66% 24%, rgba(45, 146, 162, 0.16), transparent 18%),
+    radial-gradient(circle at 36% 74%, rgba(43, 170, 146, 0.22), transparent 22%),
+    linear-gradient(rgba(255, 255, 255, 0.032) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(255, 255, 255, 0.018) 1px, transparent 1px);
+  background-size: auto, auto, 100% 38px, 38px 100%;
+  opacity: 0.52;
+}
+
+.workflow-artboard::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(180deg, rgba(2, 7, 13, 0.04) 0%, rgba(2, 7, 13, 0.4) 100%),
+    radial-gradient(circle at center, transparent 48%, rgba(0, 0, 0, 0.38) 100%);
+}
+
+.workflow-artboard-glow {
+  position: absolute;
+  inset: auto auto 1.4rem 39%;
+  width: 19rem;
+  height: 19rem;
+  border-radius: 999px;
+  background: radial-gradient(circle, rgba(35, 164, 142, 0.32), rgba(20, 81, 79, 0.12) 58%, transparent 76%);
+  filter: blur(30px);
+  opacity: 0.94;
+}
+
+.workflow-artboard-vignette {
+  position: absolute;
+  inset: 0;
+  background:
+    radial-gradient(circle at 50% 38%, transparent 30%, rgba(0, 0, 0, 0.08) 58%, rgba(0, 0, 0, 0.36) 100%);
+  z-index: 0;
+}
+
+.workflow-artboard-orb {
+  position: absolute;
+  border-radius: 999px;
+  filter: blur(20px);
+  opacity: 0.46;
+  z-index: 0;
+}
+
+.workflow-artboard-orb-a {
+  top: 4.8rem;
+  right: 6rem;
+  width: 6rem;
+  height: 6rem;
+  background: radial-gradient(circle, rgba(52, 164, 169, 0.26), transparent 72%);
+}
+
+.workflow-artboard-orb-b {
+  bottom: 3rem;
+  left: 13rem;
+  width: 7rem;
+  height: 7rem;
+  background: radial-gradient(circle, rgba(49, 186, 156, 0.34), transparent 72%);
+}
+
+.workflow-artboard-sidebar,
+.workflow-artboard-main {
+  position: relative;
+  z-index: 1;
+}
+
+.workflow-artboard-sidebar {
+  position: absolute;
+  inset: 0 auto 0 0;
+  width: 22%;
+  padding: 1rem 0.8rem 1rem 1rem;
+  border-right: 1px solid rgba(72, 193, 173, 0.08);
+  background: linear-gradient(180deg, rgba(4, 10, 15, 0.92), rgba(3, 8, 12, 0.78));
+}
+
+.workflow-artboard-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.55rem;
+}
+
+.workflow-artboard-brand-dot {
+  width: 0.7rem;
+  height: 0.7rem;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(88, 216, 196, 0.94), rgba(42, 153, 135, 0.88));
+  box-shadow: 0 0 14px rgba(49, 178, 160, 0.32);
+}
+
+.workflow-artboard-brand p,
+.workflow-artboard-brand span {
+  margin: 0;
+}
+
+.workflow-artboard-brand p {
+  color: rgba(242, 247, 255, 0.92);
+  font-size: 0.72rem;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
+.workflow-artboard-brand span {
+  display: block;
+  margin-top: 0.12rem;
+  color: rgba(180, 193, 214, 0.58);
+  font-size: 0.48rem;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+}
+
+.workflow-artboard-nav {
+  margin-top: 1.2rem;
+  display: grid;
+  gap: 0.65rem;
+}
+
+.workflow-artboard-nav-item {
+  width: 72%;
+  height: 0.5rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.07);
+}
+
+.workflow-artboard-nav-item-active {
+  width: 88%;
+  background: linear-gradient(90deg, rgba(76, 206, 188, 0.58), rgba(44, 137, 138, 0.34));
+}
+
+.workflow-artboard-main {
+  position: absolute;
+  inset: 0 0 0 22%;
+  padding: 1rem 1rem 1rem 1.1rem;
+}
+
+.workflow-artboard-topline {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.workflow-artboard-topline-right {
+  display: flex;
+  align-items: center;
+  gap: 0.45rem;
+}
+
+.workflow-artboard-pill-group {
+  display: flex;
+  gap: 0.45rem;
+}
+
+.workflow-artboard-pill,
+.workflow-artboard-chip,
+.workflow-artboard-stage-badge,
+.workflow-artboard-evidence-kicker {
+  border-radius: 999px;
+}
+
+.workflow-artboard-pill {
+  width: 3.1rem;
+  height: 0.72rem;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.workflow-artboard-pill-active {
+  background: linear-gradient(90deg, rgba(86, 214, 197, 0.74), rgba(53, 157, 145, 0.58));
+}
+
+.workflow-artboard-chip {
+  width: 3.4rem;
+  height: 1.2rem;
+  border: 1px solid rgba(72, 193, 173, 0.28);
+  background: rgba(16, 73, 68, 0.34);
+}
+
+.workflow-artboard-chip-faint {
+  width: 2.15rem;
+  opacity: 0.58;
+}
+
+.workflow-artboard-canvas {
+  margin-top: 1rem;
+  display: grid;
+  gap: 0.8rem;
+}
+
+.workflow-artboard-stage,
+.workflow-artboard-evidence-card {
+  border: 1px solid rgba(72, 193, 173, 0.18);
+  border-radius: 1rem;
+  background:
+    linear-gradient(180deg, rgba(7, 30, 28, 0.72), rgba(6, 14, 16, 0.9)),
+    rgba(255, 255, 255, 0.02);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.025),
+    0 10px 24px rgba(0, 0, 0, 0.12);
+}
+
+.workflow-artboard-stage {
+  padding: 0.85rem;
+}
+
+.workflow-artboard-stage-upload {
+  min-height: 6.8rem;
+}
+
+.workflow-artboard-bridge {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.45rem;
+  padding: 0 0.4rem;
+}
+
+.workflow-artboard-bridge-lower {
+  justify-content: flex-start;
+  padding-left: 0.35rem;
+}
+
+.workflow-artboard-bridge-node {
+  width: 0.42rem;
+  height: 0.42rem;
+  border-radius: 999px;
+  box-shadow: 0 0 10px rgba(63, 191, 179, 0.28);
+}
+
+.workflow-artboard-bridge-node-a {
+  background: rgba(96, 221, 206, 0.88);
+}
+
+.workflow-artboard-bridge-node-b {
+  background: rgba(64, 178, 173, 0.82);
+}
+
+.workflow-artboard-bridge-node-c {
+  background: rgba(175, 237, 221, 0.72);
+}
+
+.workflow-artboard-bridge-line {
+  flex: 1;
+  max-width: 5.4rem;
+  height: 1px;
+  background: linear-gradient(90deg, rgba(72, 193, 173, 0.08), rgba(72, 193, 173, 0.34), rgba(72, 193, 173, 0.08));
+}
+
+.workflow-artboard-bridge-line-short {
+  max-width: 3.25rem;
+}
+
+.workflow-artboard-bridge-line-wide {
+  max-width: 9rem;
+}
+
+.workflow-artboard-stage-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem;
+}
+
+.workflow-artboard-dotline {
+  width: 5rem;
+  height: 0.55rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.workflow-artboard-stage-badge {
+  width: 2.4rem;
+  height: 0.75rem;
+  background: rgba(72, 193, 173, 0.24);
+}
+
+.workflow-artboard-line {
+  display: block;
+  border-radius: 999px;
+  background: rgba(227, 235, 248, 0.12);
+}
+
+.workflow-artboard-line-long {
+  margin-top: 1rem;
+  width: 72%;
+  height: 0.82rem;
+}
+
+.workflow-artboard-line-mid {
+  margin-top: 0.6rem;
+  width: 54%;
+  height: 0.62rem;
+}
+
+.workflow-artboard-upload-row {
+  margin-top: 1.2rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+}
+
+.workflow-artboard-button-muted {
+  width: 4.2rem;
+  height: 1.55rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.08);
+}
+
+.workflow-artboard-button-primary {
+  width: 5.5rem;
+  height: 2.05rem;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(79, 125, 255, 0.95), rgba(66, 110, 247, 0.92));
+  box-shadow: 0 10px 26px rgba(54, 102, 255, 0.2);
+}
+
+.workflow-artboard-stage-grid {
+  display: grid;
+  grid-template-columns: 1fr 1.15fr;
+  gap: 0.8rem;
+}
+
+.workflow-artboard-meter {
+  margin-top: 0.85rem;
+  height: 0.72rem;
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.06);
+  overflow: hidden;
+}
+
+.workflow-artboard-meter-fill {
+  height: 100%;
+  border-radius: inherit;
+  background: linear-gradient(90deg, rgba(101, 223, 214, 0.94), rgba(74, 158, 204, 0.8));
+}
+
+.workflow-artboard-meter-fill-a {
+  width: 64%;
+}
+
+.workflow-artboard-meter-fill-b {
+  width: 82%;
+}
+
+.workflow-artboard-answer-lines {
+  margin-top: 0.95rem;
+  display: grid;
+  gap: 0.55rem;
+}
+
+.workflow-artboard-line-card {
+  width: 88%;
+  height: 0.62rem;
+}
+
+.workflow-artboard-line-card-short {
+  width: 56%;
+  height: 0.62rem;
+}
+
+.workflow-artboard-evidence {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.7rem;
+}
+
+.workflow-artboard-evidence-card {
+  min-height: 5.25rem;
+  padding: 0.8rem;
+}
+
+.workflow-artboard-evidence-card-secondary {
+  transform: translateY(0.35rem);
+}
+
+.workflow-artboard-evidence-card-tertiary {
+  transform: translateY(-0.15rem);
+}
+
+.workflow-artboard-evidence-kicker {
+  display: block;
+  width: 2.75rem;
+  height: 0.58rem;
+  background: rgba(72, 193, 173, 0.24);
+}
+
+.workflow-artboard-line-evidence {
+  margin-top: 0.95rem;
+  width: 90%;
+  height: 0.58rem;
+}
+
+.workflow-artboard-line-evidence-short {
+  margin-top: 0.5rem;
+  width: 62%;
+  height: 0.52rem;
+}
+
 .reveal {
   opacity: 0;
   transform: translateY(18px);
@@ -562,6 +1000,27 @@ a {
   .slim-step,
   .proof-card {
     padding: 1.25rem;
+  }
+
+  .workflow-artboard-sidebar {
+    width: 24%;
+    padding: 0.8rem 0.55rem 0.8rem 0.75rem;
+  }
+
+  .workflow-artboard-main {
+    inset: 0 0 0 24%;
+    padding: 0.8rem;
+  }
+
+  .workflow-artboard-glow {
+    left: 34%;
+    width: 15rem;
+    height: 15rem;
+  }
+
+  .workflow-artboard-stage-grid,
+  .workflow-artboard-evidence {
+    gap: 0.55rem;
   }
 }
 

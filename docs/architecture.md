@@ -16,12 +16,12 @@ This split now matters because the retrieval core is largely stable, while the m
 
 1. ingest uploaded PDF or DOCX content
 2. infer lightweight document structure and document style
-3. create metadata-rich chunks and sections
-4. build or reuse persisted chunk and section indexes in Chroma
-5. analyze the question and route retrieval
-6. retrieve evidence through chunk-first, section-first, or hybrid retrieval
+3. create metadata-rich chunks, sections, and deterministic section synopses
+4. build or reuse persisted chunk, section, and synopsis indexes plus lightweight topology artifacts
+5. analyze the question and produce a deterministic retrieval plan
+6. retrieve evidence through chunk-first, synopsis-first, legacy section-first fallback, or hybrid retrieval
 7. grade evidence as `strong`, `weak`, or `unsupported`
-8. adapt retrieval only for the weak middle band
+8. adapt retrieval through structural guidance and global fallback instead of query rewriting
 9. generate a grounded answer with explicit support status
 10. cache safe answer results for repeated questions
 
@@ -79,58 +79,79 @@ On top of this, HelpmateAI builds `SectionRecord` objects carrying:
 
 This layer is especially important for theses and research papers, where broad questions often need section-level navigation before exact chunk retrieval.
 
+The current retrieval upgrade adds a lightweight topology layer on top of these sections:
+
+- `SectionSynopsisRecord`
+- `TopologyEdge`
+- generic region kinds such as:
+  - `overview`
+  - `definitions`
+  - `procedure`
+  - `evidence`
+  - `discussion`
+  - `rules`
+  - `appendix`
+
+These topology artifacts are stored locally alongside the existing schema-versioned Chroma index rather than in a separate graph database.
+
 ## Retrieval Stack
 
-HelpmateAI currently uses a dual-path hybrid retrieval design:
+HelpmateAI now uses a planned hybrid retrieval design:
 
 - dense retrieval from Chroma
 - lexical retrieval via TF-IDF scoring
 - reciprocal-rank style fusion
 - optional reranking
 - metadata-aware ranking preferences
+- deterministic `RetrievalPlan` generation before retrieval
 - chunk-first retrieval for exact factual grounding
-- section-first retrieval for broad narrative questions
-- hybrid merge mode when the query is genuinely mixed
+- synopsis-first hierarchical retrieval for section-level and global questions
+- hybrid merge mode when the query is genuinely mixed or distributed
+- soft multi-region structural guidance with global fallback
+- hard structural constraints only for explicit page, clause, or named-section references
 
-The retrieval layer performs lightweight query analysis so it can classify questions into broad modes such as:
+The planner reasons about generic question shape rather than domain-specific taxonomies. It predicts:
 
-- `definition_lookup`
-- `waiting_period_lookup`
-- `process_lookup`
-- `benefit_lookup`
-- `summary_lookup`
+- `intent_type`
+  - `lookup`
+  - `summary`
+  - `comparison`
+  - `procedure`
+  - `numeric`
+  - `cross_cutting`
+- `evidence_spread`
+  - `atomic`
+  - `sectional`
+  - `distributed`
+  - `global`
+- `constraint_mode`
+  - `none`
+  - `soft_local`
+  - `soft_multi_region`
+  - `hard_region`
 
-These classifications are used as soft retrieval preferences.
-
-On top of that, HelpmateAI has a lightweight query router that chooses between:
+Routing can now choose between:
 
 - `chunk_first`
+- `synopsis_first`
 - `section_first`
 - `hybrid_both`
 
-The router is primarily heuristic. A lightweight LLM-assisted tie-breaker is still available only when the heuristic router is low-confidence. This remains a deterministic staged pipeline, not a full multi-agent system.
+The planner is deterministic first. A lightweight LLM-assisted route refinement remains available only when planning confidence is low. There is no model-based query rewriting in the current architecture.
 
 ## Weak-Evidence And Guardrail Flow
 
-The earlier model-based query rewrite layer has been removed.
+The earlier query rewrite layer has been removed.
 
 Current weak-evidence behavior:
 
 - grade retrieval evidence as `strong`, `weak`, or `unsupported`
 - short-circuit obviously irrelevant questions before answer generation
-- allow only the `weak` middle band to retry retrieval
-- use deterministic query expansion instead of LLM query rewriting
-- expand weak summary questions with section-aware variants such as:
-  - `abstract`
-  - `introduction`
-  - `overview`
-  - `discussion`
-  - `conclusion`
-  - `future work`
-  - `recommendations`
-- keep evidence scoring anchored to the original user question rather than any expanded retrieval variant
+- allow only the `weak` middle band to trigger adaptive structural retrieval
+- keep unsupported questions from flowing into answer generation
+- keep soft-local and soft-multi-region plans backed by a global fallback pool so recall does not silently collapse
 
-This reduced variability, removed an unnecessary LLM dependency from the retrieval path, and made benchmark behavior easier to interpret.
+This reduced variability, removed an unnecessary retrieval layer, and made planner behavior measurable in benchmarks.
 
 ## Answer Generation
 
@@ -167,6 +188,12 @@ Current evaluation surfaces:
 - positive retrieval eval datasets
 - negative abstention eval datasets
 - saved JSON benchmark reports under `docs/evals/reports/`
+- structure-aware retrieval metrics:
+  - `section_hit_rate`
+  - `region_hit_rate`
+  - `plan_accuracy`
+  - `global_fallback_recovery_rate`
+  - `multi_region_recall`
 - Vectara retrieval comparison harness as the primary external baseline
 - OpenAI File Search comparison harness kept as a historical/reference baseline
 - `ragas` answer-quality evaluation:
@@ -181,13 +208,13 @@ This lets the team compare:
 - local RAG versus hosted retrieval
 - retrieval quality versus answer quality
 - structural changes versus baseline behavior
-- dual-path retrieval behavior across policy, thesis, and research-paper documents
+- topology-aware retrieval behavior across policy, thesis, and research-paper documents
 
 Current benchmark read:
 
 - health-policy retrieval remains stable
-- `pancreas8` improved materially with the stronger section-first path
-- thesis and `pancreas7` remain the main targets for future retrieval refinement
+- `pancreas8` remains strong under synopsis-first retrieval
+- thesis remains the main target for future planner and section-selection refinement
 - OpenAI is still the weakest external retrieval baseline on the current document families
 
 ## UI And Product Surface
@@ -215,8 +242,9 @@ The `Next.js + FastAPI` surface is now the main product direction for:
 - explicit abstention and retrieval guardrails
 - saved benchmark reports
 - document-intelligence layer integrated into the live retrieval path
-- dual chunk-first and section-first retrieval paths are live
-- deterministic weak-evidence expansion is simpler and more predictable than the earlier model-rewrite path
+- deterministic retrieval planning is now explicit and inspectable
+- chunk-first and synopsis-first retrieval paths are both live
+- structure is now an active retrieval control signal rather than passive metadata
 - evaluation policy is now simpler and more credible:
   - Vectara as main external retrieval baseline
   - OpenAI as historical/reference retrieval baseline
@@ -226,7 +254,8 @@ The `Next.js + FastAPI` surface is now the main product direction for:
 
 - clause-level misses still happen when relevant content spans adjacent sections
 - narrative and synthesis-heavy questions are harder than factual clause lookups
-- thesis and `pancreas7` aim/method questions are still weaker than we want
+- thesis aim/method questions are still weaker than we want
+- region-hit metrics are newer than page-hit metrics, so they still need interpretation before they become optimization targets
 - the new frontend is still under active buildout, so the product shell is not fully aligned with backend maturity yet
 
 ## Likely Next Product Step
@@ -235,9 +264,9 @@ The most justified next improvements are now split into two tracks.
 
 Backend-quality track:
 
-- stronger thesis and paper aim/method retrieval
+- stronger thesis aim/method retrieval
+- better synopsis ranking and neighbor expansion for borderline broad questions
 - better suppression of references, appendices, and front-matter noise
-- deeper section-aware reranking for broad paper and thesis questions
 
 Frontend/product track:
 

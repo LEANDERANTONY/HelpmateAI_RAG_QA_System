@@ -5,7 +5,7 @@ from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
 
-from src.schemas import ChunkRecord, IndexRecord, SectionRecord
+from src.schemas import ChunkRecord, IndexRecord, SectionRecord, SectionSynopsisRecord, TopologyEdge
 
 
 class ChromaIndexStore:
@@ -47,6 +47,12 @@ class ChromaIndexStore:
     def _sections_path(self, fingerprint: str) -> Path:
         return self._index_dir(fingerprint) / "sections.json"
 
+    def _synopses_path(self, fingerprint: str) -> Path:
+        return self._index_dir(fingerprint) / "synopses.json"
+
+    def _topology_path(self, fingerprint: str) -> Path:
+        return self._index_dir(fingerprint) / "topology_edges.json"
+
     @staticmethod
     def _section_search_document(section: SectionRecord) -> str:
         aliases = section.metadata.get("section_aliases", [])
@@ -64,12 +70,31 @@ class ChromaIndexStore:
         ]
         return "\n\n".join(part for part in parts if part).strip()
 
+    @staticmethod
+    def _synopsis_search_document(synopsis: SectionSynopsisRecord) -> str:
+        section_path = synopsis.metadata.get("section_path", [])
+        path_text = " > ".join(section_path) if isinstance(section_path, list) else str(section_path)
+        aliases = synopsis.metadata.get("section_aliases", [])
+        alias_text = " | ".join(aliases[:6]) if isinstance(aliases, list) else str(aliases)
+        parts = [
+            synopsis.title,
+            path_text,
+            synopsis.region_kind,
+            alias_text,
+            ", ".join(synopsis.key_terms[:8]),
+            synopsis.synopsis,
+            " | ".join(synopsis.page_labels),
+        ]
+        return "\n\n".join(part for part in parts if part).strip()
+
     def load_index_record(self, fingerprint: str) -> IndexRecord | None:
         meta_path = self._meta_path(fingerprint)
         if not meta_path.exists():
             return None
         payload = json.loads(meta_path.read_text(encoding="utf-8"))
         payload.setdefault("section_count", 0)
+        payload.setdefault("synopsis_count", 0)
+        payload.setdefault("topology_edge_count", 0)
         return IndexRecord(**payload)
 
     def load_chunks(self, fingerprint: str) -> list[ChunkRecord]:
@@ -86,12 +111,28 @@ class ChromaIndexStore:
         payload = json.loads(sections_path.read_text(encoding="utf-8"))
         return [SectionRecord(**item) for item in payload]
 
+    def load_synopses(self, fingerprint: str) -> list[SectionSynopsisRecord]:
+        synopses_path = self._synopses_path(fingerprint)
+        if not synopses_path.exists():
+            return []
+        payload = json.loads(synopses_path.read_text(encoding="utf-8"))
+        return [SectionSynopsisRecord(**item) for item in payload]
+
+    def load_topology_edges(self, fingerprint: str) -> list[TopologyEdge]:
+        topology_path = self._topology_path(fingerprint)
+        if not topology_path.exists():
+            return []
+        payload = json.loads(topology_path.read_text(encoding="utf-8"))
+        return [TopologyEdge(**item) for item in payload]
+
     def get_or_create_index(
         self,
         fingerprint: str,
         document_id: str,
         chunks: list[ChunkRecord],
         sections: list[SectionRecord],
+        synopses: list[SectionSynopsisRecord],
+        topology_edges: list[TopologyEdge],
         embedding_model: str,
         chunk_size: int,
         chunk_overlap: int,
@@ -102,6 +143,8 @@ class ChromaIndexStore:
             and existing.index_schema_version == self.index_schema_version
             and self._chunks_path(fingerprint).exists()
             and self._sections_path(fingerprint).exists()
+            and self._synopses_path(fingerprint).exists()
+            and self._topology_path(fingerprint).exists()
         ):
             existing.reused = True
             return existing
@@ -123,6 +166,10 @@ class ChromaIndexStore:
             name=f"{collection_name}-sections",
             embedding_function=self._embedding_function(),
         )
+        synopsis_collection = client.get_or_create_collection(
+            name=f"{collection_name}-synopses",
+            embedding_function=self._embedding_function(),
+        )
         chroma_metadatas = [self._sanitize_metadata_for_chroma(chunk.metadata) for chunk in chunks]
         collection.upsert(
             ids=[chunk.chunk_id for chunk in chunks],
@@ -134,6 +181,12 @@ class ChromaIndexStore:
             ids=[section.section_id for section in sections],
             documents=[self._section_search_document(section) for section in sections],
             metadatas=section_metadatas,
+        )
+        synopsis_metadatas = [self._sanitize_metadata_for_chroma(synopsis.metadata) for synopsis in synopses]
+        synopsis_collection.upsert(
+            ids=[synopsis.section_id for synopsis in synopses],
+            documents=[self._synopsis_search_document(synopsis) for synopsis in synopses],
+            metadatas=synopsis_metadatas,
         )
 
         index_record = IndexRecord(
@@ -148,6 +201,8 @@ class ChromaIndexStore:
             chunk_overlap=chunk_overlap,
             created_at=datetime.now(timezone.utc).isoformat(),
             index_schema_version=self.index_schema_version,
+            synopsis_count=len(synopses),
+            topology_edge_count=len(topology_edges),
             reused=False,
         )
         self._meta_path(fingerprint).write_text(json.dumps(asdict(index_record), indent=2), encoding="utf-8")
@@ -157,6 +212,14 @@ class ChromaIndexStore:
         )
         self._sections_path(fingerprint).write_text(
             json.dumps([section.to_dict() for section in sections], indent=2),
+            encoding="utf-8",
+        )
+        self._synopses_path(fingerprint).write_text(
+            json.dumps([synopsis.to_dict() for synopsis in synopses], indent=2),
+            encoding="utf-8",
+        )
+        self._topology_path(fingerprint).write_text(
+            json.dumps([edge.to_dict() for edge in topology_edges], indent=2),
             encoding="utf-8",
         )
         return index_record
@@ -212,6 +275,33 @@ class ChromaIndexStore:
         )
         collection = client.get_collection(
             name=f"{index.collection_name}-sections",
+            embedding_function=self._embedding_function(),
+        )
+        results = collection.query(query_texts=[question], n_results=top_k)
+        items: list[dict] = []
+        for idx, section_id in enumerate(results.get("ids", [[]])[0]):
+            items.append(
+                {
+                    "section_id": section_id,
+                    "text": results.get("documents", [[]])[0][idx],
+                    "metadata": results.get("metadatas", [[]])[0][idx],
+                    "distance": results.get("distances", [[]])[0][idx],
+                }
+            )
+        return items
+
+    def dense_query_synopses(self, fingerprint: str, question: str, top_k: int) -> list[dict]:
+        index = self.load_index_record(fingerprint)
+        if index is None:
+            return []
+        import chromadb
+
+        client = chromadb.PersistentClient(
+            path=index.storage_path,
+            settings=self._client_settings(),
+        )
+        collection = client.get_collection(
+            name=f"{index.collection_name}-synopses",
             embedding_function=self._embedding_function(),
         )
         results = collection.query(query_texts=[question], n_results=top_k)

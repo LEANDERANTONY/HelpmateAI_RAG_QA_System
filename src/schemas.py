@@ -50,6 +50,49 @@ class SectionRecord:
 
 
 @dataclass
+class SectionSynopsisRecord:
+    section_id: str
+    document_id: str
+    title: str
+    synopsis: str
+    region_kind: str
+    page_labels: list[str] = field(default_factory=list)
+    key_terms: list[str] = field(default_factory=list)
+    metadata: dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass
+class TopologyEdge:
+    source_section_id: str
+    target_section_id: str
+    edge_type: str
+    weight: float = 0.0
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass
+class RetrievalPlan:
+    intent_type: str
+    evidence_spread: str
+    constraint_mode: str
+    preferred_route: str
+    target_region_ids: list[str] = field(default_factory=list)
+    target_region_kinds: list[str] = field(default_factory=list)
+    hard_filters: dict[str, Any] = field(default_factory=dict)
+    use_global_fallback: bool = True
+    planner_confidence: float = 0.0
+    planner_source: str = "deterministic"
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass
 class IndexRecord:
     document_id: str
     fingerprint: str
@@ -62,6 +105,8 @@ class IndexRecord:
     chunk_overlap: int
     created_at: str
     index_schema_version: str = "v1"
+    synopsis_count: int = 0
+    topology_edge_count: int = 0
     reused: bool = False
 
     def to_dict(self) -> dict[str, Any]:
@@ -99,6 +144,7 @@ class RetrievalResult:
     best_score: float = 0.0
     max_lexical_score: float = 0.0
     content_overlap_score: float = 0.0
+    retrieval_plan: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -116,6 +162,7 @@ class RetrievalResult:
             "best_score": self.best_score,
             "max_lexical_score": self.max_lexical_score,
             "content_overlap_score": self.content_overlap_score,
+            "retrieval_plan": dict(self.retrieval_plan),
         }
 
 

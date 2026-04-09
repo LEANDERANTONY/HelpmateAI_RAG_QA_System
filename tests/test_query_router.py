@@ -10,9 +10,9 @@ def test_query_router_prefers_chunk_first_for_exact_questions():
     assert decision.route == "chunk_first"
 
 
-def test_query_router_prefers_section_first_for_summary_questions():
+def test_query_router_prefers_synopsis_first_for_summary_questions():
     question = "Summarize the paper's main conclusion and future work."
 
     decision = QueryRouter().route(question, QueryAnalyzer.analyze(question))
 
-    assert decision.route == "section_first"
+    assert decision.route == "synopsis_first"

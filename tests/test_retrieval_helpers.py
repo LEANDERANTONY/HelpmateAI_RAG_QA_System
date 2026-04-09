@@ -59,7 +59,7 @@ def test_assess_evidence_status_marks_weak_for_borderline_signal():
     )
 
     assert status == "weak"
-    assert content_overlap == 0.0
+    assert content_overlap > 0.0
 
 
 def test_assess_evidence_status_keeps_summary_queries_retryable_when_abstract_is_present():

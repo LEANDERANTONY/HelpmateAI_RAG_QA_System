@@ -9,6 +9,25 @@ from src.config import get_settings
 from src.pipeline import HelpmatePipeline
 
 
+def _plan_matches_outcome(retrieval, matched: bool, found_pages: list[str]) -> bool:
+    plan = retrieval.retrieval_plan or {}
+    evidence_spread = str(plan.get("evidence_spread", ""))
+    route_used = retrieval.route_used
+    unique_pages = list(dict.fromkeys(found_pages))
+
+    if not matched:
+        return False
+    if evidence_spread == "atomic":
+        return route_used == "chunk_first"
+    if evidence_spread == "sectional":
+        return route_used in {"synopsis_first", "section_first"} and len(unique_pages) <= 3
+    if evidence_spread == "distributed":
+        return plan.get("constraint_mode") == "soft_multi_region" and route_used in {"synopsis_first", "hybrid_both"}
+    if evidence_spread == "global":
+        return route_used in {"synopsis_first", "hybrid_both"}
+    return matched
+
+
 def _save_report(prefix: str, payload: dict) -> Path:
     root = Path(__file__).resolve().parents[2]
     reports_dir = root / "docs" / "evals" / "reports"
@@ -48,6 +67,13 @@ def run_retrieval_eval(
     results: list[dict] = []
     hits = 0
     mrr_total = 0.0
+    section_hits = 0
+    region_hits = 0
+    plan_hits = 0
+    global_fallback_uses = 0
+    global_fallback_hits = 0
+    distributed_questions = 0
+    multi_region_total = 0.0
     for item in dataset:
         retrieval = pipeline.retrieve_evidence(document.document_id, document.fingerprint, item["question"])
         found_pages = [candidate.metadata.get("page_label", "Document") for candidate in retrieval.candidates]
@@ -60,6 +86,29 @@ def run_retrieval_eval(
                 reciprocal_rank = 1.0 / index
                 break
         mrr_total += reciprocal_rank
+        section_matched = any(
+            candidate.metadata.get("page_label", "Document") in expected_pages and candidate.metadata.get("section_id")
+            for candidate in retrieval.candidates
+        )
+        target_region_kinds = set(retrieval.retrieval_plan.get("target_region_kinds", []))
+        region_matched = any(
+            candidate.metadata.get("page_label", "Document") in expected_pages
+            and (
+                (target_region_kinds and candidate.metadata.get("region_kind") in target_region_kinds)
+                or (not target_region_kinds and bool(candidate.metadata.get("region_kind")))
+            )
+            for candidate in retrieval.candidates
+        )
+        section_hits += int(section_matched)
+        region_hits += int(region_matched)
+        plan_hits += int(_plan_matches_outcome(retrieval, matched, found_pages))
+        if retrieval.retrieval_plan.get("global_fallback_used"):
+            global_fallback_uses += 1
+            global_fallback_hits += int(matched)
+        if retrieval.retrieval_plan.get("evidence_spread") == "distributed":
+            distributed_questions += 1
+            overlap = len(set(found_pages) & set(expected_pages))
+            multi_region_total += overlap / max(len(expected_pages), 1)
         results.append(
             {
                 "question": item["question"],
@@ -69,6 +118,7 @@ def run_retrieval_eval(
                 "reciprocal_rank": reciprocal_rank,
                 "query_used": retrieval.query_used,
                 "strategy_notes": retrieval.strategy_notes,
+                "retrieval_plan": retrieval.retrieval_plan,
             }
         )
 
@@ -76,6 +126,11 @@ def run_retrieval_eval(
         "dataset_size": len(dataset),
         "top_k_page_hit_rate": hits / max(len(dataset), 1),
         "mean_reciprocal_rank": mrr_total / max(len(dataset), 1),
+        "section_hit_rate": section_hits / max(len(dataset), 1),
+        "region_hit_rate": region_hits / max(len(dataset), 1),
+        "plan_accuracy": plan_hits / max(len(dataset), 1),
+        "global_fallback_recovery_rate": global_fallback_hits / max(global_fallback_uses, 1),
+        "multi_region_recall": multi_region_total / max(distributed_questions, 1),
         "settings": {
             "chunk_size": settings.chunk_size,
             "chunk_overlap": settings.chunk_overlap,
@@ -83,6 +138,9 @@ def run_retrieval_eval(
             "lexical_top_k": settings.lexical_top_k,
             "fused_top_k": settings.fused_top_k,
             "final_top_k": settings.final_top_k,
+            "synopsis_dense_top_k": settings.synopsis_dense_top_k,
+            "synopsis_lexical_top_k": settings.synopsis_lexical_top_k,
+            "synopsis_fused_top_k": settings.synopsis_fused_top_k,
         },
         "results": results,
     }

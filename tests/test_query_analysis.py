@@ -4,8 +4,8 @@ from src.query_analysis import QueryAnalyzer
 def test_query_analyzer_classifies_waiting_period_queries():
     profile = QueryAnalyzer.analyze("What is the named ailment waiting period under clause 4.1?")
 
-    assert profile.query_type == "waiting_period_lookup"
-    assert "waiting_period" in profile.preferred_content_types
+    assert profile.query_type == "definition_lookup"
+    assert profile.evidence_spread == "atomic"
     assert "4.1" in profile.clause_terms
 
 
@@ -13,3 +13,11 @@ def test_query_analyzer_classifies_summary_questions():
     profile = QueryAnalyzer.analyze("What is the main aim of this thesis?")
 
     assert profile.query_type == "summary_lookup"
+
+
+def test_query_analyzer_marks_feature_list_questions_as_specific_detail_procedure():
+    profile = QueryAnalyzer.analyze("What seven urinary biomarker features were used for the biomarker model?")
+
+    assert profile.query_type == "process_lookup"
+    assert profile.intent_type == "procedure"
+    assert profile.asks_for_specific_detail is True

@@ -12,59 +12,22 @@ class RoutingDecision:
     route: str
     confidence: float
     reasons: list[str] = field(default_factory=list)
+    source: str = "heuristic"
 
 
 class QueryRouter:
-    SECTION_HINTS = (
+    SYNOPSIS_HINTS = (
+        "future work",
+        "key takeaway",
+        "main conclusion",
+        "main focus",
+        "overview",
         "summary",
         "summarize",
-        "overview",
-        "main focus",
-        "main idea",
-        "main argument",
-        "what does the paper argue",
-        "conclusion",
-        "limitations",
-        "future work",
-        "future directions",
-        "key takeaway",
-        "compare",
-        "challenge",
-        "argue",
-        "main aim",
-        "research objectives",
-        "next steps",
+        "what did the thesis conclude",
+        "what does the paper say about",
     )
-    STRONG_SECTION_HINTS = (
-        "main focus",
-        "main idea",
-        "main argument",
-        "what does the paper argue",
-        "conclusion",
-        "limitations",
-        "future work",
-        "future directions",
-        "key takeaway",
-        "clinical adoption",
-        "main finding",
-        "main aim",
-        "research objectives",
-        "next steps",
-    )
-    FACTUAL_HINTS = (
-        "what is",
-        "how many",
-        "when",
-        "which",
-        "define",
-        "exact",
-        "page ",
-        "clause ",
-        "auc",
-        "accuracy",
-        "split",
-        "how was",
-    )
+    CHUNK_HINTS = ("clause ", "define", "exact", "page ", "quote", "what is", "what does")
 
     def __init__(self, settings: Settings | None = None):
         self.settings = settings
@@ -79,49 +42,63 @@ class QueryRouter:
 
     def _heuristic_route(self, question: str, query_profile: QueryProfile) -> RoutingDecision:
         lowered = question.lower()
-        section_score = sum(1 for term in self.SECTION_HINTS if term in lowered)
-        section_score += sum(2 for term in self.STRONG_SECTION_HINTS if term in lowered)
-        factual_score = sum(1 for term in self.FACTUAL_HINTS if term in lowered)
         reasons: list[str] = []
 
-        if query_profile.query_type == "summary_lookup":
-            section_score += 3
-            reasons.append("Summary-style query type prefers section-level routing.")
+        if query_profile.has_explicit_constraint and any(term in lowered for term in self.CHUNK_HINTS):
+            return RoutingDecision(
+                route="chunk_first",
+                confidence=0.9,
+                reasons=["Explicit page/clause-style cues favor direct chunk grounding."],
+            )
 
-        if query_profile.query_type in {"definition_lookup", "waiting_period_lookup", "benefit_lookup", "exclusion_lookup", "process_lookup"}:
-            factual_score += 2
-            reasons.append(f"Query type {query_profile.query_type} prefers chunk-level grounding.")
+        if query_profile.evidence_spread == "atomic":
+            return RoutingDecision(
+                route="chunk_first",
+                confidence=0.84,
+                reasons=["Atomic evidence spread favors exact chunk retrieval."],
+            )
 
-        if any(term in lowered for term in ("abstract", "conclusion", "future work", "discussion", "results", "main finding", "challenge")):
-            section_score += 2
-            reasons.append("High-level narrative cues suggest section-first retrieval.")
+        if query_profile.evidence_spread == "global":
+            return RoutingDecision(
+                route="synopsis_first",
+                confidence=0.84,
+                reasons=["Global synthesis questions benefit from synopsis-first planning."],
+            )
 
-        if "paper" in lowered and any(term in lowered for term in ("main focus", "main idea", "main conclusion", "argue", "challenge")):
-            section_score += 2
-            reasons.append("Paper-level synthesis phrasing favors section-first retrieval.")
+        if query_profile.evidence_spread == "sectional":
+            confidence = 0.78 if any(term in lowered for term in self.SYNOPSIS_HINTS) else 0.7
+            return RoutingDecision(
+                route="synopsis_first",
+                confidence=confidence,
+                reasons=["Sectional questions should narrow regions before chunk search."],
+            )
 
-        if section_score >= factual_score + 2:
-            confidence = min(0.95, 0.6 + 0.1 * (section_score - factual_score))
-            return RoutingDecision("section_first", confidence, reasons or ["Broad summary cues dominated the query."])
-        if factual_score >= section_score + 2:
-            confidence = min(0.95, 0.6 + 0.1 * (factual_score - section_score))
-            return RoutingDecision("chunk_first", confidence, reasons or ["Exact factual cues dominated the query."])
-        return RoutingDecision("hybrid_both", 0.55, reasons or ["Signals were mixed, so both retrieval paths will run."])
+        if query_profile.evidence_spread == "distributed":
+            return RoutingDecision(
+                route="hybrid_both",
+                confidence=0.62,
+                reasons=["Distributed questions benefit from region guidance plus a global fallback pool."],
+            )
+
+        reasons.append("Signals remained mixed after deterministic planning.")
+        return RoutingDecision(route="hybrid_both", confidence=0.55, reasons=reasons)
 
     def _llm_route(self, question: str, query_profile: QueryProfile, current: RoutingDecision) -> RoutingDecision:
         if self.client is None or self.settings is None:
             return current
-        if current.confidence > self.settings.router_confidence_threshold or current.route != "hybrid_both":
+        if current.confidence > self.settings.router_confidence_threshold:
             return current
 
         prompt = (
-            "Classify the best retrieval route for this question in a long-document QA system.\n"
+            "Choose the best retrieval route for a long-document QA system.\n"
             "Routes:\n"
-            "- chunk_first: exact fact, number, clause, definition, metric, split, page-specific lookup\n"
-            "- section_first: broad summary, main aim, conclusion, future work, cross-section synthesis\n"
-            "- hybrid_both: meaningfully needs both or is genuinely mixed\n\n"
+            "- chunk_first: exact fact, explicit page/clause, definition, or tightly localized lookup\n"
+            "- section_first: a legacy section-scoped retrieval mode when synopsis-first is unnecessary\n"
+            "- hybrid_both: distributed evidence or genuinely mixed intent\n"
+            "- synopsis_first: broad synthesis or section-level narrowing before chunk retrieval\n\n"
             "Return compact JSON with keys route and reason.\n\n"
-            f"Query type: {query_profile.query_type}\n"
+            f"Intent: {query_profile.intent_type}\n"
+            f"Evidence spread: {query_profile.evidence_spread}\n"
             f"Question: {question}"
         )
         try:
@@ -135,10 +112,15 @@ class QueryRouter:
             )
             payload = json.loads(response.choices[0].message.content or "{}")
             route = payload.get("route")
-            if route not in {"chunk_first", "section_first", "hybrid_both"}:
+            if route not in {"chunk_first", "section_first", "hybrid_both", "synopsis_first"}:
                 return current
-            reason = str(payload.get("reason", "")).strip() or "LLM router resolved the mixed query."
-            return RoutingDecision(route=route, confidence=0.7, reasons=[*current.reasons, reason])
+            reason = str(payload.get("reason", "")).strip() or "LLM fallback refined the retrieval route."
+            return RoutingDecision(
+                route=route,
+                confidence=0.72,
+                reasons=[*current.reasons, reason],
+                source="llm_fallback",
+            )
         except Exception:
             return current
 
