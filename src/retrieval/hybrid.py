@@ -47,6 +47,13 @@ class HybridRetriever:
         "future directions",
         "final remarks",
     }
+    EARLY_SUMMARY_TERMS = {"about", "aim", "contribution", "contributions", "focus", "objective", "overview", "purpose", "scope", "summary", "topic"}
+    FINDINGS_SUMMARY_TERMS = {"finding", "findings", "headline", "result", "results", "performance", "outcome"}
+    LATE_SUMMARY_TERMS = {"conclusion", "conclusions", "future", "implication", "implications", "limitation", "limitations", "next", "recommendation", "recommendations"}
+    LOW_VALUE_SUMMARY_SECTION_KINDS = {"references", "appendix"}
+    OVERVIEW_SECTION_KINDS = {"overview", "abstract", "introduction", "background"}
+    FINDINGS_SECTION_KINDS = {"results", "discussion", "evidence"}
+    LATE_SECTION_KINDS = {"discussion", "conclusion", "conclusions", "future work", "future directions", "limitations"}
 
     def __init__(self, store: ChromaIndexStore, settings: Settings):
         self.store = store
@@ -63,12 +70,25 @@ class HybridRetriever:
         return candidate.rerank_score if candidate.rerank_score is not None else candidate.fused_score
 
     @classmethod
+    def _normalize_term_set(cls, terms: set[str]) -> set[str]:
+        normalized: set[str] = set()
+        for term in terms:
+            normalized.add(term)
+            if len(term) > 4 and term.endswith("s"):
+                normalized.add(term[:-1])
+            if len(term) > 5 and term.endswith("ies"):
+                normalized.add(term[:-3] + "y")
+        return normalized
+
+    @classmethod
     def _significant_question_terms(cls, question: str) -> set[str]:
-        return {
+        return cls._normalize_term_set(
+            {
             token
             for token in re.findall(r"[A-Za-z0-9]+", question.lower())
             if len(token) > 3 and token not in cls.GENERIC_QUERY_TERMS
-        }
+            }
+        )
 
     @classmethod
     def _content_overlap_ratio(cls, question: str, candidates: list[RetrievalCandidate]) -> float:
@@ -79,6 +99,7 @@ class HybridRetriever:
         for candidate in candidates[:3]:
             candidate_terms.update(re.findall(r"[A-Za-z0-9]+", candidate.text.lower()))
             candidate_terms.update(re.findall(r"[A-Za-z0-9]+", str(candidate.metadata.get("section_heading", "")).lower()))
+        candidate_terms = cls._normalize_term_set(candidate_terms)
         return len(significant_terms & candidate_terms) / max(len(significant_terms), 1)
 
     def _assess_evidence_status(
@@ -193,6 +214,7 @@ class HybridRetriever:
         scoped_section_ids: set[str] | None = None,
         region_lookup: dict[str, str] | None = None,
         preferred_region_kinds: set[str] | None = None,
+        query_type: str = "general_lookup",
     ) -> RetrievalCandidate:
         keyword_boost = 0.15 * self._keyword_overlap(question, chunk.text)
         heading_boost = 0.15 * self._keyword_overlap(question, str(chunk.metadata.get("section_heading", "")))
@@ -201,6 +223,24 @@ class HybridRetriever:
         clause_boost = 0.18 if any(term in chunk.metadata.get("clause_ids", []) for term in clause_terms) else 0.0
         scoped_boost = 0.14 if scoped_section_ids and chunk.metadata.get("section_id") in scoped_section_ids else 0.0
         region_boost = 0.08 if preferred_region_kinds and region_lookup and region_lookup.get(chunk.metadata.get("section_id", "")) in preferred_region_kinds else 0.0
+        summary_adjustment = 0.0
+        section_kind = str(chunk.metadata.get("section_kind", "")).lower()
+        question_terms = self._significant_question_terms(question)
+        if query_type == "summary_lookup":
+            asks_early_summary = bool(question_terms & self.EARLY_SUMMARY_TERMS)
+            asks_findings_summary = bool(question_terms & self.FINDINGS_SUMMARY_TERMS)
+            asks_late_summary = bool(question_terms & self.LATE_SUMMARY_TERMS)
+            if section_kind in self.LOW_VALUE_SUMMARY_SECTION_KINDS:
+                summary_adjustment -= 0.55
+            if asks_early_summary and section_kind in {"overview", "abstract", "introduction", "background"}:
+                summary_adjustment += 0.22
+            if asks_findings_summary and section_kind in {"results", "discussion"}:
+                summary_adjustment += 0.18
+            if asks_late_summary and section_kind in {"discussion", "conclusion", "conclusions", "future work", "future directions", "limitations"}:
+                summary_adjustment += 0.18
+            lowered_text = chunk.text[:400].lower()
+            if "author contributions" in lowered_text or "supplementary information" in lowered_text:
+                summary_adjustment -= 0.35
         metadata = dict(chunk.metadata)
         if region_lookup and chunk.metadata.get("section_id") in region_lookup:
             metadata["region_kind"] = region_lookup[chunk.metadata["section_id"]]
@@ -210,15 +250,233 @@ class HybridRetriever:
             metadata=metadata,
             dense_score=dense_scores.get(chunk.chunk_id, 0.0),
             lexical_score=lexical_scores.get(chunk.chunk_id, 0.0),
-            fused_score=fused_score + keyword_boost + heading_boost + path_boost + content_boost + clause_boost + scoped_boost + region_boost,
+            fused_score=fused_score + keyword_boost + heading_boost + path_boost + content_boost + clause_boost + scoped_boost + region_boost + summary_adjustment,
             citation_label=f"{chunk.metadata.get('source_file', 'Document')} - {chunk.metadata.get('page_label', 'Document')}",
         )
+
+    @classmethod
+    def _summary_focus(cls, question: str) -> str:
+        question_terms = cls._significant_question_terms(question)
+        asks_findings = bool(question_terms & cls.FINDINGS_SUMMARY_TERMS)
+        asks_late = bool(question_terms & cls.LATE_SUMMARY_TERMS)
+        asks_early = bool(question_terms & cls.EARLY_SUMMARY_TERMS)
+        if asks_findings:
+            return "findings"
+        if asks_late:
+            return "late"
+        if asks_early:
+            return "overview"
+        return "balanced"
 
     def _finalize_candidates(self, question: str, candidates: list[RetrievalCandidate]) -> list[RetrievalCandidate]:
         ranked = sorted(candidates, key=lambda candidate: candidate.fused_score, reverse=True)
         if self.reranker is not None and ranked:
             return self.reranker.rerank(question, ranked, top_k=self.settings.final_top_k)
         return ranked[: self.settings.final_top_k]
+
+    def _seed_selected_section_chunks(
+        self,
+        fingerprint: str,
+        question: str,
+        selected_section_ids: list[str],
+        *,
+        region_lookup: dict[str, str] | None = None,
+        preferred_region_kinds: set[str] | None = None,
+        query_type: str = "general_lookup",
+        limit: int = 2,
+    ) -> list[RetrievalCandidate]:
+        chunks = self.store.load_chunks(fingerprint)
+        seeded: list[RetrievalCandidate] = []
+        chunk_groups: dict[str, list[ChunkRecord]] = defaultdict(list)
+        for chunk in chunks:
+            section_id = str(chunk.metadata.get("section_id", ""))
+            if section_id in selected_section_ids:
+                chunk_groups[section_id].append(chunk)
+
+        summary_focus = self._summary_focus(question)
+        for section_id in selected_section_ids[:limit]:
+            members = chunk_groups.get(section_id, [])
+            if not members:
+                continue
+            region_kind = ""
+            if region_lookup is not None:
+                region_kind = region_lookup.get(section_id, "")
+            if query_type == "summary_lookup" and summary_focus == "overview" and region_kind in self.OVERVIEW_SECTION_KINDS:
+                best_chunk = min(members, key=lambda chunk: chunk.chunk_index)
+            elif query_type == "summary_lookup" and summary_focus in {"findings", "late"} and region_kind in self.FINDINGS_SECTION_KINDS | self.LATE_SECTION_KINDS:
+                best_chunk = max(
+                    members,
+                    key=lambda chunk: (
+                        self._keyword_overlap(question, str(chunk.metadata.get("section_heading", "")))
+                        + self._keyword_overlap(question, chunk.text[:600])
+                        + (0.05 if chunk.chunk_index > 0 else 0.0)
+                    ),
+                )
+            else:
+                best_chunk = max(
+                    members,
+                    key=lambda chunk: (
+                        self._keyword_overlap(question, str(chunk.metadata.get("section_heading", "")))
+                        + self._keyword_overlap(question, chunk.text[:600])
+                    ),
+                )
+            seeded.append(
+                self._score_chunk(
+                    question,
+                    best_chunk,
+                    {},
+                    {},
+                    0.22,
+                    [],
+                    [],
+                    scoped_section_ids={section_id},
+                    region_lookup=region_lookup,
+                    preferred_region_kinds=preferred_region_kinds,
+                    query_type=query_type,
+                )
+            )
+        return seeded
+
+    def _choose_global_summary_sections(
+        self,
+        question: str,
+        ranked_synopses: list[RetrievalCandidate],
+        plan: RetrievalPlan,
+    ) -> tuple[list[str], list[str]]:
+        selected: list[str] = []
+        notes: list[str] = []
+        summary_focus = self._summary_focus(question)
+
+        def pick_first(section_kinds: set[str]) -> str | None:
+            for candidate in ranked_synopses:
+                section_id = str(candidate.metadata.get("section_id", ""))
+                section_kind = str(candidate.metadata.get("section_kind", "")).lower()
+                if not section_id or section_kind in self.LOW_VALUE_SUMMARY_SECTION_KINDS:
+                    continue
+                if section_kind in section_kinds:
+                    return section_id
+            return None
+
+        overview_id = pick_first(self.OVERVIEW_SECTION_KINDS)
+        findings_id = pick_first(self.FINDINGS_SECTION_KINDS)
+        late_id = pick_first(self.LATE_SECTION_KINDS)
+
+        if overview_id:
+            selected.append(overview_id)
+        if summary_focus == "findings":
+            if findings_id:
+                selected.append(findings_id)
+            if late_id:
+                selected.append(late_id)
+        elif summary_focus == "late":
+            if late_id:
+                selected.append(late_id)
+            if findings_id:
+                selected.append(findings_id)
+        else:
+            if findings_id:
+                selected.append(findings_id)
+            if summary_focus == "balanced" and late_id:
+                selected.append(late_id)
+
+        if not selected:
+            selected.extend(
+                candidate.metadata.get("section_id")
+                for candidate in ranked_synopses[: max(2, self.settings.synopsis_section_window - 1)]
+                if candidate.metadata.get("section_id")
+                and str(candidate.metadata.get("section_kind", "")).lower() not in self.LOW_VALUE_SUMMARY_SECTION_KINDS
+            )
+
+        ranked_lookup = {
+            str(candidate.metadata.get("section_id", "")): str(candidate.metadata.get("section_kind", "")).lower()
+            for candidate in ranked_synopses
+            if candidate.metadata.get("section_id")
+        }
+        for section_id in plan.target_region_ids:
+            if ranked_lookup.get(section_id, "") in self.LOW_VALUE_SUMMARY_SECTION_KINDS:
+                continue
+            if section_id and section_id not in selected:
+                selected.append(section_id)
+            if len(selected) >= self.settings.synopsis_section_window:
+                break
+
+        deduped = list(dict.fromkeys(section_id for section_id in selected if section_id))
+        if deduped:
+            notes.append(f"Global-summary routing assembled {len(deduped)} anchor sections.")
+        return deduped[: self.settings.synopsis_section_window], notes
+
+    def _global_summary_candidates(
+        self,
+        fingerprint: str,
+        question: str,
+        metadata_filters: dict[str, list[str]],
+        preferred_content_types: list[str],
+        clause_terms: list[str],
+        plan: RetrievalPlan,
+        synopses: list[SectionSynopsisRecord],
+    ) -> tuple[list[RetrievalCandidate], list[str], bool]:
+        if not synopses:
+            return [], ["No synopsis artifacts were available for global-summary retrieval."], False
+
+        ranked_synopses = self._rank_synopses(fingerprint, question, synopses, plan)
+        selected_section_ids, notes = self._choose_global_summary_sections(question, ranked_synopses, plan)
+        region_lookup = {synopsis.section_id: synopsis.region_kind for synopsis in synopses}
+        preferred_region_kinds = set(plan.target_region_kinds)
+
+        local_candidates = self._chunk_candidates(
+            fingerprint,
+            question,
+            metadata_filters,
+            preferred_content_types,
+            clause_terms,
+            query_type="summary_lookup",
+            section_ids=set(selected_section_ids) if selected_section_ids else None,
+            strict=False,
+            dense_top_k=max(self.settings.dense_top_k, self.settings.final_top_k + self.settings.section_chunk_window + 2),
+            lexical_top_k=max(self.settings.lexical_top_k, self.settings.final_top_k + self.settings.section_chunk_window + 2),
+            fused_top_k=max(self.settings.fused_top_k, self.settings.final_top_k + self.settings.section_chunk_window + 3),
+            region_lookup=region_lookup,
+            preferred_region_kinds=preferred_region_kinds,
+        )
+        local_candidates.extend(
+            self._seed_selected_section_chunks(
+                fingerprint,
+                question,
+                selected_section_ids,
+                region_lookup=region_lookup,
+                preferred_region_kinds=preferred_region_kinds,
+                query_type="summary_lookup",
+                limit=min(3, max(2, len(selected_section_ids))),
+            )
+        )
+
+        global_candidates: list[RetrievalCandidate] = []
+        if plan.use_global_fallback:
+            global_candidates = [
+                candidate
+                for candidate in self._chunk_candidates(
+                    fingerprint,
+                    question,
+                    {key: value for key, value in metadata_filters.items() if key != "section_terms"},
+                    preferred_content_types,
+                    clause_terms,
+                    query_type="summary_lookup",
+                    dense_top_k=max(self.settings.global_fallback_top_k + 3, self.settings.final_top_k),
+                    lexical_top_k=max(self.settings.global_fallback_top_k + 3, self.settings.final_top_k),
+                    fused_top_k=max(self.settings.global_fallback_top_k + 2, 3),
+                    region_lookup=region_lookup,
+                )
+                if candidate.metadata.get("section_id") not in set(selected_section_ids)
+                and str(candidate.metadata.get("section_kind", "")).lower() not in self.LOW_VALUE_SUMMARY_SECTION_KINDS
+            ][: self.settings.global_fallback_top_k]
+
+        if ranked_synopses:
+            notes.append(
+                f"Global-summary top synopsis: {ranked_synopses[0].metadata.get('section_heading', ranked_synopses[0].chunk_id)}."
+            )
+        if global_candidates:
+            notes.append("Global-summary fallback added extra overview evidence outside the anchor sections.")
+        return local_candidates + global_candidates, notes, bool(global_candidates)
 
     def _chunk_candidates(
         self,
@@ -228,6 +486,7 @@ class HybridRetriever:
         preferred_content_types: list[str],
         clause_terms: list[str],
         *,
+        query_type: str = "general_lookup",
         section_ids: set[str] | None = None,
         strict: bool = False,
         dense_top_k: int | None = None,
@@ -267,6 +526,7 @@ class HybridRetriever:
                 scoped_section_ids=section_ids,
                 region_lookup=region_lookup,
                 preferred_region_kinds=preferred_region_kinds,
+                query_type=query_type,
             )
             for chunk_id, fused_score in sorted(fused_scores.items(), key=lambda pair: pair[1], reverse=True)[: fused_top_k or self.settings.fused_top_k]
             if chunk_id in chunk_lookup
@@ -317,6 +577,7 @@ class HybridRetriever:
         metadata_filters: dict[str, list[str]],
         preferred_content_types: list[str],
         clause_terms: list[str],
+        query_type: str,
         plan: RetrievalPlan,
         synopses: list[SectionSynopsisRecord],
         topology_edges: list[TopologyEdge],
@@ -337,6 +598,7 @@ class HybridRetriever:
             metadata_filters,
             preferred_content_types,
             clause_terms,
+            query_type=query_type,
             section_ids=set(selected_section_ids) if selected_section_ids else None,
             strict=plan.constraint_mode == "hard_region",
             dense_top_k=max(self.settings.dense_top_k, self.settings.final_top_k + self.settings.section_chunk_window),
@@ -345,6 +607,18 @@ class HybridRetriever:
             region_lookup=region_lookup,
             preferred_region_kinds=set(plan.target_region_kinds),
         )
+        if query_type == "summary_lookup" and plan.evidence_spread == "global" and selected_section_ids:
+            local_candidates.extend(
+                self._seed_selected_section_chunks(
+                    fingerprint,
+                    question,
+                    selected_section_ids,
+                    region_lookup=region_lookup,
+                    preferred_region_kinds=set(plan.target_region_kinds),
+                    query_type=query_type,
+                    limit=2,
+                )
+            )
         global_candidates: list[RetrievalCandidate] = []
         if plan.use_global_fallback:
             global_candidates = [
@@ -355,6 +629,7 @@ class HybridRetriever:
                     {key: value for key, value in metadata_filters.items() if key != "section_terms"},
                     preferred_content_types,
                     clause_terms,
+                    query_type=query_type,
                     dense_top_k=max(self.settings.global_fallback_top_k + 2, self.settings.final_top_k),
                     lexical_top_k=max(self.settings.global_fallback_top_k + 2, self.settings.final_top_k),
                     fused_top_k=max(self.settings.global_fallback_top_k, 2),
@@ -430,6 +705,7 @@ class HybridRetriever:
                 metadata_filters,
                 query_profile.preferred_content_types,
                 query_profile.clause_terms,
+                query_type=query_profile.query_type,
                 section_ids=set(plan.target_region_ids) if plan.target_region_ids else None,
                 strict=plan.constraint_mode == "hard_region",
             )
@@ -445,26 +721,39 @@ class HybridRetriever:
                 metadata_filters,
                 query_profile.preferred_content_types,
                 query_profile.clause_terms,
+                query_type=query_profile.query_type,
                 section_ids={candidate.metadata.get("section_id") for candidate in ranked_sections if candidate.metadata.get("section_id")},
             )
             notes.append("Legacy section-first path used as a bounded fallback.")
             return self._build_result(question, metadata_filters, "section_first", candidates, notes, plan, query_profile.query_type)
 
-        synopsis_candidates, synopsis_notes, global_fallback_used = self._synopsis_first(
-            fingerprint,
-            question,
-            metadata_filters,
-            query_profile.preferred_content_types,
-            query_profile.clause_terms,
-            plan,
-            synopses,
-            topology_edges,
-        )
+        if query_profile.query_type == "summary_lookup" and plan.evidence_spread == "global":
+            synopsis_candidates, synopsis_notes, global_fallback_used = self._global_summary_candidates(
+                fingerprint,
+                question,
+                metadata_filters,
+                query_profile.preferred_content_types,
+                query_profile.clause_terms,
+                plan,
+                synopses,
+            )
+        else:
+            synopsis_candidates, synopsis_notes, global_fallback_used = self._synopsis_first(
+                fingerprint,
+                question,
+                metadata_filters,
+                query_profile.preferred_content_types,
+                query_profile.clause_terms,
+                query_profile.query_type,
+                plan,
+                synopses,
+                topology_edges,
+            )
         if plan.preferred_route == "synopsis_first":
             return self._build_result(
                 question,
                 metadata_filters,
-                "synopsis_first",
+                "global_summary_first" if query_profile.query_type == "summary_lookup" and plan.evidence_spread == "global" else "synopsis_first",
                 synopsis_candidates,
                 notes + synopsis_notes,
                 plan,
@@ -478,6 +767,7 @@ class HybridRetriever:
             metadata_filters,
             query_profile.preferred_content_types,
             query_profile.clause_terms,
+            query_type=query_profile.query_type,
         )
         notes.extend(synopsis_notes)
         notes.append("Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval.")

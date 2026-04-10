@@ -15,8 +15,10 @@ HelpmateAI is a grounded long-document QA system for PDFs and DOCX files. It ind
   - `synopsis_first` for broader narrative or synthesis questions
   - `hybrid_both` for mixed or distributed evidence questions
 - builds section synopses and lightweight topology edges for document-aware retrieval control
+- repairs low-confidence journal-style section maps at indexing time with a small bounded model pass
 - uses a lightweight LLM-assisted route refinement only when deterministic planning is low-confidence
 - uses deterministic structural fallback for weak-evidence cases instead of LLM query rewriting
+- uses a dedicated `global_summary_first` route for broad paper-summary questions
 - short-circuits obviously irrelevant questions with retrieval guardrails before generation
 - runs a bounded post-rerank evidence selector that can promote a lower-ranked chunk when it is more direct than rank 1
 - generates grounded answers with citations, evidence panels, and explicit supported/unsupported status
@@ -49,7 +51,9 @@ The RAG core is already in a strong position:
 - it generalizes across policy documents, theses, and research papers
 - it competes well against external retrieval baselines
 - it now uses document-topology guidance without sacrificing chunk-grounded answers
+- it uses indexing-time structure repair only for suspicious low-confidence PDFs instead of pushing more model work into the live query path
 - it can rescue rank-order mistakes with a bounded evidence-selection layer instead of more free-form LLM planning
+- it now has a cleaner global-summary route for broad paper and thesis questions while keeping the factual path stable
 - it has a cleaner evaluation story now:
   - Vectara for external retrieval comparison
   - `ragas` for answer-quality comparison
@@ -87,6 +91,7 @@ HelpmateAI is at the start of a new phase:
 ## Important Docs
 
 - [docs/architecture.md](docs/architecture.md)
+- [docs/architecture-flow.md](docs/architecture-flow.md)
 - [docs/evals/README.md](docs/evals/README.md)
 - [docs/evals/benchmark_summary.md](docs/evals/benchmark_summary.md)
 - [docs/frontend-reference.md](docs/frontend-reference.md)
@@ -103,6 +108,8 @@ HelpmateAI is at the start of a new phase:
 - dual-path retrieval with heuristic plus lightweight LLM routing
 - deterministic weak-evidence expansion instead of model-based query rewriting
 - topology-aware planning plus synopsis retrieval
+- low-confidence indexing-time structure repair for noisy journal PDFs
+- dedicated global-summary routing for broad paper-summary questions
 - bounded post-rerank evidence selection before final answer generation
 - benchmark-aware product surface in both the retained Streamlit shell and the newer frontend/backend app flow
 

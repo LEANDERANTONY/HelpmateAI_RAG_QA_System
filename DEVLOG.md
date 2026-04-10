@@ -66,6 +66,29 @@ Improvements:
 - `pancreas7` kept its gain
 - the evidence selector now fixes some cases where the correct evidence was already in top `k` but not rank 1
 
+## Day 13: Low-Confidence Structure Repair And Dedicated Global Summaries
+
+- Added a low-confidence structure-repair layer at indexing time for noisy journal PDFs.
+- Kept deterministic section extraction first and only invoked a small model on suspicious documents.
+- Added retrieval and negative eval datasets for:
+  - `reportgeneration`
+  - `reportgeneration2`
+- Added a dedicated `global_summary_first` route for broad paper-summary questions.
+- Added summary-aware prompt shaping for the final answer model without changing factual-answer behavior.
+
+Challenges:
+
+- some journal-style papers flattened section structure badly enough that synopsis/topology retrieval inherited the wrong document map
+- broad questions like `What is this paper about?` were still failing even when relevant chunks were already in the candidate set
+- the new summary improvements had to avoid harming the benchmarked policy, thesis, and pancreas document families
+
+Improvements:
+
+- indexing-time structure repair improved section quality only where needed and kept extra model cost out of the live query path
+- `reportgeneration` broad-summary behavior improved materially
+- `reportgeneration2` main-contribution behavior recovered
+- the four older benchmark docs stayed stable or slightly better after the summary-route work
+
 ## Day 1: Notebook-To-App Restructure
 
 - Refactored the repository from a notebook-first layout into a real app structure.

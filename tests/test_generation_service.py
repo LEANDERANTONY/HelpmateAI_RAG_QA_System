@@ -1,4 +1,5 @@
 from src.config import Settings
+from src.generation.prompts import build_grounded_prompt
 from src.generation.service import AnswerGenerator
 from src.schemas import RetrievalCandidate, RetrievalResult
 
@@ -38,3 +39,20 @@ def test_generation_short_circuits_when_retrieval_is_clearly_unsupported():
     assert answer.supported is False
     assert answer.model_name == "retrieval_guardrail"
     assert "unsupported" in answer.answer.lower()
+
+
+def test_grounded_prompt_adds_summary_specific_guidance_for_global_questions():
+    prompt = build_grounded_prompt(
+        "What is this paper about?",
+        [
+            RetrievalCandidate(
+                chunk_id="c1",
+                text="This paper introduces a new multimodal report generation approach.",
+                metadata={"page_label": "Page 1"},
+            )
+        ],
+        summary_mode=True,
+    )
+
+    assert "broad high-level summary question" in prompt
+    assert "what the document is about" in prompt.lower()

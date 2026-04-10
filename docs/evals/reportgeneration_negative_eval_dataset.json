@@ -1,0 +1,17 @@
+[
+  {
+    "question": "What transformer hidden size was used in the proprietary Flamingo backbone?"
+  },
+  {
+    "question": "What exact hospital bed-occupancy forecast did Flamingo-CXR produce for 2026?"
+  },
+  {
+    "question": "What theorem proof does the paper provide for convergence of the report generator?"
+  },
+  {
+    "question": "What seven urinary biomarker features were used in this radiology report-generation study?"
+  },
+  {
+    "question": "What dosage schedule does the paper recommend for treating pneumonia patients?"
+  }
+]

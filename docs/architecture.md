@@ -16,15 +16,16 @@ This split now matters because the retrieval core is largely stable, while the m
 
 1. ingest uploaded PDF or DOCX content
 2. infer lightweight document structure and document style
-3. create metadata-rich chunks, sections, and deterministic section synopses
-4. build or reuse persisted chunk, section, and synopsis indexes plus lightweight topology artifacts
-5. analyze the question and produce a deterministic retrieval plan
-6. retrieve evidence through chunk-first, synopsis-first, legacy section-first fallback, or hybrid retrieval
-7. grade evidence as `strong`, `weak`, or `unsupported`
-8. adapt retrieval through structural guidance and global fallback instead of query rewriting
-9. optionally run a bounded post-rerank evidence selector over the top candidates
-10. generate a grounded answer with explicit support status
-11. cache safe answer results for repeated questions
+3. repair low-confidence section maps at indexing time when journal-style layout noise is detected
+4. create metadata-rich chunks, sections, and deterministic section synopses
+5. build or reuse persisted chunk, section, and synopsis indexes plus lightweight topology artifacts
+6. analyze the question and produce a deterministic retrieval plan
+7. retrieve evidence through chunk-first, synopsis-first, dedicated global-summary retrieval, legacy section-first fallback, or hybrid retrieval
+8. grade evidence as `strong`, `weak`, or `unsupported`
+9. adapt retrieval through structural guidance and global fallback instead of query rewriting
+10. optionally run a bounded post-rerank evidence selector over the top candidates
+11. generate a grounded answer with explicit support status
+12. cache safe answer results for repeated questions
 
 ## Ingestion And Structure Layer
 
@@ -95,6 +96,15 @@ The current retrieval upgrade adds a lightweight topology layer on top of these 
 
 These topology artifacts are stored locally alongside the existing schema-versioned Chroma index rather than in a separate graph database.
 
+For noisy academic and journal PDFs, the indexing path now includes a low-confidence structure-repair step:
+
+- deterministic parsing runs first
+- structural confidence is scored from lightweight layout heuristics
+- only suspicious documents trigger a small-model repair pass
+- repaired section titles, page assignments, and section-role labels feed synopsis and topology generation
+
+This keeps extra model usage out of the live query path while improving structure quality for difficult documents.
+
 ## Retrieval Stack
 
 HelpmateAI now uses a planned hybrid retrieval design:
@@ -135,10 +145,34 @@ Routing can now choose between:
 
 - `chunk_first`
 - `synopsis_first`
+- `global_summary_first`
 - `section_first`
 - `hybrid_both`
 
 The planner is deterministic first. A lightweight LLM-assisted route refinement remains available only when planning confidence is low. There is no model-based query rewriting in the current architecture.
+
+## Dedicated Global-Summary Route
+
+Broad questions like:
+
+- `What is this paper about?`
+- `What is the main contribution of this paper?`
+- `What are the key findings of this paper?`
+
+now use a dedicated evidence-assembly path when the planner marks them as `global`.
+
+This route:
+
+- ranks section synopses first
+- selects a small set of anchor sections across:
+  - overview-style material
+  - findings/results-style material
+  - discussion/conclusion-style material when present
+- seeds representative chunks from those sections
+- adds a bounded global fallback pool
+- still answers only from raw chunk evidence
+
+This route exists because broad paper-summary failures were often not true retrieval misses. The system had relevant chunks, but needed a cleaner evidence bundle for the answer stage.
 
 ## Evidence Selection Layer
 
@@ -234,7 +268,8 @@ Current benchmark read:
 - health-policy retrieval remains stable
 - thesis is now recovered and stronger than the earlier pre-topology baseline
 - `pancreas7` remains improved under the topology-aware stack
-- `pancreas8` remains strong overall, though broad paper-summary retrieval is still the hardest remaining case
+- `pancreas8` remains strong overall, though broad paper-summary retrieval is still the hardest remaining benchmark case
+- the new report-generation eval sets show strong retrieval quality overall, but broad paper-summary questions are still more fragile than concrete questions
 - OpenAI is still the weakest external retrieval baseline on the current document families
 
 ## UI And Product Surface
@@ -284,8 +319,8 @@ The most justified next improvements are now split into two tracks.
 
 Backend-quality track:
 
-- better broad paper-summary retrieval, especially early overview/title/abstract ranking
-- better synopsis ranking and neighbor expansion for borderline broad questions
+- improve the remaining weakest broad-summary cases after the new global-summary route
+- refine synopsis ranking and overview/finding balance without overfitting to the current report papers
 - better suppression of references, appendices, and front-matter noise
 - possible selective expansion of the bounded evidence-selector layer if it continues helping rank-order mistakes
 

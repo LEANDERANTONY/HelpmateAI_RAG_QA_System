@@ -1,6 +1,6 @@
 # Roadmap
 
-This roadmap reflects the current HelpmateAI state after the document-topology retrieval upgrade, benchmark-policy refinement, bounded evidence selection, and the move toward a `Next.js + FastAPI` product shell.
+This roadmap reflects the current HelpmateAI state after the document-topology retrieval upgrade, benchmark-policy refinement, bounded evidence selection, low-confidence structure repair, the dedicated global-summary route, and the move toward a `Next.js + FastAPI` product shell.
 
 ## Now: Frontend And Product Presentation
 
@@ -19,6 +19,8 @@ Current baseline:
 - OpenAI retained as a historical/reference retrieval baseline
 - lightweight document-intelligence layer for structure-aware retrieval
 - deterministic retrieval planning plus synopsis-first and hybrid retrieval
+- low-confidence indexing-time structure repair for noisy journal PDFs
+- dedicated `global_summary_first` retrieval for broad paper-summary questions
 - lightweight LLM-assisted route selection for low-confidence mixed queries
 - deterministic weak-evidence expansion instead of model-based query rewriting
 - bounded post-rerank evidence selection for ambiguous top-k results
@@ -34,6 +36,7 @@ Highest-priority active work:
 - preserve the benchmarked Python retrieval core while improving product credibility
 - make the app feel more like a polished product than a research tool
 - keep benchmark quality high while the frontend evolves
+- avoid another large retrieval-core rewrite unless the remaining broad-summary edge cases justify it
 
 Status:
 
@@ -41,7 +44,7 @@ Status:
 
 ## Next: Retrieval Refinement On The Current Core
 
-- improve broad paper-summary retrieval, especially early overview/title/abstract ranking
+- only revisit broad paper-summary retrieval if the remaining hard cases persist after frontend work starts
 - refine section ranking for broad academic questions without reintroducing model-based rewrite variability
 - improve planner accuracy and region-hit quality without overfitting to current benchmark files
 - better support thesis, report, and research-paper style questions that require broader semantic synthesis

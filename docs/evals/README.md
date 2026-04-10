@@ -7,6 +7,7 @@ HelpmateAI now uses a layered evaluation stack so retrieval changes can be judge
 - custom retrieval benchmark:
   - page-hit rate
   - mean reciprocal rank
+  - structure-aware planner/topology metrics
 - custom negative benchmark:
   - abstention rate
 - external hosted baselines:
@@ -39,8 +40,9 @@ This is important because a system can retrieve the right page while still give 
 | Document | Ours hit/MRR | Vectara retrieval | OpenAI retrieval |
 | --- | --- | --- | --- |
 | Health policy | `0.8462 / 0.7051` | `0.7692` | `0.6923` |
-| Thesis | `0.8333 / 0.5972` | not yet rerun in unified report | `0.6667` |
-| `pancreas8` | `0.8 / 0.8` | `0.8` fragment match on earlier retrieval benchmark slice was stronger than OpenAI in answer eval downstream | `0.4` |
+| Thesis | `0.9167 / 0.6042` | `0.6667` | `0.6667` |
+| `pancreas7` | `0.8889 / 0.6944` | `0.5556` | `0.3333` |
+| `pancreas8` | `0.9000 / 0.8000` | `0.8000` | `0.4000` |
 
 ### Answer-Quality Comparison
 
@@ -48,15 +50,50 @@ These scores use either our own pipeline answers or a shared answer model on top
 
 | Document | System | Ragas faithfulness | Ragas answer relevancy | Ragas context precision |
 | --- | --- | --- | --- | --- |
-| Health policy | Ours | `0.5923` | `0.6950` | `0.8611` |
-| Health policy | Vectara retrieval + shared answer model | `0.8846` | `0.6682` | `0.8782` |
-| Health policy | OpenAI retrieval + shared answer model | `0.6538` | `0.4066` | `0.3513` |
-| Thesis | Ours | `0.9333` | `0.6905` | `0.8495` |
-| Thesis | Vectara retrieval + shared answer model | `0.9583` | `0.6336` | `0.8875` |
-| Thesis | OpenAI retrieval + shared answer model | `0.4028` | `0.2949` | `0.4528` |
-| `pancreas8` | Ours | `0.7200` | `0.5996` | `0.8222` |
-| `pancreas8` | Vectara retrieval + shared answer model | `0.7133` | `0.3769` | `0.6054` |
-| `pancreas8` | OpenAI retrieval + shared answer model | `0.4667` | `0.3745` | `0.4578` |
+| Health policy | Ours | `0.8462` | `0.5995` | `0.8462` |
+| Health policy | Vectara retrieval + shared answer model | `0.7692` | `0.4773` | `0.8833` |
+| Health policy | OpenAI retrieval + shared answer model | `0.5769` | `0.1531` | `0.5927` |
+| Thesis | Ours | `1.0000` | `0.6310` | `0.8449` |
+| Thesis | Vectara retrieval + shared answer model | `0.9167` | `0.6283` | `0.8406` |
+| Thesis | OpenAI retrieval + shared answer model | `0.5069` | `0.4299` | `0.5687` |
+| `pancreas7` | Ours | `0.8889` | `0.5247` | `0.9599` |
+| `pancreas7` | Vectara retrieval + shared answer model | `0.7778` | `0.5045` | `0.7752` |
+| `pancreas7` | OpenAI retrieval + shared answer model | `0.5556` | `0.3606` | `0.4920` |
+| `pancreas8` | Ours | `0.8750` | `0.5034` | `0.9222` |
+| `pancreas8` | Vectara retrieval + shared answer model | `0.7667` | `0.5052` | `0.6337` |
+| `pancreas8` | OpenAI retrieval + shared answer model | `0.6000` | `0.2221` | `0.4887` |
+
+## Structure-Aware Metrics
+
+The current local retrieval stack also emits planner/topology metrics:
+
+- `section_hit_rate`
+- `region_hit_rate`
+- `plan_accuracy`
+- `global_fallback_recovery_rate`
+- `multi_region_recall`
+
+These are diagnostic metrics for the local architecture, not vendor-comparison metrics.
+
+## New Report-Generation Eval Sets
+
+Two additional journal-paper eval sets are now included:
+
+- `reportgeneration`
+- `reportgeneration2`
+
+Current local retrieval snapshot on those datasets:
+
+| Document | Ours hit/MRR | Negative abstention |
+| --- | --- | --- |
+| `reportgeneration` | `0.9000 / 0.8500` | `1.0000` |
+| `reportgeneration2` | `1.0000 / 0.8333` | `1.0000` |
+
+Interpretation:
+
+- retrieval on these papers is already healthy
+- the remaining challenge is the broadest paper-summary phrasing, not raw evidence discovery
+- that is why the latest architecture work focused on a dedicated global-summary evidence route instead of another retrieval rewrite
 
 ## Baseline Policy
 
@@ -85,7 +122,7 @@ from src.evals.compare_benchmarks import compare
 
 root = Path(".").resolve()
 report = compare(
-    document_path=root / "static" / "pancreas8.pdf",
+    document_path=root / "static" / "sample_files" / "pancreas8.pdf",
     positive_dataset_path=root / "docs" / "evals" / "pancreas8_retrieval_eval_dataset.json",
     negative_dataset_path=root / "docs" / "evals" / "pancreas8_negative_eval_dataset.json",
 )
@@ -102,6 +139,7 @@ Reports are saved under `docs/evals/reports/`.
 
 ## Next Eval Upgrades
 
+- add answer-quality eval coverage for the new report-generation datasets
 - add optional gold-answer fields to selected datasets
 - add stronger academic-synthesis eval questions
 - keep Vectara as the main external benchmark and de-emphasize OpenAI in routine benchmark loops

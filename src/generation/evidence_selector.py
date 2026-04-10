@@ -8,6 +8,20 @@ from src.schemas import RetrievalCandidate, RetrievalResult
 
 
 class EvidenceSelector:
+    SUMMARY_SUPPORT_SECTION_KINDS = {
+        "overview",
+        "abstract",
+        "introduction",
+        "background",
+        "results",
+        "discussion",
+        "conclusion",
+        "conclusions",
+        "future work",
+        "future directions",
+    }
+    LOW_VALUE_SECTION_KINDS = {"references", "appendix"}
+
     def __init__(self, settings: Settings):
         self.settings = settings
         self.client = None
@@ -100,6 +114,8 @@ class EvidenceSelector:
 
         retrieval_scores = [self._candidate_score(candidate) for candidate in candidates]
         normalized_retrieval = self._normalize(retrieval_scores)
+        spread = str((retrieval_result.retrieval_plan or {}).get("evidence_spread", ""))
+        is_global_summary = spread == "global"
 
         ranked: list[tuple[float, RetrievalCandidate]] = []
         for candidate, prior_score in zip(candidates, normalized_retrieval):
@@ -108,6 +124,11 @@ class EvidenceSelector:
                 self.settings.evidence_selector_rank_weight * prior_score
                 + self.settings.evidence_selector_llm_weight * llm_score
             )
+            section_kind = str(candidate.metadata.get("section_kind", "")).lower()
+            if is_global_summary and section_kind in self.SUMMARY_SUPPORT_SECTION_KINDS:
+                final_score += 0.12
+            if is_global_summary and section_kind in self.LOW_VALUE_SECTION_KINDS:
+                final_score -= 0.28
             ranked.append((final_score, candidate))
 
         ranked.sort(key=lambda item: item[0], reverse=True)
@@ -123,11 +144,29 @@ class EvidenceSelector:
             if len(chosen) >= self.settings.evidence_selector_max_evidence:
                 break
 
+        max_evidence = self.settings.evidence_selector_max_evidence + 1 if is_global_summary else self.settings.evidence_selector_max_evidence
+        preferred_global_candidate = None
+        if is_global_summary:
+            for _, candidate in ranked:
+                section_kind = str(candidate.metadata.get("section_kind", "")).lower()
+                if section_kind in self.SUMMARY_SUPPORT_SECTION_KINDS:
+                    preferred_global_candidate = candidate
+                    break
+            if preferred_global_candidate is not None and all(existing.chunk_id != preferred_global_candidate.chunk_id for existing in chosen):
+                chosen.insert(0, preferred_global_candidate)
+
+        seen_pages = {candidate.metadata.get("page_label", "") for candidate in chosen}
         for _, candidate in ranked:
-            if len(chosen) >= self.settings.evidence_selector_max_evidence:
+            if len(chosen) >= max_evidence:
                 break
+            if is_global_summary:
+                page_label = candidate.metadata.get("page_label", "")
+                if page_label in seen_pages and len(seen_pages) < max_evidence:
+                    continue
             if all(existing.chunk_id != candidate.chunk_id for existing in chosen):
                 chosen.append(candidate)
+                if is_global_summary:
+                    seen_pages.add(candidate.metadata.get("page_label", ""))
 
         note = (
             f"Evidence selector reviewed top {len(candidates)} chunks and chose "

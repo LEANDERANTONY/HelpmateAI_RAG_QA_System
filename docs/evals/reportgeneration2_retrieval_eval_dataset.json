@@ -1,0 +1,52 @@
+[
+  {
+    "question": "What is the main contribution of the RadAlign paper?",
+    "expected_pages": ["Page 1", "Page 3", "Page 13"],
+    "expected_fragments": ["RadAlign", "vision-language concept alignment", "unified framework", "retrieval-augmented generation"]
+  },
+  {
+    "question": "What problem do the authors say current report-generation approaches face?",
+    "expected_pages": ["Page 1", "Page 2"],
+    "expected_fragments": ["classification accuracy", "expense of interpretability", "hallucination", "incorrect or unreliable information"]
+  },
+  {
+    "question": "How does RadAlign work at a high level?",
+    "expected_pages": ["Page 1", "Page 3"],
+    "expected_fragments": ["align visual features with medical concepts", "prompt LLM", "similar historical cases", "radiologist workflow"]
+  },
+  {
+    "question": "How does the paper use retrieval-augmented generation?",
+    "expected_pages": ["Page 1", "Page 3", "Page 7"],
+    "expected_fragments": ["retrieval-augmented generation", "similar historical cases", "Retrieved Similar Reports", "grounds outputs"]
+  },
+  {
+    "question": "What average AUC does RadAlign report across diseases?",
+    "expected_pages": ["Page 1", "Page 10"],
+    "expected_fragments": ["average AUC of 0.885", "Average", "0.885"]
+  },
+  {
+    "question": "What GREEN score does RadAlign report, and how does it compare with prior methods?",
+    "expected_pages": ["Page 1", "Page 9"],
+    "expected_fragments": ["GREEN score of 0.678", "0.634", "outperforming", "state-of-the-art"]
+  },
+  {
+    "question": "Which disease classes are used in the experiments?",
+    "expected_pages": ["Page 8"],
+    "expected_fragments": ["Atelectasis", "Cardiomegaly", "Consolidation", "Edema", "Pleural Effusion"]
+  },
+  {
+    "question": "What information is included in the report-generation prompt according to the paper?",
+    "expected_pages": ["Page 7"],
+    "expected_fragments": ["AI Model Diagnostic Predictions", "Detailed Feature Analysis", "Retrieved Similar Reports", "Output Requirements"]
+  },
+  {
+    "question": "What does the paper claim about robustness across different LLMs?",
+    "expected_pages": ["Page 11"],
+    "expected_fragments": ["robust across different LLM architectures", "GREEN scores", "0.646-0.695"]
+  },
+  {
+    "question": "What future work direction is mentioned in the conclusion?",
+    "expected_pages": ["Page 13"],
+    "expected_fragments": ["future work", "refining concept", "clinically reliable automation"]
+  }
+]

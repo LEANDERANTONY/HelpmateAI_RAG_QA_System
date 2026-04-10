@@ -24,6 +24,20 @@ Reason:
 | `pancreas7` | `0.8889 / 0.6944` | `0.5556` | `0.3333` |
 | `pancreas8` | `0.9000 / 0.8000` | `0.8000` | `0.4000` |
 
+## Additional Report-Generation Retrieval Snapshot
+
+Two newer paper-specific eval sets now exist for local retrieval and abstention checks:
+
+| Document | Ours hit/MRR | Negative abstention |
+| --- | --- | --- |
+| `reportgeneration` | `0.9000 / 0.8500` | `1.0000` |
+| `reportgeneration2` | `1.0000 / 0.8333` | `1.0000` |
+
+Important note:
+
+- these new paper eval sets currently measure local retrieval quality and abstention behavior
+- they are useful because they confirm that broad paper-summary weakness is now more of an evidence-assembly and answer-building problem than a raw retrieval-discovery problem
+
 ## Answer-Quality Snapshot (`ragas` only)
 
 ### Health policy
@@ -82,8 +96,10 @@ Notes:
 - section and region metrics are for local retrieval only
 - they are meant to explain planner/topology behavior, not replace hit rate, MRR, or `ragas`
 - the new bounded evidence selector runs after retrieval, so it improves final evidence choice without changing the retrieval benchmark itself
+- the dedicated `global_summary_first` route also sits inside local retrieval behavior and is intended to improve broad paper-summary evidence assembly without disturbing exact factual paths
 
 ## Next Step
 
 - keep Vectara as the main external retrieval benchmark and OpenAI as a reference baseline
-- focus the next retrieval-quality pass on broad paper-summary questions rather than changing the global architecture again
+- keep the current architecture stable while frontend/product work continues
+- when backend work resumes, focus only on the remaining weakest broad paper-summary cases rather than another global architecture rewrite

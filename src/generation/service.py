@@ -95,7 +95,9 @@ class AnswerGenerator:
             answer.query_variants = retrieval_result.query_variants
             return answer
 
-        prompt = build_grounded_prompt(question, evidence)
+        retrieval_plan = retrieval_result.retrieval_plan or {}
+        summary_mode = str(retrieval_plan.get("evidence_spread", "")) == "global"
+        prompt = build_grounded_prompt(question, evidence, summary_mode=summary_mode)
         response = self.client.chat.completions.create(
             model=self.settings.answer_model,
             messages=[

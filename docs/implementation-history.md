@@ -310,7 +310,7 @@ Improvement:
 - `pancreas8` improved materially
 - thesis future-work style questions became better supported
 
-## 19. Benchmark Refresh After Retrieval Simplification
+## 20. Benchmark Refresh After Retrieval Simplification
 
 Change:
 
@@ -327,6 +327,44 @@ Improvement:
 - confirmed the strongest win on `pancreas8`
 - clarified that thesis and `pancreas7` are now the most justified retrieval-quality targets
 
+## 21. Low-Confidence Structure Repair During Indexing
+
+Change:
+
+- added an indexing-time structure-repair layer for low-confidence journal-style PDFs
+- kept deterministic parsing first
+- only used a small model when structural confidence looked suspicious
+
+Challenge:
+
+- some publisher-formatted papers flattened section boundaries badly enough that topology and synopsis retrieval were being built on weak structure
+- doing more LLM work in the live query path would have increased latency and instability
+
+Improvement:
+
+- messy PDFs can now get a cleaner section map before topology is built
+- the repair cost is paid once at indexing time, not on every question
+- the old benchmark docs did not regress after adding this layer
+
+## 22. Dedicated Global-Summary Evidence Route
+
+Change:
+
+- added a dedicated `global_summary_first` evidence route for broad paper-summary questions
+- improved prompt handling for global-summary answers
+- added report-generation retrieval and negative eval datasets
+
+Challenge:
+
+- some broad paper questions were still failing even when retrieval already surfaced relevant evidence
+- the system needed a better overview/findings/conclusion evidence bundle rather than another retrieval rewrite
+
+Improvement:
+
+- `reportgeneration` broad summary behavior improved meaningfully
+- `reportgeneration2` main-contribution behavior recovered
+- the four benchmark documents stayed stable or slightly better while the dedicated summary route was added
+
 ## What This Means For The Next Step
 
 The architecture is now strong enough that the next improvement should not be another repo restructure.
@@ -334,6 +372,6 @@ The architecture is now strong enough that the next improvement should not be an
 The most justified next steps are now:
 
 - build a stronger custom frontend on top of the existing core
-- keep refining thesis and paper retrieval quality without another major architecture rewrite
+- keep the current retrieval architecture stable unless the remaining broad-summary edge cases justify a small targeted pass
 - add harder benchmark sets spanning multiple document families
 - expose the backend more cleanly if the new frontend later needs an API boundary

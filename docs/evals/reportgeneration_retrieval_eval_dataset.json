@@ -1,0 +1,52 @@
+[
+  {
+    "question": "What is Flamingo-CXR and what task was it built for?",
+    "expected_pages": ["Page 1", "Page 2", "Page 11"],
+    "expected_fragments": ["Flamingo-CXR", "report generation system", "chest radiographs", "fine-tuning", "radiology report generation task"]
+  },
+  {
+    "question": "What challenge does the paper say has slowed real-world adoption of automated radiology report generation?",
+    "expected_pages": ["Page 1"],
+    "expected_fragments": ["path toward real-world adoption", "challenge of evaluating the clinical quality", "AI-generated reports"]
+  },
+  {
+    "question": "Which two datasets were used to train Flamingo-CXR?",
+    "expected_pages": ["Page 2", "Page 12"],
+    "expected_fragments": ["MIMIC-CXR", "IND1", "training data", "radiology reports"]
+  },
+  {
+    "question": "What automatic report-generation metrics does the paper report for Flamingo-CXR on MIMIC-CXR?",
+    "expected_pages": ["Page 2"],
+    "expected_fragments": ["CheXpert F1 score of 0.519", "RadGraph F1 score of 0.205"]
+  },
+  {
+    "question": "What two main expert-evaluation tasks were used to judge AI-generated reports?",
+    "expected_pages": ["Page 3", "Page 4"],
+    "expected_fragments": ["pairwise preference test", "error correction task", "expert evaluation"]
+  },
+  {
+    "question": "What headline preference result does the paper report for intensive care reports from Flamingo-CXR?",
+    "expected_pages": ["Page 1"],
+    "expected_fragments": ["56.1%", "intensive care reports", "preferable or equivalent"]
+  },
+  {
+    "question": "What did the paper find about clinician-AI collaboration when AI reports contained clinically significant errors?",
+    "expected_pages": ["Page 21"],
+    "expected_fragments": ["clinician-AI collaboration", "improvement in ratings", "clinically significant errors"]
+  },
+  {
+    "question": "What future work directions does the paper suggest for improving the system?",
+    "expected_pages": ["Page 8"],
+    "expected_fragments": ["follow user instructions", "natural language", "in-context learning", "parameter-efficient optimization"]
+  },
+  {
+    "question": "How does the paper describe regional differences in radiologist preferences?",
+    "expected_pages": ["Page 6"],
+    "expected_fragments": ["regional variations in reporting style", "stylistic preferences", "regional variation in rater preferences"]
+  },
+  {
+    "question": "What kinds of report errors were tracked in the error-correction evaluation?",
+    "expected_pages": ["Page 7", "Page 19"],
+    "expected_fragments": ["incorrect findings", "incorrect location", "incorrect severity", "error types"]
+  }
+]

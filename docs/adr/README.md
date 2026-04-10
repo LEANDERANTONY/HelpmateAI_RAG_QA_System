@@ -23,6 +23,8 @@ Current state note:
 - the core RAG architecture described by these ADRs is still valid
 - the newest retrieval changes are now:
   - deterministic document-topology planning
+  - low-confidence indexing-time structure repair
   - synopsis-first retrieval with soft structural guidance
+  - a dedicated `global_summary_first` route for broad paper-summary questions
   - bounded post-rerank evidence selection
 - the next likely ADR after this should be about frontend extraction or a custom web frontend phase, not another large retrieval-core rewrite
