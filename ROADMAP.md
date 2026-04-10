@@ -1,6 +1,6 @@
 # Roadmap
 
-This roadmap reflects the current HelpmateAI state after the section-aware retrieval upgrade, benchmark-policy refinement, deterministic weak-evidence flow, and the move toward a `Next.js + FastAPI` product shell.
+This roadmap reflects the current HelpmateAI state after the document-topology retrieval upgrade, benchmark-policy refinement, bounded evidence selection, and the move toward a `Next.js + FastAPI` product shell.
 
 ## Now: Frontend And Product Presentation
 
@@ -18,9 +18,10 @@ Current baseline:
 - Vectara as the primary external retrieval baseline
 - OpenAI retained as a historical/reference retrieval baseline
 - lightweight document-intelligence layer for structure-aware retrieval
-- dual-path retrieval with section-first support
+- deterministic retrieval planning plus synopsis-first and hybrid retrieval
 - lightweight LLM-assisted route selection for low-confidence mixed queries
 - deterministic weak-evidence expansion instead of model-based query rewriting
+- bounded post-rerank evidence selection for ambiguous top-k results
 - `Next.js + FastAPI` app shell now started and being actively refined
 - retained Streamlit shell with:
   - document status panels
@@ -40,9 +41,9 @@ Status:
 
 ## Next: Retrieval Refinement On The Current Core
 
-- improve thesis and research-paper aim/method retrieval
+- improve broad paper-summary retrieval, especially early overview/title/abstract ranking
 - refine section ranking for broad academic questions without reintroducing model-based rewrite variability
-- improve query analysis and router behavior beyond current heuristic classes
+- improve planner accuracy and region-hit quality without overfitting to current benchmark files
 - better support thesis, report, and research-paper style questions that require broader semantic synthesis
 - add tougher eval sets for narrative and cross-section questions
 - add optional gold-answer datasets so answer-quality metrics can move beyond no-reference scoring

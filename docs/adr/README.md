@@ -10,6 +10,7 @@ Current ADRs:
 - `ADR-004-document-intelligence-layer-for-structure-aware-retrieval.md`
 - `ADR-005-dual-retrieval-routing-with-lightweight-llm-tiebreaker.md`
 - `ADR-006-deterministic-weak-evidence-recovery-and-guardrails.md`
+- `ADR-007-document-topology-planning-and-bounded-evidence-selection.md`
 
 Usage notes:
 
@@ -20,7 +21,8 @@ Usage notes:
 Current state note:
 
 - the core RAG architecture described by these ADRs is still valid
-- the newest change is a retrieval simplification step:
-  - model-based query rewriting has been removed
-  - deterministic weak-evidence recovery and retrieval guardrails are now the preferred design
+- the newest retrieval changes are now:
+  - deterministic document-topology planning
+  - synopsis-first retrieval with soft structural guidance
+  - bounded post-rerank evidence selection
 - the next likely ADR after this should be about frontend extraction or a custom web frontend phase, not another large retrieval-core rewrite

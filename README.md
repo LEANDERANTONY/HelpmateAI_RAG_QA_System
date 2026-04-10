@@ -10,15 +10,19 @@ HelpmateAI is a grounded long-document QA system for PDFs and DOCX files. It ind
 - builds or reuses a persisted local Chroma index keyed by document fingerprint
 - runs hybrid retrieval with dense search, lexical search, fusion, and optional reranking
 - infers document structure, section kinds, clause metadata, and content-type hints
-- uses dual retrieval paths:
+- uses a planned retrieval stack with:
   - `chunk_first` for exact factual and clause-style questions
-  - `section_first` for broader narrative or synthesis questions
-- uses a lightweight LLM-assisted router only when heuristic routing is low-confidence
-- uses deterministic adaptive retrieval expansion for weak-evidence cases instead of LLM query rewriting
+  - `synopsis_first` for broader narrative or synthesis questions
+  - `hybrid_both` for mixed or distributed evidence questions
+- builds section synopses and lightweight topology edges for document-aware retrieval control
+- uses a lightweight LLM-assisted route refinement only when deterministic planning is low-confidence
+- uses deterministic structural fallback for weak-evidence cases instead of LLM query rewriting
 - short-circuits obviously irrelevant questions with retrieval guardrails before generation
+- runs a bounded post-rerank evidence selector that can promote a lower-ranked chunk when it is more direct than rank 1
 - generates grounded answers with citations, evidence panels, and explicit supported/unsupported status
 - evaluates retrieval quality with a layered benchmark stack:
   - custom retrieval hit-rate and MRR
+  - structure-aware retrieval metrics
   - abstention checks
   - Vectara as the primary external retrieval baseline
   - OpenAI File Search as a historical/reference retrieval baseline
@@ -44,6 +48,8 @@ The RAG core is already in a strong position:
 
 - it generalizes across policy documents, theses, and research papers
 - it competes well against external retrieval baselines
+- it now uses document-topology guidance without sacrificing chunk-grounded answers
+- it can rescue rank-order mistakes with a bounded evidence-selection layer instead of more free-form LLM planning
 - it has a cleaner evaluation story now:
   - Vectara for external retrieval comparison
   - `ragas` for answer-quality comparison
@@ -96,6 +102,8 @@ HelpmateAI is at the start of a new phase:
 - local-first indexing and caching
 - dual-path retrieval with heuristic plus lightweight LLM routing
 - deterministic weak-evidence expansion instead of model-based query rewriting
+- topology-aware planning plus synopsis retrieval
+- bounded post-rerank evidence selection before final answer generation
 - benchmark-aware product surface in both the retained Streamlit shell and the newer frontend/backend app flow
 
 Out of scope for the current phase:

@@ -260,34 +260,53 @@ Improvement:
 
 Change:
 
-- removed LLM query rewriting
-- replaced it with deterministic weak-evidence expansion and evidence-state guardrails
+- removed model-based query rewriting
+- moved to deterministic weak-evidence recovery plus explicit unsupported guardrails
 
 Challenge:
 
-- model-based rewrite behavior introduced variability and made benchmark interpretation harder
-- obviously irrelevant questions could still travel too far through the answer path
+- rewrite variability was helping some questions while hurting others
+- obviously irrelevant questions needed to fail early, not after a full answer-generation pass
 
 Improvement:
 
-- retrieval is more predictable
-- irrelevant questions now fail faster
-- the retrieval path depends less on extra model behavior and more on structural search logic
+- retrieval behavior became more predictable
+- unsupported questions now short-circuit cleanly through retrieval guardrails
 
-## 18. Stronger Section-First Retrieval
+## 18. Document-Topology Retrieval
 
 Change:
 
-- improved section summaries, aliases, section-kind signals, and section seeding for summary questions
+- added deterministic retrieval planning
+- added section synopses and topology edges
+- added synopsis-first hierarchical retrieval with soft multi-region guidance and global fallback
 
 Challenge:
 
-- broad thesis and paper questions still underperformed even after the earlier structure-aware layer
-- the fix needed to generalize rather than become another document-specific set of boosts
+- structure existed in the system, but was still too passive
+- broad narrative questions needed section-aware control without losing the multi-page retrieval behavior that already worked well
 
 Improvement:
 
-- summary-style retrieval now has stronger deterministic support from section metadata
+- structure is now an active retrieval control signal
+- thesis, policy, and research-paper workflows now share a more general retrieval shape based on question type and evidence spread
+
+## 19. Bounded Post-Rerank Evidence Selection
+
+Change:
+
+- added a post-rerank evidence selector before answer generation
+
+Challenge:
+
+- some failures were not true retrieval failures
+- the right chunk was already present in top `k`, but not at rank 1
+
+Improvement:
+
+- the system can now prefer a lower-ranked but more direct chunk without rerunning retrieval
+- this keeps the intervention bounded and inspectable
+- unsupported-question guardrails still apply before the selector can run
 - `pancreas8` improved materially
 - thesis future-work style questions became better supported
 

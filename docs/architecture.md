@@ -22,8 +22,9 @@ This split now matters because the retrieval core is largely stable, while the m
 6. retrieve evidence through chunk-first, synopsis-first, legacy section-first fallback, or hybrid retrieval
 7. grade evidence as `strong`, `weak`, or `unsupported`
 8. adapt retrieval through structural guidance and global fallback instead of query rewriting
-9. generate a grounded answer with explicit support status
-10. cache safe answer results for repeated questions
+9. optionally run a bounded post-rerank evidence selector over the top candidates
+10. generate a grounded answer with explicit support status
+11. cache safe answer results for repeated questions
 
 ## Ingestion And Structure Layer
 
@@ -139,6 +140,24 @@ Routing can now choose between:
 
 The planner is deterministic first. A lightweight LLM-assisted route refinement remains available only when planning confidence is low. There is no model-based query rewriting in the current architecture.
 
+## Evidence Selection Layer
+
+After retrieval and reranking, HelpmateAI can run a bounded evidence selector before answer generation.
+
+Properties:
+
+- only sees the top retrieved candidates
+- uses ranking order as a prior, not as an absolute rule
+- can promote a lower-ranked candidate when it is clearly more direct than rank 1
+- never invents evidence and never bypasses unsupported retrieval guardrails
+- is most useful when the correct evidence is already in top `k` but not at rank 1
+
+This layer is intentionally narrower than a planner or rewriter:
+
+- it does not change the query
+- it does not retrieve new chunks
+- it only chooses the best one or two finalists from the existing retrieval result
+
 ## Weak-Evidence And Guardrail Flow
 
 The earlier query rewrite layer has been removed.
@@ -213,8 +232,9 @@ This lets the team compare:
 Current benchmark read:
 
 - health-policy retrieval remains stable
-- `pancreas8` remains strong under synopsis-first retrieval
-- thesis remains the main target for future planner and section-selection refinement
+- thesis is now recovered and stronger than the earlier pre-topology baseline
+- `pancreas7` remains improved under the topology-aware stack
+- `pancreas8` remains strong overall, though broad paper-summary retrieval is still the hardest remaining case
 - OpenAI is still the weakest external retrieval baseline on the current document families
 
 ## UI And Product Surface
@@ -264,9 +284,10 @@ The most justified next improvements are now split into two tracks.
 
 Backend-quality track:
 
-- stronger thesis aim/method retrieval
+- better broad paper-summary retrieval, especially early overview/title/abstract ranking
 - better synopsis ranking and neighbor expansion for borderline broad questions
 - better suppression of references, appendices, and front-matter noise
+- possible selective expansion of the bounded evidence-selector layer if it continues helping rank-order mistakes
 
 Frontend/product track:
 

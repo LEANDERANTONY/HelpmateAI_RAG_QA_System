@@ -42,6 +42,30 @@ Improvements:
 - `pancreas7` and `pancreas8` remained strong under the new retrieval flow
 - thesis retrieval became more inspectable, with clearer planner and region metrics showing where future tuning is needed
 
+## Day 12: Planner Recovery And Bounded Evidence Selection
+
+- tightened query-shape handling for broad summary and specific implementation/detail questions
+- improved topology region selection with early-vs-late summary bias
+- added low-value synopsis suppression for bibliography/manuscript-style noise
+- bumped the index schema to rebuild topology artifacts cleanly
+- added a bounded post-rerank evidence selector:
+  - only reviews top retrieved candidates
+  - keeps a rank prior
+  - can still promote lower-ranked but more direct evidence
+
+Challenges:
+
+- planner changes can easily help one broad-question family while hurting another
+- broad paper-summary questions remain harder than clause-style or exact factual questions
+- extra LLM help had to stay tightly bounded so latency and instability did not spread through the whole pipeline
+
+Improvements:
+
+- thesis recovered to a stronger retrieval snapshot than the earlier pre-topology baseline
+- health stayed stable
+- `pancreas7` kept its gain
+- the evidence selector now fixes some cases where the correct evidence was already in top `k` but not rank 1
+
 ## Day 1: Notebook-To-App Restructure
 
 - Refactored the repository from a notebook-first layout into a real app structure.

@@ -20,9 +20,9 @@ Reason:
 | Document | Ours hit/MRR | Vectara retrieval | OpenAI retrieval |
 | --- | --- | --- | --- |
 | Health policy | `0.8462 / 0.7051` | `0.7692` | `0.6923` |
-| Thesis | `0.7500 / 0.5972` | `0.6667` | `0.6667` |
-| `pancreas7` | `0.7778 / 0.5833` | `0.5556` | `0.3333` |
-| `pancreas8` | `1.0000 / 0.9000` | `0.8000` | `0.4000` |
+| Thesis | `0.9167 / 0.6042` | `0.6667` | `0.6667` |
+| `pancreas7` | `0.8889 / 0.6944` | `0.5556` | `0.3333` |
+| `pancreas8` | `0.9000 / 0.8000` | `0.8000` | `0.4000` |
 
 ## Answer-Quality Snapshot (`ragas` only)
 
@@ -61,12 +61,29 @@ Reason:
 ## Interpretation
 
 - Helpmate remains strongest overall on the health policy benchmark, with Vectara closest on context precision.
-- On the thesis benchmark, Helpmate and Vectara are close, but Helpmate is slightly ahead overall and clearly ahead of OpenAI.
+- On the thesis benchmark, Helpmate has now recovered to a stronger retrieval snapshot and remains ahead of both external baselines overall.
 - On `pancreas7`, Helpmate leads both external baselines across all three `ragas` metrics.
-- On `pancreas8`, Helpmate now has the strongest retrieval score and remains ahead of both external baselines overall.
+- On `pancreas8`, Helpmate still leads overall, but broad paper-summary retrieval remains the hardest remaining case.
 - OpenAI File Search is still the weakest external baseline across the document families we tested.
+
+## Structure-Aware Retrieval Snapshot
+
+Latest local topology-aware metrics:
+
+| Document | Section hit | Region hit | Plan accuracy | Global fallback recovery | Multi-region recall |
+| --- | --- | --- | --- | --- | --- |
+| Health policy | `0.8462` | `0.0000` | `0.7692` | `0.0000` | `1.0000` |
+| Thesis | `0.9167` | `0.7500` | `0.5000` | `0.9091` | `0.7500` |
+| `pancreas7` | `0.8889` | `0.4444` | `0.6667` | `0.0000` | `0.2500` |
+| `pancreas8` | `0.9000` | `0.1000` | `0.8000` | `0.0000` | `0.0000` |
+
+Notes:
+
+- section and region metrics are for local retrieval only
+- they are meant to explain planner/topology behavior, not replace hit rate, MRR, or `ragas`
+- the new bounded evidence selector runs after retrieval, so it improves final evidence choice without changing the retrieval benchmark itself
 
 ## Next Step
 
 - keep Vectara as the main external retrieval benchmark and OpenAI as a reference baseline
-- focus the next retrieval-quality pass on thesis and `pancreas7` aim/method questions rather than changing the global architecture again
+- focus the next retrieval-quality pass on broad paper-summary questions rather than changing the global architecture again
