@@ -181,12 +181,16 @@ def _section_aliases(title: str, section_kind: str, section_path: list[str]) -> 
     return seen[:10]
 
 
-def _document_overview_section(document: DocumentRecord, sections: list[SectionRecord]) -> SectionRecord | None:
+def document_overview_section(document: DocumentRecord, sections: list[SectionRecord]) -> SectionRecord | None:
     style = str(document.metadata.get("document_style", "generic_longform"))
-    if style not in {"research_paper", "thesis_document"}:
-        return None
-
     title_page = next((page for page in document.metadata.get("pages", []) if page.get("page_label") == "Page 1"), None)
+    title_page_text = str(title_page.get("text", "")) if title_page else ""
+    has_research_style_front_matter = bool(
+        re.search(r"\babstract\b", title_page_text, flags=re.IGNORECASE)
+        or re.search(r"\bintroduction\b", title_page_text, flags=re.IGNORECASE)
+    )
+    if style not in {"research_paper", "thesis_document"} and not has_research_style_front_matter:
+        return None
     abstract_section = next((section for section in sections if str(section.metadata.get("section_kind", "")).lower() == "abstract"), None)
     intro_section = next(
         (
@@ -309,7 +313,7 @@ def build_sections(document: DocumentRecord) -> list[SectionRecord]:
                 },
             )
         )
-    overview = _document_overview_section(document, sections)
+    overview = document_overview_section(document, sections)
     if overview is not None:
         sections.insert(0, overview)
     return sections

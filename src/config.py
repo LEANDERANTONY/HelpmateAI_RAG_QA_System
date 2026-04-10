@@ -39,7 +39,7 @@ class Settings:
     uploads_dir: Path = ROOT_DIR / "data" / "uploads"
     indexes_dir: Path = ROOT_DIR / "data" / "indexes"
     cache_dir: Path = ROOT_DIR / "data" / "cache"
-    index_schema_version: str = os.getenv("HELPMATE_INDEX_SCHEMA_VERSION", "v5")
+    index_schema_version: str = os.getenv("HELPMATE_INDEX_SCHEMA_VERSION", "v10")
     chunk_size: int = _env_int("HELPMATE_CHUNK_SIZE", 1200)
     chunk_overlap: int = _env_int("HELPMATE_CHUNK_OVERLAP", 180)
     dense_top_k: int = _env_int("HELPMATE_DENSE_TOP_K", 10)
@@ -66,6 +66,9 @@ class Settings:
     router_model: str = os.getenv("HELPMATE_ROUTER_MODEL", "gpt-5.4-nano")
     router_confidence_threshold: float = _env_float("HELPMATE_ROUTER_CONFIDENCE_THRESHOLD", 0.6)
     planner_confidence_threshold: float = _env_float("HELPMATE_PLANNER_CONFIDENCE_THRESHOLD", 0.74)
+    structure_repair_enabled: bool = _env_bool("HELPMATE_STRUCTURE_REPAIR_ENABLED", True)
+    structure_repair_model: str = os.getenv("HELPMATE_STRUCTURE_REPAIR_MODEL", "gpt-5.4-nano")
+    structure_repair_confidence_threshold: float = _env_float("HELPMATE_STRUCTURE_REPAIR_CONFIDENCE_THRESHOLD", 0.62)
     embedding_model: str = os.getenv("HELPMATE_EMBEDDING_MODEL", "text-embedding-3-small")
     answer_model: str = os.getenv("HELPMATE_ANSWER_MODEL", "gpt-5.4-mini")
     evidence_selector_enabled: bool = _env_bool("HELPMATE_EVIDENCE_SELECTOR_ENABLED", True)
@@ -76,7 +79,7 @@ class Settings:
     evidence_selector_llm_weight: float = _env_float("HELPMATE_EVIDENCE_SELECTOR_LLM_WEIGHT", 0.35)
     evidence_selector_gap_threshold: float = _env_float("HELPMATE_EVIDENCE_SELECTOR_GAP_THRESHOLD", 0.08)
     openai_api_key: str | None = os.getenv("OPENAI_API_KEY")
-    retrieval_version: str = os.getenv("HELPMATE_RETRIEVAL_VERSION", "v6")
+    retrieval_version: str = os.getenv("HELPMATE_RETRIEVAL_VERSION", "v10")
     generation_version: str = os.getenv("HELPMATE_GENERATION_VERSION", "v5")
     cache_similarity_threshold: float = _env_float("HELPMATE_CACHE_SIMILARITY_THRESHOLD", 0.94)
     weak_evidence_score_threshold: float = _env_float("HELPMATE_WEAK_EVIDENCE_SCORE_THRESHOLD", 0.03)

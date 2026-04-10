@@ -141,3 +141,9 @@ def test_topology_service_penalizes_bibliographic_noise_synopses():
     )
 
     assert selected == ["overview"]
+
+
+def test_topology_service_marks_table_of_contents_as_low_value():
+    service = DocumentTopologyService()
+
+    assert service._is_low_value_text("TABLE OF CONTENTS\nChapter 1 ............ 12\nChapter 2 ............ 18")

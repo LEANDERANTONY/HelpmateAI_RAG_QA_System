@@ -67,10 +67,11 @@ def test_build_sections_prefers_canonical_heading_and_clean_summary():
         },
     )
 
-    section = build_sections(document)[0]
+    sections = build_sections(document)
 
-    assert section.title == "Abstract"
-    assert "multimodal fusion for cancer diagnosis" in section.summary
+    assert sections[0].title == "Document Overview"
+    assert sections[1].title == "Abstract"
+    assert "multimodal fusion for cancer diagnosis" in sections[1].summary
 
 
 def test_build_sections_adds_document_overview_for_research_style_docs():

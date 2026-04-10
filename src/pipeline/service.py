@@ -10,6 +10,7 @@ from src.generation import AnswerGenerator, EvidenceSelector
 from src.ingest import ingest_document
 from src.retrieval import ChromaIndexStore, HybridRetriever
 from src.sections import build_sections
+from src.sections.repair import StructureRepairService
 from src.schemas import AnswerResult, CacheStatus, DocumentRecord, IndexRecord, RetrievalResult
 from src.topology import DocumentTopologyService
 
@@ -28,6 +29,7 @@ class HelpmatePipeline:
         self.generator = AnswerGenerator(self.settings)
         self.answer_cache = AnswerCache(self.settings.cache_dir)
         self.topology_service = DocumentTopologyService()
+        self.structure_repair_service = StructureRepairService(self.settings)
 
     def _persist_upload(self, source_path: str | Path) -> Path:
         source = Path(source_path)
@@ -40,9 +42,38 @@ class HelpmatePipeline:
         persisted_path = self._persist_upload(file_path)
         return ingest_document(persisted_path)
 
+    @staticmethod
+    def _apply_section_metadata_to_chunks(chunks, sections) -> None:
+        page_lookup: dict[str, dict] = {}
+        for section in sections:
+            payload = {
+                "section_id": section.section_id,
+                "section_heading": section.title,
+                "section_path": list(section.section_path),
+                "section_kind": section.metadata.get("section_kind", section.title.lower()),
+                "content_type": section.metadata.get("content_type", "general"),
+                "section_aliases": list(section.metadata.get("section_aliases", []))
+                if isinstance(section.metadata.get("section_aliases", []), list)
+                else section.metadata.get("section_aliases", []),
+            }
+            for page_label in section.page_labels:
+                page_lookup[page_label] = payload
+
+        for chunk in chunks:
+            page_label = str(chunk.metadata.get("page_label", chunk.page_label))
+            section_payload = page_lookup.get(page_label)
+            if not section_payload:
+                continue
+            chunk.metadata.update(section_payload)
+
     def build_or_load_index(self, document: DocumentRecord) -> IndexRecord:
-        chunks = chunk_document(document, self.settings.chunk_size, self.settings.chunk_overlap)
         sections = build_sections(document)
+        sections, repair_decision = self.structure_repair_service.repair_if_needed(document, sections)
+        chunks = chunk_document(document, self.settings.chunk_size, self.settings.chunk_overlap)
+        self._apply_section_metadata_to_chunks(chunks, sections)
+        for section in sections:
+            section.metadata.setdefault("structure_confidence", repair_decision.confidence)
+            section.metadata.setdefault("structure_repair_reasons", list(repair_decision.reasons))
         synopses, topology_edges = self.topology_service.build(sections)
         return self.store.get_or_create_index(
             fingerprint=document.fingerprint,

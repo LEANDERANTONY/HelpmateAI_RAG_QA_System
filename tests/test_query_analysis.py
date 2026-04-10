@@ -28,3 +28,17 @@ def test_query_analyzer_treats_future_work_as_global_summary():
 
     assert profile.query_type == "summary_lookup"
     assert profile.evidence_spread == "global"
+
+
+def test_query_analyzer_treats_main_contribution_as_global_summary():
+    profile = QueryAnalyzer.analyze("What is the main contribution of this paper?")
+
+    assert profile.query_type == "summary_lookup"
+    assert profile.evidence_spread == "global"
+
+
+def test_query_analyzer_treats_paper_about_question_as_global_summary():
+    profile = QueryAnalyzer.analyze("What is this paper about?")
+
+    assert profile.query_type == "summary_lookup"
+    assert profile.evidence_spread == "global"

@@ -24,21 +24,29 @@ class QueryProfile:
 class QueryAnalyzer:
     SUMMARY_CUES = (
         "big picture",
+        "contribution",
+        "contributions",
         "future directions",
         "future work",
         "key takeaway",
+        "key findings",
         "main aim",
         "main conclusion",
+        "main contribution",
         "main focus",
         "main idea",
         "next steps",
         "overall",
         "overview",
+        "paper about",
         "primary topic",
         "research objectives",
         "summarize",
         "summary",
         "takeaway",
+        "what are the main contributions",
+        "what is this paper about",
+        "what is this thesis about",
         "what did the thesis conclude",
         "what does the paper say about",
     )
@@ -103,21 +111,28 @@ class QueryAnalyzer:
     )
     EXPLICIT_SECTION_CUES = ("section ", "chapter ", "within section", "within chapter")
     GLOBAL_SUMMARY_CUES = (
+        "contribution",
+        "contributions",
         "future directions",
         "future work",
+        "key findings",
         "key takeaway",
         "main aim",
         "main conclusion",
+        "main contribution",
         "main focus",
         "main idea",
         "next steps",
         "overall",
         "overview",
+        "paper about",
         "primary topic",
         "purpose",
         "research objective",
         "research objectives",
         "scope",
+        "what is this paper about",
+        "what is this thesis about",
     )
 
     @staticmethod

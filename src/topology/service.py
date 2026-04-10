@@ -128,6 +128,8 @@ _REGION_KEYWORDS: dict[str, set[str]] = {
 _EARLY_REGION_QUERY_TERMS = {
     "abstract",
     "aim",
+    "contribution",
+    "contributions",
     "focus",
     "introduction",
     "objective",
@@ -136,6 +138,7 @@ _EARLY_REGION_QUERY_TERMS = {
     "purpose",
     "scope",
     "summary",
+    "topic",
 }
 
 _LATE_REGION_QUERY_TERMS = {
@@ -157,6 +160,10 @@ _LOW_VALUE_PATTERNS = (
     "author manuscript",
     "available in pmc",
     "copyright holder",
+    "extended data",
+    "table of contents",
+    "list of figures",
+    "list of tables",
     "nih-pa author manuscript",
     "pmcid",
     "pmid",
@@ -273,6 +280,10 @@ class DocumentTopologyService:
     def _is_low_value_text(text: str) -> bool:
         lowered = text.lower()
         if any(pattern in lowered for pattern in _LOW_VALUE_PATTERNS):
+            return True
+        if re.search(r"\bextended data (fig|figure|table)", lowered):
+            return True
+        if re.search(r"\.{10,}", text):
             return True
         if ".pdf" in lowered and any(char.isdigit() for char in lowered):
             return True
@@ -419,6 +430,12 @@ class DocumentTopologyService:
                     score += 0.18 * (1 - page_position)
                 if wants_late_region and synopsis.region_kind in {"discussion", "overview"}:
                     score += 0.18 * page_position
+            if wants_early_region and synopsis.region_kind == "appendix":
+                score -= 0.65
+            if wants_early_region and synopsis.region_kind == "evidence":
+                score -= 0.12
+            if wants_early_region and synopsis.title.lower().strip() in {"overview", "abstract", "document overview", "introduction"}:
+                score += 0.22
             if synopsis.metadata.get("topology_low_value"):
                 score -= 0.45
             if explicit_terms:
