@@ -125,6 +125,43 @@ _REGION_KEYWORDS: dict[str, set[str]] = {
     "general": set(),
 }
 
+_EARLY_REGION_QUERY_TERMS = {
+    "abstract",
+    "aim",
+    "focus",
+    "introduction",
+    "objective",
+    "objectives",
+    "overview",
+    "purpose",
+    "scope",
+    "summary",
+}
+
+_LATE_REGION_QUERY_TERMS = {
+    "conclusion",
+    "conclusions",
+    "discussion",
+    "future",
+    "implication",
+    "implications",
+    "limitation",
+    "limitations",
+    "next",
+    "outlook",
+    "recommendation",
+    "recommendations",
+}
+
+_LOW_VALUE_PATTERNS = (
+    "author manuscript",
+    "available in pmc",
+    "copyright holder",
+    "nih-pa author manuscript",
+    "pmcid",
+    "pmid",
+)
+
 
 class DocumentTopologyService:
     @staticmethod
@@ -232,6 +269,15 @@ class DocumentTopologyService:
             parts.append(" ".join(snippets[:3]))
         return "\n".join(part for part in parts if part).strip()
 
+    @staticmethod
+    def _is_low_value_text(text: str) -> bool:
+        lowered = text.lower()
+        if any(pattern in lowered for pattern in _LOW_VALUE_PATTERNS):
+            return True
+        if ".pdf" in lowered and any(char.isdigit() for char in lowered):
+            return True
+        return False
+
     @classmethod
     def _section_similarity(cls, left: SectionSynopsisRecord, right: SectionSynopsisRecord) -> float:
         left_terms = set(left.key_terms)
@@ -259,6 +305,9 @@ class DocumentTopologyService:
                         **section.metadata,
                         "section_path": list(section.section_path),
                         "section_heading": section.title,
+                        "topology_low_value": self._is_low_value_text(
+                            " ".join([section.title, section.summary, section.text[:400]])
+                        ),
                     },
                 )
             )
@@ -333,6 +382,11 @@ class DocumentTopologyService:
 
         return synopses, edges
 
+    @staticmethod
+    def _page_number(page_label: str) -> int | None:
+        match = re.search(r"(\d+)", page_label)
+        return int(match.group(1)) if match else None
+
     @classmethod
     def select_candidate_region_ids(
         cls,
@@ -345,6 +399,11 @@ class DocumentTopologyService:
     ) -> list[str]:
         question_terms = set(cls._tokenize(question))
         explicit_terms = [term.lower() for term in (explicit_section_terms or []) if term.strip()]
+        page_numbers = [cls._page_number(synopsis.page_labels[0]) for synopsis in synopses if synopsis.page_labels]
+        page_numbers = [page for page in page_numbers if page is not None]
+        max_page = max(page_numbers) if page_numbers else None
+        wants_early_region = bool(question_terms & _EARLY_REGION_QUERY_TERMS)
+        wants_late_region = bool(question_terms & _LATE_REGION_QUERY_TERMS)
         scored: list[tuple[str, float]] = []
         preferred_kinds = {kind for kind in (target_region_kinds or []) if kind}
 
@@ -353,6 +412,15 @@ class DocumentTopologyService:
             score = len(question_terms & heading_tokens) / max(len(question_terms), 1)
             if preferred_kinds and synopsis.region_kind in preferred_kinds:
                 score += 0.35
+            page_number = cls._page_number(synopsis.page_labels[0]) if synopsis.page_labels else None
+            if page_number is not None and max_page:
+                page_position = page_number / max(max_page, 1)
+                if wants_early_region and synopsis.region_kind in {"overview", "general"}:
+                    score += 0.18 * (1 - page_position)
+                if wants_late_region and synopsis.region_kind in {"discussion", "overview"}:
+                    score += 0.18 * page_position
+            if synopsis.metadata.get("topology_low_value"):
+                score -= 0.45
             if explicit_terms:
                 explicit_hit = any(
                     term in synopsis.title.lower()

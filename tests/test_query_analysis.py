@@ -21,3 +21,10 @@ def test_query_analyzer_marks_feature_list_questions_as_specific_detail_procedur
     assert profile.query_type == "process_lookup"
     assert profile.intent_type == "procedure"
     assert profile.asks_for_specific_detail is True
+
+
+def test_query_analyzer_treats_future_work_as_global_summary():
+    profile = QueryAnalyzer.analyze("What kinds of future work or next steps does the thesis suggest?")
+
+    assert profile.query_type == "summary_lookup"
+    assert profile.evidence_spread == "global"

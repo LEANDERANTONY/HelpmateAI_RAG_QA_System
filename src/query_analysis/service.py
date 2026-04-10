@@ -102,6 +102,23 @@ class QueryAnalyzer:
         "which are the",
     )
     EXPLICIT_SECTION_CUES = ("section ", "chapter ", "within section", "within chapter")
+    GLOBAL_SUMMARY_CUES = (
+        "future directions",
+        "future work",
+        "key takeaway",
+        "main aim",
+        "main conclusion",
+        "main focus",
+        "main idea",
+        "next steps",
+        "overall",
+        "overview",
+        "primary topic",
+        "purpose",
+        "research objective",
+        "research objectives",
+        "scope",
+    )
 
     @staticmethod
     def _contains_any(lowered: str, cues: tuple[str, ...]) -> bool:
@@ -154,6 +171,7 @@ class QueryAnalyzer:
         looks_distributed = cls._contains_any(lowered, cls.DISTRIBUTED_CUES) or bool(
             re.search(r"\bwhat\b.*\b[a-z0-9_-]{3,}s\b.*\bapply\b", lowered)
         )
+        asks_for_global_summary = asks_for_summary and cls._contains_any(lowered, cls.GLOBAL_SUMMARY_CUES)
 
         if asks_for_comparison:
             intent_type = "comparison"
@@ -170,9 +188,9 @@ class QueryAnalyzer:
 
         if explicit_page or explicit_clause:
             evidence_spread = "atomic"
-        elif intent_type == "summary" and cls._contains_any(
-            lowered,
-            ("main focus", "overall", "overview", "main conclusion", "key takeaway", "what did the thesis conclude"),
+        elif intent_type == "summary" and (
+            asks_for_global_summary
+            or cls._contains_any(lowered, ("what did the thesis conclude",))
         ):
             evidence_spread = "global"
         elif intent_type in {"comparison", "cross_cutting"} or looks_distributed:

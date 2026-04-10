@@ -6,7 +6,7 @@ from pathlib import Path
 from src.cache import AnswerCache
 from src.chunking import chunk_document
 from src.config import Settings, get_settings
-from src.generation import AnswerGenerator
+from src.generation import AnswerGenerator, EvidenceSelector
 from src.ingest import ingest_document
 from src.retrieval import ChromaIndexStore, HybridRetriever
 from src.sections import build_sections
@@ -24,6 +24,7 @@ class HelpmatePipeline:
             index_schema_version=self.settings.index_schema_version,
         )
         self.retriever = HybridRetriever(self.store, self.settings)
+        self.evidence_selector = EvidenceSelector(self.settings)
         self.generator = AnswerGenerator(self.settings)
         self.answer_cache = AnswerCache(self.settings.cache_dir)
         self.topology_service = DocumentTopologyService()
@@ -77,6 +78,7 @@ class HelpmatePipeline:
             return cached
 
         retrieval_result = self.retrieve_evidence(document.document_id, document.fingerprint, question)
+        retrieval_result = self.evidence_selector.select(question, retrieval_result)
         answer = self.generate_answer(document.document_id, question, retrieval_result)
         answer.cache_status = CacheStatus(index_reused=index_record.reused, answer_cache_hit=False)
         self.answer_cache.set(cache_key, answer)

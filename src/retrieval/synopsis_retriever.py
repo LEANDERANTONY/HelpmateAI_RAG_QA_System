@@ -59,6 +59,8 @@ class SynopsisRetriever:
             region_boost = 0.22 if preferred_kinds and synopsis.region_kind in preferred_kinds else 0.0
             id_boost = 0.35 if section_id in preferred_ids else 0.0
             penalty = -0.25 if synopsis.region_kind in self.LOW_VALUE_REGION_KINDS else 0.0
+            if synopsis.metadata.get("topology_low_value"):
+                penalty -= 0.35
             fused_score = (
                 dense_scores.get(section_id, 0.0)
                 + lexical_scores.get(section_id, 0.0)
