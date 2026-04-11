@@ -328,7 +328,7 @@ export function AppWorkspace() {
             </div>
           </div>
 
-          <div className="surface-card surface-card-teal">
+          <div className="surface-card surface-card-neutral">
             <p className="eyebrow">Step 2</p>
             <h2 className="text-xl font-semibold text-white">Index and ask</h2>
             <p className="mt-2 text-[0.96rem] leading-7 text-slate-300">
