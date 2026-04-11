@@ -223,23 +223,23 @@ export function AppWorkspace() {
 
   return (
     <div className="grid gap-6">
-      <section className="glass-panel p-6 md:p-8">
+      <section className="p-1">
         <div className="flex flex-wrap items-center justify-between gap-3">
           <div className="max-w-3xl">
             <p className="eyebrow">Workspace</p>
-            <h1 className="section-heading text-3xl md:text-4xl">
-              Premium QA surface over the existing RAG core
+            <h1 className="section-heading text-[2.15rem] leading-[0.98] md:text-[3.05rem]">
+              RAG augmented document QA
             </h1>
           </div>
         </div>
 
-        <div className="mt-6 rounded-[1.75rem] border border-cyan-300/15 bg-cyan-300/8 p-4 md:p-5">
+        <div className="mt-7 rounded-[1.6rem] border border-white/8 bg-white/[0.018] p-4 shadow-[0_12px_28px_rgba(0,0,0,0.14)] md:p-[1.125rem]">
             <div className="flex flex-wrap items-start justify-between gap-3">
               <div className="max-w-2xl">
-                <p className="text-xs uppercase tracking-[0.26em] text-cyan-200/80">
+                <p className="text-[0.68rem] uppercase tracking-[0.26em] text-blue-200/75">
                   Live state
                 </p>
-              <p className="mt-2 text-base font-medium text-white">
+              <p className="mt-1.5 text-[0.96rem] font-medium leading-6 text-white md:text-[1rem]">
                 {statusSummary}
               </p>
               </div>
@@ -257,27 +257,27 @@ export function AppWorkspace() {
           </div>
         </div>
 
-        <div className="mt-8 grid gap-5">
+        <div className="mt-8 grid gap-6">
           <div className="surface-card surface-card-teal">
             <p className="eyebrow">Step 1</p>
             <h2 className="text-xl font-semibold text-white">Upload your document</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-300">
+            <p className="mt-2 text-[0.96rem] leading-7 text-slate-300">
               Upload one PDF or DOCX file and Helpmate will prepare it for
               questioning in the workspace.
             </p>
 
-            <div className="mt-5 rounded-[1.5rem] border border-dashed border-cyan-400/30 bg-cyan-400/6 p-5">
-              <span className="inline-flex rounded-full border border-cyan-300/20 bg-cyan-300/10 px-3 py-1 text-xs uppercase tracking-[0.26em] text-cyan-200">
+            <div className="mt-5 rounded-[1.5rem] border border-dashed border-white/10 bg-black/20 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
+              <span className="inline-flex rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs uppercase tracking-[0.26em] text-blue-200">
                 One document at a time
               </span>
-              <p className="mt-4 text-lg font-medium text-white">
+              <p className="mt-4 text-[1.08rem] font-medium text-white md:text-[1.14rem]">
                 Bring in a new document from your machine.
               </p>
-              <p className="mt-2 text-sm leading-6 text-slate-400">
+              <p className="mt-2 text-[0.95rem] leading-7 text-slate-400">
                 The workspace supports one active document at a time so the
                 answer, evidence, and indexing state stay clear.
               </p>
-              <div className="mt-5 flex flex-wrap items-center gap-4">
+              <div className="mt-4 flex flex-wrap items-center gap-4">
                 <label
                   className="inline-flex cursor-pointer items-center rounded-full bg-white px-4 py-2 text-sm font-medium text-slate-950"
                   htmlFor="document-upload"
@@ -301,7 +301,7 @@ export function AppWorkspace() {
                       : "No file chosen"}
                 </p>
               </div>
-              <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
+              <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
                 <button
                   className="primary-button w-auto px-5 py-3"
                   disabled={uploadState === "loading"}
@@ -312,14 +312,14 @@ export function AppWorkspace() {
                 </button>
               </div>
               {document && uploadState === "ready" ? (
-                <div className="mt-4 rounded-2xl border border-emerald-300/20 bg-emerald-300/10 px-4 py-3 text-sm text-emerald-100">
+                <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-blue-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
                   {indexRecord
                     ? `${document.file_name} is uploaded and ready for questions.`
                     : `${document.file_name} is uploaded successfully.`}
                 </div>
               ) : null}
               {uploadState === "loading" || indexState === "loading" ? (
-                <div className="mt-4 rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-sm text-cyan-100">
+                <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-blue-100">
                   {uploadState === "loading"
                     ? "Upload in progress..."
                     : document
@@ -333,7 +333,7 @@ export function AppWorkspace() {
           <div className="surface-card surface-card-teal">
             <p className="eyebrow">Step 2</p>
             <h2 className="text-xl font-semibold text-white">Index and ask</h2>
-            <p className="mt-2 text-sm leading-6 text-slate-300">
+            <p className="mt-2 text-[0.96rem] leading-7 text-slate-300">
               Once a document is active, the workspace exposes status, starter
               questions, answer generation, and inspectable evidence.
             </p>
@@ -372,7 +372,7 @@ export function AppWorkspace() {
               >
                 {indexState === "loading" ? "Building index..." : "Build or reuse index"}
               </button>
-              <span className="text-sm text-slate-400">
+              <span className="text-[0.95rem] text-slate-400">
                 {indexRecord
                   ? `Embedding model: ${indexRecord.embedding_model}`
                   : "No index available yet."}
@@ -385,7 +385,7 @@ export function AppWorkspace() {
                 <div className="mt-3 flex flex-wrap gap-2">
                   {starters.map((starter) => (
                     <button
-                      className="rounded-full border border-cyan-300/16 bg-cyan-300/8 px-4 py-2 text-left text-sm leading-5 text-slate-100 transition hover:border-cyan-300/40 hover:bg-cyan-300/14"
+                      className="rounded-full border border-blue-300/16 bg-white/[0.03] px-4 py-2 text-left text-sm leading-5 text-slate-100 transition hover:border-blue-300/40 hover:bg-blue-300/10"
                       key={starter}
                       onClick={() => setQuestion(starter)}
                       type="button"
@@ -398,18 +398,18 @@ export function AppWorkspace() {
             ) : null}
 
             <div className="mt-6">
-              <label className="text-sm font-medium text-slate-300" htmlFor="question">
+              <label className="text-[0.96rem] font-medium text-slate-300" htmlFor="question">
                 Ask a grounded question
               </label>
               <textarea
-                className="mt-3 min-h-40 w-full resize-y rounded-[1.5rem] border border-white/10 bg-black/25 px-4 py-4 text-base text-white outline-none transition placeholder:text-slate-500 focus:border-cyan-300/50"
+                className="mt-3 min-h-40 w-full resize-y rounded-[1.5rem] border border-white/10 bg-black/25 px-4 py-4 text-base text-white outline-none transition placeholder:text-slate-500 focus:border-blue-300/50"
                 id="question"
                 onChange={(event) => setQuestion(event.target.value)}
                 placeholder="What are the key exclusions, deadlines, findings, or future directions in this document?"
                 value={question}
               />
               <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-                <p className="text-sm text-slate-400">
+                <p className="text-[0.95rem] text-slate-400">
                   {answerState === "loading"
                     ? "Running retrieval, routing, and answer generation."
                     : "Answers will come back with citations, evidence, and retrieval notes."}
@@ -435,46 +435,46 @@ export function AppWorkspace() {
       </section>
 
       <aside className="grid gap-6">
-        <section className="glass-panel overflow-hidden p-6 md:p-7">
+        <section className="overflow-hidden">
           <div className="grid gap-6">
             <div className="workspace-answer-panel workspace-answer-panel-teal">
               <div className="flex flex-wrap items-center justify-between gap-3">
-                <div>
+                <div className="max-w-3xl">
                   <p className="eyebrow">Answer</p>
-                  <h2 className="mt-3 font-[family:var(--font-space-grotesk)] text-3xl font-semibold tracking-[-0.04em] text-white">
+                  <h2 className="mt-2.5 font-[family:var(--font-space-grotesk)] text-3xl font-semibold tracking-[-0.04em] text-white">
                     {answer ? "Readable answer with source visibility" : "Answer panel ready when you are"}
                   </h2>
                 </div>
                 {answer ? (
-                  <span className="rounded-full border border-cyan-300/25 bg-cyan-300/10 px-3 py-1 text-xs uppercase tracking-[0.24em] text-cyan-100">
-                    {answer.supported ? "Supported" : "Unsupported"}
-                  </span>
+                    <span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs uppercase tracking-[0.24em] text-blue-100 shadow-[0_8px_20px_rgba(44,91,255,0.08)]">
+                      {answer.supported ? "Supported" : "Unsupported"}
+                    </span>
                 ) : null}
               </div>
 
               {answer ? (
-                <div className="mt-6 space-y-5">
-                  <div className="flex flex-wrap items-center gap-3 text-sm text-slate-400">
-                    <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5">
+                <div className="mt-4 space-y-4">
+                  <div className="flex flex-wrap items-center gap-2.5 text-sm text-slate-300">
+                    <span className="workspace-meta-chip">
                       {answer.cache_status.answer_cache_hit ? "Cache hit" : "Fresh answer"}
                     </span>
-                    <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5">
+                    <span className="workspace-meta-chip">
                       {answer.model_name || "gpt-4o-mini"}
                     </span>
-                    <span className="rounded-full border border-white/10 bg-white/[0.04] px-3 py-1.5">
+                    <span className="workspace-meta-chip">
                       {answer.citations.length} citations
                     </span>
                   </div>
 
-                  <div className="rounded-[1.75rem] border border-white/10 bg-white/[0.025] p-5 md:p-6">
+                  <div className="rounded-[1.75rem] border border-blue-300/12 bg-white/[0.025] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)] md:p-[1.375rem]">
                     {parsedAnswer?.type === "definition-list" ? (
                       <div className="grid gap-3 md:grid-cols-2">
                         {parsedAnswer.items.map((item) => (
                           <article
-                            className="rounded-[1.25rem] border border-white/8 bg-black/20 p-4"
+                            className="rounded-[1.25rem] border border-blue-300/10 bg-black/20 p-4"
                             key={item.term}
                           >
-                            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-cyan-100/80">
+                            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-100/80">
                               {item.term}
                             </p>
                             <p className="mt-3 text-[0.98rem] leading-7 text-slate-100">
@@ -484,7 +484,7 @@ export function AppWorkspace() {
                         ))}
                       </div>
                     ) : (
-                      <div className="space-y-4">
+                      <div className="space-y-3">
                         {parsedAnswer?.paragraphs.map((paragraph, index) => (
                           <p className="text-[1.08rem] leading-8 text-slate-100 md:text-[1.12rem] md:leading-9" key={`${index}-${paragraph.slice(0, 24)}`}>
                             {paragraph}
@@ -496,13 +496,13 @@ export function AppWorkspace() {
 
                   {answer.citation_details.length > 0 ? (
                     <div>
-                      <h3 className="text-sm font-semibold uppercase tracking-[0.22em] text-cyan-100/85">
+                      <h3 className="text-sm font-semibold uppercase tracking-[0.22em] text-blue-100/85">
                         Citation trail
                       </h3>
-                      <div className="mt-3 flex flex-wrap gap-2">
+                      <div className="mt-2 flex flex-wrap gap-2">
                         {answer.citation_details.map((citation) => (
                           <span
-                            className="rounded-full border border-white/10 bg-white/6 px-3.5 py-2 text-sm text-slate-200"
+                            className="rounded-full border border-blue-300/12 bg-white/[0.03] px-3.5 py-2 text-sm text-slate-100"
                             key={citation}
                           >
                             {citation}
@@ -513,13 +513,13 @@ export function AppWorkspace() {
                   ) : null}
 
                   {answer.note ? (
-                    <div className="rounded-[1.25rem] border border-white/8 bg-black/20 p-4 text-base leading-7 text-slate-300">
+                    <div className="rounded-[1.25rem] border border-blue-300/10 bg-black/20 p-4 text-[0.98rem] leading-7 text-slate-300">
                       {answer.note}
                     </div>
                   ) : null}
                 </div>
               ) : (
-                <div className="mt-6 rounded-[1.75rem] border border-dashed border-white/10 bg-white/[0.025] p-6 text-sm leading-7 text-slate-400">
+                <div className="mt-5 rounded-[1.75rem] border border-dashed border-white/10 bg-white/[0.025] p-5 text-[0.96rem] leading-7 text-slate-400">
                   The answer panel fills in after a document is indexed and a question is asked. Once it runs,
                   this area will show the answer, support status, and its citation trail.
                 </div>
@@ -566,7 +566,7 @@ export function AppWorkspace() {
                         </article>
                       ))
                     ) : (
-                      <div className="rounded-[1.5rem] border border-dashed border-white/10 bg-white/[0.03] p-4 text-sm leading-6 text-slate-400">
+                      <div className="rounded-[1.5rem] border border-dashed border-blue-300/12 bg-white/[0.03] p-4 text-sm leading-6 text-slate-400">
                         Retrieved evidence cards will appear here once the backend answers a question.
                       </div>
                     )}
@@ -587,7 +587,7 @@ export function AppWorkspace() {
                         {(answer?.query_variants ?? []).length ? (
                           answer?.query_variants.map((variant) => (
                             <span
-                              className="rounded-full border border-white/10 bg-white/6 px-3 py-1 text-xs text-slate-200"
+                              className="rounded-full border border-blue-300/12 bg-white/[0.03] px-3 py-1 text-xs text-slate-100"
                               key={variant}
                             >
                               {variant}
