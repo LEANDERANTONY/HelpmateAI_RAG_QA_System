@@ -374,7 +374,7 @@ export function AppWorkspace() {
                     ? "Build or reuse index"
                     : "Upload document first"}
               </button>
-              <span className="text-[0.95rem] text-slate-400">
+              <span className="text-[0.95rem] text-slate-300">
                 {indexRecord
                   ? `Embedding model: ${indexRecord.embedding_model}`
                   : document
@@ -413,7 +413,7 @@ export function AppWorkspace() {
                 value={question}
               />
               <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-                <p className="text-[0.95rem] text-slate-400">
+                <p className="text-[0.95rem] text-slate-300">
                   {answerState === "loading"
                     ? "Running retrieval, routing, and answer generation."
                     : "Answers will come back with citations, evidence, and retrieval notes."}
@@ -523,7 +523,7 @@ export function AppWorkspace() {
                   ) : null}
                 </div>
               ) : (
-                <div className="mt-5 rounded-[1.75rem] border border-dashed border-white/10 bg-white/[0.025] p-5 text-[0.96rem] leading-7 text-slate-400">
+                <div className="mt-5 rounded-[1.75rem] border border-white/10 bg-black/25 p-5 text-[0.96rem] leading-7 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
                   The answer panel fills in after a document is indexed and a question is asked. Once it runs,
                   this area will show the answer, support status, and its citation trail.
                 </div>
@@ -578,7 +578,7 @@ export function AppWorkspace() {
                         </article>
                       ))
                     ) : (
-                      <div className="rounded-[1.5rem] border border-dashed border-blue-300/12 bg-white/[0.03] p-4 text-sm leading-6 text-slate-400">
+                      <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4 text-sm leading-6 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
                         Retrieved evidence cards will appear here once the backend answers a question.
                       </div>
                     )}
