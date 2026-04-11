@@ -98,15 +98,23 @@ class AnswerGenerator:
         retrieval_plan = retrieval_result.retrieval_plan or {}
         summary_mode = str(retrieval_plan.get("evidence_spread", "")) == "global"
         prompt = build_grounded_prompt(question, evidence, summary_mode=summary_mode)
-        response = self.client.chat.completions.create(
-            model=self.settings.answer_model,
-            messages=[
-                {"role": "system", "content": "You answer questions using only supplied document evidence."},
-                {"role": "user", "content": prompt},
-            ],
-            response_format={"type": "json_object"},
-        )
-        content = response.choices[0].message.content or "{}"
+        try:
+            response = self.client.chat.completions.create(
+                model=self.settings.answer_model,
+                messages=[
+                    {"role": "system", "content": "You answer questions using only supplied document evidence."},
+                    {"role": "user", "content": prompt},
+                ],
+                response_format={"type": "json_object"},
+            )
+            content = response.choices[0].message.content or "{}"
+        except Exception as exc:
+            answer = self._fallback_answer(question, evidence)
+            answer.retrieval_notes = retrieval_result.strategy_notes
+            answer.query_used = retrieval_result.query_used
+            answer.query_variants = retrieval_result.query_variants
+            answer.note = f"Live model call failed, so a local grounded fallback was returned instead. ({exc.__class__.__name__})"
+            return answer
         try:
             payload = json.loads(content)
         except json.JSONDecodeError:

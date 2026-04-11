@@ -1,11 +1,10 @@
 "use client";
 
-import { startTransition, useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 
 import {
   askQuestion,
   buildIndex,
-  getHealth,
   getStarterQuestions,
   uploadDocument,
 } from "@/lib/api";
@@ -13,7 +12,6 @@ import type {
   AnswerResult,
   DocumentBundleResponse,
   DocumentRecord,
-  HealthResponse,
   IndexRecord,
 } from "@/lib/api-types";
 
@@ -70,7 +68,6 @@ function parseAnswerContent(text: string): ParsedAnswerBlock {
 }
 
 export function AppWorkspace() {
-  const [health, setHealth] = useState<HealthResponse | null>(null);
   const [document, setDocument] = useState<DocumentRecord | null>(null);
   const [indexRecord, setIndexRecord] = useState<IndexRecord | null>(null);
   const [answer, setAnswer] = useState<AnswerResult | null>(null);
@@ -83,42 +80,6 @@ export function AppWorkspace() {
   const [inspectorTab, setInspectorTab] = useState<InspectorTab>("evidence");
   const [lastAction, setLastAction] = useState("Waiting for a document.");
   const [error, setError] = useState<string | null>(null);
-
-  useEffect(() => {
-    let cancelled = false;
-
-    async function bootstrap() {
-      try {
-        const healthResponse = await getHealth();
-        if (cancelled) {
-          return;
-        }
-        startTransition(() => {
-          setHealth(healthResponse);
-        });
-      } catch (bootstrapError) {
-        if (!cancelled) {
-          setError(
-            bootstrapError instanceof Error
-              ? bootstrapError.message
-              : "Unable to reach the backend.",
-          );
-        }
-      }
-    }
-
-    bootstrap();
-    return () => {
-      cancelled = true;
-    };
-  }, []);
-
-  const healthBadge = useMemo(() => {
-    if (!health) {
-      return "Connecting";
-    }
-    return health.openai_configured ? "API Ready" : "Backend Ready";
-  }, [health]);
 
   const statusSummary = useMemo(() => {
     if (answerState === "loading") {
@@ -167,11 +128,12 @@ export function AppWorkspace() {
     setError(null);
     setUploadState("loading");
     setIndexState("idle");
+    setLastAction(`Uploading ${selectedFile.name}...`);
     try {
       const uploadedBundle = await uploadDocument(selectedFile);
       applyDocumentBundle(
         uploadedBundle,
-        `Uploaded ${uploadedBundle.document.file_name}. Preparing the workspace now.`,
+        `Uploaded ${uploadedBundle.document.file_name}.`,
       );
       setUploadState("ready");
       setSelectedFile(null);
@@ -179,6 +141,10 @@ export function AppWorkspace() {
       let finalBundle = uploadedBundle;
       if (!uploadedBundle.index) {
         setIndexState("loading");
+        setLastAction(
+          `Upload complete. Building the index for ${uploadedBundle.document.file_name}...`,
+        );
+        await new Promise((resolve) => window.setTimeout(resolve, 0));
         finalBundle = await buildIndex(uploadedBundle.document.document_id);
       }
 
@@ -265,28 +231,22 @@ export function AppWorkspace() {
               Premium QA surface over the existing RAG core
             </h1>
           </div>
-          <div className="rounded-full border border-white/12 bg-white/6 px-4 py-2 text-sm text-slate-200">
-            {healthBadge}
-          </div>
         </div>
 
         <div className="mt-6 rounded-[1.75rem] border border-cyan-300/15 bg-cyan-300/8 p-4 md:p-5">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div className="max-w-2xl">
-              <p className="text-xs uppercase tracking-[0.26em] text-cyan-200/80">
-                Live state
-              </p>
+            <div className="flex flex-wrap items-start justify-between gap-3">
+              <div className="max-w-2xl">
+                <p className="text-xs uppercase tracking-[0.26em] text-cyan-200/80">
+                  Live state
+                </p>
               <p className="mt-2 text-base font-medium text-white">
                 {statusSummary}
               </p>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <span className="status-chip">
-                API {health ? "online" : "connecting"}
-              </span>
-              <span className="status-chip">
-                Document {document ? "loaded" : "pending"}
-              </span>
+              </div>
+              <div className="flex flex-wrap gap-2">
+                <span className="status-chip">
+                  Document {document ? "loaded" : "pending"}
+                </span>
               <span className="status-chip">
                 Index {indexRecord ? "ready" : indexState === "loading" ? "building" : "pending"}
               </span>
@@ -317,22 +277,31 @@ export function AppWorkspace() {
                 The workspace supports one active document at a time so the
                 answer, evidence, and indexing state stay clear.
               </p>
-              <input
-                accept=".pdf,.docx"
-                className="mt-5 block text-sm text-slate-300 file:mr-4 file:rounded-full file:border-0 file:bg-white file:px-4 file:py-2 file:text-sm file:font-medium file:text-slate-950"
-                onChange={(event) =>
-                  setSelectedFile(event.target.files?.[0] ?? null)
-                }
-                type="file"
-              />
-              <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-                <p className="max-w-xs text-sm text-slate-300">
+              <div className="mt-5 flex flex-wrap items-center gap-4">
+                <label
+                  className="inline-flex cursor-pointer items-center rounded-full bg-white px-4 py-2 text-sm font-medium text-slate-950"
+                  htmlFor="document-upload"
+                >
+                  Choose File
+                </label>
+                <input
+                  accept=".pdf,.docx"
+                  className="sr-only"
+                  id="document-upload"
+                  onChange={(event) =>
+                    setSelectedFile(event.target.files?.[0] ?? null)
+                  }
+                  type="file"
+                />
+                <p className="text-sm text-slate-300">
                   {selectedFile
                     ? selectedFile.name
                     : document && uploadState === "ready"
-                      ? `${document.file_name} is loaded`
-                      : "No local file selected yet."}
+                      ? document.file_name
+                      : "No file chosen"}
                 </p>
+              </div>
+              <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
                 <button
                   className="primary-button w-auto px-5 py-3"
                   disabled={uploadState === "loading"}
@@ -349,10 +318,19 @@ export function AppWorkspace() {
                     : `${document.file_name} is uploaded successfully.`}
                 </div>
               ) : null}
+              {uploadState === "loading" || indexState === "loading" ? (
+                <div className="mt-4 rounded-2xl border border-cyan-300/20 bg-cyan-300/10 px-4 py-3 text-sm text-cyan-100">
+                  {uploadState === "loading"
+                    ? "Upload in progress..."
+                    : document
+                      ? `Upload complete. Building the index for ${document.file_name}...`
+                      : "Preparing the document workspace..."}
+                </div>
+              ) : null}
             </div>
           </div>
 
-          <div className="surface-card">
+          <div className="surface-card surface-card-teal">
             <p className="eyebrow">Step 2</p>
             <h2 className="text-xl font-semibold text-white">Index and ask</h2>
             <p className="mt-2 text-sm leading-6 text-slate-300">
@@ -407,7 +385,7 @@ export function AppWorkspace() {
                 <div className="mt-3 flex flex-wrap gap-2">
                   {starters.map((starter) => (
                     <button
-                      className="rounded-full border border-white/10 bg-white/6 px-4 py-2 text-left text-sm leading-5 text-slate-200 transition hover:border-cyan-300/40 hover:bg-cyan-300/10"
+                      className="rounded-full border border-cyan-300/16 bg-cyan-300/8 px-4 py-2 text-left text-sm leading-5 text-slate-100 transition hover:border-cyan-300/40 hover:bg-cyan-300/14"
                       key={starter}
                       onClick={() => setQuestion(starter)}
                       type="button"
@@ -508,7 +486,7 @@ export function AppWorkspace() {
                     ) : (
                       <div className="space-y-4">
                         {parsedAnswer?.paragraphs.map((paragraph, index) => (
-                          <p className="text-[1.02rem] leading-8 text-slate-100" key={`${index}-${paragraph.slice(0, 24)}`}>
+                          <p className="text-[1.08rem] leading-8 text-slate-100 md:text-[1.12rem] md:leading-9" key={`${index}-${paragraph.slice(0, 24)}`}>
                             {paragraph}
                           </p>
                         ))}
@@ -524,7 +502,7 @@ export function AppWorkspace() {
                       <div className="mt-3 flex flex-wrap gap-2">
                         {answer.citation_details.map((citation) => (
                           <span
-                            className="rounded-full border border-white/10 bg-white/6 px-3 py-1.5 text-xs text-slate-200"
+                            className="rounded-full border border-white/10 bg-white/6 px-3.5 py-2 text-sm text-slate-200"
                             key={citation}
                           >
                             {citation}
@@ -535,7 +513,7 @@ export function AppWorkspace() {
                   ) : null}
 
                   {answer.note ? (
-                    <div className="rounded-[1.25rem] border border-white/8 bg-black/20 p-4 text-sm leading-6 text-slate-300">
+                    <div className="rounded-[1.25rem] border border-white/8 bg-black/20 p-4 text-base leading-7 text-slate-300">
                       {answer.note}
                     </div>
                   ) : null}
@@ -582,7 +560,7 @@ export function AppWorkspace() {
                                 "Chunk"}
                             </span>
                           </div>
-                          <p className="mt-3 overflow-hidden text-sm leading-6 text-slate-200 [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:6]">
+                          <p className="mt-3 overflow-hidden text-[1rem] leading-7 text-slate-200 md:text-[1.02rem] [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:7]">
                             {candidate.text}
                           </p>
                         </article>
