@@ -258,7 +258,7 @@ export function AppWorkspace() {
         </div>
 
         <div className="mt-8 grid gap-6">
-          <div className="surface-card surface-card-teal">
+          <div className="surface-card surface-card-neutral">
             <p className="eyebrow">Step 1</p>
             <h2 className="text-xl font-semibold text-white">Upload your document</h2>
             <p className="mt-2 text-[0.96rem] leading-7 text-slate-300">
@@ -318,13 +318,11 @@ export function AppWorkspace() {
                     : `${document.file_name} is uploaded successfully.`}
                 </div>
               ) : null}
-              {uploadState === "loading" || indexState === "loading" ? (
+              {indexState === "loading" ? (
                 <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-blue-100">
-                  {uploadState === "loading"
-                    ? "Upload in progress..."
-                    : document
-                      ? `Upload complete. Building the index for ${document.file_name}...`
-                      : "Preparing the document workspace..."}
+                  {document
+                    ? `Upload complete. Building the index for ${document.file_name}...`
+                    : "Preparing the document workspace..."}
                 </div>
               ) : null}
             </div>
@@ -339,23 +337,23 @@ export function AppWorkspace() {
             </p>
 
             <div className="mt-5 grid gap-3 lg:grid-cols-2">
-              <div className="soft-panel soft-panel-teal">
+              <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
                 <span className="soft-panel-label">Document</span>
                 <p className="mt-3 text-lg font-medium text-white">
                   {document?.file_name ?? "Nothing loaded yet"}
                 </p>
-                <p className="mt-2 text-sm text-slate-400">
+                <p className="mt-2 text-sm text-white">
                   {document
                     ? `${document.file_type.toUpperCase()} - ${document.page_count ?? "?"} pages`
                     : "Upload a file first"}
                 </p>
               </div>
-              <div className="soft-panel soft-panel-teal">
+              <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
                 <span className="soft-panel-label">Index</span>
                 <p className="mt-3 text-lg font-medium text-white">
                   {indexRecord ? "Ready" : "Pending"}
                 </p>
-                <p className="mt-2 text-sm text-slate-400">
+                <p className="mt-2 text-sm text-white">
                   {indexRecord
                     ? `${indexRecord.chunk_count} chunks - ${indexRecord.section_count} sections`
                     : "Build or reuse an index for the active document"}
@@ -365,17 +363,23 @@ export function AppWorkspace() {
 
             <div className="mt-4 flex flex-wrap items-center gap-3">
               <button
-                className="secondary-button w-auto px-5 py-3"
+                className="inline-flex w-auto items-center rounded-full bg-white px-5 py-3 text-sm font-medium text-slate-950 disabled:bg-white/75 disabled:text-slate-700"
                 disabled={!document || indexState === "loading"}
                 onClick={handleBuildIndex}
                 type="button"
               >
-                {indexState === "loading" ? "Building index..." : "Build or reuse index"}
+                {indexState === "loading"
+                  ? "Building index..."
+                  : document
+                    ? "Build or reuse index"
+                    : "Upload document first"}
               </button>
               <span className="text-[0.95rem] text-slate-400">
                 {indexRecord
                   ? `Embedding model: ${indexRecord.embedding_model}`
-                  : "No index available yet."}
+                  : document
+                    ? "Create the retrieval index for the active document."
+                    : "This becomes available after a document upload."}
               </span>
             </div>
 
@@ -437,7 +441,7 @@ export function AppWorkspace() {
       <aside className="grid gap-6">
         <section className="overflow-hidden">
           <div className="grid gap-6">
-            <div className="workspace-answer-panel workspace-answer-panel-teal">
+            <div className="surface-card surface-card-neutral">
               <div className="flex flex-wrap items-center justify-between gap-3">
                 <div className="max-w-3xl">
                   <p className="eyebrow">Answer</p>
@@ -466,7 +470,7 @@ export function AppWorkspace() {
                     </span>
                   </div>
 
-                  <div className="rounded-[1.75rem] border border-blue-300/12 bg-white/[0.025] p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)] md:p-[1.375rem]">
+                  <div className="rounded-[1.75rem] border border-white/10 bg-black/25 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)] md:p-[1.375rem]">
                     {parsedAnswer?.type === "definition-list" ? (
                       <div className="grid gap-3 md:grid-cols-2">
                         {parsedAnswer.items.map((item) => (
@@ -477,7 +481,7 @@ export function AppWorkspace() {
                             <p className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-100/80">
                               {item.term}
                             </p>
-                            <p className="mt-3 text-[0.98rem] leading-7 text-slate-100">
+                            <p className="mt-3 text-[0.98rem] leading-7 text-white">
                               {item.value}
                             </p>
                           </article>
@@ -486,7 +490,7 @@ export function AppWorkspace() {
                     ) : (
                       <div className="space-y-3">
                         {parsedAnswer?.paragraphs.map((paragraph, index) => (
-                          <p className="text-[1.08rem] leading-8 text-slate-100 md:text-[1.12rem] md:leading-9" key={`${index}-${paragraph.slice(0, 24)}`}>
+                          <p className="text-[1.08rem] leading-8 text-white md:text-[1.12rem] md:leading-9" key={`${index}-${paragraph.slice(0, 24)}`}>
                             {paragraph}
                           </p>
                         ))}
@@ -513,7 +517,7 @@ export function AppWorkspace() {
                   ) : null}
 
                   {answer.note ? (
-                    <div className="rounded-[1.25rem] border border-blue-300/10 bg-black/20 p-4 text-[0.98rem] leading-7 text-slate-300">
+                    <div className="rounded-[1.25rem] border border-white/10 bg-black/25 p-4 text-[0.98rem] leading-7 text-white">
                       {answer.note}
                     </div>
                   ) : null}
@@ -526,17 +530,25 @@ export function AppWorkspace() {
               )}
             </div>
 
-            <div className="workspace-inspector-shell workspace-inspector-shell-teal">
+            <div className="surface-card surface-card-neutral">
               <div className="flex flex-wrap items-center gap-2">
                 <button
-                  className={`inspector-tab ${inspectorTab === "evidence" ? "inspector-tab-active" : ""}`}
+                  className={
+                    inspectorTab === "evidence"
+                      ? "inline-flex items-center rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm font-medium text-white"
+                      : "inline-flex items-center rounded-full bg-white px-4 py-2 text-sm font-medium text-slate-950"
+                  }
                   onClick={() => setInspectorTab("evidence")}
                   type="button"
                 >
                   Evidence
                 </button>
                 <button
-                  className={`inspector-tab ${inspectorTab === "debug" ? "inspector-tab-active" : ""}`}
+                  className={
+                    inspectorTab === "debug"
+                      ? "inline-flex items-center rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm font-medium text-white"
+                      : "inline-flex items-center rounded-full bg-white px-4 py-2 text-sm font-medium text-slate-950"
+                  }
                   onClick={() => setInspectorTab("debug")}
                   type="button"
                 >
@@ -549,7 +561,7 @@ export function AppWorkspace() {
                   <div className="space-y-3">
                     {answer?.evidence?.length ? (
                       answer.evidence.slice(0, 4).map((candidate) => (
-                        <article className="soft-panel soft-panel-teal" key={candidate.chunk_id}>
+                        <article className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]" key={candidate.chunk_id}>
                           <div className="flex items-center justify-between gap-3">
                             <span className="soft-panel-label">
                               {candidate.citation_label || "Evidence"}
@@ -560,7 +572,7 @@ export function AppWorkspace() {
                                 "Chunk"}
                             </span>
                           </div>
-                          <p className="mt-3 overflow-hidden text-[1rem] leading-7 text-slate-200 md:text-[1.02rem] [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:7]">
+                          <p className="mt-3 overflow-hidden text-[1rem] leading-7 text-white md:text-[1.02rem] [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:7]">
                             {candidate.text}
                           </p>
                         </article>
@@ -575,13 +587,13 @@ export function AppWorkspace() {
 
                 {inspectorTab === "debug" ? (
                   <div className="space-y-4">
-                    <div className="soft-panel">
+                    <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
                       <span className="soft-panel-label">Active query</span>
-                      <p className="mt-3 text-sm leading-6 text-slate-200">
+                      <p className="mt-3 text-sm leading-6 text-white">
                         {answer?.query_used ?? "Ask a question to populate query details."}
                       </p>
                     </div>
-                    <div className="soft-panel">
+                    <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
                       <span className="soft-panel-label">Variants</span>
                       <div className="mt-3 flex flex-wrap gap-2">
                         {(answer?.query_variants ?? []).length ? (
@@ -594,20 +606,20 @@ export function AppWorkspace() {
                             </span>
                           ))
                         ) : (
-                          <span className="text-sm text-slate-400">No query variants yet.</span>
+                          <span className="text-sm text-white">No query variants yet.</span>
                         )}
                       </div>
                     </div>
-                    <div className="soft-panel">
+                    <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
                       <span className="soft-panel-label">Retrieval notes</span>
                       {(answer?.retrieval_notes ?? []).length ? (
-                        <ul className="mt-3 space-y-2 text-sm text-slate-300">
+                        <ul className="mt-3 space-y-2 text-sm text-white">
                           {answer?.retrieval_notes.map((note) => (
                             <li key={note}>{note}</li>
                           ))}
                         </ul>
                       ) : (
-                        <p className="mt-3 text-sm text-slate-400">
+                        <p className="mt-3 text-sm text-white">
                           Retrieval notes will appear after the first answer.
                         </p>
                       )}
