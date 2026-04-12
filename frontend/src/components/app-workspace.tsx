@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 
 import { askQuestion, buildIndex, getStarterQuestions, uploadDocument } from "@/lib/api";
+import type { AuthUserSummary } from "@/lib/auth";
 import type {
   AnswerResult,
   DocumentBundleResponse,
@@ -16,6 +17,10 @@ type InspectorTab = "evidence" | "debug";
 type ParsedAnswerBlock =
   | { type: "definition-list"; items: Array<{ term: string; value: string }> }
   | { type: "paragraphs"; paragraphs: string[] };
+
+type AppWorkspaceProps = {
+  user: AuthUserSummary | null;
+};
 
 function stripInlineReferences(text: string) {
   return text.replace(/\s*references?\s*:\s*[\s\S]*$/i, "").trim();
@@ -62,9 +67,10 @@ function parseAnswerContent(text: string): ParsedAnswerBlock {
   };
 }
 
-export function AppWorkspace() {
+export function AppWorkspace({ user }: AppWorkspaceProps) {
   const debugPanelEnabled =
     process.env.NEXT_PUBLIC_ENABLE_DEBUG_PANEL === "true";
+  const isAuthenticated = Boolean(user);
   const [document, setDocument] = useState<DocumentRecord | null>(null);
   const [indexRecord, setIndexRecord] = useState<IndexRecord | null>(null);
   const [answer, setAnswer] = useState<AnswerResult | null>(null);
@@ -79,6 +85,9 @@ export function AppWorkspace() {
   const [error, setError] = useState<string | null>(null);
 
   const statusSummary = useMemo(() => {
+    if (!isAuthenticated) {
+      return "Sign in with Google from the left rail to unlock private uploads, indexing, and grounded answers.";
+    }
     if (answerState === "loading") {
       return "Generating a grounded answer from the indexed document.";
     }
@@ -89,7 +98,7 @@ export function AppWorkspace() {
       return "Ingesting the selected document through the API boundary.";
     }
     return lastAction;
-  }, [answerState, indexState, lastAction, uploadState]);
+  }, [answerState, indexState, isAuthenticated, lastAction, uploadState]);
 
   const parsedAnswer = useMemo(
     () => (answer ? parseAnswerContent(answer.answer) : null),
@@ -120,6 +129,10 @@ export function AppWorkspace() {
   async function handleUpload() {
     if (!selectedFile) {
       setError("Choose a PDF or DOCX before uploading.");
+      return;
+    }
+    if (!isAuthenticated) {
+      setError("Sign in with Google before uploading a document.");
       return;
     }
     setError(null);
@@ -165,6 +178,10 @@ export function AppWorkspace() {
   async function handleAsk() {
     if (!document) {
       setError("Upload a document first.");
+      return;
+    }
+    if (!isAuthenticated) {
+      setError("Sign in with Google before generating answers.");
       return;
     }
     if (!indexRecord) {
@@ -251,7 +268,7 @@ export function AppWorkspace() {
               </p>
               <div className="mt-4 flex flex-wrap items-center gap-4">
                 <label
-                  className="inline-flex cursor-pointer items-center rounded-full bg-white px-4 py-2 text-sm font-medium text-slate-950"
+                  className={`inline-flex items-center rounded-full bg-white px-4 py-2 text-sm font-medium text-slate-950 ${isAuthenticated ? "cursor-pointer" : "cursor-not-allowed opacity-60"}`}
                   htmlFor="document-upload"
                 >
                   Choose File
@@ -259,6 +276,7 @@ export function AppWorkspace() {
                 <input
                   accept=".pdf,.docx"
                   className="sr-only"
+                  disabled={!isAuthenticated}
                   id="document-upload"
                   onChange={(event) =>
                     setSelectedFile(event.target.files?.[0] ?? null)
@@ -276,7 +294,7 @@ export function AppWorkspace() {
               <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
                 <button
                   className="primary-button w-auto px-5 py-3"
-                  disabled={uploadState === "loading"}
+                  disabled={uploadState === "loading" || !isAuthenticated}
                   onClick={handleUpload}
                   type="button"
                 >
@@ -295,6 +313,11 @@ export function AppWorkspace() {
                   {document
                     ? `Upload complete. Building the index for ${document.file_name}...`
                     : "Preparing the document workspace..."}
+                </div>
+              ) : null}
+              {!isAuthenticated ? (
+                <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-slate-200">
+                  Sign in first. This workspace will later enforce one active document per user and time-bound retention.
                 </div>
               ) : null}
             </div>
@@ -369,6 +392,7 @@ export function AppWorkspace() {
               </label>
               <textarea
                 className="mt-3 min-h-40 w-full resize-y rounded-[1.5rem] border border-white/10 bg-black/25 px-4 py-4 text-base text-white outline-none transition placeholder:text-slate-500 focus:border-blue-300/50"
+                disabled={!isAuthenticated}
                 id="question"
                 onChange={(event) => setQuestion(event.target.value)}
                 placeholder="What are the key exclusions, deadlines, findings, or future directions in this document?"
@@ -382,7 +406,7 @@ export function AppWorkspace() {
                 </p>
                 <button
                   className="primary-button w-auto px-5 py-3"
-                  disabled={answerState === "loading"}
+                  disabled={answerState === "loading" || !isAuthenticated}
                   onClick={handleAsk}
                   type="button"
                 >

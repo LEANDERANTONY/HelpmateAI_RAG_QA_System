@@ -128,11 +128,15 @@ Important frontend environment variables:
 
 - `NEXT_PUBLIC_API_BASE_URL`
 - `API_REWRITE_TARGET`
+- `NEXT_PUBLIC_SUPABASE_URL`
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY`
 
 Typical production setup on Vercel:
 
 - `NEXT_PUBLIC_API_BASE_URL=/api`
 - `API_REWRITE_TARGET=https://api.yourdomain.com`
+- `NEXT_PUBLIC_SUPABASE_URL=https://your-project.supabase.co`
+- `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY=...`
 
 This keeps browser calls same-origin from the frontend point of view while the Next app proxies them to the backend.
 

@@ -300,6 +300,156 @@ a {
   z-index: -1;
 }
 
+.workspace-layout {
+  position: relative;
+  z-index: 1;
+  align-items: flex-start;
+}
+
+.workspace-sidebar {
+  position: sticky;
+  top: 1.25rem;
+  width: min(22rem, 100%);
+  flex: 0 0 min(22rem, 100%);
+  transition: width 220ms ease, flex-basis 220ms ease, transform 220ms ease;
+}
+
+.workspace-sidebar-collapsed {
+  width: 5.6rem;
+  flex-basis: 5.6rem;
+}
+
+.workspace-sidebar-shell {
+  border-radius: 1.75rem;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.025), rgba(255, 255, 255, 0.01)),
+    rgba(10, 11, 17, 0.88);
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.025),
+    0 18px 44px rgba(0, 0, 0, 0.18);
+  padding: 1rem;
+}
+
+.workspace-sidebar-toggle {
+  display: inline-flex;
+  width: 2.75rem;
+  height: 2.75rem;
+  align-items: center;
+  justify-content: center;
+  gap: 0.2rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  background: rgba(255, 255, 255, 0.03);
+  margin-bottom: 1rem;
+}
+
+.workspace-sidebar-toggle span {
+  display: block;
+  width: 0.2rem;
+  height: 0.95rem;
+  border-radius: 999px;
+  background: rgba(223, 231, 255, 0.82);
+}
+
+.workspace-sidebar-brand {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  margin-bottom: 1rem;
+}
+
+.workspace-sidebar-brand-dot {
+  width: 0.9rem;
+  height: 0.9rem;
+  border-radius: 999px;
+  background: linear-gradient(180deg, rgba(97, 145, 255, 0.96), rgba(62, 103, 235, 0.92));
+  box-shadow: 0 0 18px rgba(70, 117, 255, 0.26);
+}
+
+.workspace-sidebar-brand p {
+  color: #eef2ff;
+  font-weight: 700;
+}
+
+.workspace-sidebar-brand span {
+  display: block;
+  color: #99a2bb;
+  font-size: 0.8rem;
+}
+
+.workspace-sidebar-card {
+  border-radius: 1.45rem;
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.02), rgba(255, 255, 255, 0.008)),
+    rgba(7, 8, 14, 0.76);
+  padding: 1rem;
+}
+
+.workspace-sidebar-card + .workspace-sidebar-card {
+  margin-top: 0.9rem;
+}
+
+.workspace-sidebar-title {
+  margin-top: 0.65rem;
+  font-family: var(--font-space-grotesk), sans-serif;
+  font-size: 1.25rem;
+  font-weight: 600;
+  letter-spacing: -0.04em;
+  color: #f4f8ff;
+}
+
+.workspace-sidebar-copy {
+  margin-top: 0.5rem;
+  color: #c6cede;
+  font-size: 0.94rem;
+  line-height: 1.7;
+}
+
+.workspace-sidebar-avatar {
+  width: 3rem;
+  height: 3rem;
+  margin-top: 1rem;
+  border-radius: 999px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+}
+
+.workspace-sidebar-error {
+  margin-top: 0.8rem;
+  color: #ffd5d5;
+  font-size: 0.88rem;
+  line-height: 1.6;
+}
+
+.workspace-sidebar-stats {
+  display: grid;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+}
+
+.workspace-sidebar-stat {
+  display: grid;
+  gap: 0.25rem;
+  border-radius: 1rem;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.025);
+  padding: 0.85rem 0.9rem;
+}
+
+.workspace-sidebar-stat span {
+  color: #96a0ba;
+  font-size: 0.72rem;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.workspace-sidebar-stat strong {
+  color: #f5f8ff;
+  font-size: 0.97rem;
+  font-weight: 600;
+}
+
 .landing-section {
   position: relative;
 }
@@ -1098,6 +1248,18 @@ a {
 }
 
 @media (max-width: 899px) {
+  .workspace-layout {
+    flex-direction: column;
+  }
+
+  .workspace-sidebar,
+  .workspace-sidebar-collapsed {
+    position: relative;
+    top: 0;
+    width: 100%;
+    flex-basis: auto;
+  }
+
   .landing-section::before {
     inset: 0.5rem 0 auto;
   }
