@@ -63,6 +63,24 @@ def _env_mapping(name: str) -> dict[str, str]:
     return pairs
 
 
+def _chroma_api_key() -> str | None:
+    direct = os.getenv("HELPMATE_CHROMA_API_KEY") or os.getenv("CHROMA_API_KEY")
+    if direct:
+        return direct.strip() or None
+
+    headers = _env_mapping("HELPMATE_CHROMA_HTTP_HEADERS")
+    if "x-chroma-token" in headers:
+        return headers["x-chroma-token"]
+
+    authorization = headers.get("Authorization", "")
+    bearer_prefix = "Bearer "
+    if authorization.startswith(bearer_prefix):
+        token = authorization[len(bearer_prefix) :].strip()
+        return token or None
+
+    return None
+
+
 def _env_str(name: str, default: str = "") -> str:
     value = os.getenv(name)
     return value if value is not None else default
@@ -95,6 +113,7 @@ class Settings:
     chroma_http_headers: dict[str, str] = field(
         default_factory=lambda: _env_mapping("HELPMATE_CHROMA_HTTP_HEADERS"),
     )
+    chroma_api_key: str | None = field(default_factory=_chroma_api_key)
     index_schema_version: str = os.getenv("HELPMATE_INDEX_SCHEMA_VERSION", "v10")
     chunk_size: int = _env_int("HELPMATE_CHUNK_SIZE", 1200)
     chunk_overlap: int = _env_int("HELPMATE_CHUNK_OVERLAP", 180)

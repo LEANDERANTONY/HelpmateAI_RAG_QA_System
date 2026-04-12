@@ -160,6 +160,14 @@ class ChromaIndexStore:
         import chromadb
 
         if self.settings.uses_chroma_http:
+            if self.settings.chroma_api_key:
+                return chromadb.CloudClient(
+                    cloud_host=self.settings.chroma_http_host,
+                    cloud_port=self.settings.chroma_http_port,
+                    api_key=self.settings.chroma_api_key,
+                    tenant=self.settings.chroma_http_tenant,
+                    database=self.settings.chroma_http_database,
+                )
             return chromadb.HttpClient(
                 host=self.settings.chroma_http_host,
                 port=self.settings.chroma_http_port,

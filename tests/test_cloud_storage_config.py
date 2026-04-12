@@ -22,6 +22,18 @@ def test_settings_parse_cloud_backends(monkeypatch, tmp_path):
         "Authorization": "Bearer token",
         "X-Test": "value",
     }
+    assert settings.chroma_api_key == "token"
+
+
+def test_settings_parse_chroma_api_key_from_header(monkeypatch, tmp_path):
+    monkeypatch.setenv("HELPMATE_DATA_DIR", str(tmp_path / "data"))
+    monkeypatch.setenv("HELPMATE_CHROMA_HTTP_HEADERS", "x-chroma-token=secret-token")
+    monkeypatch.delenv("HELPMATE_CHROMA_API_KEY", raising=False)
+    monkeypatch.delenv("CHROMA_API_KEY", raising=False)
+
+    settings = get_settings()
+
+    assert settings.chroma_api_key == "secret-token"
 
 
 def test_build_api_record_store_defaults_to_local(monkeypatch, tmp_path):
