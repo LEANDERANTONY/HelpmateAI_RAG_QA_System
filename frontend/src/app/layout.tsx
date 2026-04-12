@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import { DM_Sans, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 
@@ -30,7 +31,10 @@ export default function RootLayout({
       suppressHydrationWarning
       className={`${dmSans.variable} ${spaceGrotesk.variable} h-full scroll-smooth antialiased`}
     >
-      <body className="min-h-full flex flex-col">{children}</body>
+      <body className="min-h-full flex flex-col">
+        {children}
+        <Analytics />
+      </body>
     </html>
   );
 }

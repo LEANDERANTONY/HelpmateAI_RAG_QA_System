@@ -39,7 +39,7 @@ The repo is no longer a notebook demo. It is a real app-shaped project with:
 - `backend/` as the FastAPI boundary over the Python core
 - `app.py` as the retained Streamlit research and benchmark shell
 - `Dockerfile` as the backend deployment image
-- `Dockerfile.streamlit` as the retained internal Streamlit image
+- `deploy/vps/` as the simple Docker Compose plus Caddy VPS deployment bundle
 - `src/` for reusable ingestion, retrieval, generation, cache, and UI logic
 - `src/structure/`, `src/query_analysis/`, `src/sections/`, and `src/query_router.py` for the document-intelligence and routing layers
 - `tests/` for focused fast checks around the core logic
@@ -106,6 +106,8 @@ Example:
 - `www.helpmate.ai` -> Framer
 - `app.helpmate.ai` -> Vercel project rooted at [frontend](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\frontend)
 - `api.helpmate.ai` -> FastAPI service using [Dockerfile](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\Dockerfile)
+
+If Render becomes too expensive for the required memory tier, the backend can also be moved onto a VPS with the included [deploy/vps/docker-compose.yml](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\deploy\vps\docker-compose.yml) stack while the frontend stays on Vercel.
 
 Important runtime notes:
 

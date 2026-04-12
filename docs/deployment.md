@@ -21,8 +21,9 @@ This is the recommended production shape:
 The repo includes:
 
 - [Dockerfile](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\Dockerfile) for backend deployment
-- [Dockerfile.streamlit](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\Dockerfile.streamlit) for the retained internal Streamlit shell
 - [render.yaml](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\render.yaml) as a backend-oriented Render blueprint
+- [deploy/vps/docker-compose.yml](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\deploy\vps\docker-compose.yml) for a simple VPS deployment
+- [deploy/vps/Caddyfile](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\deploy\vps\Caddyfile) for TLS and reverse proxying on a VPS
 
 ## Deployment Flow
 
@@ -148,6 +149,50 @@ Before using it in production:
 - replace `https://app.example.com` in `HELPMATE_CORS_ORIGINS`
 - set `OPENAI_API_KEY`
 - verify the plan and disk size are appropriate for your documents
+
+## VPS Notes
+
+If Render becomes too expensive for the memory you need, Helpmate now has a straightforward VPS path.
+
+Recommended shape:
+
+- Vercel keeps serving the frontend
+- one Linux VPS runs the FastAPI backend
+- Caddy terminates TLS and proxies to the backend container
+- Supabase and hosted Chroma stay exactly as they are
+
+Files included for that path:
+
+- [deploy/vps/docker-compose.yml](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\deploy\vps\docker-compose.yml)
+- [deploy/vps/Caddyfile](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\deploy\vps\Caddyfile)
+- [deploy/vps/.env.example](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\deploy\vps\.env.example)
+
+Suggested first host size:
+
+- `4 GB RAM` minimum if you trim the pipeline
+- `8 GB RAM` preferred for the current pipeline and safer headroom
+
+Suggested VPS rollout:
+
+1. Create an Ubuntu VPS.
+2. Point `api.yourdomain.com` at the VPS public IP.
+3. Install Docker and Docker Compose.
+4. Copy the repo onto the VPS.
+5. Copy `deploy/vps/.env.example` to `deploy/vps/.env` and fill in your real secrets.
+6. Set `HELPMATE_API_DOMAIN` to your API hostname.
+7. Run `docker compose up -d --build` from [deploy/vps](C:\Users\Leander%20Antony%20A\Documents\Projects\HelpmateAI_RAG_QA_System\deploy\vps).
+8. Wait for Caddy to provision TLS automatically.
+9. Verify `https://api.yourdomain.com/health`.
+10. Update the frontend proxy target if needed.
+
+Recommended low-memory production default on smaller VPS plans:
+
+- `HELPMATE_RERANKER_ENABLED=false`
+
+Why:
+
+- reranking is one of the heaviest live-query features in the current pipeline
+- turning it off is the fastest way to reduce memory pressure without redesigning the architecture
 
 ## Local Dev Reminder
 

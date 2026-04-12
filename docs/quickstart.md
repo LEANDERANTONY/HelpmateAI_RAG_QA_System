@@ -5,7 +5,7 @@
 1. Install `uv`.
 2. From the repo root, run `uv sync`.
 3. Export `OPENAI_API_KEY` if you want live model-backed answer generation.
-4. Start the app with `streamlit run app.py`.
+4. Start the backend with `uv run uvicorn backend.main:app --reload --port 8001`.
 
 ## First Workflow
 

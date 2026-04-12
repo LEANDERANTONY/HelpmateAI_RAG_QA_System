@@ -1,0 +1,5 @@
+{$HELPMATE_API_DOMAIN} {
+    encode gzip zstd
+
+    reverse_proxy api:8001
+}
