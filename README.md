@@ -22,6 +22,7 @@ HelpmateAI is a grounded long-document QA system for PDFs and DOCX files. It ind
 - short-circuits obviously irrelevant questions with retrieval guardrails before generation
 - runs a bounded post-rerank evidence selector that can promote a lower-ranked chunk when it is more direct than rank 1
 - generates grounded answers with citations, evidence panels, and explicit supported/unsupported status
+- can now switch from local persistence to a hosted `Supabase + Chroma HTTP` deployment path without changing the retrieval core
 - evaluates retrieval quality with a layered benchmark stack:
   - custom retrieval hit-rate and MRR
   - structure-aware retrieval metrics
@@ -75,6 +76,8 @@ HelpmateAI is at the start of a new phase:
 - FastAPI
 - Streamlit
 - ChromaDB
+- optional hosted Chroma-compatible HTTP backend
+- optional Supabase-backed state persistence
 - OpenAI
 - scikit-learn
 - sentence-transformers
@@ -114,6 +117,12 @@ Important runtime notes:
   - `HELPMATE_INDEXES_DIR`
   - `HELPMATE_CACHE_DIR`
 - backend CORS is controlled by `HELPMATE_CORS_ORIGINS`
+- cloud-backed persistence can be enabled with:
+  - `HELPMATE_STATE_STORE_BACKEND=supabase`
+  - `HELPMATE_VECTOR_STORE_BACKEND=chroma_http`
+  - `SUPABASE_URL`
+  - `SUPABASE_SERVICE_ROLE_KEY`
+  - `HELPMATE_CHROMA_HTTP_*`
 
 See [docs/deployment.md](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\docs\deployment.md) for the step-by-step deployment plan.
 
@@ -134,7 +143,7 @@ See [docs/deployment.md](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI
 
 - supported document types: `.pdf`, `.docx`
 - retrieval-first long-document QA
-- local-first indexing and caching
+- local-first indexing and caching, with an optional cloud-persistence deployment mode
 - dual-path retrieval with heuristic plus lightweight LLM routing
 - deterministic weak-evidence expansion instead of model-based query rewriting
 - topology-aware planning plus synopsis retrieval

@@ -46,6 +46,28 @@ def _env_list(name: str, default: tuple[str, ...]) -> tuple[str, ...]:
     return cleaned or default
 
 
+def _env_mapping(name: str) -> dict[str, str]:
+    value = os.getenv(name)
+    if not value:
+        return {}
+    pairs: dict[str, str] = {}
+    for raw_item in value.split(","):
+        item = raw_item.strip()
+        if not item or "=" not in item:
+            continue
+        key, mapped_value = item.split("=", 1)
+        key = key.strip()
+        mapped_value = mapped_value.strip()
+        if key and mapped_value:
+            pairs[key] = mapped_value
+    return pairs
+
+
+def _env_str(name: str, default: str = "") -> str:
+    value = os.getenv(name)
+    return value if value is not None else default
+
+
 @dataclass(frozen=True)
 class Settings:
     app_name: str = "HelpmateAI"
@@ -55,8 +77,23 @@ class Settings:
     uploads_dir: Path = field(default_factory=Path)
     indexes_dir: Path = field(default_factory=Path)
     cache_dir: Path = field(default_factory=Path)
+    state_store_backend: str = field(default_factory=lambda: _env_str("HELPMATE_STATE_STORE_BACKEND", "local").strip().lower())
+    vector_store_backend: str = field(default_factory=lambda: _env_str("HELPMATE_VECTOR_STORE_BACKEND", "local").strip().lower())
     cors_origins: tuple[str, ...] = field(
         default_factory=lambda: _env_list("HELPMATE_CORS_ORIGINS", ("*",)),
+    )
+    supabase_url: str | None = field(default_factory=lambda: os.getenv("SUPABASE_URL"))
+    supabase_key: str | None = field(default_factory=lambda: os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_ANON_KEY"))
+    supabase_documents_table: str = field(default_factory=lambda: _env_str("HELPMATE_SUPABASE_DOCUMENTS_TABLE", "helpmate_documents"))
+    supabase_indexes_table: str = field(default_factory=lambda: _env_str("HELPMATE_SUPABASE_INDEXES_TABLE", "helpmate_indexes"))
+    supabase_artifacts_table: str = field(default_factory=lambda: _env_str("HELPMATE_SUPABASE_ARTIFACTS_TABLE", "helpmate_index_artifacts"))
+    chroma_http_host: str = field(default_factory=lambda: _env_str("HELPMATE_CHROMA_HTTP_HOST", "localhost"))
+    chroma_http_port: int = field(default_factory=lambda: _env_int("HELPMATE_CHROMA_HTTP_PORT", 8000))
+    chroma_http_ssl: bool = field(default_factory=lambda: _env_bool("HELPMATE_CHROMA_HTTP_SSL", False))
+    chroma_http_tenant: str = field(default_factory=lambda: _env_str("HELPMATE_CHROMA_HTTP_TENANT", "default_tenant"))
+    chroma_http_database: str = field(default_factory=lambda: _env_str("HELPMATE_CHROMA_HTTP_DATABASE", "default_database"))
+    chroma_http_headers: dict[str, str] = field(
+        default_factory=lambda: _env_mapping("HELPMATE_CHROMA_HTTP_HEADERS"),
     )
     index_schema_version: str = os.getenv("HELPMATE_INDEX_SCHEMA_VERSION", "v10")
     chunk_size: int = _env_int("HELPMATE_CHUNK_SIZE", 1200)
@@ -119,6 +156,14 @@ class Settings:
         evals_dir = self.docs_dir / "evals"
         for path in (self.data_dir, self.uploads_dir, self.indexes_dir, self.cache_dir, self.docs_dir, evals_dir):
             path.mkdir(parents=True, exist_ok=True)
+
+    @property
+    def uses_supabase_state(self) -> bool:
+        return self.state_store_backend == "supabase"
+
+    @property
+    def uses_chroma_http(self) -> bool:
+        return self.vector_store_backend in {"chroma_http", "chroma_cloud", "http"}
 
 
 def get_settings() -> Settings:
