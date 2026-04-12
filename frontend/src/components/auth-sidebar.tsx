@@ -19,7 +19,7 @@ const workflowStates = [
 
 export function AuthSidebar({ user }: AuthSidebarProps) {
   const authEnabled = isSupabaseConfigured();
-  const [collapsed, setCollapsed] = useState(false);
+  const [expanded, setExpanded] = useState(false);
   const [pendingAction, setPendingAction] = useState<"signin" | "signout" | null>(
     null,
   );
@@ -32,6 +32,11 @@ export function AuthSidebar({ user }: AuthSidebarProps) {
     }
 
     return user.displayName || user.email || "Signed in";
+  }, [user]);
+
+  const accountInitial = useMemo(() => {
+    const seed = user?.displayName || user?.email || "H";
+    return seed.trim().charAt(0).toUpperCase();
   }, [user]);
 
   async function handleGoogleSignIn() {
@@ -85,95 +90,90 @@ export function AuthSidebar({ user }: AuthSidebarProps) {
   }
 
   return (
-    <aside
-      className={`workspace-sidebar ${collapsed ? "workspace-sidebar-collapsed" : ""}`}
-    >
-      <div className="workspace-sidebar-shell">
-        <button
-          aria-expanded={!collapsed}
-          aria-label={collapsed ? "Expand sidebar" : "Collapse sidebar"}
-          className="workspace-sidebar-toggle"
-          onClick={() => setCollapsed((current) => !current)}
-          type="button"
-        >
-          <span />
-          <span />
-          <span />
-        </button>
+    <section className="auth-inline-panel">
+      <div className="auth-inline-summary">
+        <div className="auth-inline-lead">
+          <button
+            aria-expanded={expanded}
+            aria-label={expanded ? "Collapse account panel" : "Expand account panel"}
+            className="auth-inline-toggle"
+            onClick={() => setExpanded((current) => !current)}
+            type="button"
+          >
+            <span />
+            <span />
+            <span />
+          </button>
 
-        <div className="workspace-sidebar-brand">
-          <div className="workspace-sidebar-brand-dot" />
-          {!collapsed ? (
-            <div>
-              <p>HelpmateAI</p>
-              <span>Grounded document workflow</span>
+          <div className="auth-inline-heading">
+            <p className="eyebrow">Account</p>
+            <div className="auth-inline-identity">
+              <span className="auth-inline-avatar">{accountInitial}</span>
+              <h2>{accountLabel}</h2>
             </div>
-          ) : null}
+          </div>
         </div>
 
-        {!collapsed ? (
-          <>
-            <div className="workspace-sidebar-card">
-              <p className="eyebrow">Account</p>
-              <h2 className="workspace-sidebar-title">{accountLabel}</h2>
-              <p className="workspace-sidebar-copy">
-                {user
-                  ? "Your session unlocks the private workspace flow so later we can enforce per-user document retention."
-                  : authEnabled
-                    ? "Sign in with Google from the workspace rail to unlock uploads, indexing, and personal document state."
-                    : "Add the Supabase frontend env vars to enable Google sign-in in this workspace."}
-              </p>
+        <p className="auth-inline-copy">
+          {user
+            ? "Signed in and ready to work with your active document workspace."
+            : authEnabled
+              ? "Sign in with Google to unlock uploads, indexing, and saved workspace access."
+              : "Connect the Supabase frontend env vars to enable Google sign-in here."}
+        </p>
 
-              {user?.avatarUrl ? (
-                // eslint-disable-next-line @next/next/no-img-element
-                <img
-                  alt={user.displayName || user.email || "User avatar"}
-                  className="workspace-sidebar-avatar"
-                  src={user.avatarUrl}
-                />
-              ) : null}
-
-              {user ? (
-                <button
-                  className="secondary-button mt-5 w-full px-4 py-3"
-                  disabled={pendingAction === "signout"}
-                  onClick={handleSignOut}
-                  type="button"
-                >
-                  {pendingAction === "signout" ? "Signing out..." : "Sign out"}
-                </button>
-              ) : (
-                <button
-                  className="primary-button mt-5 w-full px-4 py-3"
-                  disabled={pendingAction === "signin" || !authEnabled}
-                  onClick={handleGoogleSignIn}
-                  type="button"
-                >
-                  {pendingAction === "signin"
-                    ? "Redirecting..."
-                    : "Continue with Google"}
-                </button>
-              )}
-
-              {error ? (
-                <p className="workspace-sidebar-error">{error}</p>
-              ) : null}
-            </div>
-
-            <div className="workspace-sidebar-card">
-              <p className="eyebrow">Workflow</p>
-              <ul className="workspace-sidebar-stats">
-                {workflowStates.map((item) => (
-                  <li className="workspace-sidebar-stat" key={item.label}>
-                    <span>{item.label}</span>
-                    <strong>{item.value}</strong>
-                  </li>
-                ))}
-              </ul>
-            </div>
-          </>
-        ) : null}
+        <div className="auth-inline-actions">
+          {user ? (
+            <button
+              className="secondary-button px-4 py-3"
+              disabled={pendingAction === "signout"}
+              onClick={handleSignOut}
+              type="button"
+            >
+              {pendingAction === "signout" ? "Signing out..." : "Sign out"}
+            </button>
+          ) : (
+            <button
+              className="primary-button px-4 py-3"
+              disabled={pendingAction === "signin" || !authEnabled}
+              onClick={handleGoogleSignIn}
+              type="button"
+            >
+              {pendingAction === "signin" ? "Redirecting..." : "Continue with Google"}
+            </button>
+          )}
+        </div>
       </div>
-    </aside>
+
+      {expanded ? (
+        <div className="auth-inline-details">
+          <div className="auth-inline-details-card">
+            <p className="eyebrow">Session</p>
+            <h3>{user ? "Google account connected" : "Ready for sign-in"}</h3>
+            <p>
+              {user
+                ? user.email || "Your account is connected for private workspace access."
+                : "Open Google sign-in to access uploads, indexing, and your saved workspace state."}
+            </p>
+          </div>
+
+          {workflowStates.map((item) => (
+            <div className="auth-inline-details-card" key={item.label}>
+              <p className="eyebrow">{item.label}</p>
+              <h3>{item.value}</h3>
+              <p>
+                {item.label === "Auth"
+                  ? "Session-based access for a private document workflow."
+                  : item.label === "Storage"
+                    ? "Cloud-backed document state and vector retrieval."
+                    : "A focused workspace tuned for one active document at a time."}
+              </p>
+            </div>
+          ))}
+        </div>
+      ) : null}
+
+      {error ? <p className="auth-inline-error">{error}</p> : null}
+    </section>
   );
 }

@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 
 import { askQuestion, buildIndex, getStarterQuestions, uploadDocument } from "@/lib/api";
 import type { AuthUserSummary } from "@/lib/auth";
+import { AuthSidebar } from "@/components/auth-sidebar";
 import type {
   AnswerResult,
   DocumentBundleResponse,
@@ -86,7 +87,7 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
 
   const statusSummary = useMemo(() => {
     if (!isAuthenticated) {
-      return "Sign in with Google from the left rail to unlock private uploads, indexing, and grounded answers.";
+      return "Sign in with Google to unlock private uploads, indexing, and grounded answers.";
     }
     if (answerState === "loading") {
       return "Generating a grounded answer from the indexed document.";
@@ -223,19 +224,19 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
         </div>
 
         <div className="mt-7 rounded-[1.6rem] border border-white/8 bg-white/[0.018] p-4 shadow-[0_12px_28px_rgba(0,0,0,0.14)] md:p-[1.125rem]">
-            <div className="flex flex-wrap items-start justify-between gap-3">
-              <div className="max-w-2xl">
-                <p className="text-[0.68rem] uppercase tracking-[0.26em] text-blue-200/75">
-                  Live state
-                </p>
+          <div className="flex flex-wrap items-start justify-between gap-3">
+            <div className="max-w-2xl">
+              <p className="text-[0.68rem] uppercase tracking-[0.26em] text-blue-200/75">
+                Live state
+              </p>
               <p className="mt-1.5 text-[0.96rem] font-medium leading-6 text-white md:text-[1rem]">
                 {statusSummary}
               </p>
-              </div>
-              <div className="flex flex-wrap gap-2">
-                <span className="status-chip">
-                  Document {document ? "loaded" : "pending"}
-                </span>
+            </div>
+            <div className="flex flex-wrap gap-2">
+              <span className="status-chip">
+                Document {document ? "loaded" : "pending"}
+              </span>
               <span className="status-chip">
                 Index {indexRecord ? "ready" : indexState === "loading" ? "building" : "pending"}
               </span>
@@ -244,6 +245,10 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
               </span>
             </div>
           </div>
+        </div>
+
+        <div className="mt-5">
+          <AuthSidebar user={user} />
         </div>
 
         <div className="mt-8 grid gap-6">
@@ -317,7 +322,7 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
               ) : null}
               {!isAuthenticated ? (
                 <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-slate-200">
-                  Sign in first. This workspace will later enforce one active document per user and time-bound retention.
+                  Sign in first to start a private one-document workspace.
                 </div>
               ) : null}
             </div>

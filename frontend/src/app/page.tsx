@@ -17,7 +17,7 @@ export default async function WorkspacePage() {
 
   return (
     <main className="workspace-page flex-1">
-      <WorkspaceShell user={toAuthUserSummary(user)}>
+      <WorkspaceShell>
         <AppWorkspace user={toAuthUserSummary(user)} />
       </WorkspaceShell>
     </main>
