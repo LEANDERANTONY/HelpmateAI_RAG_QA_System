@@ -2,12 +2,7 @@
 
 import { useMemo, useState } from "react";
 
-import {
-  askQuestion,
-  buildIndex,
-  getStarterQuestions,
-  uploadDocument,
-} from "@/lib/api";
+import { askQuestion, buildIndex, getStarterQuestions, uploadDocument } from "@/lib/api";
 import type {
   AnswerResult,
   DocumentBundleResponse,
@@ -68,6 +63,8 @@ function parseAnswerContent(text: string): ParsedAnswerBlock {
 }
 
 export function AppWorkspace() {
+  const debugPanelEnabled =
+    process.env.NEXT_PUBLIC_ENABLE_DEBUG_PANEL === "true";
   const [document, setDocument] = useState<DocumentRecord | null>(null);
   const [indexRecord, setIndexRecord] = useState<IndexRecord | null>(null);
   const [answer, setAnswer] = useState<AnswerResult | null>(null);
@@ -165,38 +162,13 @@ export function AppWorkspace() {
     }
   }
 
-  async function handleBuildIndex() {
+  async function handleAsk() {
     if (!document) {
       setError("Upload a document first.");
       return;
     }
-    setError(null);
-    setIndexState("loading");
-    try {
-      const bundle = await buildIndex(document.document_id);
-      applyDocumentBundle(
-        bundle,
-        `Index ready for ${bundle.document.file_name}.`,
-      );
-      await refreshStarters(bundle.document.document_id);
-      setIndexState("ready");
-    } catch (indexError) {
-      setIndexState("idle");
-      setError(
-        indexError instanceof Error
-          ? indexError.message
-          : "Index build failed unexpectedly.",
-      );
-    }
-  }
-
-  async function handleAsk() {
-    if (!document) {
-      setError("Upload and index a document first.");
-      return;
-    }
     if (!indexRecord) {
-      setError("Build or reuse the index before asking a question.");
+      setError("This document is still being prepared. Try again in a moment.");
       return;
     }
     if (!question.trim()) {
@@ -362,24 +334,14 @@ export function AppWorkspace() {
             </div>
 
             <div className="mt-4 flex flex-wrap items-center gap-3">
-              <button
-                className="inline-flex w-auto items-center rounded-full bg-white px-5 py-3 text-sm font-medium text-slate-950 disabled:bg-white/75 disabled:text-slate-700"
-                disabled={!document || indexState === "loading"}
-                onClick={handleBuildIndex}
-                type="button"
-              >
-                {indexState === "loading"
-                  ? "Building index..."
-                  : document
-                    ? "Build or reuse index"
-                    : "Upload document first"}
-              </button>
               <span className="text-[0.95rem] text-slate-300">
-                {indexRecord
-                  ? `Embedding model: ${indexRecord.embedding_model}`
-                  : document
-                    ? "Create the retrieval index for the active document."
-                    : "This becomes available after a document upload."}
+                {indexState === "loading"
+                  ? "The document is being prepared for retrieval and grounded QA."
+                  : indexRecord
+                    ? `Embedding model: ${indexRecord.embedding_model}`
+                    : document
+                      ? "The workspace will expose starter questions and answer generation once preparation completes."
+                      : "This becomes available after a document upload."}
               </span>
             </div>
 
@@ -531,33 +493,39 @@ export function AppWorkspace() {
             </div>
 
             <div className="surface-card surface-card-neutral">
-              <div className="flex flex-wrap items-center gap-2">
-                <button
-                  className={
-                    inspectorTab === "evidence"
-                      ? "inline-flex items-center rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm font-medium text-white"
-                      : "inline-flex items-center rounded-full bg-white px-4 py-2 text-sm font-medium text-slate-950"
-                  }
-                  onClick={() => setInspectorTab("evidence")}
-                  type="button"
-                >
-                  Evidence
-                </button>
-                <button
-                  className={
-                    inspectorTab === "debug"
-                      ? "inline-flex items-center rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm font-medium text-white"
-                      : "inline-flex items-center rounded-full bg-white px-4 py-2 text-sm font-medium text-slate-950"
-                  }
-                  onClick={() => setInspectorTab("debug")}
-                  type="button"
-                >
-                  Debug
-                </button>
-              </div>
+              {debugPanelEnabled ? (
+                <div className="flex flex-wrap items-center gap-2">
+                  <button
+                    className={
+                      inspectorTab === "evidence"
+                        ? "inline-flex items-center rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm font-medium text-white"
+                        : "inline-flex items-center rounded-full bg-white px-4 py-2 text-sm font-medium text-slate-950"
+                    }
+                    onClick={() => setInspectorTab("evidence")}
+                    type="button"
+                  >
+                    Evidence
+                  </button>
+                  <button
+                    className={
+                      inspectorTab === "debug"
+                        ? "inline-flex items-center rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm font-medium text-white"
+                        : "inline-flex items-center rounded-full bg-white px-4 py-2 text-sm font-medium text-slate-950"
+                    }
+                    onClick={() => setInspectorTab("debug")}
+                    type="button"
+                  >
+                    Debug
+                  </button>
+                </div>
+              ) : (
+                <div>
+                  <span className="soft-panel-label">Evidence</span>
+                </div>
+              )}
 
               <div className="mt-5">
-                {inspectorTab === "evidence" ? (
+                {(!debugPanelEnabled || inspectorTab === "evidence") ? (
                   <div className="space-y-3">
                     {answer?.evidence?.length ? (
                       answer.evidence.slice(0, 4).map((candidate) => (
@@ -585,7 +553,7 @@ export function AppWorkspace() {
                   </div>
                 ) : null}
 
-                {inspectorTab === "debug" ? (
+                {debugPanelEnabled && inspectorTab === "debug" ? (
                   <div className="space-y-4">
                     <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
                       <span className="soft-panel-label">Active query</span>
