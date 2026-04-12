@@ -5,7 +5,7 @@ description = "Streamlit-first grounded long-document QA app with hybrid retriev
 readme = "README.md"
 requires-python = ">=3.11,<3.12"
 dependencies = [
-    "chromadb==0.4.24",
+    "chromadb>=1,<2",
     "cryptography>=44,<46",
     "fastapi>=0.115,<1",
     "numpy<2",
