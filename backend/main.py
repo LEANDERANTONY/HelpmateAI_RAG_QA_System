@@ -96,10 +96,14 @@ app = FastAPI(
     description="Thin FastAPI boundary over the existing HelpmateAI RAG core.",
 )
 
+settings = get_settings()
+cors_origins = list(settings.cors_origins)
+allow_all_origins = "*" in cors_origins
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
-    allow_credentials=True,
+    allow_origins=["*"] if allow_all_origins else cors_origins,
+    allow_credentials=not allow_all_origins,
     allow_methods=["*"],
     allow_headers=["*"],
 )

@@ -37,6 +37,8 @@ The repo is no longer a notebook demo. It is a real app-shaped project with:
 - `frontend/` as the evolving `Next.js` product UI
 - `backend/` as the FastAPI boundary over the Python core
 - `app.py` as the retained Streamlit research and benchmark shell
+- `Dockerfile` as the backend deployment image
+- `Dockerfile.streamlit` as the retained internal Streamlit image
 - `src/` for reusable ingestion, retrieval, generation, cache, and UI logic
 - `src/structure/`, `src/query_analysis/`, `src/sections/`, and `src/query_router.py` for the document-intelligence and routing layers
 - `tests/` for focused fast checks around the core logic
@@ -88,10 +90,38 @@ HelpmateAI is at the start of a new phase:
 
 `pyproject.toml` and `uv.lock` are the dependency source of truth.
 
+## Deployment Shape
+
+Recommended production split:
+
+- marketing site: Framer on `www`
+- product UI: `Next.js` on `app`
+- API: `FastAPI` on `api`
+
+Example:
+
+- `www.helpmate.ai` -> Framer
+- `app.helpmate.ai` -> Vercel project rooted at [frontend](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\frontend)
+- `api.helpmate.ai` -> FastAPI service using [Dockerfile](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\Dockerfile)
+
+Important runtime notes:
+
+- the frontend defaults to same-origin `/api`
+- production rewrites are controlled by `API_REWRITE_TARGET`
+- backend storage paths can be overridden with:
+  - `HELPMATE_DATA_DIR`
+  - `HELPMATE_UPLOADS_DIR`
+  - `HELPMATE_INDEXES_DIR`
+  - `HELPMATE_CACHE_DIR`
+- backend CORS is controlled by `HELPMATE_CORS_ORIGINS`
+
+See [docs/deployment.md](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\docs\deployment.md) for the step-by-step deployment plan.
+
 ## Important Docs
 
 - [docs/architecture.md](docs/architecture.md)
 - [docs/architecture-flow.md](docs/architecture-flow.md)
+- [docs/deployment.md](docs/deployment.md)
 - [docs/evals/README.md](docs/evals/README.md)
 - [docs/evals/benchmark_summary.md](docs/evals/benchmark_summary.md)
 - [docs/frontend-reference.md](docs/frontend-reference.md)

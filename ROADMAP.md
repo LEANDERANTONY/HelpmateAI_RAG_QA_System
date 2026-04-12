@@ -56,16 +56,30 @@ Status:
 
 - planned quality step on top of the current architecture
 
+## Now: Deployment Hardening For The Split Product
+
+- harden the current FastAPI boundary for deployment
+- keep the app/backend split explicit:
+  - Framer for marketing
+  - `Next.js` for the workspace
+  - `FastAPI` for the product backend
+- make storage, uploads, and index paths configurable for hosted environments
+- tighten CORS and proxy settings for deployed frontend/backend domains
+- keep the retained Streamlit shell available as an internal path, not the default deployment target
+
+Status:
+
+- active delivery focus
+
 ## Later: Frontend Hardening And API Extraction
 
-- harden the current FastAPI boundary as the frontend grows
-- improve deployment reliability for a split frontend/backend setup if adopted
+- continue polishing the `Next.js` workspace now that the deployment split is clearer
 - keep benchmark and retrieval-debug views accessible in the product UI
 - reduce noisy runtime behavior such as Chroma telemetry clutter
 
 Status:
 
-- deferred until the new frontend direction is chosen and scoped
+- planned after deployment wiring settles
 
 ## Later: Auth And User Persistence
 

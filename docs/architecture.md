@@ -7,10 +7,18 @@ HelpmateAI is a long-document QA system with a benchmarked Python retrieval core
 - `frontend/` owns the new `Next.js` product UI
 - `backend/` exposes the main upload, index, status, and ask API boundary
 - `app.py` remains a thin Streamlit launcher for internal benchmarking and debug workflows
+- Framer is the intended marketing front door, separate from the deployed product runtime
+- the deployment target is now a split `app` + `api` shape rather than a single Streamlit web process
 - `src/pipeline/` coordinates ingestion, indexing, retrieval, and answer generation
 - `src/ingest/`, `src/chunking/`, `src/retrieval/`, `src/generation/`, and `src/cache/` remain transport-agnostic
 
 This split now matters because the retrieval core is largely stable, while the main product work is moving into the frontend layer rather than another large backend rewrite.
+
+Recommended deployment shape:
+
+- `www` -> Framer
+- `app` -> `Next.js`
+- `api` -> `FastAPI`
 
 ## Main Pipeline
 

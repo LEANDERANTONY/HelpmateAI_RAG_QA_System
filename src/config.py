@@ -1,7 +1,7 @@
 from __future__ import annotations
 
 import os
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -30,15 +30,34 @@ def _env_bool(name: str, default: bool) -> bool:
     return value.lower() in {"1", "true", "yes", "on"}
 
 
+def _env_path(name: str, default: Path) -> Path:
+    value = os.getenv(name)
+    if not value:
+        return default
+    return Path(value).expanduser()
+
+
+def _env_list(name: str, default: tuple[str, ...]) -> tuple[str, ...]:
+    value = os.getenv(name)
+    if not value:
+        return default
+    items = [item.strip() for item in value.split(",")]
+    cleaned = tuple(item for item in items if item)
+    return cleaned or default
+
+
 @dataclass(frozen=True)
 class Settings:
     app_name: str = "HelpmateAI"
     app_tagline: str = "Grounded answers for long-form documents."
-    docs_dir: Path = ROOT_DIR / "docs"
-    data_dir: Path = ROOT_DIR / "data"
-    uploads_dir: Path = ROOT_DIR / "data" / "uploads"
-    indexes_dir: Path = ROOT_DIR / "data" / "indexes"
-    cache_dir: Path = ROOT_DIR / "data" / "cache"
+    docs_dir: Path = field(default_factory=lambda: _env_path("HELPMATE_DOCS_DIR", ROOT_DIR / "docs"))
+    data_dir: Path = field(default_factory=lambda: _env_path("HELPMATE_DATA_DIR", ROOT_DIR / "data"))
+    uploads_dir: Path = field(default_factory=Path)
+    indexes_dir: Path = field(default_factory=Path)
+    cache_dir: Path = field(default_factory=Path)
+    cors_origins: tuple[str, ...] = field(
+        default_factory=lambda: _env_list("HELPMATE_CORS_ORIGINS", ("*",)),
+    )
     index_schema_version: str = os.getenv("HELPMATE_INDEX_SCHEMA_VERSION", "v10")
     chunk_size: int = _env_int("HELPMATE_CHUNK_SIZE", 1200)
     chunk_overlap: int = _env_int("HELPMATE_CHUNK_OVERLAP", 180)
@@ -87,6 +106,14 @@ class Settings:
     lexical_hit_threshold: float = _env_float("HELPMATE_LEXICAL_HIT_THRESHOLD", 0.02)
     unsupported_lexical_hit_threshold: float = _env_float("HELPMATE_UNSUPPORTED_LEXICAL_HIT_THRESHOLD", 0.005)
     unsupported_content_overlap_threshold: float = _env_float("HELPMATE_UNSUPPORTED_CONTENT_OVERLAP_THRESHOLD", 0.05)
+
+    def __post_init__(self) -> None:
+        uploads_dir = _env_path("HELPMATE_UPLOADS_DIR", self.data_dir / "uploads")
+        indexes_dir = _env_path("HELPMATE_INDEXES_DIR", self.data_dir / "indexes")
+        cache_dir = _env_path("HELPMATE_CACHE_DIR", self.data_dir / "cache")
+        object.__setattr__(self, "uploads_dir", uploads_dir)
+        object.__setattr__(self, "indexes_dir", indexes_dir)
+        object.__setattr__(self, "cache_dir", cache_dir)
 
     def ensure_dirs(self) -> None:
         evals_dir = self.docs_dir / "evals"
