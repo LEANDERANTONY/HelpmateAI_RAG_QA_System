@@ -1,0 +1,4139 @@
+[
+  {
+    "dataset_name": "retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Principal-Sample-Life-Insurance-Policy.pdf",
+    "document_id": "e68d757a293d57b6",
+    "fingerprint": "e68d757a293d57b6b7f1e954e572e9c4de22b9201ff2f93c2734c51b6836d9fb",
+    "question": "What is the free look period in this policy?",
+    "expected_pages": [
+      "Page 20",
+      "Page 23"
+    ],
+    "expected_fragments": [
+      "grace period",
+      "failure to pay premium",
+      "31 days"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "GROUP POLICY FOR|PART I - DEFINITIONS",
+        "GROUP POLICY FOR|Civil Union Partner",
+        "GROUP POLICY FOR|Member",
+        "GROUP POLICY FOR|Insurance Month",
+        "GROUP POLICY FOR|Physician under this Group Policy",
+        "GROUP POLICY FOR|Signed or Signature"
+      ],
+      "target_region_kinds": [
+        "definitions",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "The intent is a direct policy lookup with atomic evidence; the free look period should be found via a tightly localized, exact fact rather than broad synthesis or section-level narrowing."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Principal-Sample-Life-Insurance-Policy.pdf",
+    "document_id": "e68d757a293d57b6",
+    "fingerprint": "e68d757a293d57b6b7f1e954e572e9c4de22b9201ff2f93c2734c51b6836d9fb",
+    "question": "What happens if premiums are not paid on time?",
+    "expected_pages": [
+      "Page 20",
+      "Page 23",
+      "Page 24"
+    ],
+    "expected_fragments": [
+      "grace period",
+      "failure to pay premium",
+      "terminate"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "GROUP POLICY FOR|GC 806 VAL",
+        "GROUP POLICY FOR|GC 6000 TITLE PAGE",
+        "GROUP POLICY FOR|PART I - DEFINITIONS",
+        "GROUP POLICY FOR|Insurance Month",
+        "GROUP POLICY FOR|PART II - POLICY ADMINISTRATION",
+        "GROUP POLICY FOR|This page left blank intentionally"
+      ],
+      "target_region_kinds": [
+        "general",
+        "rules",
+        "definitions"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "Atomic lookup for a specific policy consequence; best served by tightly localized fact retrieval rather than section-wide synthesis."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Principal-Sample-Life-Insurance-Policy.pdf",
+    "document_id": "e68d757a293d57b6",
+    "fingerprint": "e68d757a293d57b6b7f1e954e572e9c4de22b9201ff2f93c2734c51b6836d9fb",
+    "question": "What does page 20 say about the free look period?",
+    "expected_pages": [
+      "Page 20"
+    ],
+    "expected_fragments": [
+      "grace period",
+      "31 days"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "hard_region",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "GROUP POLICY FOR|GC 6000 TITLE PAGE",
+        "GROUP POLICY FOR|PART I - DEFINITIONS",
+        "GROUP POLICY FOR|Civil Union Partner",
+        "GROUP POLICY FOR|Member",
+        "GROUP POLICY FOR|Insurance Month",
+        "GROUP POLICY FOR|PART II - POLICY ADMINISTRATION"
+      ],
+      "target_region_kinds": [],
+      "hard_filters": {
+        "page_labels": [
+          "Page 20"
+        ]
+      },
+      "use_global_fallback": false,
+      "planner_confidence": 0.92,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.9,
+      "reasons": [
+        "Explicit page/clause-style cues favor direct chunk grounding."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Explicit page/clause-style cues favor direct chunk grounding.",
+        "Lookup intent with atomic evidence; question asks for a specific fact on page 20 about the free look period, so tightly localized chunk-level retrieval is best."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Principal-Sample-Life-Insurance-Policy.pdf",
+    "document_id": "e68d757a293d57b6",
+    "fingerprint": "e68d757a293d57b6b7f1e954e572e9c4de22b9201ff2f93c2734c51b6836d9fb",
+    "question": "When does Member Life Insurance become effective?",
+    "expected_pages": [
+      "Page 28",
+      "Page 29",
+      "Page 30",
+      "Page 31"
+    ],
+    "expected_fragments": [
+      "effective date",
+      "actively at work",
+      "proof of good health"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "GROUP POLICY FOR|GC 806 VAL",
+        "GROUP POLICY FOR|GC 6000 TITLE PAGE",
+        "GROUP POLICY FOR|PART III - INDIVIDUAL REQUIREMENTS AND RIGHTS",
+        "GROUP POLICY FOR|PART IV - BENEFITS",
+        "GROUP POLICY FOR|PART I - DEFINITIONS",
+        "GROUP POLICY FOR|Member"
+      ],
+      "target_region_kinds": [
+        "general",
+        "rules",
+        "definitions"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "The intent is a direct lookup for a specific effectiveness date, and the evidence is atomic, so tightly localized chunk retrieval with exact fact matching is best."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Principal-Sample-Life-Insurance-Policy.pdf",
+    "document_id": "e68d757a293d57b6",
+    "fingerprint": "e68d757a293d57b6b7f1e954e572e9c4de22b9201ff2f93c2734c51b6836d9fb",
+    "question": "How are beneficiaries described in this policy?",
+    "expected_pages": [
+      "Page 47",
+      "Page 48"
+    ],
+    "expected_fragments": [
+      "beneficiary",
+      "named",
+      "order of precedence"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "GROUP POLICY FOR|GC 6000 TITLE PAGE",
+        "GROUP POLICY FOR|PART IV - BENEFITS",
+        "GROUP POLICY FOR|This page left blank intentionally",
+        "GROUP POLICY FOR|GC 806 VAL",
+        "GROUP POLICY FOR|PART I - DEFINITIONS",
+        "GROUP POLICY FOR|Civil Union Partner"
+      ],
+      "target_region_kinds": [
+        "general",
+        "rules",
+        "definitions"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "The question requests a direct description of a specific entity (beneficiaries) with atomic evidence spread, indicating a tightly localized lookup rather than broad synthesis."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Principal-Sample-Life-Insurance-Policy.pdf",
+    "document_id": "e68d757a293d57b6",
+    "fingerprint": "e68d757a293d57b6b7f1e954e572e9c4de22b9201ff2f93c2734c51b6836d9fb",
+    "question": "What happens during the grace period?",
+    "expected_pages": [
+      "Page 20",
+      "Page 23"
+    ],
+    "expected_fragments": [
+      "grace period",
+      "31 days",
+      "failure to pay premium"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "GROUP POLICY FOR|GC 806 VAL",
+        "GROUP POLICY FOR|GC 6000 TITLE PAGE",
+        "GROUP POLICY FOR|PART I - DEFINITIONS",
+        "GROUP POLICY FOR|Civil Union Partner",
+        "GROUP POLICY FOR|Member",
+        "GROUP POLICY FOR|Insurance Month"
+      ],
+      "target_region_kinds": [
+        "general",
+        "rules",
+        "definitions"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "Intent is a direct lookup with atomic, tightly localized evidence (what happens during the grace period), so exact chunk-level retrieval is sufficient without needing synopsis-level narrowing."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Principal-Sample-Life-Insurance-Policy.pdf",
+    "document_id": "e68d757a293d57b6",
+    "fingerprint": "e68d757a293d57b6b7f1e954e572e9c4de22b9201ff2f93c2734c51b6836d9fb",
+    "question": "What statements are made about reinstatement?",
+    "expected_pages": [
+      "Page 40",
+      "Page 41"
+    ],
+    "expected_fragments": [
+      "reinstated",
+      "returns to active work",
+      "six months"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "GROUP POLICY FOR|This page left blank intentionally",
+        "GROUP POLICY FOR|GC 806 VAL",
+        "GROUP POLICY FOR|GC 6000 TITLE PAGE",
+        "GROUP POLICY FOR|PART I - DEFINITIONS",
+        "GROUP POLICY FOR|Civil Union Partner",
+        "GROUP POLICY FOR|Member"
+      ],
+      "target_region_kinds": [
+        "general",
+        "rules",
+        "definitions"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "Lookup intent with atomic evidence: question targets specific statements about reinstatement, so tightly localized exact-chunk retrieval is best."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Principal-Sample-Life-Insurance-Policy.pdf",
+    "document_id": "e68d757a293d57b6",
+    "fingerprint": "e68d757a293d57b6b7f1e954e572e9c4de22b9201ff2f93c2734c51b6836d9fb",
+    "question": "How are death benefit claims described?",
+    "expected_pages": [
+      "Page 47",
+      "Page 61",
+      "Page 62"
+    ],
+    "expected_fragments": [
+      "death benefits payable",
+      "written proof",
+      "notice of claim"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "GROUP POLICY FOR|GC 6000 TITLE PAGE",
+        "GROUP POLICY FOR|PART IV - BENEFITS",
+        "GROUP POLICY FOR|This page left blank intentionally",
+        "GROUP POLICY FOR|GC 806 VAL",
+        "GROUP POLICY FOR|PART I - DEFINITIONS",
+        "GROUP POLICY FOR|Civil Union Partner"
+      ],
+      "target_region_kinds": [
+        "general",
+        "rules",
+        "definitions"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "Intent is a direct lookup with atomic evidence; the question asks for how death benefit claims are described, implying a localized exact phrasing rather than broad synthesis."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Principal-Sample-Life-Insurance-Policy.pdf",
+    "document_id": "e68d757a293d57b6",
+    "fingerprint": "e68d757a293d57b6b7f1e954e572e9c4de22b9201ff2f93c2734c51b6836d9fb",
+    "question": "What should the customer know about premium payments?",
+    "expected_pages": [
+      "Page 20",
+      "Page 21",
+      "Page 22",
+      "Page 23"
+    ],
+    "expected_fragments": [
+      "payment responsibility",
+      "premium",
+      "due dates"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "GROUP POLICY FOR|PART IV - BENEFITS",
+        "GROUP POLICY FOR|GC 806 VAL",
+        "GROUP POLICY FOR|GC 6000 TITLE PAGE",
+        "GROUP POLICY FOR|PART I - DEFINITIONS",
+        "GROUP POLICY FOR|Civil Union Partner",
+        "GROUP POLICY FOR|Member"
+      ],
+      "target_region_kinds": [
+        "general",
+        "rules",
+        "definitions"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "Atomic lookup-style question about a specific concept (premium payments) with evidence expected to be localized and explicitly stated; no need for broad synthesis or section-level narrowing."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Principal-Sample-Life-Insurance-Policy.pdf",
+    "document_id": "e68d757a293d57b6",
+    "fingerprint": "e68d757a293d57b6b7f1e954e572e9c4de22b9201ff2f93c2734c51b6836d9fb",
+    "question": "What does the policy say about policy renewal?",
+    "expected_pages": [
+      "Page 25"
+    ],
+    "expected_fragments": [
+      "policy renewal",
+      "policy anniversary"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "GROUP POLICY FOR|PART I - DEFINITIONS",
+        "GROUP POLICY FOR|Civil Union Partner",
+        "GROUP POLICY FOR|Member",
+        "GROUP POLICY FOR|Insurance Month",
+        "GROUP POLICY FOR|TABLE OF CONTENTS",
+        "GROUP POLICY FOR|Physician under this Group Policy"
+      ],
+      "target_region_kinds": [
+        "definitions",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "Lookup question with atomic evidence; policy renewal details are likely a tightly localized explicit clause/statement, so chunk-level retrieval is most appropriate."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Principal-Sample-Life-Insurance-Policy.pdf",
+    "document_id": "e68d757a293d57b6",
+    "fingerprint": "e68d757a293d57b6b7f1e954e572e9c4de22b9201ff2f93c2734c51b6836d9fb",
+    "question": "What are the individual purchase rights for a member?",
+    "expected_pages": [
+      "Page 42",
+      "Page 43"
+    ],
+    "expected_fragments": [
+      "individual purchase",
+      "proof of good health",
+      "31 days"
+    ],
+    "deterministic_plan": {
+      "intent_type": "cross_cutting",
+      "evidence_spread": "distributed",
+      "constraint_mode": "soft_multi_region",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "GROUP POLICY FOR|PART III - INDIVIDUAL REQUIREMENTS AND RIGHTS",
+        "GROUP POLICY FOR|Section A \u2013 Eligibility",
+        "GROUP POLICY FOR|GC 6000 TITLE PAGE",
+        "GROUP POLICY FOR|PART II - POLICY ADMINISTRATION",
+        "GROUP POLICY FOR|PART IV - BENEFITS",
+        "GROUP POLICY FOR"
+      ],
+      "target_region_kinds": [
+        "rules",
+        "discussion",
+        "evidence",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.66,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "hybrid_both",
+      "confidence": 0.62,
+      "reasons": [
+        "Distributed questions benefit from region guidance plus a global fallback pool."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "hybrid_both",
+      "confidence": 0.72,
+      "reasons": [
+        "Distributed questions benefit from region guidance plus a global fallback pool.",
+        "Question asks for specific \u201cindividual purchase rights\u201d which are likely defined across multiple parts (distributed evidence) and may mix membership-related definitions with purchase-right clauses."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Principal-Sample-Life-Insurance-Policy.pdf",
+    "document_id": "e68d757a293d57b6",
+    "fingerprint": "e68d757a293d57b6b7f1e954e572e9c4de22b9201ff2f93c2734c51b6836d9fb",
+    "question": "What are the conversion rights for dependents?",
+    "expected_pages": [
+      "Page 44",
+      "Page 45"
+    ],
+    "expected_fragments": [
+      "dependent",
+      "individual policy",
+      "31 days"
+    ],
+    "deterministic_plan": {
+      "intent_type": "cross_cutting",
+      "evidence_spread": "distributed",
+      "constraint_mode": "soft_multi_region",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "GROUP POLICY FOR|PART III - INDIVIDUAL REQUIREMENTS AND RIGHTS",
+        "GROUP POLICY FOR|GC 806 VAL",
+        "GROUP POLICY FOR|GC 6000 TITLE PAGE",
+        "GROUP POLICY FOR|PART II - POLICY ADMINISTRATION",
+        "GROUP POLICY FOR|PART IV - BENEFITS",
+        "GROUP POLICY FOR|Section A \u2013 Eligibility"
+      ],
+      "target_region_kinds": [
+        "rules",
+        "discussion",
+        "evidence",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.66,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "hybrid_both",
+      "confidence": 0.62,
+      "reasons": [
+        "Distributed questions benefit from region guidance plus a global fallback pool."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "hybrid_both",
+      "confidence": 0.72,
+      "reasons": [
+        "Distributed questions benefit from region guidance plus a global fallback pool.",
+        "Cross-cutting question with conversion rights likely requires distributed evidence across multiple sections/clauses; synopsis-first may miss scattered details, so mixed/parallel retrieval better captures all relevant provisions."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "health_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+    "document_id": "1a994e256c109513",
+    "fingerprint": "1a994e256c109513b5c495454dd0f43430a6e03b53c7187d2871a77971c07532",
+    "question": "What is the cashless facility under this policy?",
+    "expected_pages": [
+      "Page 4"
+    ],
+    "expected_fragments": [
+      "cashless facility",
+      "directly made to the network provider",
+      "pre-authorization"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "Ultimate Care -CHIHLIP25044V012425|Ultimate Care -CHIHLIP25044V012425"
+      ],
+      "target_region_kinds": [
+        "definitions",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "The question asks for a specific definition/exact item (\u201ccashless facility\u201d) with atomic evidence, so a tightly localized chunk-level lookup is best."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "health_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+    "document_id": "1a994e256c109513",
+    "fingerprint": "1a994e256c109513b5c495454dd0f43430a6e03b53c7187d2871a77971c07532",
+    "question": "How is the grace period defined and how long is it for monthly versus other premium payment modes?",
+    "expected_pages": [
+      "Page 6",
+      "Page 85"
+    ],
+    "expected_fragments": [
+      "grace period",
+      "fifteen days",
+      "thirty days"
+    ],
+    "deterministic_plan": {
+      "intent_type": "comparison",
+      "evidence_spread": "distributed",
+      "constraint_mode": "soft_multi_region",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "Ultimate Care -CHIHLIP25044V012425|Ultimate Care -CHIHLIP25044V012425"
+      ],
+      "target_region_kinds": [
+        "definitions",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.66,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "hybrid_both",
+      "confidence": 0.62,
+      "reasons": [
+        "Distributed questions benefit from region guidance plus a global fallback pool."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "hybrid_both",
+      "confidence": 0.72,
+      "reasons": [
+        "Distributed questions benefit from region guidance plus a global fallback pool.",
+        "Comparison requires extracting grace-period definition plus differing durations by multiple premium payment modes; evidence is likely distributed across sections, so a hybrid approach that retrieves mixed/distant chunks is best."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "health_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+    "document_id": "1a994e256c109513",
+    "fingerprint": "1a994e256c109513b5c495454dd0f43430a6e03b53c7187d2871a77971c07532",
+    "question": "What counts as maternity expenses in this policy?",
+    "expected_pages": [
+      "Page 8"
+    ],
+    "expected_fragments": [
+      "childbirth",
+      "caesarean sections",
+      "medical termination of pregnancy"
+    ],
+    "deterministic_plan": {
+      "intent_type": "numeric",
+      "evidence_spread": "sectional",
+      "constraint_mode": "soft_local",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "Ultimate Care -CHIHLIP25044V012425",
+        "Ultimate Care -CHIHLIP25044V012425|Ultimate Care -CHIHLIP25044V012425 Ver: Jan/25/AS"
+      ],
+      "target_region_kinds": [
+        "evidence",
+        "discussion",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.74,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.7,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "synopsis_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search.",
+        "Question asks for a defined policy concept (\u201cwhat counts as maternity expenses\u201d), likely requiring a brief section-level framing before retrieving the specific enumerated items across sections."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "health_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+    "document_id": "1a994e256c109513",
+    "fingerprint": "1a994e256c109513b5c495454dd0f43430a6e03b53c7187d2871a77971c07532",
+    "question": "How does the policy define a network provider?",
+    "expected_pages": [
+      "Page 9"
+    ],
+    "expected_fragments": [
+      "network provider",
+      "hospitals enlisted",
+      "cashless facility"
+    ],
+    "deterministic_plan": {
+      "intent_type": "procedure",
+      "evidence_spread": "sectional",
+      "constraint_mode": "soft_local",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "Ultimate Care -CHIHLIP25044V012425|Ultimate Care -CHIHLIP25044V012425"
+      ],
+      "target_region_kinds": [
+        "definitions",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.74,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.7,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search.",
+        "The question asks for a specific policy definition of a term (\u201cnetwork provider\u201d). This is typically a tightly localized, explicit definition that should be retrieved directly at the clause/fact level rather than via broad synthesis; evidence is sectional but the target is a precise definitional statement."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "health_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+    "document_id": "1a994e256c109513",
+    "fingerprint": "1a994e256c109513b5c495454dd0f43430a6e03b53c7187d2871a77971c07532",
+    "question": "How does the policy define a pre-existing disease?",
+    "expected_pages": [
+      "Page 9"
+    ],
+    "expected_fragments": [
+      "pre-existing disease",
+      "36 months",
+      "medical advice or treatment"
+    ],
+    "deterministic_plan": {
+      "intent_type": "procedure",
+      "evidence_spread": "sectional",
+      "constraint_mode": "soft_local",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "Ultimate Care -CHIHLIP25044V012425|Ultimate Care -CHIHLIP25044V012425"
+      ],
+      "target_region_kinds": [
+        "definitions",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.74,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.7,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search.",
+        "The question asks for a specific policy definition (pre-existing disease), which is typically stated explicitly in a localized definition clause; a chunk-first lookup best targets the exact wording."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "health_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+    "document_id": "1a994e256c109513",
+    "fingerprint": "1a994e256c109513b5c495454dd0f43430a6e03b53c7187d2871a77971c07532",
+    "question": "What does renewal mean in this policy wording?",
+    "expected_pages": [
+      "Page 10"
+    ],
+    "expected_fragments": [
+      "renewal",
+      "mutual consent",
+      "grace period"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [],
+      "target_region_kinds": [
+        "definitions",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "Lookup-style question asking for the meaning of a specific term (\u201crenewal\u201d) in the policy wording; evidence is atomic and should be retrieved as an exact, localized definition from the relevant clause."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "health_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+    "document_id": "1a994e256c109513",
+    "fingerprint": "1a994e256c109513b5c495454dd0f43430a6e03b53c7187d2871a77971c07532",
+    "question": "How many days of pre-hospitalization and post-hospitalization expenses are covered?",
+    "expected_pages": [
+      "Page 22",
+      "Page 23"
+    ],
+    "expected_fragments": [
+      "60 days immediately prior",
+      "90 days immediately after",
+      "same illness or injury"
+    ],
+    "deterministic_plan": {
+      "intent_type": "numeric",
+      "evidence_spread": "sectional",
+      "constraint_mode": "soft_local",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "Ultimate Care -CHIHLIP25044V012425",
+        "Ultimate Care -CHIHLIP25044V012425|Ultimate Care -CHIHLIP25044V012425 Ver: Jan/25/AS"
+      ],
+      "target_region_kinds": [
+        "evidence",
+        "discussion",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.74,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.7,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "synopsis_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search.",
+        "Numeric coverage detail is likely stated in a section-level benefits/coverage summary; use synopsis-first to narrow to the relevant coverage section, then retrieve the exact chunk with the day counts."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "health_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+    "document_id": "1a994e256c109513",
+    "fingerprint": "1a994e256c109513b5c495454dd0f43430a6e03b53c7187d2871a77971c07532",
+    "question": "What waiting period applies to pre-existing diseases?",
+    "expected_pages": [
+      "Page 70"
+    ],
+    "expected_fragments": [
+      "36 months of continuous coverage",
+      "date of inception",
+      "declared at the time of application"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "Ultimate Care -CHIHLIP25044V012425|Ultimate Care -CHIHLIP25044V012425"
+      ],
+      "target_region_kinds": [
+        "general",
+        "rules",
+        "definitions"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "Lookup-style question targeting a specific rule about waiting periods for pre-existing diseases; evidence is atomic and should be retrieved via tightly localized chunk-level fact/definition."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "health_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+    "document_id": "1a994e256c109513",
+    "fingerprint": "1a994e256c109513b5c495454dd0f43430a6e03b53c7187d2871a77971c07532",
+    "question": "What is the named ailment waiting period and where is the disease list described?",
+    "expected_pages": [
+      "Page 70",
+      "Page 71"
+    ],
+    "expected_fragments": [
+      "24 months of continuous coverage",
+      "list of specific diseases",
+      "claims arising due to an accident"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "Ultimate Care -CHIHLIP25044V012425|Ultimate Care -CHIHLIP25044V012425"
+      ],
+      "target_region_kinds": [
+        "definitions",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "Atomic lookup seeking a specific named waiting period and the precise location of the disease list; best served by tightly localized chunk retrieval with explicit references."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "health_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+    "document_id": "1a994e256c109513",
+    "fingerprint": "1a994e256c109513b5c495454dd0f43430a6e03b53c7187d2871a77971c07532",
+    "question": "What is the 30-day waiting period in this health policy?",
+    "expected_pages": [
+      "Page 71",
+      "Page 72"
+    ],
+    "expected_fragments": [
+      "30 days from the first policy commencement date",
+      "except claims arising due to an accident",
+      "continuous coverage"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "Ultimate Care -CHIHLIP25044V012425|Ultimate Care -CHIHLIP25044V012425",
+        "Ultimate Care -CHIHLIP25044V012425|Ultimate Care -CHIHLIP25044V012425 Ver: Jan/25/AS"
+      ],
+      "target_region_kinds": [
+        "definitions",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "Lookup-style question with atomic evidence and a specific detail (the 30-day waiting period); best handled by tightly localized exact chunk retrieval rather than broad synthesis."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "health_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+    "document_id": "1a994e256c109513",
+    "fingerprint": "1a994e256c109513b5c495454dd0f43430a6e03b53c7187d2871a77971c07532",
+    "question": "What happens if an installment premium is not received within the grace period?",
+    "expected_pages": [
+      "Page 85"
+    ],
+    "expected_fragments": [
+      "policy will get cancelled",
+      "all subsequent premium installments",
+      "recover and deduct"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "Ultimate Care -CHIHLIP25044V012425|Ultimate Care -CHIHLIP25044V012425"
+      ],
+      "target_region_kinds": [
+        "general",
+        "rules",
+        "definitions"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "Lookup-style question with atomic evidence; requires an exact, localized rule about what occurs when an installment premium isn\u2019t paid within the grace period."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "health_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+    "document_id": "1a994e256c109513",
+    "fingerprint": "1a994e256c109513b5c495454dd0f43430a6e03b53c7187d2871a77971c07532",
+    "question": "How can an insured person avail cashless treatment at a network provider?",
+    "expected_pages": [
+      "Page 90"
+    ],
+    "expected_fragments": [
+      "pre-authorization form",
+      "health card",
+      "valid photo identification proof"
+    ],
+    "deterministic_plan": {
+      "intent_type": "procedure",
+      "evidence_spread": "sectional",
+      "constraint_mode": "soft_local",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "Ultimate Care -CHIHLIP25044V012425",
+        "Ultimate Care -CHIHLIP25044V012425|Ultimate Care -CHIHLIP25044V012425 Ver: Jan/25/AS"
+      ],
+      "target_region_kinds": [
+        "procedure",
+        "evidence",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.74,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.7,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "synopsis_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search.",
+        "Question asks for the procedure; evidence is spread across sections, so first generate a broad procedure overview then narrow to relevant sections/chunks for the cashless treatment steps at network providers."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "health_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+    "document_id": "1a994e256c109513",
+    "fingerprint": "1a994e256c109513b5c495454dd0f43430a6e03b53c7187d2871a77971c07532",
+    "question": "How is co-payment applied during claim assessment?",
+    "expected_pages": [
+      "Page 96"
+    ],
+    "expected_fragments": [
+      "claim assessment",
+      "co-payment",
+      "admissible claim amount payable"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "Ultimate Care -CHIHLIP25044V012425|Ultimate Care -CHIHLIP25044V012425"
+      ],
+      "target_region_kinds": [
+        "general",
+        "rules",
+        "definitions"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "Lookup-style question with atomic evidence\u2014best handled by tightly localized chunk retrieval for the exact definition/process of co-payment application during claim assessment."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "thesis_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+    "document_id": "c459aa7631f3848f",
+    "fingerprint": "c459aa7631f3848f0a70bf23a5a191b3586e540e2e57d7be4750dbdd140e1691",
+    "question": "What is the main aim of this thesis?",
+    "expected_pages": [
+      "Page 20"
+    ],
+    "expected_fragments": [
+      "develop and rigorously evaluate a bias-aware multimodal deep learning framework",
+      "pancreatic cancer detection",
+      "CT imaging and urinary biomarker data"
+    ],
+    "deterministic_plan": {
+      "intent_type": "summary",
+      "evidence_spread": "global",
+      "constraint_mode": "soft_multi_region",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "c459aa7631f3848f-document-overview",
+        "Summary|CHAPTER 6",
+        "Abstract",
+        "Research Aim and Objectives",
+        "Summary|CHAPTER 1",
+        "Chapter Summary|CHAPTER 2"
+      ],
+      "target_region_kinds": [
+        "overview",
+        "discussion",
+        "evidence"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.78,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Global synthesis questions benefit from synopsis-first planning."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "synopsis_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Global synthesis questions benefit from synopsis-first planning.",
+        "User asks for a thesis-level main aim (global, summary intent). Broad synthesis is needed first to identify the overarching goal, then targeted chunk retrieval can confirm details."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "thesis_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+    "document_id": "c459aa7631f3848f",
+    "fingerprint": "c459aa7631f3848f0a70bf23a5a191b3586e540e2e57d7be4750dbdd140e1691",
+    "question": "What were the three main research objectives of the study?",
+    "expected_pages": [
+      "Page 20"
+    ],
+    "expected_fragments": [
+      "bias-aware data foundation",
+      "unimodal diagnostic models",
+      "multimodal fusion"
+    ],
+    "deterministic_plan": {
+      "intent_type": "summary",
+      "evidence_spread": "global",
+      "constraint_mode": "soft_multi_region",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "Summary|CHAPTER 6",
+        "Research Aim and Objectives",
+        "Chapter Summary|CHAPTER 2",
+        "Summary|CHAPTER 5",
+        "c459aa7631f3848f-document-overview",
+        "Abstract"
+      ],
+      "target_region_kinds": [
+        "overview",
+        "discussion",
+        "evidence"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.78,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Global synthesis questions benefit from synopsis-first planning."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "synopsis_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Global synthesis questions benefit from synopsis-first planning.",
+        "Asking for a high-level summary of the study\u2019s three main research objectives; evidence is global and best handled by broad synopsis-level narrowing before retrieving the specific supporting chunks."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "thesis_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+    "document_id": "c459aa7631f3848f",
+    "fingerprint": "c459aa7631f3848f0a70bf23a5a191b3586e540e2e57d7be4750dbdd140e1691",
+    "question": "How many CT patients were used in the processed cohort and how were they split?",
+    "expected_pages": [
+      "Page 21",
+      "Page 40"
+    ],
+    "expected_fragments": [
+      "122 patients",
+      "40 PDAC",
+      "82 controls",
+      "patient-level"
+    ],
+    "deterministic_plan": {
+      "intent_type": "procedure",
+      "evidence_spread": "sectional",
+      "constraint_mode": "soft_local",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "Dataset Bias Detection and Mitigation",
+        "Dataset Bias Detection and Mitigation|Biomarker Classification Model",
+        "Dataset Bias Detection and Mitigation|Decision-Level Fusion",
+        "Scope of the Study",
+        "Machine Learning for Biomarker Analysis|Fusion Strategies",
+        "Datasets|REG1B, TFF1, and REG1A"
+      ],
+      "target_region_kinds": [
+        "procedure",
+        "evidence",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.74,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.7,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "synopsis_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search.",
+        "Procedure question with sectionally spread evidence; first narrow to the relevant processed-cohort/CT-patient section(s) via synopsis, then retrieve the exact chunk(s) with the cohort size and CT split."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "thesis_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+    "document_id": "c459aa7631f3848f",
+    "fingerprint": "c459aa7631f3848f0a70bf23a5a191b3586e540e2e57d7be4750dbdd140e1691",
+    "question": "What was the baseline bias AUC and what did extreme standardization reduce it to?",
+    "expected_pages": [
+      "Page 4",
+      "Page 42",
+      "Page 73"
+    ],
+    "expected_fragments": [
+      "0.866",
+      "0.569",
+      "extreme standardization"
+    ],
+    "deterministic_plan": {
+      "intent_type": "numeric",
+      "evidence_spread": "sectional",
+      "constraint_mode": "soft_local",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "Dataset Bias Detection and Mitigation|Spatial Bias Detection and Mitigation",
+        "Significance of the Study",
+        "Dataset Bias and Shortcut Learning|Implications for the Present Study",
+        "Dataset Bias Detection and Mitigation|CT results in Chapter 5",
+        "Dataset Bias Detection and Mitigation|Biomarker Classification Model",
+        "Dataset Bias Detection and Mitigation|Decision-Level Fusion"
+      ],
+      "target_region_kinds": [
+        "evidence",
+        "discussion",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.74,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.7,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "hybrid_both",
+      "confidence": 0.72,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search.",
+        "The question asks for two related numeric outcomes (baseline bias AUC and the reduction to under extreme standardization). Evidence is spread across sections, so a purely section-first or purely synopsis-first approach may miss scattered figures; mixed retrieval helps gather both the baseline definition and the transformed value."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "thesis_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+    "document_id": "c459aa7631f3848f",
+    "fingerprint": "c459aa7631f3848f0a70bf23a5a191b3586e540e2e57d7be4750dbdd140e1691",
+    "question": "What CT model architecture was used in the thesis?",
+    "expected_pages": [
+      "Page 45"
+    ],
+    "expected_fragments": [
+      "ResNet50",
+      "2048-dimensional embedding",
+      "binary cancer versus control classification"
+    ],
+    "deterministic_plan": {
+      "intent_type": "procedure",
+      "evidence_spread": "sectional",
+      "constraint_mode": "soft_local",
+      "preferred_route": "hybrid_both",
+      "target_region_ids": [
+        "Dataset Bias Detection and Mitigation|Biomarker Classification Model",
+        "Data Preparation and Preprocessing|CT Classification Model (ResNet50)",
+        "Model Architecture",
+        "Dataset Bias Detection and Mitigation",
+        "Dataset Bias Detection and Mitigation|CT results in Chapter 5",
+        "Dataset Bias Detection and Mitigation|Decision-Level Fusion"
+      ],
+      "target_region_kinds": [
+        "procedure",
+        "evidence",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.74,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.7,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "section_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search.",
+        "Procedure-oriented question about a specific CT model architecture; evidence is mostly section-scoped, so section-level retrieval is sufficient without needing broad synopsis-first synthesis or distributed mixed-intent evidence."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "thesis_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+    "document_id": "c459aa7631f3848f",
+    "fingerprint": "c459aa7631f3848f0a70bf23a5a191b3586e540e2e57d7be4750dbdd140e1691",
+    "question": "What seven urinary biomarker features were used for the biomarker model?",
+    "expected_pages": [
+      "Page 45",
+      "Page 61",
+      "Page 65"
+    ],
+    "expected_fragments": [
+      "age",
+      "plasma_CA19_9",
+      "creatinine",
+      "LYVE1",
+      "REG1B",
+      "TFF1",
+      "REG1A"
+    ],
+    "deterministic_plan": {
+      "intent_type": "procedure",
+      "evidence_spread": "sectional",
+      "constraint_mode": "soft_local",
+      "preferred_route": "hybrid_both",
+      "target_region_ids": [
+        "Biomarker Classification Model Results",
+        "Datasets|REG1B, TFF1, and REG1A",
+        "Dataset Bias Detection and Mitigation",
+        "Dataset Bias Detection and Mitigation|CT results in Chapter 5",
+        "Dataset Bias Detection and Mitigation|Biomarker Classification Model",
+        "Dataset Bias Detection and Mitigation|Decision-Level Fusion"
+      ],
+      "target_region_kinds": [
+        "procedure",
+        "evidence",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.74,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.7,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "synopsis_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search.",
+        "Question asks for a specific set of biomarker features (seven) used in a model; evidence is likely scattered across sections, so first use synopsis/section-level narrowing to locate the biomarker-model subsection, then retrieve relevant chunks for the exact list."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "thesis_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+    "document_id": "c459aa7631f3848f",
+    "fingerprint": "c459aa7631f3848f0a70bf23a5a191b3586e540e2e57d7be4750dbdd140e1691",
+    "question": "How many biomarker samples were used and what was the train validation test split?",
+    "expected_pages": [
+      "Page 61"
+    ],
+    "expected_fragments": [
+      "590 samples",
+      "60% / 20% / 20%",
+      "199",
+      "391"
+    ],
+    "deterministic_plan": {
+      "intent_type": "numeric",
+      "evidence_spread": "sectional",
+      "constraint_mode": "soft_local",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "Dataset Bias Detection and Mitigation|Decision-Level Fusion",
+        "Dataset Bias Detection and Mitigation|Biomarker Classification Model",
+        "Dataset Bias Detection and Mitigation|CT results in Chapter 5",
+        "Datasets|REG1B, TFF1, and REG1A",
+        "CT Classification Model Results|Patient-Level Performance",
+        "CT Classification Model Results|Figure 5.2: CT test-set performance"
+      ],
+      "target_region_kinds": [
+        "evidence",
+        "discussion",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.74,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.7,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "section_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search.",
+        "Numeric, likely explicitly reported in a specific section/table; evidence is sectional rather than widely distributed, so section-scoped retrieval should locate the sample count and the train/validation/test split."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "thesis_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+    "document_id": "c459aa7631f3848f",
+    "fingerprint": "c459aa7631f3848f0a70bf23a5a191b3586e540e2e57d7be4750dbdd140e1691",
+    "question": "What AUC did the biomarker MLP achieve and how did it compare with the original study?",
+    "expected_pages": [
+      "Page 4",
+      "Page 81"
+    ],
+    "expected_fragments": [
+      "0.944",
+      "0.936",
+      "independent validation"
+    ],
+    "deterministic_plan": {
+      "intent_type": "comparison",
+      "evidence_spread": "distributed",
+      "constraint_mode": "soft_multi_region",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "Comparison with Existing Literature",
+        "Biomarker Classification Model Results|Comparison with Original Study",
+        "Summary|CHAPTER 6",
+        "Research Aim and Objectives",
+        "Chapter Summary|CHAPTER 2",
+        "Dataset Bias and Shortcut Learning|Implications for the Present Study"
+      ],
+      "target_region_kinds": [
+        "evidence",
+        "discussion",
+        "overview"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.66,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "hybrid_both",
+      "confidence": 0.62,
+      "reasons": [
+        "Distributed questions benefit from region guidance plus a global fallback pool."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "hybrid_both",
+      "confidence": 0.72,
+      "reasons": [
+        "Distributed questions benefit from region guidance plus a global fallback pool.",
+        "Comparison questions with metric details (AUC) typically require evidence from multiple dispersed passages (model results plus original study reporting), indicating mixed/distributed support rather than a single tightly localized fact or purely synopsis-to-chunk narrowing."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "thesis_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+    "document_id": "c459aa7631f3848f",
+    "fingerprint": "c459aa7631f3848f0a70bf23a5a191b3586e540e2e57d7be4750dbdd140e1691",
+    "question": "What did the thesis conclude about multimodal fusion under synthetic pairing?",
+    "expected_pages": [
+      "Page 4",
+      "Page 83",
+      "Page 84"
+    ],
+    "expected_fragments": [
+      "CT-dominated",
+      "synthetic pairing",
+      "cannot replace matched patient data"
+    ],
+    "deterministic_plan": {
+      "intent_type": "summary",
+      "evidence_spread": "global",
+      "constraint_mode": "soft_multi_region",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "Multimodal Fusion Results|Feature-Level Fusion",
+        "Multimodal Fusion Results",
+        "Scope of the Study",
+        "Contributions to Knowledge",
+        "Research Aim and Objectives",
+        "Chapter Summary|CHAPTER 2"
+      ],
+      "target_region_kinds": [
+        "overview",
+        "discussion",
+        "evidence"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.78,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Global synthesis questions benefit from synopsis-first planning."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "synopsis_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Global synthesis questions benefit from synopsis-first planning.",
+        "Question asks for a thesis-level conclusion (summary) with evidence spread globally; start with synopsis/section-level narrowing before retrieving supporting chunks."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "thesis_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+    "document_id": "c459aa7631f3848f",
+    "fingerprint": "c459aa7631f3848f0a70bf23a5a191b3586e540e2e57d7be4750dbdd140e1691",
+    "question": "What happened in the label-mismatch control when the CT weight was 0.3 versus 0.7?",
+    "expected_pages": [
+      "Page 83",
+      "Page 84"
+    ],
+    "expected_fragments": [
+      "0.352",
+      "0.993",
+      "CT-driven"
+    ],
+    "deterministic_plan": {
+      "intent_type": "comparison",
+      "evidence_spread": "distributed",
+      "constraint_mode": "soft_multi_region",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "Multimodal Fusion Results",
+        "CT Classification Model Results",
+        "Research Aim and Objectives",
+        "Dataset Bias Detection and Mitigation|CT results in Chapter 5",
+        "Summary|Library Version Role",
+        "Training and Evaluation Pipeline"
+      ],
+      "target_region_kinds": [
+        "evidence",
+        "discussion",
+        "overview"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.66,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "hybrid_both",
+      "confidence": 0.62,
+      "reasons": [
+        "Distributed questions benefit from region guidance plus a global fallback pool."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "hybrid_both",
+      "confidence": 0.72,
+      "reasons": [
+        "Distributed questions benefit from region guidance plus a global fallback pool.",
+        "Comparison across two CT weight settings implies effects may be scattered across multiple sections/controls; mixed intent (lookup + comparison) and distributed evidence favor hybrid retrieval rather than synopsis-first or tightly localized chunk_first."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "thesis_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+    "document_id": "c459aa7631f3848f",
+    "fingerprint": "c459aa7631f3848f0a70bf23a5a191b3586e540e2e57d7be4750dbdd140e1691",
+    "question": "How was multimodal fusion implemented in the thesis?",
+    "expected_pages": [
+      "Page 66"
+    ],
+    "expected_fragments": [
+      "decision-level fusion",
+      "feature-level fusion",
+      "synthetic pairing",
+      "five random seeds"
+    ],
+    "deterministic_plan": {
+      "intent_type": "procedure",
+      "evidence_spread": "sectional",
+      "constraint_mode": "soft_local",
+      "preferred_route": "hybrid_both",
+      "target_region_ids": [
+        "Scope of the Study",
+        "Dataset Bias Detection and Mitigation|Decision-Level Fusion",
+        "Data Preparation and Preprocessing|Biomarker Classification Model (MLP)",
+        "Biomarker Classification Model Results",
+        "Multimodal Fusion Results",
+        "Multimodal Fusion Results|Feature-Level Fusion"
+      ],
+      "target_region_kinds": [
+        "procedure",
+        "evidence",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.74,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.7,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "synopsis_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search.",
+        "Procedure-focused question over a long thesis with evidence spread by sections; synopsis-first can narrow to the relevant implementation/methods sections before chunk-level extraction."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "thesis_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+    "document_id": "c459aa7631f3848f",
+    "fingerprint": "c459aa7631f3848f0a70bf23a5a191b3586e540e2e57d7be4750dbdd140e1691",
+    "question": "What kinds of future work or next steps does the thesis suggest?",
+    "expected_pages": [
+      "Page 10"
+    ],
+    "expected_fragments": [
+      "Addressing the Domain Bias Problem",
+      "Genuine Multimodal Evaluation",
+      "Prospective Validation",
+      "Technical Improvements"
+    ],
+    "deterministic_plan": {
+      "intent_type": "summary",
+      "evidence_spread": "global",
+      "constraint_mode": "soft_multi_region",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "Recommendations for Future Work",
+        "Recommendations for Future Work|Extending Clinical Scope",
+        "Recommendations for Future Work|Enabling Genuine Multimodal Evaluation",
+        "Limitations",
+        "Summary|CHAPTER 6",
+        "Chapter Summary|CHAPTER 2"
+      ],
+      "target_region_kinds": [
+        "overview",
+        "discussion",
+        "evidence"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.78,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Global synthesis questions benefit from synopsis-first planning."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "synopsis_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Global synthesis questions benefit from synopsis-first planning.",
+        "Question asks for thesis-suggested future work/next steps, which is typically discussed in a global synthesis section (e.g., conclusion/future work). Use synopsis-first to narrow to the relevant section(s), then retrieve supporting chunks."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "pancreas7_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\pancreas7.pdf",
+    "document_id": "fc305cae0108697f",
+    "fingerprint": "fc305cae0108697f2f306e23593555d36ac57d5541d562c7218a793f4ccf37fb",
+    "question": "What was the goal of the pancreas7 study?",
+    "expected_pages": [
+      "Page 11",
+      "Page 3"
+    ],
+    "expected_fragments": [
+      "identify pancreatic cancer",
+      "computed tomography",
+      "constructing a convolutional neural network classifier"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "World Journal of|ZJWR0108008",
+        "World Journal of|CT images",
+        "World Journal of|Figure 1 Examples of dataset",
+        "World Journal of",
+        "World Journal of|Gender (male/female) 124/98 98/92 0.3852 0.54",
+        "World Journal of|ARTICLE HIGHLIGHTS"
+      ],
+      "target_region_kinds": [
+        "general",
+        "rules",
+        "definitions"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "The question asks for a specific stated goal and evidence is atomic; a tightly localized lookup over chunks is most appropriate."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "pancreas7_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\pancreas7.pdf",
+    "document_id": "fc305cae0108697f",
+    "fingerprint": "fc305cae0108697f2f306e23593555d36ac57d5541d562c7218a793f4ccf37fb",
+    "question": "What CNN architecture did the paper use?",
+    "expected_pages": [
+      "Page 4",
+      "Page 5"
+    ],
+    "expected_fragments": [
+      "three convolutional layers",
+      "fully connected layer",
+      "dropout rate of 0.5"
+    ],
+    "deterministic_plan": {
+      "intent_type": "procedure",
+      "evidence_spread": "sectional",
+      "constraint_mode": "soft_local",
+      "preferred_route": "hybrid_both",
+      "target_region_ids": [
+        "World Journal of|ZJWR0108008",
+        "World Journal of|CT images",
+        "World Journal of|Figure 1 Examples of dataset",
+        "World Journal of|With cancer With cancerCT phase",
+        "World Journal of|Gender (male/female) 124/98 98/92 0.3852 0.54",
+        "World Journal of|Accuracy 0.820568 0.790633 0.788076 1.074 0.585"
+      ],
+      "target_region_kinds": [
+        "procedure",
+        "evidence",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.74,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.7,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "section_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search.",
+        "Procedure/architecture lookup is likely answered within a specific section describing the model; legacy section-scoped retrieval should localize evidence without needing broad synopsis synthesis."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "pancreas7_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\pancreas7.pdf",
+    "document_id": "fc305cae0108697f",
+    "fingerprint": "fc305cae0108697f2f306e23593555d36ac57d5541d562c7218a793f4ccf37fb",
+    "question": "What CT phases were included in the datasets?",
+    "expected_pages": [
+      "Page 5",
+      "Page 6"
+    ],
+    "expected_fragments": [
+      "plain scan",
+      "venous phase",
+      "arterial phase"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "World Journal of|ZJWR0108008",
+        "World Journal of",
+        "World Journal of|CT images",
+        "World Journal of|Figure 1 Examples of dataset",
+        "World Journal of|With cancer With cancerCT phase",
+        "World Journal of|ARTICLE HIGHLIGHTS"
+      ],
+      "target_region_kinds": [
+        "general",
+        "rules",
+        "definitions"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "Lookup-style question targeting a specific factual list (CT phases included) with atomic evidence; best served by tightly localized chunk retrieval rather than synopsis-level narrowing."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "pancreas7_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\pancreas7.pdf",
+    "document_id": "fc305cae0108697f",
+    "fingerprint": "fc305cae0108697f2f306e23593555d36ac57d5541d562c7218a793f4ccf37fb",
+    "question": "How many patients and images were included in total?",
+    "expected_pages": [
+      "Page 6"
+    ],
+    "expected_fragments": [
+      "1195",
+      "7245",
+      "539",
+      "656"
+    ],
+    "deterministic_plan": {
+      "intent_type": "numeric",
+      "evidence_spread": "sectional",
+      "constraint_mode": "soft_local",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "World Journal of|With cancer With cancerCT phase",
+        "World Journal of|ZJWR0108008",
+        "World Journal of",
+        "World Journal of|CT images",
+        "fc305cae0108697f-document-overview",
+        "World Journal of|Figure 1 Examples of dataset"
+      ],
+      "target_region_kinds": [
+        "evidence",
+        "discussion",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.74,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.7,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "synopsis_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search.",
+        "Question asks for total counts spanning the whole document; broad synthesis/aggregation is needed before pinpointing the specific section/chunks that report the overall numbers."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "pancreas7_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\pancreas7.pdf",
+    "document_id": "fc305cae0108697f",
+    "fingerprint": "fc305cae0108697f2f306e23593555d36ac57d5541d562c7218a793f4ccf37fb",
+    "question": "How many pancreatic cancer patients and control patients were used in the binary classification experiments?",
+    "expected_pages": [
+      "Page 7",
+      "Page 8"
+    ],
+    "expected_fragments": [
+      "222 patients",
+      "190 patients",
+      "3494 CT images",
+      "3751 CT images"
+    ],
+    "deterministic_plan": {
+      "intent_type": "numeric",
+      "evidence_spread": "sectional",
+      "constraint_mode": "soft_local",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "World Journal of",
+        "World Journal of|ZJWR0108008",
+        "World Journal of|Accuracy 0.820568 0.790633 0.788076 1.074 0.585",
+        "World Journal of|With cancer With cancerCT phase",
+        "World Journal of|CT images",
+        "World Journal of|Figure 1 Examples of dataset"
+      ],
+      "target_region_kinds": [
+        "evidence",
+        "discussion",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.74,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.7,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search.",
+        "The question asks for specific numeric counts from binary classification experiments; evidence is likely explicitly stated in particular parts/clauses. A tightly localized lookup (chunk_first) is best rather than broad synthesis (synopsis_first)."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "pancreas7_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\pancreas7.pdf",
+    "document_id": "fc305cae0108697f",
+    "fingerprint": "fc305cae0108697f2f306e23593555d36ac57d5541d562c7218a793f4ccf37fb",
+    "question": "What binary classification accuracy did the CNN achieve across the three CT phases?",
+    "expected_pages": [
+      "Page 7",
+      "Page 8"
+    ],
+    "expected_fragments": [
+      "95.47%",
+      "95.76%",
+      "95.15%"
+    ],
+    "deterministic_plan": {
+      "intent_type": "cross_cutting",
+      "evidence_spread": "distributed",
+      "constraint_mode": "soft_multi_region",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "World Journal of",
+        "World Journal of|Accuracy 0.820568 0.790633 0.788076 1.074 0.585",
+        "World Journal of|Figure 1 Examples of dataset",
+        "World Journal of|ZJWR0108008",
+        "World Journal of|CT images",
+        "World Journal of|With cancer With cancerCT phase"
+      ],
+      "target_region_kinds": [
+        "rules",
+        "discussion",
+        "evidence",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.66,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "hybrid_both",
+      "confidence": 0.62,
+      "reasons": [
+        "Distributed questions benefit from region guidance plus a global fallback pool."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "hybrid_both",
+      "confidence": 0.72,
+      "reasons": [
+        "Distributed questions benefit from region guidance plus a global fallback pool.",
+        "Cross-cutting question with evidence distributed across multiple parts of the document; likely requires pulling multiple snippets from different sections rather than a single localized lookup or only section-level narrowing."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "pancreas7_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\pancreas7.pdf",
+    "document_id": "fc305cae0108697f",
+    "fingerprint": "fc305cae0108697f2f306e23593555d36ac57d5541d562c7218a793f4ccf37fb",
+    "question": "How did the CNN compare with gastroenterologists and trainees on plain scan accuracy?",
+    "expected_pages": [
+      "Page 8"
+    ],
+    "expected_fragments": [
+      "0.954747",
+      "0.922",
+      "0.736"
+    ],
+    "deterministic_plan": {
+      "intent_type": "comparison",
+      "evidence_spread": "distributed",
+      "constraint_mode": "soft_multi_region",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "World Journal of|Accuracy 0.820568 0.790633 0.788076 1.074 0.585",
+        "World Journal of|With cancer With cancerCT phase",
+        "World Journal of|Gender (male/female) 124/98 98/92 0.3852 0.54",
+        "World Journal of",
+        "fc305cae0108697f-document-overview",
+        "World Journal of|Published by Baishideng Publishing Group Inc"
+      ],
+      "target_region_kinds": [
+        "evidence",
+        "discussion",
+        "overview"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.66,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "hybrid_both",
+      "confidence": 0.62,
+      "reasons": [
+        "Distributed questions benefit from region guidance plus a global fallback pool."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "hybrid_both",
+      "confidence": 0.72,
+      "reasons": [
+        "Distributed questions benefit from region guidance plus a global fallback pool.",
+        "Comparison question with evidence spread across multiple sources/sections (CNN vs gastroenterologists vs trainees) suggests distributed, mixed-intent retrieval rather than purely localized facts or a single section-level narrowing."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "pancreas7_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\pancreas7.pdf",
+    "document_id": "fc305cae0108697f",
+    "fingerprint": "fc305cae0108697f2f306e23593555d36ac57d5541d562c7218a793f4ccf37fb",
+    "question": "Which phase had the highest sensitivity for head and neck pancreatic malignancies in the ternary classifier?",
+    "expected_pages": [
+      "Page 9",
+      "Page 10"
+    ],
+    "expected_fragments": [
+      "arterial phase",
+      "0.852390",
+      "head and neck"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "World Journal of|Accuracy 0.820568 0.790633 0.788076 1.074 0.585",
+        "World Journal of|ZJWR0108008",
+        "World Journal of|CT images",
+        "World Journal of|Figure 1 Examples of dataset",
+        "World Journal of",
+        "World Journal of|With cancer With cancerCT phase"
+      ],
+      "target_region_kinds": [
+        "general",
+        "rules",
+        "definitions"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "Lookup-style question with atomic, tightly localized evidence; likely an explicit phase label in a specific part of the document, so direct chunk retrieval is best."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "pancreas7_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\pancreas7.pdf",
+    "document_id": "fc305cae0108697f",
+    "fingerprint": "fc305cae0108697f2f306e23593555d36ac57d5541d562c7218a793f4ccf37fb",
+    "question": "Why did the authors say plain phase could be sufficient for the binary classifier?",
+    "expected_pages": [
+      "Page 11"
+    ],
+    "expected_fragments": [
+      "relatively same sensitivity",
+      "easier access",
+      "lower radiation"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "World Journal of|ZJWR0108008",
+        "World Journal of|CT images",
+        "World Journal of|Figure 1 Examples of dataset",
+        "World Journal of|Accuracy 0.820568 0.790633 0.788076 1.074 0.585",
+        "World Journal of|ARTICLE HIGHLIGHTS",
+        "World Journal of"
+      ],
+      "target_region_kinds": [
+        "general",
+        "rules",
+        "definitions"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "Atomic lookup for a specific quoted claim (\u201cplain phase\u201d sufficient) with localized evidence; no broad synthesis or distributed/mixed evidence is indicated."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "pancreas8_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\pancreas8.pdf",
+    "document_id": "b6be1e198110b628",
+    "fingerprint": "b6be1e198110b628fd5022d130ef9d4b0819c009f9bff8575a55c329420a8406",
+    "question": "What is the main focus of the pancreas8 paper?",
+    "expected_pages": [
+      "Page 1"
+    ],
+    "expected_fragments": [
+      "multimodal data fusion",
+      "cancer biomarker discovery",
+      "deep learning"
+    ],
+    "deterministic_plan": {
+      "intent_type": "summary",
+      "evidence_spread": "global",
+      "constraint_mode": "soft_multi_region",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "b6be1e198110b628-document-overview",
+        "Abstract",
+        "Abstract|Research, N. Comprehensive and Integrated Genomic Characterization of Adult Soft Tissue",
+        "Abstract|Using Multi-Directional Recurrent Neural Networks. IEEE Trans Biomed Eng 66, 1477\u20131490"
+      ],
+      "target_region_kinds": [
+        "overview",
+        "discussion",
+        "evidence"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.78,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Global synthesis questions benefit from synopsis-first planning."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "synopsis_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Global synthesis questions benefit from synopsis-first planning.",
+        "User asks for a high-level summary (\u201cmain focus\u201d), with evidence likely spread globally; a synopsis-first route should narrow the relevant sections before chunk retrieval."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "pancreas8_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\pancreas8.pdf",
+    "document_id": "b6be1e198110b628",
+    "fingerprint": "b6be1e198110b628fd5022d130ef9d4b0819c009f9bff8575a55c329420a8406",
+    "question": "Why does the paper argue that multimodal fusion is needed in oncology?",
+    "expected_pages": [
+      "Page 4"
+    ],
+    "expected_fragments": [
+      "single modalities offer a limited view",
+      "disease heterogeneity",
+      "treatment response"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "b6be1e198110b628-document-overview",
+        "Abstract"
+      ],
+      "target_region_kinds": [
+        "general",
+        "rules",
+        "definitions"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "Lookup-style question with atomic evidence; best served by tightly localized chunk-level retrieval rather than synopsis-based narrowing or distributed/mixed evidence search."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "pancreas8_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\pancreas8.pdf",
+    "document_id": "b6be1e198110b628",
+    "fingerprint": "b6be1e198110b628fd5022d130ef9d4b0819c009f9bff8575a55c329420a8406",
+    "question": "What three fusion stages does the paper describe?",
+    "expected_pages": [
+      "Page 6",
+      "Page 19"
+    ],
+    "expected_fragments": [
+      "early",
+      "intermediate",
+      "late"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "b6be1e198110b628-document-overview",
+        "Abstract"
+      ],
+      "target_region_kinds": [
+        "general",
+        "rules",
+        "definitions"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "Lookup-style question for a small set of explicit items (three fusion stages) with atomic evidence; best served by tightly localized chunk-level retrieval."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "pancreas8_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\pancreas8.pdf",
+    "document_id": "b6be1e198110b628",
+    "fingerprint": "b6be1e198110b628fd5022d130ef9d4b0819c009f9bff8575a55c329420a8406",
+    "question": "How does the paper describe early fusion?",
+    "expected_pages": [
+      "Page 6"
+    ],
+    "expected_fragments": [
+      "concatenating feature vectors",
+      "single model"
+    ],
+    "deterministic_plan": {
+      "intent_type": "procedure",
+      "evidence_spread": "sectional",
+      "constraint_mode": "soft_local",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "Abstract|Research, N. Comprehensive and Integrated Genomic Characterization of Adult Soft Tissue",
+        "Abstract|Using Multi-Directional Recurrent Neural Networks. IEEE Trans Biomed Eng 66, 1477\u20131490",
+        "b6be1e198110b628-document-overview",
+        "Abstract"
+      ],
+      "target_region_kinds": [
+        "procedure",
+        "evidence",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.74,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.7,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "synopsis_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search.",
+        "Question asks for how the paper describes early fusion, likely requiring section-level synthesis to pinpoint the relevant discussion since evidence is spread across sections; then chunk retrieval can extract the precise procedural details."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "pancreas8_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\pancreas8.pdf",
+    "document_id": "b6be1e198110b628",
+    "fingerprint": "b6be1e198110b628fd5022d130ef9d4b0819c009f9bff8575a55c329420a8406",
+    "question": "What is one advantage and one limitation of late fusion according to the paper?",
+    "expected_pages": [
+      "Page 6"
+    ],
+    "expected_fragments": [
+      "different model for each modality",
+      "handle situations when some modalities are missing",
+      "ignores possible synergies"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "b6be1e198110b628-document-overview",
+        "Abstract"
+      ],
+      "target_region_kinds": [
+        "definitions",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "The question asks for a specific stated advantage and limitation of late fusion, which is typically a tightly localized fact/claim in the paper and not a broad synthesis; atomic evidence spread suggests direct chunk lookup over section-wide or distributed retrieval."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "pancreas8_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\pancreas8.pdf",
+    "document_id": "b6be1e198110b628",
+    "fingerprint": "b6be1e198110b628fd5022d130ef9d4b0819c009f9bff8575a55c329420a8406",
+    "question": "What examples of multimodal data types does the paper mention for oncology?",
+    "expected_pages": [
+      "Page 1",
+      "Page 5"
+    ],
+    "expected_fragments": [
+      "molecular",
+      "histopathology",
+      "radiology",
+      "clinical records"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "b6be1e198110b628-document-overview",
+        "Abstract"
+      ],
+      "target_region_kinds": [
+        "general",
+        "rules",
+        "definitions"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "The intent is a direct lookup for specific examples, with atomic evidence rather than dispersed synthesis\u2014best served by tightly localized chunk retrieval."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "pancreas8_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\pancreas8.pdf",
+    "document_id": "b6be1e198110b628",
+    "fingerprint": "b6be1e198110b628fd5022d130ef9d4b0819c009f9bff8575a55c329420a8406",
+    "question": "What major challenge does the paper identify around matched multimodal datasets?",
+    "expected_pages": [
+      "Page 8"
+    ],
+    "expected_fragments": [
+      "lack of large golden labelled cohorts",
+      "matched multimodal data",
+      "privacy concerns"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "b6be1e198110b628-document-overview",
+        "Abstract"
+      ],
+      "target_region_kinds": [
+        "general",
+        "rules",
+        "definitions"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "Atomic fact lookup with tightly localized evidence; matched multimodal datasets challenge can be retrieved directly without broad synthesis or section-level narrowing."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "pancreas8_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\pancreas8.pdf",
+    "document_id": "b6be1e198110b628",
+    "fingerprint": "b6be1e198110b628fd5022d130ef9d4b0819c009f9bff8575a55c329420a8406",
+    "question": "What challenge does the paper identify for clinical adoption of deep learning models?",
+    "expected_pages": [
+      "Page 8"
+    ],
+    "expected_fragments": [
+      "lack of well-defined methods for model interpretation",
+      "confidence or uncertainty measures",
+      "clinically relevant"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "b6be1e198110b628-document-overview",
+        "Abstract"
+      ],
+      "target_region_kinds": [
+        "general",
+        "rules",
+        "definitions"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "The question is a targeted lookup for a specific stated challenge; evidence is atomic and likely located in an explicit sentence/phrase, so tightly localized chunk retrieval is optimal."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "pancreas8_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\pancreas8.pdf",
+    "document_id": "b6be1e198110b628",
+    "fingerprint": "b6be1e198110b628fd5022d130ef9d4b0819c009f9bff8575a55c329420a8406",
+    "question": "What role do DREAM and Kaggle competitions play according to the paper?",
+    "expected_pages": [
+      "Page 5",
+      "Page 9"
+    ],
+    "expected_fragments": [
+      "community-driven competitions",
+      "standardised multimodal data",
+      "effective concept"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [],
+      "target_region_kinds": [
+        "general",
+        "rules",
+        "definitions"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "Lookup intent with atomic evidence: the question asks for a specific stated role (likely a concrete sentence/definition) that can be retrieved via tightly localized fact-level chunk matching, without needing synopsis-level narrowing."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "pancreas8_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\pancreas8.pdf",
+    "document_id": "b6be1e198110b628",
+    "fingerprint": "b6be1e198110b628fd5022d130ef9d4b0819c009f9bff8575a55c329420a8406",
+    "question": "What does the paper say about OMOP in relation to multimodal data?",
+    "expected_pages": [
+      "Page 9"
+    ],
+    "expected_fragments": [
+      "OMOP",
+      "harmonising EHR data",
+      "across institutes and countries"
+    ],
+    "deterministic_plan": {
+      "intent_type": "summary",
+      "evidence_spread": "sectional",
+      "constraint_mode": "soft_local",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "b6be1e198110b628-document-overview",
+        "Abstract",
+        "Abstract|Research, N. Comprehensive and Integrated Genomic Characterization of Adult Soft Tissue",
+        "Abstract|Using Multi-Directional Recurrent Neural Networks. IEEE Trans Biomed Eng 66, 1477\u20131490"
+      ],
+      "target_region_kinds": [
+        "overview",
+        "discussion",
+        "evidence"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.74,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.78,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "synopsis_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search.",
+        "Asking for a summary about how OMOP relates to multimodal data; evidence is spread across sections, so broad synopsis-first narrowing before chunk-level retrieval best captures the overall relationship."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "reportgeneration_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration.pdf",
+    "document_id": "b950f9666b1999a4",
+    "fingerprint": "b950f9666b1999a4f3cbf1f557a55034bfca8af1a887027269117ce2e5449680",
+    "question": "What is Flamingo-CXR and what task was it built for?",
+    "expected_pages": [
+      "Page 1",
+      "Page 2",
+      "Page 11"
+    ],
+    "expected_fragments": [
+      "Flamingo-CXR",
+      "report generation system",
+      "chest radiographs",
+      "fine-tuning",
+      "radiology report generation task"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "b950f9666b1999a4-repair-02-results",
+        "b950f9666b1999a4-repair-05-methods",
+        "b950f9666b1999a4-repair-07-references",
+        "b950f9666b1999a4-repair-13-extended-data-fig-5-average-number-of-clinically-significant-errors"
+      ],
+      "target_region_kinds": [
+        "definitions",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "Atomic definition-style lookup with explicit factual phrasing needed; evidence is localized so exact chunk retrieval best matches the question intent."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "reportgeneration_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration.pdf",
+    "document_id": "b950f9666b1999a4",
+    "fingerprint": "b950f9666b1999a4f3cbf1f557a55034bfca8af1a887027269117ce2e5449680",
+    "question": "What challenge does the paper say has slowed real-world adoption of automated radiology report generation?",
+    "expected_pages": [
+      "Page 1"
+    ],
+    "expected_fragments": [
+      "path toward real-world adoption",
+      "challenge of evaluating the clinical quality",
+      "AI-generated reports"
+    ],
+    "deterministic_plan": {
+      "intent_type": "numeric",
+      "evidence_spread": "sectional",
+      "constraint_mode": "soft_local",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "b950f9666b1999a4-repair-02-results",
+        "b950f9666b1999a4-repair-01-overview",
+        "b950f9666b1999a4-repair-16-extended-data-table-2-automated-report-generation-metrics",
+        "b950f9666b1999a4-repair-05-methods",
+        "b950f9666b1999a4-repair-06-methods-continued",
+        "b950f9666b1999a4-repair-07-references"
+      ],
+      "target_region_kinds": [
+        "evidence",
+        "discussion",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.74,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.7,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "synopsis_first",
+      "confidence": 0.7,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search."
+      ],
+      "source": "heuristic"
+    }
+  },
+  {
+    "dataset_name": "reportgeneration_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration.pdf",
+    "document_id": "b950f9666b1999a4",
+    "fingerprint": "b950f9666b1999a4f3cbf1f557a55034bfca8af1a887027269117ce2e5449680",
+    "question": "Which two datasets were used to train Flamingo-CXR?",
+    "expected_pages": [
+      "Page 2",
+      "Page 12"
+    ],
+    "expected_fragments": [
+      "MIMIC-CXR",
+      "IND1",
+      "training data",
+      "radiology reports"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "b950f9666b1999a4-repair-02-results",
+        "b950f9666b1999a4-repair-13-extended-data-fig-5-average-number-of-clinically-significant-errors",
+        "b950f9666b1999a4-repair-05-methods",
+        "b950f9666b1999a4-repair-07-references"
+      ],
+      "target_region_kinds": [
+        "general",
+        "rules",
+        "definitions"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "Atomic lookup asking for specific datasets; evidence is localized to exact facts and likely present verbatim in a small span."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "reportgeneration_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration.pdf",
+    "document_id": "b950f9666b1999a4",
+    "fingerprint": "b950f9666b1999a4f3cbf1f557a55034bfca8af1a887027269117ce2e5449680",
+    "question": "What automatic report-generation metrics does the paper report for Flamingo-CXR on MIMIC-CXR?",
+    "expected_pages": [
+      "Page 2"
+    ],
+    "expected_fragments": [
+      "CheXpert F1 score of 0.519",
+      "RadGraph F1 score of 0.205"
+    ],
+    "deterministic_plan": {
+      "intent_type": "numeric",
+      "evidence_spread": "sectional",
+      "constraint_mode": "soft_local",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "b950f9666b1999a4-repair-02-results",
+        "b950f9666b1999a4-repair-16-extended-data-table-2-automated-report-generation-metrics",
+        "b950f9666b1999a4-repair-13-extended-data-fig-5-average-number-of-clinically-significant-errors",
+        "b950f9666b1999a4-repair-17-extended-data-table-3-clinically-significant-errors-in-ground-truth",
+        "b950f9666b1999a4-repair-18-extended-data-table-4-clinically-significant-errors-in-flamingo-cxr",
+        "b950f9666b1999a4-repair-07-references"
+      ],
+      "target_region_kinds": [
+        "evidence",
+        "discussion",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.74,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.7,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "synopsis_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search.",
+        "Question asks for specific numeric report-generation metrics; evidence is spread across the paper, so start with synopsis/section-level retrieval to narrow to the Flamingo-CXR on MIMIC-CXR reporting sections, then retrieve relevant metric details from chunks."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "reportgeneration_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration.pdf",
+    "document_id": "b950f9666b1999a4",
+    "fingerprint": "b950f9666b1999a4f3cbf1f557a55034bfca8af1a887027269117ce2e5449680",
+    "question": "What two main expert-evaluation tasks were used to judge AI-generated reports?",
+    "expected_pages": [
+      "Page 3",
+      "Page 4"
+    ],
+    "expected_fragments": [
+      "pairwise preference test",
+      "error correction task",
+      "expert evaluation"
+    ],
+    "deterministic_plan": {
+      "intent_type": "numeric",
+      "evidence_spread": "sectional",
+      "constraint_mode": "soft_local",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "b950f9666b1999a4-repair-02-results",
+        "b950f9666b1999a4-repair-03-results-continued",
+        "b950f9666b1999a4-repair-12-extended-data-fig-4-types-of-errors-found-in-original-reports",
+        "b950f9666b1999a4-repair-13-extended-data-fig-5-average-number-of-clinically-significant-errors",
+        "b950f9666b1999a4-repair-01-overview"
+      ],
+      "target_region_kinds": [
+        "evidence",
+        "discussion",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.74,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.7,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "synopsis_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search.",
+        "Question asks for a specific numeric detail (two tasks) but evidence is spread across sections; start with section-level narrowing/synthesis, then retrieve the exact chunks stating the two expert-evaluation tasks."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "reportgeneration_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration.pdf",
+    "document_id": "b950f9666b1999a4",
+    "fingerprint": "b950f9666b1999a4f3cbf1f557a55034bfca8af1a887027269117ce2e5449680",
+    "question": "What headline preference result does the paper report for intensive care reports from Flamingo-CXR?",
+    "expected_pages": [
+      "Page 1"
+    ],
+    "expected_fragments": [
+      "56.1%",
+      "intensive care reports",
+      "preferable or equivalent"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "b950f9666b1999a4-repair-02-results",
+        "b950f9666b1999a4-repair-13-extended-data-fig-5-average-number-of-clinically-significant-errors",
+        "b950f9666b1999a4-repair-07-references",
+        "b950f9666b1999a4-repair-09-extended-data-fig-1-labelling-interface",
+        "b950f9666b1999a4-repair-12-extended-data-fig-4-types-of-errors-found-in-original-reports",
+        "b950f9666b1999a4-repair-05-methods"
+      ],
+      "target_region_kinds": [
+        "general",
+        "rules",
+        "definitions"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "Lookup-style question seeking a single, explicit reported result (headline preference) from the paper; evidence is atomic and tightly localized rather than distributed or requiring synopsis-level narrowing."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "reportgeneration_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration.pdf",
+    "document_id": "b950f9666b1999a4",
+    "fingerprint": "b950f9666b1999a4f3cbf1f557a55034bfca8af1a887027269117ce2e5449680",
+    "question": "What did the paper find about clinician-AI collaboration when AI reports contained clinically significant errors?",
+    "expected_pages": [
+      "Page 21"
+    ],
+    "expected_fragments": [
+      "clinician-AI collaboration",
+      "improvement in ratings",
+      "clinically significant errors"
+    ],
+    "deterministic_plan": {
+      "intent_type": "numeric",
+      "evidence_spread": "sectional",
+      "constraint_mode": "soft_local",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "b950f9666b1999a4-repair-02-results",
+        "b950f9666b1999a4-repair-13-extended-data-fig-5-average-number-of-clinically-significant-errors",
+        "b950f9666b1999a4-repair-17-extended-data-table-3-clinically-significant-errors-in-ground-truth",
+        "b950f9666b1999a4-repair-18-extended-data-table-4-clinically-significant-errors-in-flamingo-cxr",
+        "b950f9666b1999a4-repair-12-extended-data-fig-4-types-of-errors-found-in-original-reports",
+        "b950f9666b1999a4-repair-14-extended-data-fig-6-clinician-ai-collaboration"
+      ],
+      "target_region_kinds": [
+        "evidence",
+        "discussion",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.74,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.7,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "hybrid_both",
+      "confidence": 0.72,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search.",
+        "Question asks about a specific collaboration finding conditioned on a particular scenario (AI reports with clinically significant errors); evidence is likely spread across multiple sections (results/discussion) rather than a single localized definition or exact clause, so mixed/sectional retrieval with distributed evidence is best."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "reportgeneration_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration.pdf",
+    "document_id": "b950f9666b1999a4",
+    "fingerprint": "b950f9666b1999a4f3cbf1f557a55034bfca8af1a887027269117ce2e5449680",
+    "question": "What future work directions does the paper suggest for improving the system?",
+    "expected_pages": [
+      "Page 8"
+    ],
+    "expected_fragments": [
+      "follow user instructions",
+      "natural language",
+      "in-context learning",
+      "parameter-efficient optimization"
+    ],
+    "deterministic_plan": {
+      "intent_type": "summary",
+      "evidence_spread": "global",
+      "constraint_mode": "soft_multi_region",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "b950f9666b1999a4-repair-02-results",
+        "b950f9666b1999a4-repair-01-overview",
+        "b950f9666b1999a4-repair-07-references",
+        "b950f9666b1999a4-repair-05-methods",
+        "b950f9666b1999a4-repair-06-methods-continued",
+        "b950f9666b1999a4-repair-03-results-continued"
+      ],
+      "target_region_kinds": [
+        "overview",
+        "discussion",
+        "evidence"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.78,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Global synthesis questions benefit from synopsis-first planning."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "synopsis_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Global synthesis questions benefit from synopsis-first planning.",
+        "Question asks for the paper\u2019s suggested future work, which is typically discussed in a high-level concluding/future-work section; with evidence spread globally, starting with synopsis/section-level narrowing helps locate the relevant passages before retrieving specific chunks."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "reportgeneration_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration.pdf",
+    "document_id": "b950f9666b1999a4",
+    "fingerprint": "b950f9666b1999a4f3cbf1f557a55034bfca8af1a887027269117ce2e5449680",
+    "question": "How does the paper describe regional differences in radiologist preferences?",
+    "expected_pages": [
+      "Page 6"
+    ],
+    "expected_fragments": [
+      "regional variations in reporting style",
+      "stylistic preferences",
+      "regional variation in rater preferences"
+    ],
+    "deterministic_plan": {
+      "intent_type": "comparison",
+      "evidence_spread": "distributed",
+      "constraint_mode": "soft_multi_region",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "b950f9666b1999a4-repair-02-results",
+        "b950f9666b1999a4-repair-01-overview",
+        "b950f9666b1999a4-repair-05-methods",
+        "b950f9666b1999a4-repair-06-methods-continued",
+        "b950f9666b1999a4-repair-07-references",
+        "b950f9666b1999a4-repair-03-results-continued"
+      ],
+      "target_region_kinds": [
+        "evidence",
+        "discussion",
+        "overview"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.66,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "hybrid_both",
+      "confidence": 0.62,
+      "reasons": [
+        "Distributed questions benefit from region guidance plus a global fallback pool."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "hybrid_both",
+      "confidence": 0.72,
+      "reasons": [
+        "Distributed questions benefit from region guidance plus a global fallback pool.",
+        "Comparison questions with regional differences typically draw on evidence scattered across multiple sections/figures; distributed evidence and mixed intent make a hybrid approach more reliable than synopsis-only or tightly localized chunk lookup."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "reportgeneration_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration.pdf",
+    "document_id": "b950f9666b1999a4",
+    "fingerprint": "b950f9666b1999a4f3cbf1f557a55034bfca8af1a887027269117ce2e5449680",
+    "question": "What kinds of report errors were tracked in the error-correction evaluation?",
+    "expected_pages": [
+      "Page 7",
+      "Page 19"
+    ],
+    "expected_fragments": [
+      "incorrect findings",
+      "incorrect location",
+      "incorrect severity",
+      "error types"
+    ],
+    "deterministic_plan": {
+      "intent_type": "cross_cutting",
+      "evidence_spread": "distributed",
+      "constraint_mode": "soft_multi_region",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "b950f9666b1999a4-repair-02-results",
+        "b950f9666b1999a4-repair-13-extended-data-fig-5-average-number-of-clinically-significant-errors",
+        "b950f9666b1999a4-repair-03-results-continued",
+        "b950f9666b1999a4-repair-12-extended-data-fig-4-types-of-errors-found-in-original-reports",
+        "b950f9666b1999a4-repair-14-extended-data-fig-6-clinician-ai-collaboration",
+        "b950f9666b1999a4-repair-17-extended-data-table-3-clinically-significant-errors-in-ground-truth"
+      ],
+      "target_region_kinds": [
+        "rules",
+        "discussion",
+        "evidence",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.66,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "hybrid_both",
+      "confidence": 0.62,
+      "reasons": [
+        "Distributed questions benefit from region guidance plus a global fallback pool."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "hybrid_both",
+      "confidence": 0.72,
+      "reasons": [
+        "Distributed questions benefit from region guidance plus a global fallback pool.",
+        "Cross-cutting question with distributed evidence across the document; likely requires combining findings from multiple sections/chunks rather than a single localized lookup or purely synopsis-first narrowing."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "reportgeneration2_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration2.pdf",
+    "document_id": "c28685174b6bce75",
+    "fingerprint": "c28685174b6bce75cdc76b5fc3ed77364c925d76e5d64b86430deaac24fc94ca",
+    "question": "What is the main contribution of the RadAlign paper?",
+    "expected_pages": [
+      "Page 1",
+      "Page 3",
+      "Page 13"
+    ],
+    "expected_fragments": [
+      "RadAlign",
+      "vision-language concept alignment",
+      "unified framework",
+      "retrieval-augmented generation"
+    ],
+    "deterministic_plan": {
+      "intent_type": "summary",
+      "evidence_spread": "global",
+      "constraint_mode": "soft_multi_region",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "c28685174b6bce75-document-overview",
+        "RadAlign: Advancing Radiology Report|2 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 7",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 9",
+        "RadAlign: Advancing Radiology Report|10 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 11"
+      ],
+      "target_region_kinds": [
+        "overview",
+        "discussion",
+        "evidence"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.78,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Global synthesis questions benefit from synopsis-first planning."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "synopsis_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Global synthesis questions benefit from synopsis-first planning.",
+        "Asking for the main contribution is a high-level summary with globally distributed evidence; synopsis-first should quickly narrow to the relevant sections before chunk-level retrieval."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "reportgeneration2_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration2.pdf",
+    "document_id": "c28685174b6bce75",
+    "fingerprint": "c28685174b6bce75cdc76b5fc3ed77364c925d76e5d64b86430deaac24fc94ca",
+    "question": "What problem do the authors say current report-generation approaches face?",
+    "expected_pages": [
+      "Page 1",
+      "Page 2"
+    ],
+    "expected_fragments": [
+      "classification accuracy",
+      "expense of interpretability",
+      "hallucination",
+      "incorrect or unreliable information"
+    ],
+    "deterministic_plan": {
+      "intent_type": "numeric",
+      "evidence_spread": "sectional",
+      "constraint_mode": "soft_local",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "RadAlign: Advancing Radiology Report",
+        "RadAlign: Advancing Radiology Report|2 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 3",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 5",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 7",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 9"
+      ],
+      "target_region_kinds": [
+        "evidence",
+        "discussion",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.74,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.7,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "synopsis_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search.",
+        "Question asks for a specific problem statement, but evidence is spread across sections; a synopsis/section-level narrowing first should identify the relevant sections before chunk-level fact lookup."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "reportgeneration2_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration2.pdf",
+    "document_id": "c28685174b6bce75",
+    "fingerprint": "c28685174b6bce75cdc76b5fc3ed77364c925d76e5d64b86430deaac24fc94ca",
+    "question": "How does RadAlign work at a high level?",
+    "expected_pages": [
+      "Page 1",
+      "Page 3"
+    ],
+    "expected_fragments": [
+      "align visual features with medical concepts",
+      "prompt LLM",
+      "similar historical cases",
+      "radiologist workflow"
+    ],
+    "deterministic_plan": {
+      "intent_type": "procedure",
+      "evidence_spread": "sectional",
+      "constraint_mode": "soft_local",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "RadAlign: Advancing Radiology Report",
+        "RadAlign: Advancing Radiology Report|2 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 3",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 5",
+        "RadAlign: Advancing Radiology Report|6 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 7"
+      ],
+      "target_region_kinds": [
+        "procedure",
+        "evidence",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.74,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.7,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "synopsis_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search.",
+        "High-level how-it-works is synthesis/procedural overview; evidence is spread across sections, so first build a section-level synopsis then retrieve supporting chunks."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "reportgeneration2_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration2.pdf",
+    "document_id": "c28685174b6bce75",
+    "fingerprint": "c28685174b6bce75cdc76b5fc3ed77364c925d76e5d64b86430deaac24fc94ca",
+    "question": "How does the paper use retrieval-augmented generation?",
+    "expected_pages": [
+      "Page 1",
+      "Page 3",
+      "Page 7"
+    ],
+    "expected_fragments": [
+      "retrieval-augmented generation",
+      "similar historical cases",
+      "Retrieved Similar Reports",
+      "grounds outputs"
+    ],
+    "deterministic_plan": {
+      "intent_type": "procedure",
+      "evidence_spread": "sectional",
+      "constraint_mode": "soft_local",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 11",
+        "RadAlign: Advancing Radiology Report",
+        "RadAlign: Advancing Radiology Report|2 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 3",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 5",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 7"
+      ],
+      "target_region_kinds": [
+        "procedure",
+        "evidence",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.74,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.7,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "synopsis_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search.",
+        "Question asks for how the paper uses RAG (procedure/overall method). Evidence is spread across sections, so a synopsis-first pass to identify the relevant method components and workflow before chunk-level retrieval is best."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "reportgeneration2_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration2.pdf",
+    "document_id": "c28685174b6bce75",
+    "fingerprint": "c28685174b6bce75cdc76b5fc3ed77364c925d76e5d64b86430deaac24fc94ca",
+    "question": "What average AUC does RadAlign report across diseases?",
+    "expected_pages": [
+      "Page 1",
+      "Page 10"
+    ],
+    "expected_fragments": [
+      "average AUC of 0.885",
+      "Average",
+      "0.885"
+    ],
+    "deterministic_plan": {
+      "intent_type": "numeric",
+      "evidence_spread": "distributed",
+      "constraint_mode": "soft_multi_region",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "RadAlign: Advancing Radiology Report|10 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 11",
+        "RadAlign: Advancing Radiology Report",
+        "RadAlign: Advancing Radiology Report|2 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 3",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 5"
+      ],
+      "target_region_kinds": [
+        "evidence",
+        "discussion",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.66,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "hybrid_both",
+      "confidence": 0.62,
+      "reasons": [
+        "Distributed questions benefit from region guidance plus a global fallback pool."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "hybrid_both",
+      "confidence": 0.72,
+      "reasons": [
+        "Distributed questions benefit from region guidance plus a global fallback pool.",
+        "Numeric query likely requires averaging AUC values reported across multiple disease sections; evidence is distributed and not confined to a single localized fact."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "reportgeneration2_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration2.pdf",
+    "document_id": "c28685174b6bce75",
+    "fingerprint": "c28685174b6bce75cdc76b5fc3ed77364c925d76e5d64b86430deaac24fc94ca",
+    "question": "What GREEN score does RadAlign report, and how does it compare with prior methods?",
+    "expected_pages": [
+      "Page 1",
+      "Page 9"
+    ],
+    "expected_fragments": [
+      "GREEN score of 0.678",
+      "0.634",
+      "outperforming",
+      "state-of-the-art"
+    ],
+    "deterministic_plan": {
+      "intent_type": "comparison",
+      "evidence_spread": "distributed",
+      "constraint_mode": "soft_multi_region",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 11",
+        "RadAlign: Advancing Radiology Report|10 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+        "c28685174b6bce75-document-overview",
+        "RadAlign: Advancing Radiology Report|2 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 7",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 9"
+      ],
+      "target_region_kinds": [
+        "evidence",
+        "discussion",
+        "overview"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.66,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "hybrid_both",
+      "confidence": 0.62,
+      "reasons": [
+        "Distributed questions benefit from region guidance plus a global fallback pool."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "hybrid_both",
+      "confidence": 0.72,
+      "reasons": [
+        "Distributed questions benefit from region guidance plus a global fallback pool.",
+        "Comparison questions with evidence dispersed across multiple parts (e.g., the reported GREEN score for RadAlign plus prior-method baselines/results). Requires retrieving mixed, distributed evidence rather than a single localized fact or broad synopsis-only narrowing."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "reportgeneration2_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration2.pdf",
+    "document_id": "c28685174b6bce75",
+    "fingerprint": "c28685174b6bce75cdc76b5fc3ed77364c925d76e5d64b86430deaac24fc94ca",
+    "question": "Which disease classes are used in the experiments?",
+    "expected_pages": [
+      "Page 8"
+    ],
+    "expected_fragments": [
+      "Atelectasis",
+      "Cardiomegaly",
+      "Consolidation",
+      "Edema",
+      "Pleural Effusion"
+    ],
+    "deterministic_plan": {
+      "intent_type": "lookup",
+      "evidence_spread": "atomic",
+      "constraint_mode": "none",
+      "preferred_route": "chunk_first",
+      "target_region_ids": [
+        "RadAlign: Advancing Radiology Report|8 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+        "RadAlign: Advancing Radiology Report",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 3",
+        "RadAlign: Advancing Radiology Report|4 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 5",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 7"
+      ],
+      "target_region_kinds": [
+        "general",
+        "rules",
+        "definitions"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": false,
+      "planner_confidence": 0.86,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "chunk_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "chunk_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Atomic evidence spread favors exact chunk retrieval.",
+        "The intent is a direct lookup and the evidence is atomic (one or a few explicit disease-class mentions). No need for broad synopsis or section-level narrowing."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "reportgeneration2_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration2.pdf",
+    "document_id": "c28685174b6bce75",
+    "fingerprint": "c28685174b6bce75cdc76b5fc3ed77364c925d76e5d64b86430deaac24fc94ca",
+    "question": "What information is included in the report-generation prompt according to the paper?",
+    "expected_pages": [
+      "Page 7"
+    ],
+    "expected_fragments": [
+      "AI Model Diagnostic Predictions",
+      "Detailed Feature Analysis",
+      "Retrieved Similar Reports",
+      "Output Requirements"
+    ],
+    "deterministic_plan": {
+      "intent_type": "numeric",
+      "evidence_spread": "sectional",
+      "constraint_mode": "soft_local",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "RadAlign: Advancing Radiology Report|2 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 7",
+        "RadAlign: Advancing Radiology Report",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 3",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 5",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 9"
+      ],
+      "target_region_kinds": [
+        "evidence",
+        "discussion",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.74,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.7,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "synopsis_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Sectional questions should narrow regions before chunk search.",
+        "Question asks for what the report-generation prompt includes; likely described at section/synthesis level and then requires narrowing to the exact phrasing. With sectional evidence spread and long-document context, synopsis-first helps identify the relevant section before chunk-level lookup."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "reportgeneration2_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration2.pdf",
+    "document_id": "c28685174b6bce75",
+    "fingerprint": "c28685174b6bce75cdc76b5fc3ed77364c925d76e5d64b86430deaac24fc94ca",
+    "question": "What does the paper claim about robustness across different LLMs?",
+    "expected_pages": [
+      "Page 11"
+    ],
+    "expected_fragments": [
+      "robust across different LLM architectures",
+      "GREEN scores",
+      "0.646-0.695"
+    ],
+    "deterministic_plan": {
+      "intent_type": "comparison",
+      "evidence_spread": "distributed",
+      "constraint_mode": "soft_multi_region",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "RadAlign: Advancing Radiology Report",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 3",
+        "RadAlign: Advancing Radiology Report|4 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 5",
+        "RadAlign: Advancing Radiology Report|10 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+        "RadAlign: Advancing Radiology Report|6 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas"
+      ],
+      "target_region_kinds": [
+        "definitions",
+        "general"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.66,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "hybrid_both",
+      "confidence": 0.62,
+      "reasons": [
+        "Distributed questions benefit from region guidance plus a global fallback pool."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "hybrid_both",
+      "confidence": 0.72,
+      "reasons": [
+        "Distributed questions benefit from region guidance plus a global fallback pool.",
+        "Comparison across models typically relies on distributed evidence (multiple claims/experiments across sections). This is not a single localized fact, and it isn\u2019t purely broad synthesis-only; it benefits from both section-level context and chunk-level evidence."
+      ],
+      "source": "llm_fallback"
+    }
+  },
+  {
+    "dataset_name": "reportgeneration2_retrieval_eval_dataset.json",
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration2.pdf",
+    "document_id": "c28685174b6bce75",
+    "fingerprint": "c28685174b6bce75cdc76b5fc3ed77364c925d76e5d64b86430deaac24fc94ca",
+    "question": "What future work direction is mentioned in the conclusion?",
+    "expected_pages": [
+      "Page 13"
+    ],
+    "expected_fragments": [
+      "future work",
+      "refining concept",
+      "clinically reliable automation"
+    ],
+    "deterministic_plan": {
+      "intent_type": "summary",
+      "evidence_spread": "global",
+      "constraint_mode": "soft_multi_region",
+      "preferred_route": "synopsis_first",
+      "target_region_ids": [
+        "RadAlign: Advancing Radiology Report|2 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 7",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 9",
+        "RadAlign: Advancing Radiology Report|10 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+        "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 11",
+        "c28685174b6bce75-document-overview"
+      ],
+      "target_region_kinds": [
+        "overview",
+        "discussion",
+        "evidence"
+      ],
+      "hard_filters": {},
+      "use_global_fallback": true,
+      "planner_confidence": 0.78,
+      "planner_source": "deterministic"
+    },
+    "heuristic_router": {
+      "route": "synopsis_first",
+      "confidence": 0.84,
+      "reasons": [
+        "Global synthesis questions benefit from synopsis-first planning."
+      ],
+      "source": "heuristic"
+    },
+    "llm_router": {
+      "route": "synopsis_first",
+      "confidence": 0.72,
+      "reasons": [
+        "Global synthesis questions benefit from synopsis-first planning.",
+        "Asking for a summary-level \u201cfuture work direction\u201d in the conclusion suggests section-level synthesis first, then localized chunk retrieval for the specific future-work statement; evidence is global."
+      ],
+      "source": "llm_fallback"
+    }
+  }
+]

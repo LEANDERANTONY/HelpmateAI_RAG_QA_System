@@ -67,7 +67,9 @@ class HybridRetriever:
 
     @staticmethod
     def _evidence_score(candidate: RetrievalCandidate) -> float:
-        return candidate.rerank_score if candidate.rerank_score is not None else candidate.fused_score
+        # Cross-encoder reranker outputs are useful for ordering, but their raw
+        # score scale is not calibrated against the retrieval thresholds below.
+        return candidate.fused_score
 
     @classmethod
     def _normalize_term_set(cls, terms: set[str]) -> set[str]:

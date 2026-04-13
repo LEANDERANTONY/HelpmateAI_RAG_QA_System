@@ -10,6 +10,8 @@ def test_settings_parse_cloud_backends(monkeypatch, tmp_path):
     monkeypatch.setenv("HELPMATE_CHROMA_HTTP_PORT", "443")
     monkeypatch.setenv("HELPMATE_CHROMA_HTTP_SSL", "true")
     monkeypatch.setenv("HELPMATE_CHROMA_HTTP_HEADERS", "Authorization=Bearer token,X-Test=value")
+    monkeypatch.delenv("HELPMATE_CHROMA_API_KEY", raising=False)
+    monkeypatch.delenv("CHROMA_API_KEY", raising=False)
 
     settings = get_settings()
 

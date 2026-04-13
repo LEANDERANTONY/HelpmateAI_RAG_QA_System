@@ -35,7 +35,9 @@ class EvidenceSelector:
 
     @staticmethod
     def _candidate_score(candidate: RetrievalCandidate) -> float:
-        return candidate.rerank_score if candidate.rerank_score is not None else candidate.fused_score
+        # Use fused retrieval strength as the stable prior; reranker logits are
+        # only used to sort candidates and are not comparable across queries.
+        return candidate.fused_score
 
     def _should_select(self, retrieval_result: RetrievalResult) -> bool:
         if retrieval_result.evidence_status == "unsupported":

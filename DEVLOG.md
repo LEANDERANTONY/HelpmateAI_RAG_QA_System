@@ -8,6 +8,34 @@ Historical note:
 - later entries add quality-control, benchmarking, and document-intelligence work on top of that baseline
 - the project is still evolving, so later entries refine earlier architectural assumptions without erasing them
 
+## Day 14: Architecture Ablations, Threshold Calibration, And Stack Scorecard
+
+- Added a layered architecture-eval workflow rather than relying on a single benchmark.
+- Added and saved:
+  - selector weight sweep
+  - selector on/off ablation
+  - reranker on/off ablation
+  - planner/router threshold sweep
+  - planner ablation
+  - answer-stack ablation
+  - latency/cost benchmark
+  - focused `ragas` stack comparison
+- Added a compact architecture scorecard and roadmap under `docs/evals/`.
+- Recorded the benchmark-driven architecture decision in a new ADR.
+
+Challenges:
+
+- some of the most plausible layers were the hardest to justify cleanly because they improved one signal while hurting another
+- planner usefulness could not be judged fairly until its heuristic confidence thresholds were calibrated
+- selector tuning risked looking persuasive on its own even though the real question was whether the selector should remain in the default stack at all
+
+Improvements:
+
+- reranker is now strongly justified with both retrieval-level and answer-level evidence
+- planner/router is now calibrated and documented as a modest positive rather than a dramatic win
+- evidence selector is now documented as experimental instead of implicitly assumed to be part of the best default architecture
+- Helpmate now has a proper evidence trail for why each major layer stays or remains under review
+
 ## Day 11: Document-Topology Retrieval Upgrade
 
 - Added a deterministic `RetrievalPlan` layer ahead of retrieval.
