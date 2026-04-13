@@ -146,7 +146,7 @@ class Settings:
     structure_repair_confidence_threshold: float = _env_float("HELPMATE_STRUCTURE_REPAIR_CONFIDENCE_THRESHOLD", 0.62)
     embedding_model: str = os.getenv("HELPMATE_EMBEDDING_MODEL", "text-embedding-3-small")
     answer_model: str = os.getenv("HELPMATE_ANSWER_MODEL", "gpt-5.4-mini")
-    evidence_selector_enabled: bool = _env_bool("HELPMATE_EVIDENCE_SELECTOR_ENABLED", True)
+    evidence_selector_enabled: bool = _env_bool("HELPMATE_EVIDENCE_SELECTOR_ENABLED", False)
     evidence_selector_model: str = os.getenv("HELPMATE_EVIDENCE_SELECTOR_MODEL", "gpt-5.4-nano")
     evidence_selector_top_k: int = _env_int("HELPMATE_EVIDENCE_SELECTOR_TOP_K", 4)
     evidence_selector_max_evidence: int = _env_int("HELPMATE_EVIDENCE_SELECTOR_MAX_EVIDENCE", 2)
