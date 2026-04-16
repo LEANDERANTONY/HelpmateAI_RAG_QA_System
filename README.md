@@ -4,7 +4,7 @@
 
 HelpmateAI is a grounded long-document QA system for PDFs and DOCX files. Upload a policy, thesis, or research paper, ask a question in plain language, and get a readable answer with visible citations and raw supporting evidence.
 
-The current product direction is a `Next.js + FastAPI` experience on top of a benchmark-driven Python retrieval core. The system is designed to stay inspectable: retrieval is hybrid, answers are citation-aware, and the supporting passages remain visible instead of being hidden behind a polished summary.
+The current product is a `Next.js + FastAPI` experience on top of a benchmark-driven Python retrieval core, deployed with a VPS-ready backend path. The system is designed to stay inspectable: retrieval is hybrid, answers are citation-aware, and the supporting passages remain visible instead of being hidden behind a polished summary.
 
 ## Why This Project Stands Out
 
@@ -76,10 +76,9 @@ The repo is no longer a notebook demo. It is a real app-shaped project with:
 
 - `frontend/` as the evolving `Next.js` product UI
 - `backend/` as the FastAPI boundary over the Python core
-- `app.py` as the retained Streamlit research and benchmark shell
 - `Dockerfile` as the backend deployment image
-- `deploy/vps/` as the simple Docker Compose plus Caddy VPS deployment bundle
-- `src/` for reusable ingestion, retrieval, generation, cache, and UI logic
+- `deploy/vps/` as the primary Docker Compose plus Caddy VPS deployment bundle
+- `src/` for reusable ingestion, retrieval, generation, cache, and shared service logic
 - `src/structure/`, `src/query_analysis/`, `src/sections/`, and `src/query_router.py` for the document-intelligence and routing layers
 - `tests/` for focused fast checks around the core logic
 - `docs/` for architecture, evaluation policy, roadmap, and history
@@ -106,14 +105,13 @@ The current retrieval core is in a strong position:
 HelpmateAI is at the start of a new phase:
 
 - the backend retrieval system is stable enough to keep
-- the product shell is shifting to `Next.js + FastAPI`
-- Streamlit remains useful for fast iteration, demos, and benchmark visibility, but it is now a secondary shell rather than the main product direction
+- the product shell is now centered on `Next.js + FastAPI`
+- the deployment path is standardized around the VPS-ready backend bundle plus the frontend app
 
 ## Stack
 
 - Next.js
 - FastAPI
-- Streamlit
 - ChromaDB
 - optional hosted Chroma-compatible HTTP backend
 - optional Supabase-backed state persistence
@@ -128,7 +126,6 @@ HelpmateAI is at the start of a new phase:
 2. Set `OPENAI_API_KEY` in `.env` if you want live answer generation and evaluation.
 3. Run the backend: `uv run uvicorn backend.main:app --reload --port 8001`.
 4. Run the frontend: `npm run dev` in [frontend](frontend).
-5. Optionally run `streamlit run app.py` for the internal benchmark/debug shell.
 
 `pyproject.toml` and `uv.lock` are the dependency source of truth.
 
@@ -144,9 +141,7 @@ Example:
 
 - `www.helpmate.ai` -> Framer
 - `app.helpmate.ai` -> Vercel project rooted at [frontend](frontend)
-- `api.helpmate.ai` -> FastAPI service using [Dockerfile](Dockerfile)
-
-If Render becomes too expensive for the required memory tier, the backend can also be moved onto a VPS with the included [deploy/vps/docker-compose.yml](deploy/vps/docker-compose.yml) stack while the frontend stays on Vercel.
+- `api.helpmate.ai` -> VPS-hosted FastAPI service using [Dockerfile](Dockerfile) and [deploy/vps](deploy/vps)
 
 Important runtime notes:
 
@@ -191,7 +186,7 @@ See [docs/deployment.md](docs/deployment.md) for the step-by-step deployment pla
 - low-confidence indexing-time structure repair for noisy journal PDFs
 - dedicated global-summary routing for broad paper-summary questions
 - bounded post-rerank evidence selection before final answer generation
-- benchmark-aware product surface in both the retained Streamlit shell and the newer frontend/backend app flow
+- benchmark-aware product surface in the current frontend/backend app flow
 
 Out of scope for the current phase:
 

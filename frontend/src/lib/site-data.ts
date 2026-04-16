@@ -80,9 +80,9 @@ export const workspaceHighlights = [
 
 export const faqItems = [
   {
-    question: "Why not keep Streamlit as the final UI?",
+    question: "Why a custom workspace instead of generic document chat?",
     answer:
-      "Streamlit got the RAG core to a strong state, but the product now needs a more intentional frontend and API boundary.",
+      "Helpmate needs calmer long-document reading, clearer evidence presentation, and a stronger API boundary than a generic prototype shell can provide.",
   },
   {
     question: "What makes Helpmate different from generic file chat?",

@@ -1,6 +1,6 @@
 # Roadmap
 
-This roadmap reflects the current HelpmateAI state after the document-topology retrieval upgrade, benchmark-policy refinement, bounded evidence selection, low-confidence structure repair, the dedicated global-summary route, and the move toward a `Next.js + FastAPI` product shell.
+This roadmap reflects the current HelpmateAI state after the document-topology retrieval upgrade, benchmark-policy refinement, bounded evidence selection, low-confidence structure repair, the dedicated global-summary route, and the standardization around a `Next.js + FastAPI` product shell.
 
 ## Now: Frontend And Product Presentation
 
@@ -25,14 +25,10 @@ Current baseline:
 - deterministic weak-evidence expansion instead of model-based query rewriting
 - bounded post-rerank evidence selection for ambiguous top-k results
 - `Next.js + FastAPI` app shell now started and being actively refined
-- retained Streamlit shell with:
-  - document status panels
-  - style-aware starter questions
-  - benchmark summary surfaces
 
 Highest-priority active work:
 
-- continue the move from the current Streamlit shell toward a stronger custom frontend
+- continue refining the custom frontend and workspace UX
 - preserve the benchmarked Python retrieval core while improving product credibility
 - make the app feel more like a polished product than a research tool
 - keep benchmark quality high while the frontend evolves
@@ -65,7 +61,6 @@ Status:
   - `FastAPI` for the product backend
 - make storage, uploads, and index paths configurable for hosted environments
 - tighten CORS and proxy settings for deployed frontend/backend domains
-- keep the retained Streamlit shell available as an internal path, not the default deployment target
 
 Status:
 
@@ -96,7 +91,7 @@ Status:
 
 - background indexing jobs
 - multi-user concurrency beyond local development comfort
-- non-Streamlit clients
+- non-browser clients
 - stronger operational control over long-running eval and indexing tasks
 
 Status:

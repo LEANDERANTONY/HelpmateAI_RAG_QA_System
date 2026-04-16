@@ -14,8 +14,6 @@ static/Final_Thesis_Leander_Antony_A.pdf
 *.pyd
 .DS_Store
 Thumbs.db
-streamlit.log
-streamlit.err.log
 THREAD_HANDOFF.md
 tmp/
 static/UI/

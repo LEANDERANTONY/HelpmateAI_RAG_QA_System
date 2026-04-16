@@ -16,13 +16,12 @@ This is the recommended production shape:
 
 - Framer for the landing page
 - Vercel for [frontend](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\frontend)
-- Render, Railway, Fly.io, or a VPS for the FastAPI backend
+- a Linux VPS for the FastAPI backend
 
 The repo includes:
 
 - [Dockerfile](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\Dockerfile) for backend deployment
-- [render.yaml](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\render.yaml) as a backend-oriented Render blueprint
-- [deploy/vps/docker-compose.yml](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\deploy\vps\docker-compose.yml) for a simple VPS deployment
+- [deploy/vps/docker-compose.yml](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\deploy\vps\docker-compose.yml) for the standard VPS deployment
 - [deploy/vps/Caddyfile](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\deploy\vps\Caddyfile) for TLS and reverse proxying on a VPS
 
 ## Deployment Flow
@@ -81,7 +80,7 @@ Why these matter:
 
 ## Cloud-Backed Variant
 
-If you want to avoid a persistent Render disk, Helpmate can now run in a cloud-backed mode:
+If you want the VPS backend to stay mostly stateless, Helpmate can run in a cloud-backed mode:
 
 - Supabase stores document records, index records, and the chunk/section/synopsis artifact bundle
 - hosted Chroma stores the vector collections
@@ -166,23 +165,9 @@ Typical production setup on Vercel:
 
 This keeps browser calls same-origin from the frontend point of view while the Next app proxies them to the backend.
 
-## Render Notes
-
-The included [render.yaml](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\render.yaml) assumes:
-
-- one backend web service
-- Docker deploy using the root [Dockerfile](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\Dockerfile)
-- a mounted persistent disk at `/var/data/helpmate`
-
-Before using it in production:
-
-- replace `https://app.example.com` in `HELPMATE_CORS_ORIGINS`
-- set `OPENAI_API_KEY`
-- verify the plan and disk size are appropriate for your documents
-
 ## VPS Notes
 
-If Render becomes too expensive for the memory you need, Helpmate now has a straightforward VPS path.
+The VPS bundle is the standard production backend path.
 
 Recommended shape:
 
@@ -236,6 +221,5 @@ Local defaults stay simple:
 
 - backend: `uv run uvicorn backend.main:app --reload --port 8001`
 - frontend: `npm run dev` inside [frontend](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\frontend)
-- Streamlit shell: `streamlit run app.py`
 
 The frontend rewrite defaults to `http://127.0.0.1:8001` locally, so local development still works without extra setup.

@@ -11,7 +11,7 @@ This published site is already enough to use as a structural and aesthetic refer
 
 ## What We Can Reuse From This Reference
 
-The Framer reference has a stronger product feel than the current Streamlit shell because it uses:
+The Framer reference has a stronger product feel than the earlier prototype shell because it uses:
 
 - a clearer landing-page narrative
 - stronger section hierarchy

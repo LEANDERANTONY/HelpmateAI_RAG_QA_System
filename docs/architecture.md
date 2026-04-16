@@ -1,14 +1,13 @@
 # Architecture
 
-HelpmateAI is a long-document QA system with a benchmarked Python retrieval core, local-first indexing, and explicit quality controls. The current product direction is a `Next.js + FastAPI` surface over the existing Python services, while Streamlit remains available as an internal benchmark and inspection shell.
+HelpmateAI is a long-document QA system with a benchmarked Python retrieval core, local-first indexing, and explicit quality controls. The current product is a `Next.js + FastAPI` surface over the existing Python services, with the repo standardized around the live frontend plus VPS-backed API shape.
 
 ## Runtime Shape
 
 - `frontend/` owns the new `Next.js` product UI
 - `backend/` exposes the main upload, index, status, and ask API boundary
-- `app.py` remains a thin Streamlit launcher for internal benchmarking and debug workflows
 - Framer is the intended marketing front door, separate from the deployed product runtime
-- the deployment target is now a split `app` + `api` shape rather than a single Streamlit web process
+- the deployment target is a split `app` + `api` shape rather than a single prototype shell
 - `src/pipeline/` coordinates ingestion, indexing, retrieval, and answer generation
 - `src/ingest/`, `src/chunking/`, `src/retrieval/`, `src/generation/`, and `src/cache/` remain transport-agnostic
 
@@ -282,21 +281,15 @@ Current benchmark read:
 
 ## UI And Product Surface
 
-The current product surface is split across two shells.
+The current product surface is centered on the `Next.js + FastAPI` workspace.
 
-Streamlit currently includes:
-
-- document status and index status panels
-- style-aware starter questions
-- answer support badges
-- retrieval evidence cards with section/context hints
-- benchmark snapshots and benchmark-policy notes
-
-The `Next.js + FastAPI` surface is now the main product direction for:
+The active app now carries:
 
 - upload and ask workflows
+- starter-question guidance tied to the active document
+- answer support states, citations, and evidence panels
 - cleaner landing and workspace presentation
-- a more credible product-facing UI
+- a more credible product-facing UI boundary for future auth and persistence work
 
 ## Current Strengths
 
@@ -334,8 +327,8 @@ Backend-quality track:
 
 Frontend/product track:
 
-- continue the `Next.js + FastAPI` migration
+- continue refining the `Next.js + FastAPI` product shell
 - keep the existing Python retrieval core intact
-- preserve Streamlit as an internal benchmark/debug shell rather than the primary user surface
+- keep benchmark and retrieval-debug visibility available without reintroducing a second UI stack
 
 The architecture now supports these improvements without another major restructure.
