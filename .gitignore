@@ -14,6 +14,11 @@ static/Final_Thesis_Leander_Antony_A.pdf
 *.pyd
 .DS_Store
 Thumbs.db
+PLAN.md
+ROADMAP.md
 THREAD_HANDOFF.md
+docs/deployment.md
+docs/frontend-reference.md
+docs/quickstart.md
 tmp/
 static/UI/
