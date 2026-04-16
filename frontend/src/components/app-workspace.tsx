@@ -337,7 +337,14 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
                   onClick={handleUpload}
                   type="button"
                 >
-                  {uploadState === "loading" ? "Uploading..." : "Upload document"}
+                  {uploadState === "loading" ? (
+                    <>
+                      <span aria-hidden="true" className="button-spinner" />
+                      Uploading...
+                    </>
+                  ) : (
+                    "Upload document"
+                  )}
                 </button>
               </div>
               {document && uploadState === "ready" ? (
@@ -449,7 +456,14 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
                   onClick={handleAsk}
                   type="button"
                 >
-                  {answerState === "loading" ? "Generating answer..." : "Generate answer"}
+                  {answerState === "loading" ? (
+                    <>
+                      <span aria-hidden="true" className="button-spinner" />
+                      Generating answer...
+                    </>
+                  ) : (
+                    "Generate answer"
+                  )}
                 </button>
               </div>
             </div>
