@@ -20,5 +20,6 @@ THREAD_HANDOFF.md
 docs/deployment.md
 docs/frontend-reference.md
 docs/quickstart.md
+.tmp/
 tmp/
 static/UI/
