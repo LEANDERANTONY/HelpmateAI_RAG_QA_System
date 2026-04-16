@@ -109,3 +109,16 @@ class HelpmatePipeline:
         answer.cache_status = CacheStatus(index_reused=index_record.reused, answer_cache_hit=False)
         self.answer_cache.set(cache_key, answer)
         return answer
+
+    def delete_workspace(self, document: DocumentRecord, index_record: IndexRecord | None = None) -> None:
+        if index_record is not None:
+            self.store.delete_index_data(
+                fingerprint=index_record.fingerprint,
+                collection_name=index_record.collection_name,
+            )
+        source_path = Path(document.source_path)
+        try:
+            if source_path.exists() and source_path.is_file():
+                source_path.unlink()
+        except Exception:
+            pass

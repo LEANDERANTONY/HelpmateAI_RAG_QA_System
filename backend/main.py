@@ -1,13 +1,15 @@
 from __future__ import annotations
 
 from functools import lru_cache
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
-from fastapi import FastAPI, File, HTTPException, UploadFile
+from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
+from backend.auth import AuthenticatedUser, require_authenticated_user
 from backend.store import build_api_record_store
 from src.config import get_settings
 from src.evals.report_loader import get_latest_benchmark_report
@@ -57,6 +59,11 @@ class HealthResponse(BaseModel):
 
 class DocumentBundleResponse(BaseModel):
     document: dict[str, Any]
+    index: dict[str, Any] | None = None
+
+
+class CurrentWorkspaceResponse(BaseModel):
+    document: dict[str, Any] | None = None
     index: dict[str, Any] | None = None
 
 
@@ -171,6 +178,98 @@ def _document_payload(document: DocumentRecord) -> dict[str, Any]:
     }
 
 
+WORKSPACE_OWNER_KEY = "_workspace_owner_user_id"
+WORKSPACE_LAST_ACTIVITY_KEY = "_workspace_last_activity_at"
+WORKSPACE_EXPIRES_AT_KEY = "_workspace_expires_at"
+
+
+def _now() -> datetime:
+    return datetime.now(timezone.utc)
+
+
+def _retention_delta():
+    return timedelta(hours=_settings().workspace_retention_hours)
+
+
+def _parse_timestamp(value: str | None) -> datetime | None:
+    if not value:
+        return None
+    try:
+        return datetime.fromisoformat(value.replace("Z", "+00:00"))
+    except ValueError:
+        return None
+
+
+def _document_owner_id(document: DocumentRecord) -> str | None:
+    return str((document.metadata or {}).get(WORKSPACE_OWNER_KEY) or "") or None
+
+
+def _document_expires_at(document: DocumentRecord) -> datetime | None:
+    return _parse_timestamp((document.metadata or {}).get(WORKSPACE_EXPIRES_AT_KEY))
+
+
+def _touch_document_workspace(document: DocumentRecord, user: AuthenticatedUser) -> DocumentRecord:
+    metadata = dict(document.metadata or {})
+    now = _now()
+    metadata[WORKSPACE_OWNER_KEY] = user.id
+    metadata[WORKSPACE_LAST_ACTIVITY_KEY] = now.isoformat()
+    metadata[WORKSPACE_EXPIRES_AT_KEY] = (now + _retention_delta()).isoformat()
+    document.metadata = metadata
+    return document
+
+
+def _delete_workspace_records(document: DocumentRecord) -> None:
+    index_record = _store().get_index(document.document_id)
+    if index_record is not None:
+        _pipeline().delete_workspace(document, index_record)
+        _store().delete_index(document.document_id)
+    _store().delete_document(document.document_id)
+
+
+def _cleanup_if_expired(document: DocumentRecord) -> bool:
+    expires_at = _document_expires_at(document)
+    if expires_at is None or expires_at > _now():
+        return False
+    _delete_workspace_records(document)
+    return True
+
+
+def _find_active_workspace_document(user: AuthenticatedUser) -> DocumentRecord | None:
+    active_documents: list[DocumentRecord] = []
+    for document in _store().list_documents():
+        if _document_owner_id(document) != user.id:
+            continue
+        if _cleanup_if_expired(document):
+            continue
+        active_documents.append(document)
+    if not active_documents:
+        return None
+    active_documents.sort(
+        key=lambda doc: _parse_timestamp((doc.metadata or {}).get(WORKSPACE_LAST_ACTIVITY_KEY)) or datetime.min.replace(tzinfo=timezone.utc),
+        reverse=True,
+    )
+    primary = active_documents[0]
+    for stale in active_documents[1:]:
+        _delete_workspace_records(stale)
+    return primary
+
+
+def _require_document_for_user(document_id: str, user: AuthenticatedUser) -> DocumentRecord:
+    document = _require_document(document_id)
+    owner_id = _document_owner_id(document)
+    if owner_id != user.id:
+        raise HTTPException(status_code=404, detail="Document not found.")
+    if _cleanup_if_expired(document):
+        raise HTTPException(status_code=410, detail="Your saved workspace expired. Upload the document again to continue.")
+    return document
+
+
+def _save_touched_document(document: DocumentRecord, user: AuthenticatedUser) -> DocumentRecord:
+    document = _touch_document_workspace(document, user)
+    _store().save_document(document)
+    return document
+
+
 def _sample_dir() -> Path:
     return _settings().data_dir.parent / "static" / "sample_files"
 
@@ -208,9 +307,15 @@ def health() -> HealthResponse:
 
 
 @app.post("/documents/upload", response_model=DocumentBundleResponse)
-async def upload_document(file: UploadFile = File(...)) -> DocumentBundleResponse:
+async def upload_document(
+    file: UploadFile = File(...),
+    user: AuthenticatedUser = Depends(require_authenticated_user),
+) -> DocumentBundleResponse:
     file_name = Path(file.filename or "document.pdf").name
     suffix = _validate_file_type(file_name)
+    existing_document = _find_active_workspace_document(user)
+    if existing_document is not None:
+        _delete_workspace_records(existing_document)
     target_path = _settings().uploads_dir / file_name
     target_path.write_bytes(await file.read())
     if target_path.suffix.lower() != suffix:
@@ -218,7 +323,7 @@ async def upload_document(file: UploadFile = File(...)) -> DocumentBundleRespons
 
     document = _pipeline().ingest_document(target_path)
 
-    _store().save_document(document)
+    document = _save_touched_document(document, user)
     existing_index = _store().get_index(document.document_id)
     return DocumentBundleResponse(
         document=_document_payload(document),
@@ -239,15 +344,22 @@ def list_sample_documents() -> list[SampleDocumentResponse]:
 
 
 @app.post("/samples/{sample_slug}/load", response_model=DocumentBundleResponse)
-def load_sample_document(sample_slug: str) -> DocumentBundleResponse:
+def load_sample_document(
+    sample_slug: str,
+    user: AuthenticatedUser = Depends(require_authenticated_user),
+) -> DocumentBundleResponse:
     sample_path = (_sample_dir() / Path(sample_slug).name).resolve()
     if sample_path.parent != _sample_dir().resolve() or not sample_path.exists():
         raise HTTPException(status_code=404, detail="Sample document not found.")
     _validate_file_type(sample_path.name)
 
+    existing_document = _find_active_workspace_document(user)
+    if existing_document is not None:
+        _delete_workspace_records(existing_document)
+
     document = _pipeline().ingest_document(sample_path)
     index_record = _pipeline().build_or_load_index(document)
-    _store().save_document(document)
+    document = _save_touched_document(document, user)
     _store().save_index(index_record)
     return DocumentBundleResponse(
         document=_document_payload(document),
@@ -255,10 +367,29 @@ def load_sample_document(sample_slug: str) -> DocumentBundleResponse:
     )
 
 
+@app.get("/workspace/current", response_model=CurrentWorkspaceResponse)
+def get_current_workspace(
+    user: AuthenticatedUser = Depends(require_authenticated_user),
+) -> CurrentWorkspaceResponse:
+    document = _find_active_workspace_document(user)
+    if document is None:
+        return CurrentWorkspaceResponse()
+    document = _save_touched_document(document, user)
+    index_record = _store().get_index(document.document_id)
+    return CurrentWorkspaceResponse(
+        document=_document_payload(document),
+        index=index_record.to_dict() if index_record else None,
+    )
+
+
 @app.post("/documents/{document_id}/index", response_model=DocumentBundleResponse)
-def build_or_load_index(document_id: str) -> DocumentBundleResponse:
-    document = _require_document(document_id)
+def build_or_load_index(
+    document_id: str,
+    user: AuthenticatedUser = Depends(require_authenticated_user),
+) -> DocumentBundleResponse:
+    document = _require_document_for_user(document_id, user)
     index_record = _pipeline().build_or_load_index(document)
+    document = _save_touched_document(document, user)
     _store().save_index(index_record)
     return DocumentBundleResponse(
         document=_document_payload(document),
@@ -267,8 +398,12 @@ def build_or_load_index(document_id: str) -> DocumentBundleResponse:
 
 
 @app.get("/documents/{document_id}", response_model=DocumentBundleResponse)
-def get_document(document_id: str) -> DocumentBundleResponse:
-    document = _require_document(document_id)
+def get_document(
+    document_id: str,
+    user: AuthenticatedUser = Depends(require_authenticated_user),
+) -> DocumentBundleResponse:
+    document = _require_document_for_user(document_id, user)
+    document = _save_touched_document(document, user)
     index_record = _store().get_index(document_id)
     return DocumentBundleResponse(
         document=_document_payload(document),
@@ -277,8 +412,12 @@ def get_document(document_id: str) -> DocumentBundleResponse:
 
 
 @app.get("/documents/{document_id}/starters", response_model=StarterQuestionsResponse)
-def get_starter_questions(document_id: str) -> StarterQuestionsResponse:
-    document = _require_document(document_id)
+def get_starter_questions(
+    document_id: str,
+    user: AuthenticatedUser = Depends(require_authenticated_user),
+) -> StarterQuestionsResponse:
+    document = _require_document_for_user(document_id, user)
+    _save_touched_document(document, user)
     document_style = (document.metadata or {}).get(
         "document_style",
         "generic_longform",
@@ -291,8 +430,11 @@ def get_starter_questions(document_id: str) -> StarterQuestionsResponse:
 
 
 @app.post("/qa", response_model=AskResponse)
-def answer_question(payload: AskRequest) -> AskResponse:
-    document = _require_document(payload.document_id)
+def answer_question(
+    payload: AskRequest,
+    user: AuthenticatedUser = Depends(require_authenticated_user),
+) -> AskResponse:
+    document = _require_document_for_user(payload.document_id, user)
     index_record = _require_index(payload.document_id)
     question = payload.question.strip()
     if not question:
@@ -302,6 +444,7 @@ def answer_question(payload: AskRequest) -> AskResponse:
         index_record,
         question,
     )
+    _save_touched_document(document, user)
     return AskResponse(answer=answer.to_dict())
 
 

@@ -62,6 +62,8 @@ Optional cloud-persistence variables:
 - `HELPMATE_CHROMA_HTTP_TENANT`
 - `HELPMATE_CHROMA_HTTP_DATABASE`
 - `HELPMATE_CHROMA_HTTP_HEADERS`
+- `HELPMATE_WORKSPACE_RETENTION_HOURS`
+- `HELPMATE_CHROMA_UPSERT_BATCH_SIZE`
 
 Recommended production values:
 
@@ -99,6 +101,8 @@ Recommended backend values in that mode:
 - `HELPMATE_CHROMA_HTTP_SSL=true`
 - `HELPMATE_CHROMA_HTTP_TENANT=default_tenant`
 - `HELPMATE_CHROMA_HTTP_DATABASE=default_database`
+- `HELPMATE_WORKSPACE_RETENTION_HOURS=24`
+- `HELPMATE_CHROMA_UPSERT_BATCH_SIZE=250`
 
 If the hosted Chroma endpoint requires headers, use:
 
@@ -108,13 +112,24 @@ The Supabase tables are expected to support simple upserts:
 
 - `helpmate_documents`
   - primary key: `document_id`
-  - columns: `document_id text`, `fingerprint text`, `file_name text`, `payload jsonb`, `updated_at timestamptz`
+  - columns: `document_id text`, `fingerprint text`, `file_name text`, `payload jsonb`, `user_id uuid`, `last_activity_at timestamptz`, `expires_at timestamptz`, `updated_at timestamptz`
 - `helpmate_indexes`
   - primary key: `document_id`
   - columns: `document_id text`, `fingerprint text`, `collection_name text`, `payload jsonb`, `updated_at timestamptz`
 - `helpmate_index_artifacts`
   - primary key: `fingerprint`
   - columns: `fingerprint text`, `document_id text`, `collection_name text`, `index_record jsonb`, `chunks jsonb`, `sections jsonb`, `synopses jsonb`, `topology_edges jsonb`, `updated_at timestamptz`
+
+If you want the stricter authenticated retention model, also apply:
+
+- [docs/supabase-workspace-retention.sql](./supabase-workspace-retention.sql)
+
+That script adds:
+
+- explicit `user_id`, `last_activity_at`, and `expires_at` columns
+- cascading delete from document rows to index and artifact rows
+- RLS policies so only the owning authenticated user can read active rows
+- a `pg_cron` cleanup job that deletes expired workspaces every 5 minutes
 
 This mode is the clean path if you want:
 

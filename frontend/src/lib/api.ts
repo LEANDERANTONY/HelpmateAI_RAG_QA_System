@@ -1,16 +1,34 @@
 import type {
   BenchmarkResponse,
+  CurrentWorkspaceResponse,
   DocumentBundleResponse,
   HealthResponse,
   SampleDocument,
   StarterQuestionsResponse,
 } from "@/lib/api-types";
+import { createClient } from "@/lib/supabase/client";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
-  const response = await fetch(`${API_BASE_URL}${path}`, init);
+  const headers = new Headers(init?.headers);
+  if (typeof window !== "undefined" && isSupabaseConfigured()) {
+    const supabase = createClient();
+    const {
+      data: { session },
+    } = await supabase.auth.getSession();
+    const token = session?.access_token;
+    if (token) {
+      headers.set("Authorization", `Bearer ${token}`);
+    }
+  }
+
+  const response = await fetch(`${API_BASE_URL}${path}`, {
+    ...init,
+    headers,
+  });
   if (!response.ok) {
     const fallbackMessage = `Request failed with status ${response.status}`;
     let message = fallbackMessage;
@@ -44,6 +62,10 @@ export async function loadSampleDocument(sampleSlug: string) {
       method: "POST",
     },
   );
+}
+
+export async function getCurrentWorkspace() {
+  return request<CurrentWorkspaceResponse>("/workspace/current");
 }
 
 export async function uploadDocument(file: File) {

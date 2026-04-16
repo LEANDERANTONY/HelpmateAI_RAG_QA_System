@@ -114,6 +114,7 @@ class Settings:
         default_factory=lambda: _env_mapping("HELPMATE_CHROMA_HTTP_HEADERS"),
     )
     chroma_api_key: str | None = field(default_factory=_chroma_api_key)
+    chroma_upsert_batch_size: int = field(default_factory=lambda: _env_int("HELPMATE_CHROMA_UPSERT_BATCH_SIZE", 250))
     index_schema_version: str = os.getenv("HELPMATE_INDEX_SCHEMA_VERSION", "v10")
     chunk_size: int = _env_int("HELPMATE_CHUNK_SIZE", 1200)
     chunk_overlap: int = _env_int("HELPMATE_CHUNK_OVERLAP", 180)
@@ -162,6 +163,7 @@ class Settings:
     lexical_hit_threshold: float = _env_float("HELPMATE_LEXICAL_HIT_THRESHOLD", 0.02)
     unsupported_lexical_hit_threshold: float = _env_float("HELPMATE_UNSUPPORTED_LEXICAL_HIT_THRESHOLD", 0.005)
     unsupported_content_overlap_threshold: float = _env_float("HELPMATE_UNSUPPORTED_CONTENT_OVERLAP_THRESHOLD", 0.05)
+    workspace_retention_hours: int = _env_int("HELPMATE_WORKSPACE_RETENTION_HOURS", 24)
 
     def __post_init__(self) -> None:
         uploads_dir = _env_path("HELPMATE_UPLOADS_DIR", self.data_dir / "uploads")

@@ -66,6 +66,11 @@ export type DocumentBundleResponse = {
   index: IndexRecord | null;
 };
 
+export type CurrentWorkspaceResponse = {
+  document: DocumentRecord | null;
+  index: IndexRecord | null;
+};
+
 export type StarterQuestionsResponse = {
   document_id: string;
   document_style: string;

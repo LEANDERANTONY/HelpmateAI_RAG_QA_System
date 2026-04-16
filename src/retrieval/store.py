@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import json
+import shutil
 from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
@@ -72,6 +73,9 @@ class LocalArtifactStore:
             encoding="utf-8",
         )
 
+    def delete_bundle(self, fingerprint: str) -> None:
+        shutil.rmtree(self._index_dir(fingerprint), ignore_errors=True)
+
 
 class SupabaseArtifactStore:
     def __init__(self, settings: Settings):
@@ -124,6 +128,9 @@ class SupabaseArtifactStore:
         }
         self.client.table(self.table_name).upsert(payload, on_conflict="fingerprint").execute()
 
+    def delete_bundle(self, fingerprint: str) -> None:
+        self.client.table(self.table_name).delete().eq("fingerprint", fingerprint).execute()
+
 
 class ChromaIndexStore:
     def __init__(
@@ -156,6 +163,25 @@ class ChromaIndexStore:
     def _index_dir(self, fingerprint: str) -> Path:
         return self.root_dir / self.index_schema_version / fingerprint
 
+    def _upsert_collection_in_batches(
+        self,
+        collection,
+        *,
+        ids: list[str],
+        documents: list[str],
+        metadatas: list[dict],
+    ) -> None:
+        if not ids:
+            return
+        batch_size = max(1, min(self.settings.chroma_upsert_batch_size, 300))
+        for start in range(0, len(ids), batch_size):
+            end = start + batch_size
+            collection.upsert(
+                ids=ids[start:end],
+                documents=documents[start:end],
+                metadatas=metadatas[start:end],
+            )
+
     def _client(self, fingerprint: str | None = None):
         import chromadb
 
@@ -183,6 +209,20 @@ class ChromaIndexStore:
             path=str(self._index_dir(fingerprint) / "chroma"),
             settings=self._client_settings(),
         )
+
+    def delete_index_data(self, fingerprint: str, collection_name: str) -> None:
+        if self.settings.uses_chroma_http:
+            client = self._client()
+            for name in (
+                collection_name,
+                f"{collection_name}-sections",
+                f"{collection_name}-synopses",
+            ):
+                try:
+                    client.delete_collection(name=name)
+                except Exception:
+                    pass
+        self.artifact_store.delete_bundle(fingerprint)
 
     @staticmethod
     def _section_search_document(section: SectionRecord) -> str:
@@ -283,19 +323,22 @@ class ChromaIndexStore:
             embedding_function=self._embedding_function(),
         )
         chroma_metadatas = [self._sanitize_metadata_for_chroma(chunk.metadata) for chunk in chunks]
-        collection.upsert(
+        self._upsert_collection_in_batches(
+            collection,
             ids=[chunk.chunk_id for chunk in chunks],
             documents=[chunk.text for chunk in chunks],
             metadatas=chroma_metadatas,
         )
         section_metadatas = [self._sanitize_metadata_for_chroma(section.metadata) for section in sections]
-        section_collection.upsert(
+        self._upsert_collection_in_batches(
+            section_collection,
             ids=[section.section_id for section in sections],
             documents=[self._section_search_document(section) for section in sections],
             metadatas=section_metadatas,
         )
         synopsis_metadatas = [self._sanitize_metadata_for_chroma(synopsis.metadata) for synopsis in synopses]
-        synopsis_collection.upsert(
+        self._upsert_collection_in_batches(
+            synopsis_collection,
             ids=[synopsis.section_id for synopsis in synopses],
             documents=[self._synopsis_search_document(synopsis) for synopsis in synopses],
             metadatas=synopsis_metadatas,

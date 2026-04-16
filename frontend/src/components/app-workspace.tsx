@@ -1,8 +1,8 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 
-import { askQuestion, buildIndex, getStarterQuestions, uploadDocument } from "@/lib/api";
+import { askQuestion, buildIndex, getCurrentWorkspace, getStarterQuestions, uploadDocument } from "@/lib/api";
 import type { AuthUserSummary } from "@/lib/auth";
 import { AuthSidebar } from "@/components/auth-sidebar";
 import type {
@@ -126,6 +126,40 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
       setStarters([]);
     }
   }
+
+  useEffect(() => {
+    let cancelled = false;
+
+    async function restoreWorkspace() {
+      if (!isAuthenticated || document) {
+        return;
+      }
+      try {
+        const workspace = await getCurrentWorkspace();
+        if (cancelled || !workspace.document) {
+          return;
+        }
+        setDocument(workspace.document);
+        setIndexRecord(workspace.index);
+        setLastAction(
+          workspace.index
+            ? `Resumed ${workspace.document.file_name} from your active workspace.`
+            : `Resumed ${workspace.document.file_name}. Build the index to continue.`,
+        );
+        await refreshStarters(workspace.document.document_id);
+      } catch {
+        if (!cancelled) {
+          setStarters([]);
+        }
+      }
+    }
+
+    void restoreWorkspace();
+
+    return () => {
+      cancelled = true;
+    };
+  }, [document, isAuthenticated]);
 
   async function handleUpload() {
     if (!selectedFile) {

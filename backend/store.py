@@ -8,6 +8,25 @@ from src.cloud import create_supabase_client, extract_supabase_rows
 from src.config import Settings
 from src.schemas import DocumentRecord, IndexRecord
 
+WORKSPACE_OWNER_KEY = "_workspace_owner_user_id"
+WORKSPACE_LAST_ACTIVITY_KEY = "_workspace_last_activity_at"
+WORKSPACE_EXPIRES_AT_KEY = "_workspace_expires_at"
+
+
+def _workspace_row_fields(document: DocumentRecord) -> dict[str, str]:
+    metadata = document.metadata or {}
+    payload: dict[str, str] = {}
+    owner_id = str(metadata.get(WORKSPACE_OWNER_KEY) or "").strip()
+    last_activity_at = str(metadata.get(WORKSPACE_LAST_ACTIVITY_KEY) or "").strip()
+    expires_at = str(metadata.get(WORKSPACE_EXPIRES_AT_KEY) or "").strip()
+    if owner_id:
+        payload["user_id"] = owner_id
+    if last_activity_at:
+        payload["last_activity_at"] = last_activity_at
+    if expires_at:
+        payload["expires_at"] = expires_at
+    return payload
+
 
 class LocalApiRecordStore:
     def __init__(self, settings: Settings):
@@ -47,6 +66,18 @@ class LocalApiRecordStore:
             return None
         return IndexRecord(**json.loads(path.read_text(encoding="utf-8")))
 
+    def list_documents(self) -> list[DocumentRecord]:
+        documents: list[DocumentRecord] = []
+        for path in sorted(self.documents_dir.glob("*.json")):
+            documents.append(DocumentRecord(**json.loads(path.read_text(encoding="utf-8"))))
+        return documents
+
+    def delete_document(self, document_id: str) -> None:
+        self._document_path(document_id).unlink(missing_ok=True)
+
+    def delete_index(self, document_id: str) -> None:
+        self._index_path(document_id).unlink(missing_ok=True)
+
 
 class SupabaseApiRecordStore:
     def __init__(self, settings: Settings):
@@ -66,6 +97,7 @@ class SupabaseApiRecordStore:
             "payload": document.to_dict(),
             "updated_at": self._timestamp(),
         }
+        payload.update(_workspace_row_fields(document))
         self.client.table(self.documents_table).upsert(payload, on_conflict="document_id").execute()
 
     def save_index(self, index_record: IndexRecord) -> None:
@@ -105,6 +137,17 @@ class SupabaseApiRecordStore:
             return None
         payload = rows[0].get("payload") or {}
         return IndexRecord(**payload)
+
+    def list_documents(self) -> list[DocumentRecord]:
+        response = self.client.table(self.documents_table).select("payload").execute()
+        rows = extract_supabase_rows(response)
+        return [DocumentRecord(**(row.get("payload") or {})) for row in rows if row.get("payload")]
+
+    def delete_document(self, document_id: str) -> None:
+        self.client.table(self.documents_table).delete().eq("document_id", document_id).execute()
+
+    def delete_index(self, document_id: str) -> None:
+        self.client.table(self.indexes_table).delete().eq("document_id", document_id).execute()
 
 
 def build_api_record_store(settings: Settings):
