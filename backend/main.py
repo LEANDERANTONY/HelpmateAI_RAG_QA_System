@@ -8,7 +8,7 @@ from fastapi import FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 
-from backend.store import ApiRecordStore
+from backend.store import build_api_record_store
 from src.config import get_settings
 from src.evals.report_loader import get_latest_benchmark_report
 from src.pipeline import HelpmatePipeline
@@ -120,8 +120,8 @@ def _pipeline() -> HelpmatePipeline:
 
 
 @lru_cache
-def _store() -> ApiRecordStore:
-    return ApiRecordStore(_settings())
+def _store() -> Any:
+    return build_api_record_store(_settings())
 
 
 def _require_document(document_id: str) -> DocumentRecord:

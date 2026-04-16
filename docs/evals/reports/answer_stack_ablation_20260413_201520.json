@@ -1,0 +1,466 @@
+{
+  "variant_order": [
+    "baseline",
+    "reranker_only",
+    "planner_reranker",
+    "full_stack"
+  ],
+  "variants": {
+    "baseline": {
+      "settings": {
+        "reranker_enabled": false,
+        "evidence_selector_enabled": false,
+        "planner_confidence_threshold": 2.0,
+        "router_confidence_threshold": 1.0,
+        "router_llm_enabled": false,
+        "answer_model": "gpt-5.4-mini"
+      },
+      "positive_overall": {
+        "dataset_size": 76,
+        "supported_rate": 0.8026315789473685,
+        "citation_page_hit_rate": 0.6973684210526315,
+        "evidence_fragment_recall_mean": 0.6460526315789474
+      },
+      "negative_overall": {
+        "dataset_size": 35,
+        "abstention_rate": 0.9714285714285714,
+        "false_support_rate": 0.02857142857142857
+      },
+      "per_dataset": {
+        "retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 12,
+            "supported_rate": 0.16666666666666666,
+            "citation_page_hit_rate": 0.5833333333333334,
+            "evidence_fragment_recall_mean": 0.611111111111111
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        },
+        "health_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 13,
+            "supported_rate": 0.8461538461538461,
+            "citation_page_hit_rate": 0.6923076923076923,
+            "evidence_fragment_recall_mean": 0.6923076923076923
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 12,
+            "supported_rate": 0.9166666666666666,
+            "citation_page_hit_rate": 0.6666666666666666,
+            "evidence_fragment_recall_mean": 0.7638888888888888
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 0.8,
+            "false_support_rate": 0.2
+          }
+        },
+        "pancreas7_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 9,
+            "supported_rate": 0.8888888888888888,
+            "citation_page_hit_rate": 0.5555555555555556,
+            "evidence_fragment_recall_mean": 0.5185185185185186
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        },
+        "pancreas8_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 10,
+            "supported_rate": 0.9,
+            "citation_page_hit_rate": 0.8,
+            "evidence_fragment_recall_mean": 0.6333333333333333
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        },
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 10,
+            "supported_rate": 1.0,
+            "citation_page_hit_rate": 0.9,
+            "evidence_fragment_recall_mean": 0.7183333333333334
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 10,
+            "supported_rate": 1.0,
+            "citation_page_hit_rate": 0.7,
+            "evidence_fragment_recall_mean": 0.5416666666666667
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        }
+      }
+    },
+    "reranker_only": {
+      "settings": {
+        "reranker_enabled": true,
+        "evidence_selector_enabled": false,
+        "planner_confidence_threshold": 2.0,
+        "router_confidence_threshold": 1.0,
+        "router_llm_enabled": false,
+        "answer_model": "gpt-5.4-mini"
+      },
+      "positive_overall": {
+        "dataset_size": 76,
+        "supported_rate": 0.881578947368421,
+        "citation_page_hit_rate": 0.868421052631579,
+        "evidence_fragment_recall_mean": 0.733114035087719
+      },
+      "negative_overall": {
+        "dataset_size": 35,
+        "abstention_rate": 0.9714285714285714,
+        "false_support_rate": 0.02857142857142857
+      },
+      "per_dataset": {
+        "retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 12,
+            "supported_rate": 0.4166666666666667,
+            "citation_page_hit_rate": 0.5833333333333334,
+            "evidence_fragment_recall_mean": 0.5694444444444444
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        },
+        "health_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 13,
+            "supported_rate": 0.8461538461538461,
+            "citation_page_hit_rate": 0.8461538461538461,
+            "evidence_fragment_recall_mean": 0.7692307692307693
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 12,
+            "supported_rate": 1.0,
+            "citation_page_hit_rate": 0.9166666666666666,
+            "evidence_fragment_recall_mean": 0.7430555555555557
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 0.8,
+            "false_support_rate": 0.2
+          }
+        },
+        "pancreas7_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 9,
+            "supported_rate": 1.0,
+            "citation_page_hit_rate": 0.8888888888888888,
+            "evidence_fragment_recall_mean": 0.7777777777777778
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        },
+        "pancreas8_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 10,
+            "supported_rate": 1.0,
+            "citation_page_hit_rate": 0.9,
+            "evidence_fragment_recall_mean": 0.8333333333333333
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        },
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 10,
+            "supported_rate": 1.0,
+            "citation_page_hit_rate": 1.0,
+            "evidence_fragment_recall_mean": 0.7966666666666666
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 10,
+            "supported_rate": 1.0,
+            "citation_page_hit_rate": 1.0,
+            "evidence_fragment_recall_mean": 0.6666666666666667
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        }
+      }
+    },
+    "planner_reranker": {
+      "settings": {
+        "reranker_enabled": true,
+        "evidence_selector_enabled": false,
+        "planner_confidence_threshold": 0.7,
+        "router_confidence_threshold": 0.62,
+        "router_llm_enabled": true,
+        "answer_model": "gpt-5.4-mini"
+      },
+      "positive_overall": {
+        "dataset_size": 76,
+        "supported_rate": 0.881578947368421,
+        "citation_page_hit_rate": 0.868421052631579,
+        "evidence_fragment_recall_mean": 0.7364035087719296
+      },
+      "negative_overall": {
+        "dataset_size": 35,
+        "abstention_rate": 0.9714285714285714,
+        "false_support_rate": 0.02857142857142857
+      },
+      "per_dataset": {
+        "retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 12,
+            "supported_rate": 0.4166666666666667,
+            "citation_page_hit_rate": 0.5833333333333334,
+            "evidence_fragment_recall_mean": 0.5694444444444444
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        },
+        "health_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 13,
+            "supported_rate": 0.8461538461538461,
+            "citation_page_hit_rate": 0.8461538461538461,
+            "evidence_fragment_recall_mean": 0.7692307692307693
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 12,
+            "supported_rate": 1.0,
+            "citation_page_hit_rate": 0.9166666666666666,
+            "evidence_fragment_recall_mean": 0.7430555555555557
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 0.8,
+            "false_support_rate": 0.2
+          }
+        },
+        "pancreas7_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 9,
+            "supported_rate": 1.0,
+            "citation_page_hit_rate": 0.8888888888888888,
+            "evidence_fragment_recall_mean": 0.7777777777777778
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        },
+        "pancreas8_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 10,
+            "supported_rate": 1.0,
+            "citation_page_hit_rate": 0.9,
+            "evidence_fragment_recall_mean": 0.8333333333333333
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        },
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 10,
+            "supported_rate": 1.0,
+            "citation_page_hit_rate": 1.0,
+            "evidence_fragment_recall_mean": 0.7966666666666666
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 10,
+            "supported_rate": 1.0,
+            "citation_page_hit_rate": 1.0,
+            "evidence_fragment_recall_mean": 0.6916666666666667
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        }
+      }
+    },
+    "full_stack": {
+      "settings": {
+        "reranker_enabled": true,
+        "evidence_selector_enabled": true,
+        "planner_confidence_threshold": 0.7,
+        "router_confidence_threshold": 0.62,
+        "router_llm_enabled": true,
+        "answer_model": "gpt-5.4-mini"
+      },
+      "positive_overall": {
+        "dataset_size": 76,
+        "supported_rate": 0.8552631578947368,
+        "citation_page_hit_rate": 0.7763157894736842,
+        "evidence_fragment_recall_mean": 0.6526315789473683
+      },
+      "negative_overall": {
+        "dataset_size": 35,
+        "abstention_rate": 0.9714285714285714,
+        "false_support_rate": 0.02857142857142857
+      },
+      "per_dataset": {
+        "retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 12,
+            "supported_rate": 0.3333333333333333,
+            "citation_page_hit_rate": 0.5833333333333334,
+            "evidence_fragment_recall_mean": 0.4861111111111111
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        },
+        "health_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 13,
+            "supported_rate": 0.8461538461538461,
+            "citation_page_hit_rate": 0.6923076923076923,
+            "evidence_fragment_recall_mean": 0.6666666666666667
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 12,
+            "supported_rate": 1.0,
+            "citation_page_hit_rate": 0.8333333333333334,
+            "evidence_fragment_recall_mean": 0.673611111111111
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 0.8,
+            "false_support_rate": 0.2
+          }
+        },
+        "pancreas7_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 9,
+            "supported_rate": 1.0,
+            "citation_page_hit_rate": 0.6666666666666666,
+            "evidence_fragment_recall_mean": 0.7407407407407408
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        },
+        "pancreas8_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 10,
+            "supported_rate": 1.0,
+            "citation_page_hit_rate": 0.9,
+            "evidence_fragment_recall_mean": 0.8
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        },
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 10,
+            "supported_rate": 1.0,
+            "citation_page_hit_rate": 0.8,
+            "evidence_fragment_recall_mean": 0.5933333333333334
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 10,
+            "supported_rate": 0.9,
+            "citation_page_hit_rate": 1.0,
+            "evidence_fragment_recall_mean": 0.6416666666666667
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        }
+      }
+    }
+  }
+}

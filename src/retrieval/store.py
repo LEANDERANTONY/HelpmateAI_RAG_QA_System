@@ -5,22 +5,140 @@ from dataclasses import asdict
 from datetime import datetime, timezone
 from pathlib import Path
 
+from src.cloud import create_supabase_client, extract_supabase_rows
+from src.config import Settings
 from src.schemas import ChunkRecord, IndexRecord, SectionRecord, SectionSynopsisRecord, TopologyEdge
+
+
+class LocalArtifactStore:
+    def __init__(self, root_dir: str | Path, index_schema_version: str):
+        self.root_dir = Path(root_dir)
+        self.root_dir.mkdir(parents=True, exist_ok=True)
+        self.index_schema_version = index_schema_version
+
+    def _index_dir(self, fingerprint: str) -> Path:
+        return self.root_dir / self.index_schema_version / fingerprint
+
+    def meta_path(self, fingerprint: str) -> Path:
+        return self._index_dir(fingerprint) / "index_meta.json"
+
+    def chunks_path(self, fingerprint: str) -> Path:
+        return self._index_dir(fingerprint) / "chunks.json"
+
+    def sections_path(self, fingerprint: str) -> Path:
+        return self._index_dir(fingerprint) / "sections.json"
+
+    def synopses_path(self, fingerprint: str) -> Path:
+        return self._index_dir(fingerprint) / "synopses.json"
+
+    def topology_path(self, fingerprint: str) -> Path:
+        return self._index_dir(fingerprint) / "topology_edges.json"
+
+    def load_bundle(self, fingerprint: str) -> dict | None:
+        meta_path = self.meta_path(fingerprint)
+        if not meta_path.exists():
+            return None
+        chunks_path = self.chunks_path(fingerprint)
+        sections_path = self.sections_path(fingerprint)
+        synopses_path = self.synopses_path(fingerprint)
+        topology_path = self.topology_path(fingerprint)
+        if not all(path.exists() for path in (chunks_path, sections_path, synopses_path, topology_path)):
+            return None
+        return {
+            "index_record": json.loads(meta_path.read_text(encoding="utf-8")),
+            "chunks": json.loads(chunks_path.read_text(encoding="utf-8")),
+            "sections": json.loads(sections_path.read_text(encoding="utf-8")),
+            "synopses": json.loads(synopses_path.read_text(encoding="utf-8")),
+            "topology_edges": json.loads(topology_path.read_text(encoding="utf-8")),
+        }
+
+    def save_bundle(
+        self,
+        fingerprint: str,
+        index_record: IndexRecord,
+        chunks: list[ChunkRecord],
+        sections: list[SectionRecord],
+        synopses: list[SectionSynopsisRecord],
+        topology_edges: list[TopologyEdge],
+    ) -> None:
+        index_dir = self._index_dir(fingerprint)
+        index_dir.mkdir(parents=True, exist_ok=True)
+        self.meta_path(fingerprint).write_text(json.dumps(asdict(index_record), indent=2), encoding="utf-8")
+        self.chunks_path(fingerprint).write_text(json.dumps([chunk.to_dict() for chunk in chunks], indent=2), encoding="utf-8")
+        self.sections_path(fingerprint).write_text(json.dumps([section.to_dict() for section in sections], indent=2), encoding="utf-8")
+        self.synopses_path(fingerprint).write_text(json.dumps([synopsis.to_dict() for synopsis in synopses], indent=2), encoding="utf-8")
+        self.topology_path(fingerprint).write_text(
+            json.dumps([edge.to_dict() for edge in topology_edges], indent=2),
+            encoding="utf-8",
+        )
+
+
+class SupabaseArtifactStore:
+    def __init__(self, settings: Settings):
+        self.client = create_supabase_client(settings.supabase_url, settings.supabase_key)
+        self.table_name = settings.supabase_artifacts_table
+
+    @staticmethod
+    def _timestamp() -> str:
+        return datetime.now(timezone.utc).isoformat()
+
+    def load_bundle(self, fingerprint: str) -> dict | None:
+        response = (
+            self.client.table(self.table_name)
+            .select("index_record,chunks,sections,synopses,topology_edges")
+            .eq("fingerprint", fingerprint)
+            .limit(1)
+            .execute()
+        )
+        rows = extract_supabase_rows(response)
+        if not rows:
+            return None
+        row = rows[0]
+        return {
+            "index_record": row.get("index_record") or {},
+            "chunks": row.get("chunks") or [],
+            "sections": row.get("sections") or [],
+            "synopses": row.get("synopses") or [],
+            "topology_edges": row.get("topology_edges") or [],
+        }
+
+    def save_bundle(
+        self,
+        fingerprint: str,
+        index_record: IndexRecord,
+        chunks: list[ChunkRecord],
+        sections: list[SectionRecord],
+        synopses: list[SectionSynopsisRecord],
+        topology_edges: list[TopologyEdge],
+    ) -> None:
+        payload = {
+            "fingerprint": fingerprint,
+            "document_id": index_record.document_id,
+            "collection_name": index_record.collection_name,
+            "index_record": index_record.to_dict(),
+            "chunks": [chunk.to_dict() for chunk in chunks],
+            "sections": [section.to_dict() for section in sections],
+            "synopses": [synopsis.to_dict() for synopsis in synopses],
+            "topology_edges": [edge.to_dict() for edge in topology_edges],
+            "updated_at": self._timestamp(),
+        }
+        self.client.table(self.table_name).upsert(payload, on_conflict="fingerprint").execute()
 
 
 class ChromaIndexStore:
     def __init__(
         self,
-        root_dir: str | Path,
-        embedding_model: str,
-        api_key: str | None = None,
-        index_schema_version: str = "v1",
+        settings: Settings,
     ):
-        self.root_dir = Path(root_dir)
+        self.settings = settings
+        self.root_dir = Path(settings.indexes_dir)
         self.root_dir.mkdir(parents=True, exist_ok=True)
-        self.embedding_model = embedding_model
-        self.api_key = api_key
-        self.index_schema_version = index_schema_version
+        self.embedding_model = settings.embedding_model
+        self.api_key = settings.openai_api_key
+        self.index_schema_version = settings.index_schema_version
+        self.artifact_store = (
+            SupabaseArtifactStore(settings) if settings.uses_supabase_state else LocalArtifactStore(settings.indexes_dir, settings.index_schema_version)
+        )
 
     def _embedding_function(self):
         if not self.api_key:
@@ -38,20 +156,33 @@ class ChromaIndexStore:
     def _index_dir(self, fingerprint: str) -> Path:
         return self.root_dir / self.index_schema_version / fingerprint
 
-    def _meta_path(self, fingerprint: str) -> Path:
-        return self._index_dir(fingerprint) / "index_meta.json"
+    def _client(self, fingerprint: str | None = None):
+        import chromadb
 
-    def _chunks_path(self, fingerprint: str) -> Path:
-        return self._index_dir(fingerprint) / "chunks.json"
-
-    def _sections_path(self, fingerprint: str) -> Path:
-        return self._index_dir(fingerprint) / "sections.json"
-
-    def _synopses_path(self, fingerprint: str) -> Path:
-        return self._index_dir(fingerprint) / "synopses.json"
-
-    def _topology_path(self, fingerprint: str) -> Path:
-        return self._index_dir(fingerprint) / "topology_edges.json"
+        if self.settings.uses_chroma_http:
+            if self.settings.chroma_api_key:
+                return chromadb.CloudClient(
+                    cloud_host=self.settings.chroma_http_host,
+                    cloud_port=self.settings.chroma_http_port,
+                    api_key=self.settings.chroma_api_key,
+                    tenant=self.settings.chroma_http_tenant,
+                    database=self.settings.chroma_http_database,
+                )
+            return chromadb.HttpClient(
+                host=self.settings.chroma_http_host,
+                port=self.settings.chroma_http_port,
+                ssl=self.settings.chroma_http_ssl,
+                headers=self.settings.chroma_http_headers or None,
+                settings=self._client_settings(),
+                tenant=self.settings.chroma_http_tenant,
+                database=self.settings.chroma_http_database,
+            )
+        if fingerprint is None:
+            raise ValueError("Local Chroma storage requires a fingerprint.")
+        return chromadb.PersistentClient(
+            path=str(self._index_dir(fingerprint) / "chroma"),
+            settings=self._client_settings(),
+        )
 
     @staticmethod
     def _section_search_document(section: SectionRecord) -> str:
@@ -88,41 +219,33 @@ class ChromaIndexStore:
         return "\n\n".join(part for part in parts if part).strip()
 
     def load_index_record(self, fingerprint: str) -> IndexRecord | None:
-        meta_path = self._meta_path(fingerprint)
-        if not meta_path.exists():
+        bundle = self.artifact_store.load_bundle(fingerprint)
+        if bundle is None:
             return None
-        payload = json.loads(meta_path.read_text(encoding="utf-8"))
+        payload = dict(bundle.get("index_record") or {})
         payload.setdefault("section_count", 0)
         payload.setdefault("synopsis_count", 0)
         payload.setdefault("topology_edge_count", 0)
         return IndexRecord(**payload)
 
     def load_chunks(self, fingerprint: str) -> list[ChunkRecord]:
-        chunks_path = self._chunks_path(fingerprint)
-        if not chunks_path.exists():
-            return []
-        payload = json.loads(chunks_path.read_text(encoding="utf-8"))
+        bundle = self.artifact_store.load_bundle(fingerprint) or {}
+        payload = bundle.get("chunks") or []
         return [ChunkRecord(**item) for item in payload]
 
     def load_sections(self, fingerprint: str) -> list[SectionRecord]:
-        sections_path = self._sections_path(fingerprint)
-        if not sections_path.exists():
-            return []
-        payload = json.loads(sections_path.read_text(encoding="utf-8"))
+        bundle = self.artifact_store.load_bundle(fingerprint) or {}
+        payload = bundle.get("sections") or []
         return [SectionRecord(**item) for item in payload]
 
     def load_synopses(self, fingerprint: str) -> list[SectionSynopsisRecord]:
-        synopses_path = self._synopses_path(fingerprint)
-        if not synopses_path.exists():
-            return []
-        payload = json.loads(synopses_path.read_text(encoding="utf-8"))
+        bundle = self.artifact_store.load_bundle(fingerprint) or {}
+        payload = bundle.get("synopses") or []
         return [SectionSynopsisRecord(**item) for item in payload]
 
     def load_topology_edges(self, fingerprint: str) -> list[TopologyEdge]:
-        topology_path = self._topology_path(fingerprint)
-        if not topology_path.exists():
-            return []
-        payload = json.loads(topology_path.read_text(encoding="utf-8"))
+        bundle = self.artifact_store.load_bundle(fingerprint) or {}
+        payload = bundle.get("topology_edges") or []
         return [TopologyEdge(**item) for item in payload]
 
     def get_or_create_index(
@@ -138,26 +261,15 @@ class ChromaIndexStore:
         chunk_overlap: int,
     ) -> IndexRecord:
         existing = self.load_index_record(fingerprint)
-        if (
-            existing is not None
-            and existing.index_schema_version == self.index_schema_version
-            and self._chunks_path(fingerprint).exists()
-            and self._sections_path(fingerprint).exists()
-            and self._synopses_path(fingerprint).exists()
-            and self._topology_path(fingerprint).exists()
-        ):
+        if existing is not None and existing.index_schema_version == self.index_schema_version:
             existing.reused = True
             return existing
 
         index_dir = self._index_dir(fingerprint)
-        index_dir.mkdir(parents=True, exist_ok=True)
+        if not self.settings.uses_chroma_http:
+            index_dir.mkdir(parents=True, exist_ok=True)
         collection_name = f"helpmate-{document_id}"
-        import chromadb
-
-        client = chromadb.PersistentClient(
-            path=str(index_dir / "chroma"),
-            settings=self._client_settings(),
-        )
+        client = self._client(fingerprint)
         collection = client.get_or_create_collection(
             name=collection_name,
             embedding_function=self._embedding_function(),
@@ -193,7 +305,15 @@ class ChromaIndexStore:
             document_id=document_id,
             fingerprint=fingerprint,
             collection_name=collection_name,
-            storage_path=str(index_dir / "chroma"),
+            storage_path=(
+                f"https://{self.settings.chroma_http_host}"
+                if self.settings.uses_chroma_http and self.settings.chroma_http_ssl
+                else (
+                    f"http://{self.settings.chroma_http_host}:{self.settings.chroma_http_port}"
+                    if self.settings.uses_chroma_http
+                    else str(index_dir / "chroma")
+                )
+            ),
             chunk_count=len(chunks),
             section_count=len(sections),
             embedding_model=embedding_model,
@@ -205,22 +325,13 @@ class ChromaIndexStore:
             topology_edge_count=len(topology_edges),
             reused=False,
         )
-        self._meta_path(fingerprint).write_text(json.dumps(asdict(index_record), indent=2), encoding="utf-8")
-        self._chunks_path(fingerprint).write_text(
-            json.dumps([chunk.to_dict() for chunk in chunks], indent=2),
-            encoding="utf-8",
-        )
-        self._sections_path(fingerprint).write_text(
-            json.dumps([section.to_dict() for section in sections], indent=2),
-            encoding="utf-8",
-        )
-        self._synopses_path(fingerprint).write_text(
-            json.dumps([synopsis.to_dict() for synopsis in synopses], indent=2),
-            encoding="utf-8",
-        )
-        self._topology_path(fingerprint).write_text(
-            json.dumps([edge.to_dict() for edge in topology_edges], indent=2),
-            encoding="utf-8",
+        self.artifact_store.save_bundle(
+            fingerprint=fingerprint,
+            index_record=index_record,
+            chunks=chunks,
+            sections=sections,
+            synopses=synopses,
+            topology_edges=topology_edges,
         )
         return index_record
 
@@ -240,12 +351,7 @@ class ChromaIndexStore:
         index = self.load_index_record(fingerprint)
         if index is None:
             return []
-        import chromadb
-
-        client = chromadb.PersistentClient(
-            path=index.storage_path,
-            settings=self._client_settings(),
-        )
+        client = self._client(None if self.settings.uses_chroma_http else fingerprint)
         collection = client.get_collection(
             name=index.collection_name,
             embedding_function=self._embedding_function(),
@@ -267,12 +373,7 @@ class ChromaIndexStore:
         index = self.load_index_record(fingerprint)
         if index is None:
             return []
-        import chromadb
-
-        client = chromadb.PersistentClient(
-            path=index.storage_path,
-            settings=self._client_settings(),
-        )
+        client = self._client(None if self.settings.uses_chroma_http else fingerprint)
         collection = client.get_collection(
             name=f"{index.collection_name}-sections",
             embedding_function=self._embedding_function(),
@@ -294,12 +395,7 @@ class ChromaIndexStore:
         index = self.load_index_record(fingerprint)
         if index is None:
             return []
-        import chromadb
-
-        client = chromadb.PersistentClient(
-            path=index.storage_path,
-            settings=self._client_settings(),
-        )
+        client = self._client(None if self.settings.uses_chroma_http else fingerprint)
         collection = client.get_collection(
             name=f"{index.collection_name}-synopses",
             embedding_function=self._embedding_function(),

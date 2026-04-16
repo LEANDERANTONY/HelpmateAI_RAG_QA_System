@@ -95,6 +95,37 @@ Interpretation:
 - the remaining challenge is the broadest paper-summary phrasing, not raw evidence discovery
 - that is why the latest architecture work focused on a dedicated global-summary evidence route instead of another retrieval rewrite
 
+## Evidence-Selector Weight Tuning
+
+The evidence selector combines:
+
+- a retrieval prior from fused retrieval ranking
+- an LLM score over the shortlisted candidates
+
+Those blend weights are treated as hyperparameters rather than fixed intuition.
+
+The repo now includes an offline sweep script:
+
+```powershell
+uv run python -m src.evals.evidence_selector_weight_sweep --step 0.01
+```
+
+That sweep caches the selector model's candidate scores once, then replays the same questions offline across different rank/LLM mixes using the labeled retrieval datasets already in this repo.
+
+Current tuning snapshot:
+
+- benchmark size: `76` labeled questions across health policy, thesis, pancreas, and report-generation datasets
+- objective: `0.45 * page_hit_rate + 0.35 * fragment_recall + 0.20 * MRR`
+- best-performing plateau: `rank_weight` from about `0.03` to `0.37`
+- chosen default: `rank_weight=0.25`, `llm_weight=0.75`
+
+Why that default was chosen:
+
+- it sits inside the top-performing plateau instead of at a fragile edge
+- it keeps the LLM score as the dominant signal when the selector is invoked
+- it still preserves a meaningful retrieval prior for tie-breaking and stability
+- it outperforms the older `0.65 / 0.35` hand-set blend on fragment recall while keeping the same page-hit and MRR on the current benchmark
+
 ## Baseline Policy
 
 Going forward, Vectara should be treated as the primary external managed-retrieval benchmark.

@@ -18,12 +18,7 @@ from src.topology import DocumentTopologyService
 class HelpmatePipeline:
     def __init__(self, settings: Settings | None = None):
         self.settings = settings or get_settings()
-        self.store = ChromaIndexStore(
-            self.settings.indexes_dir,
-            embedding_model=self.settings.embedding_model,
-            api_key=self.settings.openai_api_key,
-            index_schema_version=self.settings.index_schema_version,
-        )
+        self.store = ChromaIndexStore(self.settings)
         self.retriever = HybridRetriever(self.store, self.settings)
         self.evidence_selector = EvidenceSelector(self.settings)
         self.generator = AnswerGenerator(self.settings)

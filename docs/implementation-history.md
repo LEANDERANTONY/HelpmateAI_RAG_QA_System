@@ -238,6 +238,28 @@ Challenge:
 Improvement:
 
 - the app now reflects more of the real system maturity
+
+## 16. Benchmark-Driven Stack Validation
+
+Change:
+
+- added an explicit architecture-eval layer for the retrieval and answer stack
+- calibrated planner/router thresholds before judging planner usefulness
+- added answer-stack, latency/cost, and focused `ragas` variant comparisons
+- recorded the resulting architecture position in dedicated eval docs and an ADR
+
+Challenge:
+
+- retrieval, reranking, routing, and evidence selection all looked reasonable in isolation
+- but the project needed to know which layers were actually earning their complexity and runtime cost
+- some components improved narrower metrics while harming the more important grounded-answer behavior
+
+Improvement:
+
+- reranker is now clearly justified instead of merely assumed useful
+- planner/router now has calibrated thresholds and a measured, modest quality gain
+- evidence selector is now treated as experimental because current benchmarks do not justify it as the default path
+- the repo now contains an architecture record explaining why these choices were made
 - the next major product step is clearer: a stronger custom frontend on top of the current Python core
 
 ## 16. FastAPI And Next.js Transition

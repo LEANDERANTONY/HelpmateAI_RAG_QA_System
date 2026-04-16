@@ -46,6 +46,46 @@ def _env_list(name: str, default: tuple[str, ...]) -> tuple[str, ...]:
     return cleaned or default
 
 
+def _env_mapping(name: str) -> dict[str, str]:
+    value = os.getenv(name)
+    if not value:
+        return {}
+    pairs: dict[str, str] = {}
+    for raw_item in value.split(","):
+        item = raw_item.strip()
+        if not item or "=" not in item:
+            continue
+        key, mapped_value = item.split("=", 1)
+        key = key.strip()
+        mapped_value = mapped_value.strip()
+        if key and mapped_value:
+            pairs[key] = mapped_value
+    return pairs
+
+
+def _chroma_api_key() -> str | None:
+    direct = os.getenv("HELPMATE_CHROMA_API_KEY") or os.getenv("CHROMA_API_KEY")
+    if direct:
+        return direct.strip() or None
+
+    headers = _env_mapping("HELPMATE_CHROMA_HTTP_HEADERS")
+    if "x-chroma-token" in headers:
+        return headers["x-chroma-token"]
+
+    authorization = headers.get("Authorization", "")
+    bearer_prefix = "Bearer "
+    if authorization.startswith(bearer_prefix):
+        token = authorization[len(bearer_prefix) :].strip()
+        return token or None
+
+    return None
+
+
+def _env_str(name: str, default: str = "") -> str:
+    value = os.getenv(name)
+    return value if value is not None else default
+
+
 @dataclass(frozen=True)
 class Settings:
     app_name: str = "HelpmateAI"
@@ -55,9 +95,25 @@ class Settings:
     uploads_dir: Path = field(default_factory=Path)
     indexes_dir: Path = field(default_factory=Path)
     cache_dir: Path = field(default_factory=Path)
+    state_store_backend: str = field(default_factory=lambda: _env_str("HELPMATE_STATE_STORE_BACKEND", "local").strip().lower())
+    vector_store_backend: str = field(default_factory=lambda: _env_str("HELPMATE_VECTOR_STORE_BACKEND", "local").strip().lower())
     cors_origins: tuple[str, ...] = field(
         default_factory=lambda: _env_list("HELPMATE_CORS_ORIGINS", ("*",)),
     )
+    supabase_url: str | None = field(default_factory=lambda: os.getenv("SUPABASE_URL"))
+    supabase_key: str | None = field(default_factory=lambda: os.getenv("SUPABASE_SERVICE_ROLE_KEY") or os.getenv("SUPABASE_ANON_KEY"))
+    supabase_documents_table: str = field(default_factory=lambda: _env_str("HELPMATE_SUPABASE_DOCUMENTS_TABLE", "helpmate_documents"))
+    supabase_indexes_table: str = field(default_factory=lambda: _env_str("HELPMATE_SUPABASE_INDEXES_TABLE", "helpmate_indexes"))
+    supabase_artifacts_table: str = field(default_factory=lambda: _env_str("HELPMATE_SUPABASE_ARTIFACTS_TABLE", "helpmate_index_artifacts"))
+    chroma_http_host: str = field(default_factory=lambda: _env_str("HELPMATE_CHROMA_HTTP_HOST", "localhost"))
+    chroma_http_port: int = field(default_factory=lambda: _env_int("HELPMATE_CHROMA_HTTP_PORT", 8000))
+    chroma_http_ssl: bool = field(default_factory=lambda: _env_bool("HELPMATE_CHROMA_HTTP_SSL", False))
+    chroma_http_tenant: str = field(default_factory=lambda: _env_str("HELPMATE_CHROMA_HTTP_TENANT", "default_tenant"))
+    chroma_http_database: str = field(default_factory=lambda: _env_str("HELPMATE_CHROMA_HTTP_DATABASE", "default_database"))
+    chroma_http_headers: dict[str, str] = field(
+        default_factory=lambda: _env_mapping("HELPMATE_CHROMA_HTTP_HEADERS"),
+    )
+    chroma_api_key: str | None = field(default_factory=_chroma_api_key)
     index_schema_version: str = os.getenv("HELPMATE_INDEX_SCHEMA_VERSION", "v10")
     chunk_size: int = _env_int("HELPMATE_CHUNK_SIZE", 1200)
     chunk_overlap: int = _env_int("HELPMATE_CHUNK_OVERLAP", 180)
@@ -83,19 +139,19 @@ class Settings:
     reranker_model: str = os.getenv("HELPMATE_RERANKER_MODEL", "cross-encoder/ms-marco-MiniLM-L-6-v2")
     router_llm_enabled: bool = _env_bool("HELPMATE_ROUTER_LLM_ENABLED", True)
     router_model: str = os.getenv("HELPMATE_ROUTER_MODEL", "gpt-5.4-nano")
-    router_confidence_threshold: float = _env_float("HELPMATE_ROUTER_CONFIDENCE_THRESHOLD", 0.6)
-    planner_confidence_threshold: float = _env_float("HELPMATE_PLANNER_CONFIDENCE_THRESHOLD", 0.74)
+    router_confidence_threshold: float = _env_float("HELPMATE_ROUTER_CONFIDENCE_THRESHOLD", 0.62)
+    planner_confidence_threshold: float = _env_float("HELPMATE_PLANNER_CONFIDENCE_THRESHOLD", 0.7)
     structure_repair_enabled: bool = _env_bool("HELPMATE_STRUCTURE_REPAIR_ENABLED", True)
     structure_repair_model: str = os.getenv("HELPMATE_STRUCTURE_REPAIR_MODEL", "gpt-5.4-nano")
     structure_repair_confidence_threshold: float = _env_float("HELPMATE_STRUCTURE_REPAIR_CONFIDENCE_THRESHOLD", 0.62)
     embedding_model: str = os.getenv("HELPMATE_EMBEDDING_MODEL", "text-embedding-3-small")
     answer_model: str = os.getenv("HELPMATE_ANSWER_MODEL", "gpt-5.4-mini")
-    evidence_selector_enabled: bool = _env_bool("HELPMATE_EVIDENCE_SELECTOR_ENABLED", True)
+    evidence_selector_enabled: bool = _env_bool("HELPMATE_EVIDENCE_SELECTOR_ENABLED", False)
     evidence_selector_model: str = os.getenv("HELPMATE_EVIDENCE_SELECTOR_MODEL", "gpt-5.4-nano")
     evidence_selector_top_k: int = _env_int("HELPMATE_EVIDENCE_SELECTOR_TOP_K", 4)
     evidence_selector_max_evidence: int = _env_int("HELPMATE_EVIDENCE_SELECTOR_MAX_EVIDENCE", 2)
-    evidence_selector_rank_weight: float = _env_float("HELPMATE_EVIDENCE_SELECTOR_RANK_WEIGHT", 0.65)
-    evidence_selector_llm_weight: float = _env_float("HELPMATE_EVIDENCE_SELECTOR_LLM_WEIGHT", 0.35)
+    evidence_selector_rank_weight: float = _env_float("HELPMATE_EVIDENCE_SELECTOR_RANK_WEIGHT", 0.25)
+    evidence_selector_llm_weight: float = _env_float("HELPMATE_EVIDENCE_SELECTOR_LLM_WEIGHT", 0.75)
     evidence_selector_gap_threshold: float = _env_float("HELPMATE_EVIDENCE_SELECTOR_GAP_THRESHOLD", 0.08)
     openai_api_key: str | None = os.getenv("OPENAI_API_KEY")
     retrieval_version: str = os.getenv("HELPMATE_RETRIEVAL_VERSION", "v10")
@@ -119,6 +175,14 @@ class Settings:
         evals_dir = self.docs_dir / "evals"
         for path in (self.data_dir, self.uploads_dir, self.indexes_dir, self.cache_dir, self.docs_dir, evals_dir):
             path.mkdir(parents=True, exist_ok=True)
+
+    @property
+    def uses_supabase_state(self) -> bool:
+        return self.state_store_backend == "supabase"
+
+    @property
+    def uses_chroma_http(self) -> bool:
+        return self.vector_store_backend in {"chroma_http", "chroma_cloud", "http"}
 
 
 def get_settings() -> Settings:

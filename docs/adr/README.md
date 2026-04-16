@@ -11,6 +11,7 @@ Current ADRs:
 - `ADR-005-dual-retrieval-routing-with-lightweight-llm-tiebreaker.md`
 - `ADR-006-deterministic-weak-evidence-recovery-and-guardrails.md`
 - `ADR-007-document-topology-planning-and-bounded-evidence-selection.md`
+- `ADR-008-benchmark-driven-stack-defaults-and-experimental-selector.md`
 
 Usage notes:
 
@@ -27,4 +28,7 @@ Current state note:
   - synopsis-first retrieval with soft structural guidance
   - a dedicated `global_summary_first` route for broad paper-summary questions
   - bounded post-rerank evidence selection
-- the next likely ADR after this should be about frontend extraction or a custom web frontend phase, not another large retrieval-core rewrite
+- the newest architecture governance change is:
+  - benchmark-driven confirmation that reranker stays
+  - planner/router stays as a modest positive
+  - evidence selector remains experimental rather than default

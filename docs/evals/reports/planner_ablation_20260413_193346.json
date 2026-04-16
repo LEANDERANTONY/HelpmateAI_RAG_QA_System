@@ -1,0 +1,1423 @@
+{
+  "case_count": 76,
+  "settings": {
+    "planner_confidence_threshold": 0.7,
+    "router_confidence_threshold": 0.62,
+    "reranker_enabled": true,
+    "evidence_selector_enabled": false
+  },
+  "deterministic_only": {
+    "dataset_size": 76,
+    "page_hit_rate": 0.8552631578947368,
+    "mean_reciprocal_rank": 0.7017543859649124,
+    "mean_fragment_recall": 0.7190789473684208,
+    "objective_score": 0.7768969298245614
+  },
+  "planner_calibrated": {
+    "dataset_size": 76,
+    "page_hit_rate": 0.8552631578947368,
+    "mean_reciprocal_rank": 0.7017543859649124,
+    "mean_fragment_recall": 0.7223684210526313,
+    "objective_score": 0.778048245614035
+  },
+  "overall_delta": {
+    "page_hit_rate": 0.0,
+    "mean_reciprocal_rank": 0.0,
+    "mean_fragment_recall": 0.003289473684210509,
+    "objective_score": 0.0011513157894735837
+  },
+  "question_outcomes": {
+    "improved": 1,
+    "worsened": 0,
+    "unchanged": 75,
+    "changed_candidate_sets_or_routes": 12
+  },
+  "llm_fallback_count": 12,
+  "route_counts": {
+    "chunk_first": 32,
+    "hybrid_both": 16,
+    "synopsis_first": 28
+  },
+  "per_dataset": {
+    "health_retrieval_eval_dataset.json": {
+      "deterministic_only": {
+        "dataset_size": 13,
+        "page_hit_rate": 0.8461538461538461,
+        "mean_reciprocal_rank": 0.6987179487179487,
+        "mean_fragment_recall": 0.7692307692307693,
+        "objective_score": 0.7897435897435896
+      },
+      "planner_calibrated": {
+        "dataset_size": 13,
+        "page_hit_rate": 0.8461538461538461,
+        "mean_reciprocal_rank": 0.6987179487179487,
+        "mean_fragment_recall": 0.7692307692307693,
+        "objective_score": 0.7897435897435896
+      },
+      "delta": {
+        "page_hit_rate": 0.0,
+        "mean_reciprocal_rank": 0.0,
+        "mean_fragment_recall": 0.0,
+        "objective_score": 0.0
+      }
+    },
+    "pancreas7_retrieval_eval_dataset.json": {
+      "deterministic_only": {
+        "dataset_size": 9,
+        "page_hit_rate": 0.8888888888888888,
+        "mean_reciprocal_rank": 0.6944444444444444,
+        "mean_fragment_recall": 0.7777777777777778,
+        "objective_score": 0.8111111111111111
+      },
+      "planner_calibrated": {
+        "dataset_size": 9,
+        "page_hit_rate": 0.8888888888888888,
+        "mean_reciprocal_rank": 0.6944444444444444,
+        "mean_fragment_recall": 0.7777777777777778,
+        "objective_score": 0.8111111111111111
+      },
+      "delta": {
+        "page_hit_rate": 0.0,
+        "mean_reciprocal_rank": 0.0,
+        "mean_fragment_recall": 0.0,
+        "objective_score": 0.0
+      }
+    },
+    "pancreas8_retrieval_eval_dataset.json": {
+      "deterministic_only": {
+        "dataset_size": 10,
+        "page_hit_rate": 0.9,
+        "mean_reciprocal_rank": 0.8,
+        "mean_fragment_recall": 0.8333333333333333,
+        "objective_score": 0.8566666666666667
+      },
+      "planner_calibrated": {
+        "dataset_size": 10,
+        "page_hit_rate": 0.9,
+        "mean_reciprocal_rank": 0.8,
+        "mean_fragment_recall": 0.8333333333333333,
+        "objective_score": 0.8566666666666667
+      },
+      "delta": {
+        "page_hit_rate": 0.0,
+        "mean_reciprocal_rank": 0.0,
+        "mean_fragment_recall": 0.0,
+        "objective_score": 0.0
+      }
+    },
+    "reportgeneration2_retrieval_eval_dataset.json": {
+      "deterministic_only": {
+        "dataset_size": 10,
+        "page_hit_rate": 1.0,
+        "mean_reciprocal_rank": 0.8333333333333333,
+        "mean_fragment_recall": 0.6666666666666667,
+        "objective_score": 0.85
+      },
+      "planner_calibrated": {
+        "dataset_size": 10,
+        "page_hit_rate": 1.0,
+        "mean_reciprocal_rank": 0.8333333333333333,
+        "mean_fragment_recall": 0.6916666666666667,
+        "objective_score": 0.85875
+      },
+      "delta": {
+        "page_hit_rate": 0.0,
+        "mean_reciprocal_rank": 0.0,
+        "mean_fragment_recall": 0.02499999999999991,
+        "objective_score": 0.008750000000000036
+      }
+    },
+    "reportgeneration_retrieval_eval_dataset.json": {
+      "deterministic_only": {
+        "dataset_size": 10,
+        "page_hit_rate": 0.9,
+        "mean_reciprocal_rank": 0.85,
+        "mean_fragment_recall": 0.6900000000000001,
+        "objective_score": 0.8165000000000001
+      },
+      "planner_calibrated": {
+        "dataset_size": 10,
+        "page_hit_rate": 0.9,
+        "mean_reciprocal_rank": 0.85,
+        "mean_fragment_recall": 0.6900000000000001,
+        "objective_score": 0.8165000000000001
+      },
+      "delta": {
+        "page_hit_rate": 0.0,
+        "mean_reciprocal_rank": 0.0,
+        "mean_fragment_recall": 0.0,
+        "objective_score": 0.0
+      }
+    },
+    "retrieval_eval_dataset.json": {
+      "deterministic_only": {
+        "dataset_size": 12,
+        "page_hit_rate": 0.5833333333333334,
+        "mean_reciprocal_rank": 0.48611111111111116,
+        "mean_fragment_recall": 0.5694444444444444,
+        "objective_score": 0.5590277777777778
+      },
+      "planner_calibrated": {
+        "dataset_size": 12,
+        "page_hit_rate": 0.5833333333333334,
+        "mean_reciprocal_rank": 0.48611111111111116,
+        "mean_fragment_recall": 0.5694444444444444,
+        "objective_score": 0.5590277777777778
+      },
+      "delta": {
+        "page_hit_rate": 0.0,
+        "mean_reciprocal_rank": 0.0,
+        "mean_fragment_recall": 0.0,
+        "objective_score": 0.0
+      }
+    },
+    "thesis_retrieval_eval_dataset.json": {
+      "deterministic_only": {
+        "dataset_size": 12,
+        "page_hit_rate": 0.9166666666666666,
+        "mean_reciprocal_rank": 0.611111111111111,
+        "mean_fragment_recall": 0.7430555555555557,
+        "objective_score": 0.7947916666666667
+      },
+      "planner_calibrated": {
+        "dataset_size": 12,
+        "page_hit_rate": 0.9166666666666666,
+        "mean_reciprocal_rank": 0.611111111111111,
+        "mean_fragment_recall": 0.7430555555555557,
+        "objective_score": 0.7947916666666667
+      },
+      "delta": {
+        "page_hit_rate": 0.0,
+        "mean_reciprocal_rank": 0.0,
+        "mean_fragment_recall": 0.0,
+        "objective_score": 0.0
+      }
+    }
+  },
+  "changed_questions": [
+    {
+      "dataset_name": "reportgeneration2_retrieval_eval_dataset.json",
+      "question": "What GREEN score does RadAlign report, and how does it compare with prior methods?",
+      "delta_objective": 0.08750000000000013,
+      "deterministic_only": {
+        "question": "What GREEN score does RadAlign report, and how does it compare with prior methods?",
+        "expected_pages": [
+          "Page 1",
+          "Page 9"
+        ],
+        "selected_pages": [
+          "Page 8",
+          "Page 9",
+          "Page 9",
+          "Page 11"
+        ],
+        "page_hit": 1,
+        "reciprocal_rank": 0.5,
+        "fragment_recall": 0.75,
+        "selected_chunk_ids": [
+          "c28685174b6bce75-chunk-0030",
+          "c28685174b6bce75-chunk-0031",
+          "c28685174b6bce75-chunk-0036",
+          "c28685174b6bce75-chunk-0064"
+        ],
+        "route_used": "synopsis_first",
+        "retrieval_plan": {
+          "intent_type": "comparison",
+          "evidence_spread": "distributed",
+          "constraint_mode": "soft_multi_region",
+          "preferred_route": "synopsis_first",
+          "target_region_ids": [
+            "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 11",
+            "RadAlign: Advancing Radiology Report|10 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+            "c28685174b6bce75-document-overview",
+            "RadAlign: Advancing Radiology Report|2 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+            "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 7",
+            "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 9"
+          ],
+          "target_region_kinds": [
+            "evidence",
+            "discussion",
+            "overview"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": true,
+          "planner_confidence": 0.66,
+          "planner_source": "deterministic",
+          "global_fallback_used": true
+        },
+        "planner_source": "deterministic",
+        "preferred_route": "synopsis_first"
+      },
+      "planner_calibrated": {
+        "question": "What GREEN score does RadAlign report, and how does it compare with prior methods?",
+        "expected_pages": [
+          "Page 1",
+          "Page 9"
+        ],
+        "selected_pages": [
+          "Page 8",
+          "Page 1",
+          "Page 9",
+          "Page 9"
+        ],
+        "page_hit": 1,
+        "reciprocal_rank": 0.5,
+        "fragment_recall": 1.0,
+        "selected_chunk_ids": [
+          "c28685174b6bce75-chunk-0030",
+          "c28685174b6bce75-chunk-0001",
+          "c28685174b6bce75-chunk-0031",
+          "c28685174b6bce75-chunk-0036"
+        ],
+        "route_used": "hybrid_both",
+        "retrieval_plan": {
+          "intent_type": "comparison",
+          "evidence_spread": "distributed",
+          "constraint_mode": "soft_multi_region",
+          "preferred_route": "hybrid_both",
+          "target_region_ids": [
+            "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 11",
+            "RadAlign: Advancing Radiology Report|10 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+            "c28685174b6bce75-document-overview",
+            "RadAlign: Advancing Radiology Report|2 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+            "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 7",
+            "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 9"
+          ],
+          "target_region_kinds": [
+            "evidence",
+            "discussion",
+            "overview"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": true,
+          "planner_confidence": 0.72,
+          "planner_source": "llm_fallback",
+          "global_fallback_used": true
+        },
+        "planner_source": "llm_fallback",
+        "preferred_route": "hybrid_both"
+      }
+    },
+    {
+      "dataset_name": "retrieval_eval_dataset.json",
+      "question": "What are the individual purchase rights for a member?",
+      "delta_objective": 0.0,
+      "deterministic_only": {
+        "question": "What are the individual purchase rights for a member?",
+        "expected_pages": [
+          "Page 42",
+          "Page 43"
+        ],
+        "selected_pages": [
+          "Page 42",
+          "Page 44",
+          "Page 43",
+          "Page 47"
+        ],
+        "page_hit": 1,
+        "reciprocal_rank": 1.0,
+        "fragment_recall": 1.0,
+        "selected_chunk_ids": [
+          "e68d757a293d57b6-chunk-0139",
+          "e68d757a293d57b6-chunk-0146",
+          "e68d757a293d57b6-chunk-0142",
+          "e68d757a293d57b6-chunk-0156"
+        ],
+        "route_used": "synopsis_first",
+        "retrieval_plan": {
+          "intent_type": "cross_cutting",
+          "evidence_spread": "distributed",
+          "constraint_mode": "soft_multi_region",
+          "preferred_route": "synopsis_first",
+          "target_region_ids": [
+            "GROUP POLICY FOR|PART III - INDIVIDUAL REQUIREMENTS AND RIGHTS",
+            "GROUP POLICY FOR|Section A \u2013 Eligibility",
+            "GROUP POLICY FOR|GC 6000 TITLE PAGE",
+            "GROUP POLICY FOR|PART II - POLICY ADMINISTRATION",
+            "GROUP POLICY FOR|PART IV - BENEFITS",
+            "GROUP POLICY FOR"
+          ],
+          "target_region_kinds": [
+            "rules",
+            "discussion",
+            "evidence",
+            "general"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": true,
+          "planner_confidence": 0.66,
+          "planner_source": "deterministic",
+          "global_fallback_used": true
+        },
+        "planner_source": "deterministic",
+        "preferred_route": "synopsis_first"
+      },
+      "planner_calibrated": {
+        "question": "What are the individual purchase rights for a member?",
+        "expected_pages": [
+          "Page 42",
+          "Page 43"
+        ],
+        "selected_pages": [
+          "Page 42",
+          "Page 44",
+          "Page 43",
+          "Page 47"
+        ],
+        "page_hit": 1,
+        "reciprocal_rank": 1.0,
+        "fragment_recall": 1.0,
+        "selected_chunk_ids": [
+          "e68d757a293d57b6-chunk-0139",
+          "e68d757a293d57b6-chunk-0146",
+          "e68d757a293d57b6-chunk-0142",
+          "e68d757a293d57b6-chunk-0156"
+        ],
+        "route_used": "hybrid_both",
+        "retrieval_plan": {
+          "intent_type": "cross_cutting",
+          "evidence_spread": "distributed",
+          "constraint_mode": "soft_multi_region",
+          "preferred_route": "hybrid_both",
+          "target_region_ids": [
+            "GROUP POLICY FOR|PART III - INDIVIDUAL REQUIREMENTS AND RIGHTS",
+            "GROUP POLICY FOR|Section A \u2013 Eligibility",
+            "GROUP POLICY FOR|GC 6000 TITLE PAGE",
+            "GROUP POLICY FOR|PART II - POLICY ADMINISTRATION",
+            "GROUP POLICY FOR|PART IV - BENEFITS",
+            "GROUP POLICY FOR"
+          ],
+          "target_region_kinds": [
+            "rules",
+            "discussion",
+            "evidence",
+            "general"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": true,
+          "planner_confidence": 0.72,
+          "planner_source": "llm_fallback",
+          "global_fallback_used": true
+        },
+        "planner_source": "llm_fallback",
+        "preferred_route": "hybrid_both"
+      }
+    },
+    {
+      "dataset_name": "retrieval_eval_dataset.json",
+      "question": "What are the conversion rights for dependents?",
+      "delta_objective": 0.0,
+      "deterministic_only": {
+        "question": "What are the conversion rights for dependents?",
+        "expected_pages": [
+          "Page 44",
+          "Page 45"
+        ],
+        "selected_pages": [
+          "Page 44",
+          "Page 27",
+          "Page 34",
+          "Page 39"
+        ],
+        "page_hit": 1,
+        "reciprocal_rank": 1.0,
+        "fragment_recall": 0.6666666666666666,
+        "selected_chunk_ids": [
+          "e68d757a293d57b6-chunk-0146",
+          "e68d757a293d57b6-chunk-0094",
+          "e68d757a293d57b6-chunk-0118",
+          "e68d757a293d57b6-chunk-0131"
+        ],
+        "route_used": "synopsis_first",
+        "retrieval_plan": {
+          "intent_type": "cross_cutting",
+          "evidence_spread": "distributed",
+          "constraint_mode": "soft_multi_region",
+          "preferred_route": "synopsis_first",
+          "target_region_ids": [
+            "GROUP POLICY FOR|PART III - INDIVIDUAL REQUIREMENTS AND RIGHTS",
+            "GROUP POLICY FOR|GC 806 VAL",
+            "GROUP POLICY FOR|GC 6000 TITLE PAGE",
+            "GROUP POLICY FOR|PART II - POLICY ADMINISTRATION",
+            "GROUP POLICY FOR|PART IV - BENEFITS",
+            "GROUP POLICY FOR|Section A \u2013 Eligibility"
+          ],
+          "target_region_kinds": [
+            "rules",
+            "discussion",
+            "evidence",
+            "general"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": true,
+          "planner_confidence": 0.66,
+          "planner_source": "deterministic",
+          "global_fallback_used": true
+        },
+        "planner_source": "deterministic",
+        "preferred_route": "synopsis_first"
+      },
+      "planner_calibrated": {
+        "question": "What are the conversion rights for dependents?",
+        "expected_pages": [
+          "Page 44",
+          "Page 45"
+        ],
+        "selected_pages": [
+          "Page 44",
+          "Page 27",
+          "Page 34",
+          "Page 39"
+        ],
+        "page_hit": 1,
+        "reciprocal_rank": 1.0,
+        "fragment_recall": 0.6666666666666666,
+        "selected_chunk_ids": [
+          "e68d757a293d57b6-chunk-0146",
+          "e68d757a293d57b6-chunk-0094",
+          "e68d757a293d57b6-chunk-0118",
+          "e68d757a293d57b6-chunk-0131"
+        ],
+        "route_used": "hybrid_both",
+        "retrieval_plan": {
+          "intent_type": "cross_cutting",
+          "evidence_spread": "distributed",
+          "constraint_mode": "soft_multi_region",
+          "preferred_route": "hybrid_both",
+          "target_region_ids": [
+            "GROUP POLICY FOR|PART III - INDIVIDUAL REQUIREMENTS AND RIGHTS",
+            "GROUP POLICY FOR|GC 806 VAL",
+            "GROUP POLICY FOR|GC 6000 TITLE PAGE",
+            "GROUP POLICY FOR|PART II - POLICY ADMINISTRATION",
+            "GROUP POLICY FOR|PART IV - BENEFITS",
+            "GROUP POLICY FOR|Section A \u2013 Eligibility"
+          ],
+          "target_region_kinds": [
+            "rules",
+            "discussion",
+            "evidence",
+            "general"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": true,
+          "planner_confidence": 0.72,
+          "planner_source": "llm_fallback",
+          "global_fallback_used": true
+        },
+        "planner_source": "llm_fallback",
+        "preferred_route": "hybrid_both"
+      }
+    },
+    {
+      "dataset_name": "health_retrieval_eval_dataset.json",
+      "question": "How is the grace period defined and how long is it for monthly versus other premium payment modes?",
+      "delta_objective": 0.0,
+      "deterministic_only": {
+        "question": "How is the grace period defined and how long is it for monthly versus other premium payment modes?",
+        "expected_pages": [
+          "Page 6",
+          "Page 85"
+        ],
+        "selected_pages": [
+          "Page 6",
+          "Page 85",
+          "Page 43",
+          "Page 3"
+        ],
+        "page_hit": 1,
+        "reciprocal_rank": 1.0,
+        "fragment_recall": 1.0,
+        "selected_chunk_ids": [
+          "1a994e256c109513-chunk-0027",
+          "1a994e256c109513-chunk-0334",
+          "1a994e256c109513-chunk-0212",
+          "1a994e256c109513-chunk-0011"
+        ],
+        "route_used": "synopsis_first",
+        "retrieval_plan": {
+          "intent_type": "comparison",
+          "evidence_spread": "distributed",
+          "constraint_mode": "soft_multi_region",
+          "preferred_route": "synopsis_first",
+          "target_region_ids": [
+            "Ultimate Care -CHIHLIP25044V012425|Ultimate Care -CHIHLIP25044V012425"
+          ],
+          "target_region_kinds": [
+            "definitions",
+            "general"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": true,
+          "planner_confidence": 0.66,
+          "planner_source": "deterministic",
+          "global_fallback_used": false
+        },
+        "planner_source": "deterministic",
+        "preferred_route": "synopsis_first"
+      },
+      "planner_calibrated": {
+        "question": "How is the grace period defined and how long is it for monthly versus other premium payment modes?",
+        "expected_pages": [
+          "Page 6",
+          "Page 85"
+        ],
+        "selected_pages": [
+          "Page 6",
+          "Page 85",
+          "Page 43",
+          "Page 3"
+        ],
+        "page_hit": 1,
+        "reciprocal_rank": 1.0,
+        "fragment_recall": 1.0,
+        "selected_chunk_ids": [
+          "1a994e256c109513-chunk-0027",
+          "1a994e256c109513-chunk-0334",
+          "1a994e256c109513-chunk-0212",
+          "1a994e256c109513-chunk-0011"
+        ],
+        "route_used": "hybrid_both",
+        "retrieval_plan": {
+          "intent_type": "comparison",
+          "evidence_spread": "distributed",
+          "constraint_mode": "soft_multi_region",
+          "preferred_route": "hybrid_both",
+          "target_region_ids": [
+            "Ultimate Care -CHIHLIP25044V012425|Ultimate Care -CHIHLIP25044V012425"
+          ],
+          "target_region_kinds": [
+            "definitions",
+            "general"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": true,
+          "planner_confidence": 0.72,
+          "planner_source": "llm_fallback",
+          "global_fallback_used": false
+        },
+        "planner_source": "llm_fallback",
+        "preferred_route": "hybrid_both"
+      }
+    },
+    {
+      "dataset_name": "thesis_retrieval_eval_dataset.json",
+      "question": "What AUC did the biomarker MLP achieve and how did it compare with the original study?",
+      "delta_objective": 0.0,
+      "deterministic_only": {
+        "question": "What AUC did the biomarker MLP achieve and how did it compare with the original study?",
+        "expected_pages": [
+          "Page 4",
+          "Page 81"
+        ],
+        "selected_pages": [
+          "Page 81",
+          "Page 94",
+          "Page 87",
+          "Page 81"
+        ],
+        "page_hit": 1,
+        "reciprocal_rank": 1.0,
+        "fragment_recall": 1.0,
+        "selected_chunk_ids": [
+          "c459aa7631f3848f-chunk-0393",
+          "c459aa7631f3848f-chunk-0447",
+          "c459aa7631f3848f-chunk-0418",
+          "c459aa7631f3848f-chunk-0394"
+        ],
+        "route_used": "synopsis_first",
+        "retrieval_plan": {
+          "intent_type": "comparison",
+          "evidence_spread": "distributed",
+          "constraint_mode": "soft_multi_region",
+          "preferred_route": "synopsis_first",
+          "target_region_ids": [
+            "Comparison with Existing Literature",
+            "Biomarker Classification Model Results|Comparison with Original Study",
+            "Summary|CHAPTER 6",
+            "Research Aim and Objectives",
+            "Chapter Summary|CHAPTER 2",
+            "Dataset Bias and Shortcut Learning|Implications for the Present Study"
+          ],
+          "target_region_kinds": [
+            "evidence",
+            "discussion",
+            "overview"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": true,
+          "planner_confidence": 0.66,
+          "planner_source": "deterministic",
+          "global_fallback_used": true
+        },
+        "planner_source": "deterministic",
+        "preferred_route": "synopsis_first"
+      },
+      "planner_calibrated": {
+        "question": "What AUC did the biomarker MLP achieve and how did it compare with the original study?",
+        "expected_pages": [
+          "Page 4",
+          "Page 81"
+        ],
+        "selected_pages": [
+          "Page 81",
+          "Page 94",
+          "Page 87",
+          "Page 81"
+        ],
+        "page_hit": 1,
+        "reciprocal_rank": 1.0,
+        "fragment_recall": 1.0,
+        "selected_chunk_ids": [
+          "c459aa7631f3848f-chunk-0393",
+          "c459aa7631f3848f-chunk-0447",
+          "c459aa7631f3848f-chunk-0418",
+          "c459aa7631f3848f-chunk-0394"
+        ],
+        "route_used": "hybrid_both",
+        "retrieval_plan": {
+          "intent_type": "comparison",
+          "evidence_spread": "distributed",
+          "constraint_mode": "soft_multi_region",
+          "preferred_route": "hybrid_both",
+          "target_region_ids": [
+            "Comparison with Existing Literature",
+            "Biomarker Classification Model Results|Comparison with Original Study",
+            "Summary|CHAPTER 6",
+            "Research Aim and Objectives",
+            "Chapter Summary|CHAPTER 2",
+            "Dataset Bias and Shortcut Learning|Implications for the Present Study"
+          ],
+          "target_region_kinds": [
+            "evidence",
+            "discussion",
+            "overview"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": true,
+          "planner_confidence": 0.72,
+          "planner_source": "llm_fallback",
+          "global_fallback_used": true
+        },
+        "planner_source": "llm_fallback",
+        "preferred_route": "hybrid_both"
+      }
+    },
+    {
+      "dataset_name": "thesis_retrieval_eval_dataset.json",
+      "question": "What happened in the label-mismatch control when the CT weight was 0.3 versus 0.7?",
+      "delta_objective": 0.0,
+      "deterministic_only": {
+        "question": "What happened in the label-mismatch control when the CT weight was 0.3 versus 0.7?",
+        "expected_pages": [
+          "Page 83",
+          "Page 84"
+        ],
+        "selected_pages": [
+          "Page 84",
+          "Page 84",
+          "Page 83",
+          "Page 85"
+        ],
+        "page_hit": 1,
+        "reciprocal_rank": 1.0,
+        "fragment_recall": 1.0,
+        "selected_chunk_ids": [
+          "c459aa7631f3848f-chunk-0404",
+          "c459aa7631f3848f-chunk-0403",
+          "c459aa7631f3848f-chunk-0398",
+          "c459aa7631f3848f-chunk-0407"
+        ],
+        "route_used": "synopsis_first",
+        "retrieval_plan": {
+          "intent_type": "comparison",
+          "evidence_spread": "distributed",
+          "constraint_mode": "soft_multi_region",
+          "preferred_route": "synopsis_first",
+          "target_region_ids": [
+            "Multimodal Fusion Results",
+            "CT Classification Model Results",
+            "Research Aim and Objectives",
+            "Dataset Bias Detection and Mitigation|CT results in Chapter 5",
+            "Summary|Library Version Role",
+            "Training and Evaluation Pipeline"
+          ],
+          "target_region_kinds": [
+            "evidence",
+            "discussion",
+            "overview"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": true,
+          "planner_confidence": 0.66,
+          "planner_source": "deterministic",
+          "global_fallback_used": false
+        },
+        "planner_source": "deterministic",
+        "preferred_route": "synopsis_first"
+      },
+      "planner_calibrated": {
+        "question": "What happened in the label-mismatch control when the CT weight was 0.3 versus 0.7?",
+        "expected_pages": [
+          "Page 83",
+          "Page 84"
+        ],
+        "selected_pages": [
+          "Page 84",
+          "Page 84",
+          "Page 92",
+          "Page 83"
+        ],
+        "page_hit": 1,
+        "reciprocal_rank": 1.0,
+        "fragment_recall": 1.0,
+        "selected_chunk_ids": [
+          "c459aa7631f3848f-chunk-0404",
+          "c459aa7631f3848f-chunk-0403",
+          "c459aa7631f3848f-chunk-0441",
+          "c459aa7631f3848f-chunk-0398"
+        ],
+        "route_used": "hybrid_both",
+        "retrieval_plan": {
+          "intent_type": "comparison",
+          "evidence_spread": "distributed",
+          "constraint_mode": "soft_multi_region",
+          "preferred_route": "hybrid_both",
+          "target_region_ids": [
+            "Multimodal Fusion Results",
+            "CT Classification Model Results",
+            "Research Aim and Objectives",
+            "Dataset Bias Detection and Mitigation|CT results in Chapter 5",
+            "Summary|Library Version Role",
+            "Training and Evaluation Pipeline"
+          ],
+          "target_region_kinds": [
+            "evidence",
+            "discussion",
+            "overview"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": true,
+          "planner_confidence": 0.72,
+          "planner_source": "llm_fallback",
+          "global_fallback_used": false
+        },
+        "planner_source": "llm_fallback",
+        "preferred_route": "hybrid_both"
+      }
+    },
+    {
+      "dataset_name": "pancreas7_retrieval_eval_dataset.json",
+      "question": "What binary classification accuracy did the CNN achieve across the three CT phases?",
+      "delta_objective": 0.0,
+      "deterministic_only": {
+        "question": "What binary classification accuracy did the CNN achieve across the three CT phases?",
+        "expected_pages": [
+          "Page 7",
+          "Page 8"
+        ],
+        "selected_pages": [
+          "Page 7",
+          "Page 9",
+          "Page 7",
+          "Page 2"
+        ],
+        "page_hit": 1,
+        "reciprocal_rank": 1.0,
+        "fragment_recall": 1.0,
+        "selected_chunk_ids": [
+          "fc305cae0108697f-chunk-0033",
+          "fc305cae0108697f-chunk-0044",
+          "fc305cae0108697f-chunk-0034",
+          "fc305cae0108697f-chunk-0011"
+        ],
+        "route_used": "synopsis_first",
+        "retrieval_plan": {
+          "intent_type": "cross_cutting",
+          "evidence_spread": "distributed",
+          "constraint_mode": "soft_multi_region",
+          "preferred_route": "synopsis_first",
+          "target_region_ids": [
+            "World Journal of",
+            "World Journal of|Accuracy 0.820568 0.790633 0.788076 1.074 0.585",
+            "World Journal of|Figure 1 Examples of dataset",
+            "World Journal of|ZJWR0108008",
+            "World Journal of|CT images",
+            "World Journal of|With cancer With cancerCT phase"
+          ],
+          "target_region_kinds": [
+            "rules",
+            "discussion",
+            "evidence",
+            "general"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": true,
+          "planner_confidence": 0.66,
+          "planner_source": "deterministic",
+          "global_fallback_used": false
+        },
+        "planner_source": "deterministic",
+        "preferred_route": "synopsis_first"
+      },
+      "planner_calibrated": {
+        "question": "What binary classification accuracy did the CNN achieve across the three CT phases?",
+        "expected_pages": [
+          "Page 7",
+          "Page 8"
+        ],
+        "selected_pages": [
+          "Page 7",
+          "Page 9",
+          "Page 7",
+          "Page 2"
+        ],
+        "page_hit": 1,
+        "reciprocal_rank": 1.0,
+        "fragment_recall": 1.0,
+        "selected_chunk_ids": [
+          "fc305cae0108697f-chunk-0033",
+          "fc305cae0108697f-chunk-0044",
+          "fc305cae0108697f-chunk-0034",
+          "fc305cae0108697f-chunk-0011"
+        ],
+        "route_used": "hybrid_both",
+        "retrieval_plan": {
+          "intent_type": "cross_cutting",
+          "evidence_spread": "distributed",
+          "constraint_mode": "soft_multi_region",
+          "preferred_route": "hybrid_both",
+          "target_region_ids": [
+            "World Journal of",
+            "World Journal of|Accuracy 0.820568 0.790633 0.788076 1.074 0.585",
+            "World Journal of|Figure 1 Examples of dataset",
+            "World Journal of|ZJWR0108008",
+            "World Journal of|CT images",
+            "World Journal of|With cancer With cancerCT phase"
+          ],
+          "target_region_kinds": [
+            "rules",
+            "discussion",
+            "evidence",
+            "general"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": true,
+          "planner_confidence": 0.72,
+          "planner_source": "llm_fallback",
+          "global_fallback_used": false
+        },
+        "planner_source": "llm_fallback",
+        "preferred_route": "hybrid_both"
+      }
+    },
+    {
+      "dataset_name": "pancreas7_retrieval_eval_dataset.json",
+      "question": "How did the CNN compare with gastroenterologists and trainees on plain scan accuracy?",
+      "delta_objective": 0.0,
+      "deterministic_only": {
+        "question": "How did the CNN compare with gastroenterologists and trainees on plain scan accuracy?",
+        "expected_pages": [
+          "Page 8"
+        ],
+        "selected_pages": [
+          "Page 7",
+          "Page 9",
+          "Page 7",
+          "Page 2"
+        ],
+        "page_hit": 0,
+        "reciprocal_rank": 0.0,
+        "fragment_recall": 0.0,
+        "selected_chunk_ids": [
+          "fc305cae0108697f-chunk-0035",
+          "fc305cae0108697f-chunk-0045",
+          "fc305cae0108697f-chunk-0034",
+          "fc305cae0108697f-chunk-0011"
+        ],
+        "route_used": "synopsis_first",
+        "retrieval_plan": {
+          "intent_type": "comparison",
+          "evidence_spread": "distributed",
+          "constraint_mode": "soft_multi_region",
+          "preferred_route": "synopsis_first",
+          "target_region_ids": [
+            "World Journal of|Accuracy 0.820568 0.790633 0.788076 1.074 0.585",
+            "World Journal of|With cancer With cancerCT phase",
+            "World Journal of|Gender (male/female) 124/98 98/92 0.3852 0.54",
+            "World Journal of",
+            "fc305cae0108697f-document-overview",
+            "World Journal of|Published by Baishideng Publishing Group Inc"
+          ],
+          "target_region_kinds": [
+            "evidence",
+            "discussion",
+            "overview"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": true,
+          "planner_confidence": 0.66,
+          "planner_source": "deterministic",
+          "global_fallback_used": true
+        },
+        "planner_source": "deterministic",
+        "preferred_route": "synopsis_first"
+      },
+      "planner_calibrated": {
+        "question": "How did the CNN compare with gastroenterologists and trainees on plain scan accuracy?",
+        "expected_pages": [
+          "Page 8"
+        ],
+        "selected_pages": [
+          "Page 7",
+          "Page 9",
+          "Page 7",
+          "Page 2"
+        ],
+        "page_hit": 0,
+        "reciprocal_rank": 0.0,
+        "fragment_recall": 0.0,
+        "selected_chunk_ids": [
+          "fc305cae0108697f-chunk-0035",
+          "fc305cae0108697f-chunk-0045",
+          "fc305cae0108697f-chunk-0034",
+          "fc305cae0108697f-chunk-0011"
+        ],
+        "route_used": "hybrid_both",
+        "retrieval_plan": {
+          "intent_type": "comparison",
+          "evidence_spread": "distributed",
+          "constraint_mode": "soft_multi_region",
+          "preferred_route": "hybrid_both",
+          "target_region_ids": [
+            "World Journal of|Accuracy 0.820568 0.790633 0.788076 1.074 0.585",
+            "World Journal of|With cancer With cancerCT phase",
+            "World Journal of|Gender (male/female) 124/98 98/92 0.3852 0.54",
+            "World Journal of",
+            "fc305cae0108697f-document-overview",
+            "World Journal of|Published by Baishideng Publishing Group Inc"
+          ],
+          "target_region_kinds": [
+            "evidence",
+            "discussion",
+            "overview"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": true,
+          "planner_confidence": 0.72,
+          "planner_source": "llm_fallback",
+          "global_fallback_used": true
+        },
+        "planner_source": "llm_fallback",
+        "preferred_route": "hybrid_both"
+      }
+    },
+    {
+      "dataset_name": "reportgeneration_retrieval_eval_dataset.json",
+      "question": "How does the paper describe regional differences in radiologist preferences?",
+      "delta_objective": 0.0,
+      "deterministic_only": {
+        "question": "How does the paper describe regional differences in radiologist preferences?",
+        "expected_pages": [
+          "Page 6"
+        ],
+        "selected_pages": [
+          "Page 6",
+          "Page 8",
+          "Page 13",
+          "Page 4"
+        ],
+        "page_hit": 1,
+        "reciprocal_rank": 1.0,
+        "fragment_recall": 0.6666666666666666,
+        "selected_chunk_ids": [
+          "b950f9666b1999a4-chunk-0051",
+          "b950f9666b1999a4-chunk-0097",
+          "b950f9666b1999a4-chunk-0134",
+          "b950f9666b1999a4-chunk-0022"
+        ],
+        "route_used": "synopsis_first",
+        "retrieval_plan": {
+          "intent_type": "comparison",
+          "evidence_spread": "distributed",
+          "constraint_mode": "soft_multi_region",
+          "preferred_route": "synopsis_first",
+          "target_region_ids": [
+            "b950f9666b1999a4-repair-02-results",
+            "b950f9666b1999a4-repair-01-overview",
+            "b950f9666b1999a4-repair-05-methods",
+            "b950f9666b1999a4-repair-06-methods-continued",
+            "b950f9666b1999a4-repair-07-references",
+            "b950f9666b1999a4-repair-03-results-continued"
+          ],
+          "target_region_kinds": [
+            "evidence",
+            "discussion",
+            "overview"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": true,
+          "planner_confidence": 0.66,
+          "planner_source": "deterministic",
+          "global_fallback_used": false
+        },
+        "planner_source": "deterministic",
+        "preferred_route": "synopsis_first"
+      },
+      "planner_calibrated": {
+        "question": "How does the paper describe regional differences in radiologist preferences?",
+        "expected_pages": [
+          "Page 6"
+        ],
+        "selected_pages": [
+          "Page 6",
+          "Page 8",
+          "Page 13",
+          "Page 4"
+        ],
+        "page_hit": 1,
+        "reciprocal_rank": 1.0,
+        "fragment_recall": 0.6666666666666666,
+        "selected_chunk_ids": [
+          "b950f9666b1999a4-chunk-0051",
+          "b950f9666b1999a4-chunk-0097",
+          "b950f9666b1999a4-chunk-0134",
+          "b950f9666b1999a4-chunk-0022"
+        ],
+        "route_used": "hybrid_both",
+        "retrieval_plan": {
+          "intent_type": "comparison",
+          "evidence_spread": "distributed",
+          "constraint_mode": "soft_multi_region",
+          "preferred_route": "hybrid_both",
+          "target_region_ids": [
+            "b950f9666b1999a4-repair-02-results",
+            "b950f9666b1999a4-repair-01-overview",
+            "b950f9666b1999a4-repair-05-methods",
+            "b950f9666b1999a4-repair-06-methods-continued",
+            "b950f9666b1999a4-repair-07-references",
+            "b950f9666b1999a4-repair-03-results-continued"
+          ],
+          "target_region_kinds": [
+            "evidence",
+            "discussion",
+            "overview"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": true,
+          "planner_confidence": 0.72,
+          "planner_source": "llm_fallback",
+          "global_fallback_used": false
+        },
+        "planner_source": "llm_fallback",
+        "preferred_route": "hybrid_both"
+      }
+    },
+    {
+      "dataset_name": "reportgeneration_retrieval_eval_dataset.json",
+      "question": "What kinds of report errors were tracked in the error-correction evaluation?",
+      "delta_objective": 0.0,
+      "deterministic_only": {
+        "question": "What kinds of report errors were tracked in the error-correction evaluation?",
+        "expected_pages": [
+          "Page 7",
+          "Page 19"
+        ],
+        "selected_pages": [
+          "Page 19",
+          "Page 13",
+          "Page 3",
+          "Page 6"
+        ],
+        "page_hit": 1,
+        "reciprocal_rank": 1.0,
+        "fragment_recall": 0.75,
+        "selected_chunk_ids": [
+          "b950f9666b1999a4-chunk-0148",
+          "b950f9666b1999a4-chunk-0134",
+          "b950f9666b1999a4-chunk-0015",
+          "b950f9666b1999a4-chunk-0060"
+        ],
+        "route_used": "synopsis_first",
+        "retrieval_plan": {
+          "intent_type": "cross_cutting",
+          "evidence_spread": "distributed",
+          "constraint_mode": "soft_multi_region",
+          "preferred_route": "synopsis_first",
+          "target_region_ids": [
+            "b950f9666b1999a4-repair-02-results",
+            "b950f9666b1999a4-repair-13-extended-data-fig-5-average-number-of-clinically-significant-errors",
+            "b950f9666b1999a4-repair-03-results-continued",
+            "b950f9666b1999a4-repair-12-extended-data-fig-4-types-of-errors-found-in-original-reports",
+            "b950f9666b1999a4-repair-14-extended-data-fig-6-clinician-ai-collaboration",
+            "b950f9666b1999a4-repair-17-extended-data-table-3-clinically-significant-errors-in-ground-truth"
+          ],
+          "target_region_kinds": [
+            "rules",
+            "discussion",
+            "evidence",
+            "general"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": true,
+          "planner_confidence": 0.66,
+          "planner_source": "deterministic",
+          "global_fallback_used": true
+        },
+        "planner_source": "deterministic",
+        "preferred_route": "synopsis_first"
+      },
+      "planner_calibrated": {
+        "question": "What kinds of report errors were tracked in the error-correction evaluation?",
+        "expected_pages": [
+          "Page 7",
+          "Page 19"
+        ],
+        "selected_pages": [
+          "Page 19",
+          "Page 13",
+          "Page 3",
+          "Page 6"
+        ],
+        "page_hit": 1,
+        "reciprocal_rank": 1.0,
+        "fragment_recall": 0.75,
+        "selected_chunk_ids": [
+          "b950f9666b1999a4-chunk-0148",
+          "b950f9666b1999a4-chunk-0134",
+          "b950f9666b1999a4-chunk-0015",
+          "b950f9666b1999a4-chunk-0060"
+        ],
+        "route_used": "hybrid_both",
+        "retrieval_plan": {
+          "intent_type": "cross_cutting",
+          "evidence_spread": "distributed",
+          "constraint_mode": "soft_multi_region",
+          "preferred_route": "hybrid_both",
+          "target_region_ids": [
+            "b950f9666b1999a4-repair-02-results",
+            "b950f9666b1999a4-repair-13-extended-data-fig-5-average-number-of-clinically-significant-errors",
+            "b950f9666b1999a4-repair-03-results-continued",
+            "b950f9666b1999a4-repair-12-extended-data-fig-4-types-of-errors-found-in-original-reports",
+            "b950f9666b1999a4-repair-14-extended-data-fig-6-clinician-ai-collaboration",
+            "b950f9666b1999a4-repair-17-extended-data-table-3-clinically-significant-errors-in-ground-truth"
+          ],
+          "target_region_kinds": [
+            "rules",
+            "discussion",
+            "evidence",
+            "general"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": true,
+          "planner_confidence": 0.72,
+          "planner_source": "llm_fallback",
+          "global_fallback_used": true
+        },
+        "planner_source": "llm_fallback",
+        "preferred_route": "hybrid_both"
+      }
+    },
+    {
+      "dataset_name": "reportgeneration2_retrieval_eval_dataset.json",
+      "question": "What average AUC does RadAlign report across diseases?",
+      "delta_objective": 0.0,
+      "deterministic_only": {
+        "question": "What average AUC does RadAlign report across diseases?",
+        "expected_pages": [
+          "Page 1",
+          "Page 10"
+        ],
+        "selected_pages": [
+          "Page 9",
+          "Page 1",
+          "Page 9",
+          "Page 1"
+        ],
+        "page_hit": 1,
+        "reciprocal_rank": 0.5,
+        "fragment_recall": 1.0,
+        "selected_chunk_ids": [
+          "c28685174b6bce75-chunk-0036",
+          "c28685174b6bce75-chunk-0000",
+          "c28685174b6bce75-chunk-0031",
+          "c28685174b6bce75-chunk-0001"
+        ],
+        "route_used": "synopsis_first",
+        "retrieval_plan": {
+          "intent_type": "numeric",
+          "evidence_spread": "distributed",
+          "constraint_mode": "soft_multi_region",
+          "preferred_route": "synopsis_first",
+          "target_region_ids": [
+            "RadAlign: Advancing Radiology Report|10 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+            "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 11",
+            "RadAlign: Advancing Radiology Report",
+            "RadAlign: Advancing Radiology Report|2 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+            "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 3",
+            "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 5"
+          ],
+          "target_region_kinds": [
+            "evidence",
+            "discussion",
+            "general"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": true,
+          "planner_confidence": 0.66,
+          "planner_source": "deterministic",
+          "global_fallback_used": true
+        },
+        "planner_source": "deterministic",
+        "preferred_route": "synopsis_first"
+      },
+      "planner_calibrated": {
+        "question": "What average AUC does RadAlign report across diseases?",
+        "expected_pages": [
+          "Page 1",
+          "Page 10"
+        ],
+        "selected_pages": [
+          "Page 9",
+          "Page 1",
+          "Page 9",
+          "Page 1"
+        ],
+        "page_hit": 1,
+        "reciprocal_rank": 0.5,
+        "fragment_recall": 1.0,
+        "selected_chunk_ids": [
+          "c28685174b6bce75-chunk-0036",
+          "c28685174b6bce75-chunk-0000",
+          "c28685174b6bce75-chunk-0031",
+          "c28685174b6bce75-chunk-0001"
+        ],
+        "route_used": "hybrid_both",
+        "retrieval_plan": {
+          "intent_type": "numeric",
+          "evidence_spread": "distributed",
+          "constraint_mode": "soft_multi_region",
+          "preferred_route": "hybrid_both",
+          "target_region_ids": [
+            "RadAlign: Advancing Radiology Report|10 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+            "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 11",
+            "RadAlign: Advancing Radiology Report",
+            "RadAlign: Advancing Radiology Report|2 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+            "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 3",
+            "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 5"
+          ],
+          "target_region_kinds": [
+            "evidence",
+            "discussion",
+            "general"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": true,
+          "planner_confidence": 0.72,
+          "planner_source": "llm_fallback",
+          "global_fallback_used": true
+        },
+        "planner_source": "llm_fallback",
+        "preferred_route": "hybrid_both"
+      }
+    },
+    {
+      "dataset_name": "reportgeneration2_retrieval_eval_dataset.json",
+      "question": "What does the paper claim about robustness across different LLMs?",
+      "delta_objective": 0.0,
+      "deterministic_only": {
+        "question": "What does the paper claim about robustness across different LLMs?",
+        "expected_pages": [
+          "Page 11"
+        ],
+        "selected_pages": [
+          "Page 11",
+          "Page 2",
+          "Page 10",
+          "Page 3"
+        ],
+        "page_hit": 1,
+        "reciprocal_rank": 1.0,
+        "fragment_recall": 0.0,
+        "selected_chunk_ids": [
+          "c28685174b6bce75-chunk-0065",
+          "c28685174b6bce75-chunk-0006",
+          "c28685174b6bce75-chunk-0043",
+          "c28685174b6bce75-chunk-0008"
+        ],
+        "route_used": "synopsis_first",
+        "retrieval_plan": {
+          "intent_type": "comparison",
+          "evidence_spread": "distributed",
+          "constraint_mode": "soft_multi_region",
+          "preferred_route": "synopsis_first",
+          "target_region_ids": [
+            "RadAlign: Advancing Radiology Report",
+            "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 3",
+            "RadAlign: Advancing Radiology Report|4 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+            "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 5",
+            "RadAlign: Advancing Radiology Report|10 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+            "RadAlign: Advancing Radiology Report|6 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas"
+          ],
+          "target_region_kinds": [
+            "definitions",
+            "general"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": true,
+          "planner_confidence": 0.66,
+          "planner_source": "deterministic",
+          "global_fallback_used": true
+        },
+        "planner_source": "deterministic",
+        "preferred_route": "synopsis_first"
+      },
+      "planner_calibrated": {
+        "question": "What does the paper claim about robustness across different LLMs?",
+        "expected_pages": [
+          "Page 11"
+        ],
+        "selected_pages": [
+          "Page 11",
+          "Page 2",
+          "Page 10",
+          "Page 3"
+        ],
+        "page_hit": 1,
+        "reciprocal_rank": 1.0,
+        "fragment_recall": 0.0,
+        "selected_chunk_ids": [
+          "c28685174b6bce75-chunk-0065",
+          "c28685174b6bce75-chunk-0006",
+          "c28685174b6bce75-chunk-0043",
+          "c28685174b6bce75-chunk-0008"
+        ],
+        "route_used": "hybrid_both",
+        "retrieval_plan": {
+          "intent_type": "comparison",
+          "evidence_spread": "distributed",
+          "constraint_mode": "soft_multi_region",
+          "preferred_route": "hybrid_both",
+          "target_region_ids": [
+            "RadAlign: Advancing Radiology Report",
+            "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 3",
+            "RadAlign: Advancing Radiology Report|4 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+            "RadAlign: Advancing Radiology Report|RadAlign: Advancing Radiology Report Generation 5",
+            "RadAlign: Advancing Radiology Report|10 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+            "RadAlign: Advancing Radiology Report|6 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas"
+          ],
+          "target_region_kinds": [
+            "definitions",
+            "general"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": true,
+          "planner_confidence": 0.72,
+          "planner_source": "llm_fallback",
+          "global_fallback_used": true
+        },
+        "planner_source": "llm_fallback",
+        "preferred_route": "hybrid_both"
+      }
+    }
+  ]
+}
