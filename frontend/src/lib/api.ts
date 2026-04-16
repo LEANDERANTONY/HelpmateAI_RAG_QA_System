@@ -11,8 +11,18 @@ import { isSupabaseConfigured } from "@/lib/supabase/config";
 
 const API_BASE_URL =
   process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
+const UPLOAD_API_BASE_URL =
+  process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL ?? API_BASE_URL;
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
+  return requestAgainst<T>(API_BASE_URL, path, init);
+}
+
+async function requestAgainst<T>(
+  baseUrl: string,
+  path: string,
+  init?: RequestInit,
+): Promise<T> {
   const headers = new Headers(init?.headers);
   if (typeof window !== "undefined" && isSupabaseConfigured()) {
     const supabase = createClient();
@@ -25,7 +35,7 @@ async function request<T>(path: string, init?: RequestInit): Promise<T> {
     }
   }
 
-  const response = await fetch(`${API_BASE_URL}${path}`, {
+  const response = await fetch(`${baseUrl}${path}`, {
     ...init,
     headers,
   });
@@ -71,10 +81,14 @@ export async function getCurrentWorkspace() {
 export async function uploadDocument(file: File) {
   const formData = new FormData();
   formData.append("file", file);
-  return request<DocumentBundleResponse>("/documents/upload", {
+  return requestAgainst<DocumentBundleResponse>(
+    UPLOAD_API_BASE_URL,
+    "/documents/upload",
+    {
     method: "POST",
     body: formData,
-  });
+    },
+  );
 }
 
 export async function buildIndex(documentId: string) {
@@ -97,4 +111,4 @@ export async function askQuestion(documentId: string, question: string) {
   });
 }
 
-export { API_BASE_URL };
+export { API_BASE_URL, UPLOAD_API_BASE_URL };
