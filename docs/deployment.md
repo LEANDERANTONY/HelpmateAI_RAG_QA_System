@@ -131,6 +131,17 @@ That script adds:
 - RLS policies so only the owning authenticated user can read active rows
 - a `pg_cron` cleanup job that deletes expired workspaces every 5 minutes
 
+If you run Supabase state with local VPS uploads/indexes:
+
+- keep the Supabase SQL cleanup enabled for row expiry
+- also run `python -m backend.maintenance` on the VPS every few minutes
+
+Why:
+
+- the Supabase cron deletes expired rows and cascades remote records
+- the VPS sweeper deletes orphaned local uploads and local index directories
+- this prevents expired files from lingering on disk when no user returns
+
 This mode is the clean path if you want:
 
 - one or a few documents per user
@@ -203,6 +214,12 @@ Suggested VPS rollout:
 8. Wait for Caddy to provision TLS automatically.
 9. Verify `https://api.yourdomain.com/health`.
 10. Update the frontend proxy target if needed.
+
+Recommended host cron entry for local-disk cleanup:
+
+```cron
+*/10 * * * * docker exec helpmate-api python -m backend.maintenance >> /var/log/helpmate-workspace-sweeper.log 2>&1
+```
 
 Recommended low-memory production default on smaller VPS plans:
 
