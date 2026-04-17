@@ -526,3 +526,222 @@ For every major Helpmate layer, we should be able to say:
 - what trade-offs it introduces
 
 If we cannot say that clearly, the layer is not yet justified enough.
+
+## Future Product Focus
+
+Now that the deployed stack is stable, the roadmap should shift from bring-up work to deeper quality justification and product robustness.
+
+### 1. Expand The Eval Corpus
+
+- add more real user-style PDFs and DOCX files
+- include noisier layouts, longer reports, and more mixed-structure documents
+- grow the negative / unsupported question set
+
+Why this matters:
+
+- the current eval corpus is strong enough for first architecture decisions
+- but broader coverage will reduce the risk of overfitting those decisions to a small document family mix
+
+### 2. Benchmark Chunking More Rigorously
+
+Current state:
+
+- chunking behavior is deterministic and covered by tests
+- the repo has a small retrieval `grid_search.py` helper
+- the live chunking defaults were originally `chunk_size=1200` and `chunk_overlap=180`
+- after the full retrieval, answer-layer, and focused `ragas` pass, the recommended production overlap is now `240`
+
+Future work:
+
+- run a documented chunk-size / overlap sweep across the labeled eval sets
+- compare settings on:
+  - page-hit rate
+  - fragment recall
+  - answer faithfulness
+  - indexing latency
+  - storage footprint
+- test whether document-style-specific chunking rules outperform a single global default
+
+### 3. Benchmark Alternative Reranker Models
+
+Current state:
+
+- we proved that reranking as a layer is valuable
+- we did not yet prove that `cross-encoder/ms-marco-MiniLM-L-6-v2` is the best reranker choice for Helpmate
+
+Future work:
+
+- compare the current reranker against a shortlist of alternatives
+- measure:
+  - retrieval metrics
+  - answer-layer faithfulness
+  - latency
+  - memory usage
+  - VPS deployment fit
+
+### 4. Benchmark Alternative Embedding Models
+
+Current state:
+
+- the app uses `text-embedding-3-small`
+- that is a sensible cost-quality default
+- but it has not yet been justified by a Helpmate-specific model comparison
+
+Future work:
+
+- compare candidate embedding models on:
+  - retrieval quality
+  - indexing speed
+  - storage footprint
+  - cost
+
+### 5. Strengthen Answer-Layer Judging
+
+- expand external `ragas` evaluation beyond the current focused subset
+- add a small human-reviewed benchmark slice
+- track:
+  - faithfulness
+  - citation usefulness
+  - completeness
+  - abstention quality
+
+### 6. Operational Hardening
+
+- add monitoring around upload failures, indexing failures, QA latency, and cleanup health
+- keep auditing VPS disk usage and retention cleanup behavior
+- add lightweight diagnostics if product usage grows
+
+## Important Open Question: Were Chunking And Reranker Model Choices Arbitrary?
+
+Short answer:
+
+- partly, yes
+
+More precise answer:
+
+- the current chunking parameters and reranker model were chosen as sensible engineering defaults
+- the architecture around them has now been benchmarked
+- but the internal model / hyperparameter choices themselves have not yet gone through the same level of systematic comparison that we applied to selector weights and planner thresholds
+
+What is already justified:
+
+- reranker as a layer
+- planner thresholds
+- selector weights
+
+What is not yet fully justified:
+
+- chunk size / overlap as final values
+- reranker model identity
+- embedding model identity
+
+So the next maturity step for Helpmate is not to make the app merely work.
+
+It is to turn the remaining strong defaults into benchmark-backed decisions.
+
+## First-Pass Chunking Sweep Finding
+
+We completed a first retrieval-level chunking sweep after fixing an index-cache bug that had previously allowed chunking experiments to reuse stale indexes by fingerprint alone.
+
+What was fixed first:
+
+- index reuse now requires matching:
+  - schema version
+  - embedding model
+  - chunk size
+  - chunk overlap
+
+What was then measured:
+
+- a focused chunking comparison across the full labeled retrieval corpus
+- candidate settings:
+  - `900 / 180`
+  - `1200 / 180`
+  - `1200 / 240`
+  - `1500 / 180`
+
+Current evaluated baseline:
+
+- `chunk_size = 1200`
+- `chunk_overlap = 180`
+
+First-pass result:
+
+- `1200 / 240` ranked best on retrieval-level page hit and section hit
+- the gain over `1200 / 180` was modest, not dramatic
+- some document families improved
+- `pancreas7` regressed in this pass
+
+Current interpretation:
+
+- `1200 / 240` emerged as the strongest next candidate from the retrieval sweep
+- retrieval-only evidence was not enough to flip production by itself
+- this configuration needed answer-layer and external validation before promotion
+
+## Chunking Follow-Up: Answer-Layer And `ragas` Cross-Checks
+
+We then ran the more important follow-up comparisons with the rest of the stack held constant:
+
+- planner/router on
+- reranker on
+- selector off
+
+The chunking variants compared were:
+
+- `1200 / 180`
+- `1200 / 240`
+
+### Internal Answer-Layer Result
+
+What was measured:
+
+- supported rate on positive datasets
+- citation page-hit rate
+- evidence fragment recall
+- abstention rate on the negative set
+
+What we learned:
+
+- `1200 / 180` performed better on positive answer support
+- `1200 / 180` also kept a better evidence fragment recall profile
+- `1200 / 240` slightly improved the negative-set abstention result
+- but that gain came with weaker positive answer quality on the current benchmark
+
+Current interpretation:
+
+- the internal answer-layer check was the main argument for staying conservative with `1200 / 180`
+- however, this was only one part of the final decision and needed to be weighed against the external `ragas` signal
+
+### Focused External `ragas` Result
+
+What was measured:
+
+- a focused `ragas` comparison on three representative document families:
+  - health
+  - thesis
+  - `pancreas7`
+- metrics:
+  - supported rate
+  - faithfulness
+  - answer relevancy
+  - context precision
+
+What we learned:
+
+- `1200 / 240` scored better on:
+  - supported rate
+  - answer relevancy
+  - context precision
+- `1200 / 180` scored slightly better on faithfulness
+- the faithfulness gap was small overall, but for Helpmate it still matters more than cosmetic answer improvement
+
+Current interpretation:
+
+- the external check confirms the same tradeoff pattern:
+  - broader overlap helps answer directness and context precision
+  - faithfulness decreases slightly, but only marginally on the focused subset
+- taken together, the retrieval sweep plus the external check justify promoting `1200 / 240` as the production default
+- this is a product choice:
+  - accept a very small grounding dip
+  - in exchange for noticeably stronger answer relevancy and context precision
+- `1200 / 180` remains the more conservative fallback if future datasets show a stronger grounding regression

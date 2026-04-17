@@ -288,6 +288,21 @@ class ChromaIndexStore:
         payload = bundle.get("topology_edges") or []
         return [TopologyEdge(**item) for item in payload]
 
+    def _index_matches_runtime(
+        self,
+        existing: IndexRecord,
+        *,
+        embedding_model: str,
+        chunk_size: int,
+        chunk_overlap: int,
+    ) -> bool:
+        return (
+            existing.index_schema_version == self.index_schema_version
+            and existing.embedding_model == embedding_model
+            and existing.chunk_size == chunk_size
+            and existing.chunk_overlap == chunk_overlap
+        )
+
     def get_or_create_index(
         self,
         fingerprint: str,
@@ -301,9 +316,16 @@ class ChromaIndexStore:
         chunk_overlap: int,
     ) -> IndexRecord:
         existing = self.load_index_record(fingerprint)
-        if existing is not None and existing.index_schema_version == self.index_schema_version:
+        if existing is not None and self._index_matches_runtime(
+            existing,
+            embedding_model=embedding_model,
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap,
+        ):
             existing.reused = True
             return existing
+        if existing is not None:
+            self.delete_index_data(fingerprint, existing.collection_name)
 
         index_dir = self._index_dir(fingerprint)
         if not self.settings.uses_chroma_http:

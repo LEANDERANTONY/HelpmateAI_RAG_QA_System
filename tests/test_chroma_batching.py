@@ -1,5 +1,6 @@
 from src.config import Settings
 from src.retrieval.store import ChromaIndexStore
+from src.schemas import IndexRecord
 
 
 class _FakeCollection:
@@ -68,3 +69,46 @@ def test_batch_size_is_capped_at_chroma_request_limit(tmp_path):
     )
 
     assert [len(call["ids"]) for call in collection.calls] == [300, 1]
+
+
+def test_index_reuse_requires_matching_chunk_settings(tmp_path):
+    store = ChromaIndexStore(
+        Settings(
+            data_dir=tmp_path / "data",
+            indexes_dir=tmp_path / "indexes",
+            uploads_dir=tmp_path / "uploads",
+            cache_dir=tmp_path / "cache",
+        )
+    )
+    existing = IndexRecord(
+        document_id="doc-1",
+        fingerprint="fp-1",
+        collection_name="helpmate-doc-1",
+        storage_path=str(tmp_path / "indexes"),
+        chunk_count=10,
+        section_count=2,
+        embedding_model="text-embedding-3-small",
+        chunk_size=1200,
+        chunk_overlap=180,
+        created_at="2026-01-01T00:00:00+00:00",
+        index_schema_version=store.index_schema_version,
+    )
+
+    assert store._index_matches_runtime(
+        existing,
+        embedding_model="text-embedding-3-small",
+        chunk_size=1200,
+        chunk_overlap=180,
+    )
+    assert not store._index_matches_runtime(
+        existing,
+        embedding_model="text-embedding-3-small",
+        chunk_size=900,
+        chunk_overlap=180,
+    )
+    assert not store._index_matches_runtime(
+        existing,
+        embedding_model="text-embedding-3-small",
+        chunk_size=1200,
+        chunk_overlap=240,
+    )

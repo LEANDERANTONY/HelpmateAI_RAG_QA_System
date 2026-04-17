@@ -117,7 +117,7 @@ class Settings:
     chroma_upsert_batch_size: int = field(default_factory=lambda: _env_int("HELPMATE_CHROMA_UPSERT_BATCH_SIZE", 250))
     index_schema_version: str = os.getenv("HELPMATE_INDEX_SCHEMA_VERSION", "v10")
     chunk_size: int = _env_int("HELPMATE_CHUNK_SIZE", 1200)
-    chunk_overlap: int = _env_int("HELPMATE_CHUNK_OVERLAP", 180)
+    chunk_overlap: int = _env_int("HELPMATE_CHUNK_OVERLAP", 240)
     dense_top_k: int = _env_int("HELPMATE_DENSE_TOP_K", 10)
     lexical_top_k: int = _env_int("HELPMATE_LEXICAL_TOP_K", 10)
     fused_top_k: int = _env_int("HELPMATE_FUSED_TOP_K", 12)
