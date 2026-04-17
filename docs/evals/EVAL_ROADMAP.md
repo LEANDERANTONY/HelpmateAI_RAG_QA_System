@@ -567,7 +567,7 @@ Future work:
 Current state:
 
 - we proved that reranking as a layer is valuable
-- we did not yet prove that `cross-encoder/ms-marco-MiniLM-L-6-v2` is the best reranker choice for Helpmate
+- we did not yet prove that `cross-encoder/ms-marco-MiniLM-L-6-v2` was the best reranker choice for Helpmate
 
 Future work:
 
@@ -575,9 +575,29 @@ Future work:
 - measure:
   - retrieval metrics
   - answer-layer faithfulness
-  - latency
-  - memory usage
-  - VPS deployment fit
+- latency
+- memory usage
+- VPS deployment fit
+
+Update:
+
+- we now completed a first reranker model comparison across the official MS MARCO cross-encoder family
+- models compared:
+  - `cross-encoder/ms-marco-TinyBERT-L2-v2`
+  - `cross-encoder/ms-marco-MiniLM-L6-v2`
+  - `cross-encoder/ms-marco-MiniLM-L12-v2`
+
+What we learned:
+
+- retrieval-only sweep favored `MiniLM-L12-v2`
+- however, the answer-layer comparison and focused `ragas` cross-check both favored keeping `MiniLM-L6-v2`
+- `L12` improved retrieval ordering, but that did not translate into a better end-to-end answer profile on the current benchmark
+
+Current interpretation:
+
+- `cross-encoder/ms-marco-MiniLM-L6-v2` remains the best current production reranker choice
+- `MiniLM-L12-v2` is a strong retrieval candidate, but not a justified production replacement yet
+- this is now a benchmark-backed choice rather than an arbitrary default
 
 ### 4. Benchmark Alternative Embedding Models
 
@@ -632,7 +652,6 @@ What is already justified:
 What is not yet fully justified:
 
 - chunk size / overlap as final values
-- reranker model identity
 - embedding model identity
 
 So the next maturity step for Helpmate is not to make the app merely work.
@@ -745,3 +764,75 @@ Current interpretation:
   - accept a very small grounding dip
   - in exchange for noticeably stronger answer relevancy and context precision
 - `1200 / 180` remains the more conservative fallback if future datasets show a stronger grounding regression
+
+## Reranker Model Sweep Finding
+
+We then benchmarked whether the current reranker model itself should change.
+
+Models compared:
+
+- `cross-encoder/ms-marco-TinyBERT-L2-v2`
+- `cross-encoder/ms-marco-MiniLM-L6-v2`
+- `cross-encoder/ms-marco-MiniLM-L12-v2`
+
+### Retrieval-Level Result
+
+What was measured:
+
+- page-hit rate
+- MRR
+- fragment recall
+- objective score
+- retrieval latency
+
+What we learned:
+
+- `MiniLM-L12-v2` ranked first on retrieval objective
+- `MiniLM-L6-v2` ranked second, but with lower latency
+- `TinyBERT-L2-v2` was fastest, but not strong enough overall to justify the quality tradeoff
+
+Current interpretation:
+
+- if retrieval ordering alone were the decision surface, `MiniLM-L12-v2` would be the leading candidate
+
+### Internal Answer-Layer Result
+
+What was measured:
+
+- supported rate on positive datasets
+- citation page-hit rate
+- evidence fragment recall
+- abstention rate on the negative set
+
+What we learned:
+
+- `MiniLM-L6-v2` kept the better positive supported-rate profile
+- `MiniLM-L6-v2` also preserved the stronger negative-set abstention behavior
+- `MiniLM-L12-v2` improved fragment recall slightly, but at the cost of more false support
+
+Current interpretation:
+
+- the answer-layer comparison favors staying with `MiniLM-L6-v2`
+
+### Focused External `ragas` Result
+
+What was measured:
+
+- supported rate
+- faithfulness
+- answer relevancy
+- context precision
+
+What we learned:
+
+- `MiniLM-L6-v2` was better overall on:
+  - supported rate
+  - faithfulness
+  - answer relevancy
+- `MiniLM-L12-v2` only edged ahead slightly on overall context precision
+
+Current interpretation:
+
+- the external check reinforces the internal answer-layer result
+- `MiniLM-L12-v2` is a stronger retrieval-only model than it is an end-to-end answer model in the current stack
+- `cross-encoder/ms-marco-MiniLM-L6-v2` remains the justified production reranker

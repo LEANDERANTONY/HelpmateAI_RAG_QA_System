@@ -12,6 +12,7 @@ Current ADRs:
 - `ADR-006-deterministic-weak-evidence-recovery-and-guardrails.md`
 - `ADR-007-document-topology-planning-and-bounded-evidence-selection.md`
 - `ADR-008-benchmark-driven-stack-defaults-and-experimental-selector.md`
+- `ADR-009-benchmark-driven-chunking-default-1200-240.md`
 
 Usage notes:
 
@@ -32,3 +33,5 @@ Current state note:
   - benchmark-driven confirmation that reranker stays
   - planner/router stays as a modest positive
   - evidence selector remains experimental rather than default
+- the newest retrieval-tuning governance change is:
+  - chunking default promoted from `1200 / 180` to `1200 / 240` after retrieval, answer-layer, and focused `ragas` validation
