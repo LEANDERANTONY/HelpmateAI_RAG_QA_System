@@ -6,8 +6,9 @@ from pathlib import Path
 from backend.main import WORKSPACE_EXPIRES_AT_KEY
 from backend.maintenance import sweep_local_workspace_storage
 from backend.store import LocalApiRecordStore
+from src.cache.answer_cache import AnswerCache
 from src.config import Settings
-from src.schemas import DocumentRecord, IndexRecord
+from src.schemas import AnswerResult, CacheStatus, DocumentRecord, IndexRecord
 
 
 def _settings(tmp_path: Path) -> Settings:
@@ -96,12 +97,31 @@ def test_sweeper_deletes_expired_workspaces_and_orphans(tmp_path: Path):
     orphan_index_dir = settings.indexes_dir / settings.index_schema_version / "orphan-fingerprint"
     orphan_index_dir.mkdir(parents=True, exist_ok=True)
     (orphan_index_dir / "index_meta.json").write_text("{}", encoding="utf-8")
+    cache = AnswerCache(settings.cache_dir)
+    active_cache_key = cache.build_key("fingerprint-active", "What is active?", "v1", "v1", "gpt")
+    expired_cache_key = cache.build_key("fingerprint-expired", "What is expired?", "v1", "v1", "gpt")
+    orphan_cache_key = cache.build_key("fingerprint-orphan", "What is orphaned?", "v1", "v1", "gpt")
+    answer = AnswerResult(
+        question="What is covered?",
+        answer="Coverage is limited to the cited clauses.",
+        citations=["Page 2"],
+        evidence=[],
+        supported=True,
+        cache_status=CacheStatus(index_reused=False, answer_cache_hit=False),
+        model_name="gpt",
+    )
+    cache.set(active_cache_key, answer, fingerprint="fingerprint-active", document_id="doc-active")
+    cache.set(expired_cache_key, answer, fingerprint="fingerprint-expired", document_id="doc-expired")
+    cache.set(orphan_cache_key, answer, fingerprint="fingerprint-orphan", document_id="doc-orphan")
+    legacy_cache_path = settings.cache_dir / "legacy-cache.json"
+    legacy_cache_path.write_text("{}", encoding="utf-8")
 
     summary = sweep_local_workspace_storage(settings)
 
     assert summary.expired_workspaces_deleted == 1
     assert summary.orphan_uploads_deleted == 1
     assert summary.orphan_index_dirs_deleted == 1
+    assert summary.orphan_cache_files_deleted == 2
 
     assert store.get_document("doc-expired") is None
     assert store.get_index("doc-expired") is None
@@ -115,3 +135,7 @@ def test_sweeper_deletes_expired_workspaces_and_orphans(tmp_path: Path):
     assert not (settings.indexes_dir / settings.index_schema_version / "fingerprint-expired").exists()
     assert (settings.indexes_dir / settings.index_schema_version / "fingerprint-active").exists()
     assert not orphan_index_dir.exists()
+    assert not (settings.cache_dir / f"{expired_cache_key}.json").exists()
+    assert not (settings.cache_dir / f"{orphan_cache_key}.json").exists()
+    assert not legacy_cache_path.exists()
+    assert (settings.cache_dir / f"{active_cache_key}.json").exists()

@@ -20,6 +20,7 @@ class SweepSummary:
     expired_workspaces_deleted: int = 0
     orphan_uploads_deleted: int = 0
     orphan_index_dirs_deleted: int = 0
+    orphan_cache_files_deleted: int = 0
 
     def to_dict(self) -> dict[str, int]:
         return asdict(self)
@@ -97,6 +98,23 @@ def sweep_local_workspace_storage(settings: Settings | None = None) -> SweepSumm
                     continue
                 shutil.rmtree(fingerprint_dir, ignore_errors=True)
                 summary.orphan_index_dirs_deleted += 1
+
+    cache_root = _safe_resolve(settings.cache_dir)
+    if cache_root.exists():
+        for cache_path in cache_root.glob("*.json"):
+            try:
+                payload = json.loads(cache_path.read_text(encoding="utf-8"))
+            except Exception:
+                cache_path.unlink(missing_ok=True)
+                summary.orphan_cache_files_deleted += 1
+                continue
+
+            fingerprint = payload.get("_cache_fingerprint")
+            if fingerprint and fingerprint in active_fingerprints:
+                continue
+
+            cache_path.unlink(missing_ok=True)
+            summary.orphan_cache_files_deleted += 1
 
     return summary
 

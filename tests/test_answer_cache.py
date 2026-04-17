@@ -1,4 +1,5 @@
 import shutil
+import json
 from pathlib import Path
 
 from src.cache.answer_cache import AnswerCache
@@ -21,12 +22,15 @@ def test_answer_cache_round_trip():
         model_name="gpt",
     )
 
-    cache.set(key, answer)
+    cache.set(key, answer, fingerprint="fingerprint", document_id="doc-1")
     cached = cache.get(key)
 
     assert cached is not None
     assert cached.answer == answer.answer
     assert cached.supported is True
     assert cached.cache_status.answer_cache_hit is True
+    payload = json.loads((cache_dir / f"{key}.json").read_text(encoding="utf-8"))
+    assert payload["_cache_fingerprint"] == "fingerprint"
+    assert payload["_cache_document_id"] == "doc-1"
 
     shutil.rmtree(cache_dir)

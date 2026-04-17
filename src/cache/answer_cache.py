@@ -64,5 +64,31 @@ class AnswerCache:
             query_variants=payload.get("query_variants", [payload["question"]]),
         )
 
-    def set(self, key: str, answer: AnswerResult) -> None:
-        self._cache_path(key).write_text(json.dumps(answer.to_dict(), indent=2), encoding="utf-8")
+    def set(
+        self,
+        key: str,
+        answer: AnswerResult,
+        *,
+        fingerprint: str | None = None,
+        document_id: str | None = None,
+    ) -> None:
+        payload = answer.to_dict()
+        if fingerprint:
+            payload["_cache_fingerprint"] = fingerprint
+        if document_id:
+            payload["_cache_document_id"] = document_id
+        self._cache_path(key).write_text(json.dumps(payload, indent=2), encoding="utf-8")
+
+    def delete_for_fingerprint(self, fingerprint: str) -> int:
+        deleted = 0
+        for path in self.cache_dir.glob("*.json"):
+            try:
+                payload = json.loads(path.read_text(encoding="utf-8"))
+            except Exception:
+                path.unlink(missing_ok=True)
+                deleted += 1
+                continue
+            if payload.get("_cache_fingerprint") == fingerprint:
+                path.unlink(missing_ok=True)
+                deleted += 1
+        return deleted

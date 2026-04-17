@@ -107,7 +107,12 @@ class HelpmatePipeline:
         retrieval_result = self.evidence_selector.select(question, retrieval_result)
         answer = self.generate_answer(document.document_id, question, retrieval_result)
         answer.cache_status = CacheStatus(index_reused=index_record.reused, answer_cache_hit=False)
-        self.answer_cache.set(cache_key, answer)
+        self.answer_cache.set(
+            cache_key,
+            answer,
+            fingerprint=document.fingerprint,
+            document_id=document.document_id,
+        )
         return answer
 
     def delete_workspace(self, document: DocumentRecord, index_record: IndexRecord | None = None) -> None:
@@ -116,6 +121,7 @@ class HelpmatePipeline:
                 fingerprint=index_record.fingerprint,
                 collection_name=index_record.collection_name,
             )
+        self.answer_cache.delete_for_fingerprint(document.fingerprint)
         source_path = Path(document.source_path)
         try:
             if source_path.exists() and source_path.is_file():
