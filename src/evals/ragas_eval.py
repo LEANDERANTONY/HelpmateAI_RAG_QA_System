@@ -12,7 +12,7 @@ from ragas.embeddings import LangchainEmbeddingsWrapper
 from ragas.llms import LangchainLLMWrapper
 from ragas.metrics import Faithfulness, LLMContextPrecisionWithoutReference, ResponseRelevancy
 
-from src.config import get_settings
+from src.config import Settings, get_settings
 from src.pipeline import HelpmatePipeline
 
 
@@ -27,8 +27,8 @@ def _safe_mean(values: list[float]) -> float | None:
 
 
 class RagasEvaluator:
-    def __init__(self) -> None:
-        settings = get_settings()
+    def __init__(self, settings: Settings | None = None) -> None:
+        settings = settings or get_settings()
         self.settings = settings
         self.available = bool(settings.openai_api_key)
         self._metrics = {}
@@ -75,6 +75,7 @@ class RagasEvaluator:
                 "dataset_size": len(dataset),
             }
 
+        self.settings.ensure_dirs()
         pipeline = HelpmatePipeline(self.settings)
         document = pipeline.ingest_document(document_path)
         index_record = pipeline.build_or_load_index(document)
@@ -87,6 +88,8 @@ class RagasEvaluator:
         for item in dataset:
             question = item["question"]
             retrieval = pipeline.retrieve_evidence(document.document_id, document.fingerprint, question)
+            if pipeline.settings.evidence_selector_enabled:
+                retrieval = pipeline.evidence_selector.select(question, retrieval)
             answer = pipeline.generate_answer(document.document_id, question, retrieval).to_dict()
             sample = self._build_sample(question, answer)
             row: dict[str, object] = {

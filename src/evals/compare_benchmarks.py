@@ -3,6 +3,7 @@ from __future__ import annotations
 import json
 from pathlib import Path
 
+from src.config import Settings
 from src.evals.openai_file_search_benchmark import OpenAIFileSearchBenchmark
 from src.evals.ragas_eval import RagasEvaluator
 from src.evals.retrieval_eval import _save_report, run_negative_eval, run_retrieval_eval
@@ -10,10 +11,16 @@ from src.evals.vendor_answer_eval import VendorAnswerEvaluator
 from src.evals.vectara_benchmark import VectaraBenchmark
 
 
-def compare(document_path: str | Path, positive_dataset_path: str | Path, negative_dataset_path: str | Path) -> dict:
-    local_summary = run_retrieval_eval(positive_dataset_path, document_path)
-    local_negative = run_negative_eval(negative_dataset_path, document_path)
-    ragas_summary = RagasEvaluator().evaluate(positive_dataset_path, document_path)
+def compare(
+    document_path: str | Path,
+    positive_dataset_path: str | Path,
+    negative_dataset_path: str | Path,
+    *,
+    settings: Settings | None = None,
+) -> dict:
+    local_summary = run_retrieval_eval(positive_dataset_path, document_path, settings=settings)
+    local_negative = run_negative_eval(negative_dataset_path, document_path, settings=settings)
+    ragas_summary = RagasEvaluator(settings).evaluate(positive_dataset_path, document_path)
     openai_summary = OpenAIFileSearchBenchmark().benchmark(positive_dataset_path, document_path)
     vectara_summary = VectaraBenchmark().benchmark(positive_dataset_path, document_path)
     vendor_answer_summary = VendorAnswerEvaluator().evaluate(positive_dataset_path, document_path)

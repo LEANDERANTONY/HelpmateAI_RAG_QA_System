@@ -5,7 +5,7 @@ from dataclasses import replace
 from pathlib import Path
 from datetime import datetime
 
-from src.config import get_settings
+from src.config import Settings, get_settings
 from src.pipeline import HelpmatePipeline
 
 
@@ -42,6 +42,7 @@ def run_retrieval_eval(
     dataset_path: str | Path,
     document_path: str | Path,
     *,
+    settings: Settings | None = None,
     chunk_size: int | None = None,
     chunk_overlap: int | None = None,
     dense_top_k: int | None = None,
@@ -56,23 +57,24 @@ def run_retrieval_eval(
     global_fallback_top_k: int | None = None,
 ) -> dict:
     dataset = json.loads(Path(dataset_path).read_text(encoding="utf-8"))
-    settings = get_settings()
-    settings = replace(
-        settings,
-        chunk_size=chunk_size or settings.chunk_size,
-        chunk_overlap=chunk_overlap or settings.chunk_overlap,
-        dense_top_k=dense_top_k or settings.dense_top_k,
-        lexical_top_k=lexical_top_k or settings.lexical_top_k,
-        fused_top_k=fused_top_k or settings.fused_top_k,
-        final_top_k=final_top_k or settings.final_top_k,
-        synopsis_dense_top_k=synopsis_dense_top_k or settings.synopsis_dense_top_k,
-        synopsis_lexical_top_k=synopsis_lexical_top_k or settings.synopsis_lexical_top_k,
-        synopsis_fused_top_k=synopsis_fused_top_k or settings.synopsis_fused_top_k,
-        synopsis_section_window=synopsis_section_window or settings.synopsis_section_window,
-        planner_candidate_region_limit=planner_candidate_region_limit or settings.planner_candidate_region_limit,
-        global_fallback_top_k=global_fallback_top_k or settings.global_fallback_top_k,
+    runtime_settings = settings or get_settings()
+    runtime_settings = replace(
+        runtime_settings,
+        chunk_size=chunk_size or runtime_settings.chunk_size,
+        chunk_overlap=chunk_overlap or runtime_settings.chunk_overlap,
+        dense_top_k=dense_top_k or runtime_settings.dense_top_k,
+        lexical_top_k=lexical_top_k or runtime_settings.lexical_top_k,
+        fused_top_k=fused_top_k or runtime_settings.fused_top_k,
+        final_top_k=final_top_k or runtime_settings.final_top_k,
+        synopsis_dense_top_k=synopsis_dense_top_k or runtime_settings.synopsis_dense_top_k,
+        synopsis_lexical_top_k=synopsis_lexical_top_k or runtime_settings.synopsis_lexical_top_k,
+        synopsis_fused_top_k=synopsis_fused_top_k or runtime_settings.synopsis_fused_top_k,
+        synopsis_section_window=synopsis_section_window or runtime_settings.synopsis_section_window,
+        planner_candidate_region_limit=planner_candidate_region_limit or runtime_settings.planner_candidate_region_limit,
+        global_fallback_top_k=global_fallback_top_k or runtime_settings.global_fallback_top_k,
     )
-    pipeline = HelpmatePipeline(settings)
+    runtime_settings.ensure_dirs()
+    pipeline = HelpmatePipeline(runtime_settings)
     document = pipeline.ingest_document(document_path)
     pipeline.build_or_load_index(document)
 
@@ -144,26 +146,28 @@ def run_retrieval_eval(
         "global_fallback_recovery_rate": global_fallback_hits / max(global_fallback_uses, 1),
         "multi_region_recall": multi_region_total / max(distributed_questions, 1),
         "settings": {
-            "chunk_size": settings.chunk_size,
-            "chunk_overlap": settings.chunk_overlap,
-            "dense_top_k": settings.dense_top_k,
-            "lexical_top_k": settings.lexical_top_k,
-            "fused_top_k": settings.fused_top_k,
-            "final_top_k": settings.final_top_k,
-            "synopsis_dense_top_k": settings.synopsis_dense_top_k,
-            "synopsis_lexical_top_k": settings.synopsis_lexical_top_k,
-            "synopsis_fused_top_k": settings.synopsis_fused_top_k,
-            "synopsis_section_window": settings.synopsis_section_window,
-            "planner_candidate_region_limit": settings.planner_candidate_region_limit,
-            "global_fallback_top_k": settings.global_fallback_top_k,
+            "chunk_size": runtime_settings.chunk_size,
+            "chunk_overlap": runtime_settings.chunk_overlap,
+            "dense_top_k": runtime_settings.dense_top_k,
+            "lexical_top_k": runtime_settings.lexical_top_k,
+            "fused_top_k": runtime_settings.fused_top_k,
+            "final_top_k": runtime_settings.final_top_k,
+            "synopsis_dense_top_k": runtime_settings.synopsis_dense_top_k,
+            "synopsis_lexical_top_k": runtime_settings.synopsis_lexical_top_k,
+            "synopsis_fused_top_k": runtime_settings.synopsis_fused_top_k,
+            "synopsis_section_window": runtime_settings.synopsis_section_window,
+            "planner_candidate_region_limit": runtime_settings.planner_candidate_region_limit,
+            "global_fallback_top_k": runtime_settings.global_fallback_top_k,
         },
         "results": results,
     }
 
 
-def run_negative_eval(dataset_path: str | Path, document_path: str | Path) -> dict:
+def run_negative_eval(dataset_path: str | Path, document_path: str | Path, *, settings: Settings | None = None) -> dict:
     dataset = json.loads(Path(dataset_path).read_text(encoding="utf-8"))
-    pipeline = HelpmatePipeline()
+    runtime_settings = settings or get_settings()
+    runtime_settings.ensure_dirs()
+    pipeline = HelpmatePipeline(runtime_settings)
     document = pipeline.ingest_document(document_path)
     index_record = pipeline.build_or_load_index(document)
 

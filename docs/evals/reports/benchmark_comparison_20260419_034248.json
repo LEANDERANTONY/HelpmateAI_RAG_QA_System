@@ -1,0 +1,1340 @@
+{
+  "local_retrieval": {
+    "dataset_size": 10,
+    "top_k_page_hit_rate": 1.0,
+    "mean_reciprocal_rank": 0.8833333333333332,
+    "section_hit_rate": 1.0,
+    "region_hit_rate": 0.2,
+    "plan_accuracy": 0.8,
+    "global_fallback_recovery_rate": 1.0,
+    "multi_region_recall": 0.0,
+    "settings": {
+      "chunk_size": 1200,
+      "chunk_overlap": 240,
+      "dense_top_k": 10,
+      "lexical_top_k": 10,
+      "fused_top_k": 12,
+      "final_top_k": 4,
+      "synopsis_dense_top_k": 8,
+      "synopsis_lexical_top_k": 8,
+      "synopsis_fused_top_k": 5,
+      "synopsis_section_window": 4,
+      "planner_candidate_region_limit": 10,
+      "global_fallback_top_k": 3
+    },
+    "results": [
+      {
+        "question": "What is the main focus of the pancreas8 paper?",
+        "expected_pages": [
+          "Page 1"
+        ],
+        "found_pages": [
+          "Page 1",
+          "Page 2",
+          "Page 11",
+          "Page 14"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "What is the main focus of the pancreas8 paper?",
+        "strategy_notes": [
+          "Planner intent: summary.",
+          "Planner evidence spread: global.",
+          "Planner selected synopsis_first with soft_multi_region constraints.",
+          "Planner source: deterministic at confidence 0.78.",
+          "Preferred content types: general, results.",
+          "Global-summary routing assembled 4 anchor sections.",
+          "Global-summary top synopsis: Document Overview.",
+          "Global-summary fallback added extra overview evidence outside the anchor sections."
+        ],
+        "retrieval_plan": {
+          "intent_type": "summary",
+          "evidence_spread": "global",
+          "constraint_mode": "soft_multi_region",
+          "preferred_route": "synopsis_first",
+          "target_region_ids": [
+            "b6be1e198110b628-document-overview",
+            "Abstract",
+            "Abstract|Research, N. Comprehensive and Integrated Genomic Characterization of Adult Soft Tissue",
+            "Abstract|Using Multi-Directional Recurrent Neural Networks. IEEE Trans Biomed Eng 66, 1477\u20131490"
+          ],
+          "target_region_kinds": [
+            "overview",
+            "discussion",
+            "evidence"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": true,
+          "planner_confidence": 0.78,
+          "planner_source": "deterministic",
+          "global_fallback_used": true
+        }
+      },
+      {
+        "question": "Why does the paper argue that multimodal fusion is needed in oncology?",
+        "expected_pages": [
+          "Page 4"
+        ],
+        "found_pages": [
+          "Page 4",
+          "Page 7",
+          "Page 1",
+          "Page 1"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "Why does the paper argue that multimodal fusion is needed in oncology?",
+        "strategy_notes": [
+          "Planner intent: lookup.",
+          "Planner evidence spread: atomic.",
+          "Planner selected chunk_first with none constraints.",
+          "Planner source: deterministic at confidence 0.86.",
+          "Preferred content types: general, definition.",
+          "Chunk-first retrieval path used for exact grounding."
+        ],
+        "retrieval_plan": {
+          "intent_type": "lookup",
+          "evidence_spread": "atomic",
+          "constraint_mode": "none",
+          "preferred_route": "chunk_first",
+          "target_region_ids": [
+            "b6be1e198110b628-document-overview",
+            "Abstract"
+          ],
+          "target_region_kinds": [
+            "general",
+            "rules",
+            "definitions"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": false,
+          "planner_confidence": 0.86,
+          "planner_source": "deterministic",
+          "global_fallback_used": false
+        }
+      },
+      {
+        "question": "What three fusion stages does the paper describe?",
+        "expected_pages": [
+          "Page 6",
+          "Page 19"
+        ],
+        "found_pages": [
+          "Page 6",
+          "Page 6",
+          "Page 7",
+          "Page 6"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "What three fusion stages does the paper describe?",
+        "strategy_notes": [
+          "Planner intent: lookup.",
+          "Planner evidence spread: atomic.",
+          "Planner selected chunk_first with none constraints.",
+          "Planner source: deterministic at confidence 0.86.",
+          "Preferred content types: general, definition.",
+          "Chunk-first retrieval path used for exact grounding."
+        ],
+        "retrieval_plan": {
+          "intent_type": "lookup",
+          "evidence_spread": "atomic",
+          "constraint_mode": "none",
+          "preferred_route": "chunk_first",
+          "target_region_ids": [
+            "b6be1e198110b628-document-overview",
+            "Abstract"
+          ],
+          "target_region_kinds": [
+            "general",
+            "rules",
+            "definitions"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": false,
+          "planner_confidence": 0.86,
+          "planner_source": "deterministic",
+          "global_fallback_used": false
+        }
+      },
+      {
+        "question": "How does the paper describe early fusion?",
+        "expected_pages": [
+          "Page 6"
+        ],
+        "found_pages": [
+          "Page 6",
+          "Page 6",
+          "Page 6",
+          "Page 19"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "How does the paper describe early fusion?",
+        "strategy_notes": [
+          "Planner intent: procedure.",
+          "Planner evidence spread: sectional.",
+          "Planner selected synopsis_first with soft_local constraints.",
+          "Planner source: deterministic at confidence 0.74.",
+          "Preferred content types: methodology, general, results.",
+          "Synopsis-first routing prioritized 4 sections before chunk retrieval.",
+          "Top synopsis region: Research, N. Comprehensive and Integrated Genomic Characterization of Adult Soft Tissue."
+        ],
+        "retrieval_plan": {
+          "intent_type": "procedure",
+          "evidence_spread": "sectional",
+          "constraint_mode": "soft_local",
+          "preferred_route": "synopsis_first",
+          "target_region_ids": [
+            "Abstract|Research, N. Comprehensive and Integrated Genomic Characterization of Adult Soft Tissue",
+            "Abstract|Using Multi-Directional Recurrent Neural Networks. IEEE Trans Biomed Eng 66, 1477\u20131490",
+            "b6be1e198110b628-document-overview",
+            "Abstract"
+          ],
+          "target_region_kinds": [
+            "procedure",
+            "evidence",
+            "general"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": true,
+          "planner_confidence": 0.74,
+          "planner_source": "deterministic",
+          "global_fallback_used": false
+        }
+      },
+      {
+        "question": "What is one advantage and one limitation of late fusion according to the paper?",
+        "expected_pages": [
+          "Page 6"
+        ],
+        "found_pages": [
+          "Page 6",
+          "Page 6",
+          "Page 6",
+          "Page 7"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "What is one advantage and one limitation of late fusion according to the paper?",
+        "strategy_notes": [
+          "Planner intent: lookup.",
+          "Planner evidence spread: atomic.",
+          "Planner selected chunk_first with none constraints.",
+          "Planner source: deterministic at confidence 0.86.",
+          "Preferred content types: definition, general.",
+          "Chunk-first retrieval path used for exact grounding."
+        ],
+        "retrieval_plan": {
+          "intent_type": "lookup",
+          "evidence_spread": "atomic",
+          "constraint_mode": "none",
+          "preferred_route": "chunk_first",
+          "target_region_ids": [
+            "b6be1e198110b628-document-overview",
+            "Abstract"
+          ],
+          "target_region_kinds": [
+            "definitions",
+            "general"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": false,
+          "planner_confidence": 0.86,
+          "planner_source": "deterministic",
+          "global_fallback_used": false
+        }
+      },
+      {
+        "question": "What examples of multimodal data types does the paper mention for oncology?",
+        "expected_pages": [
+          "Page 1",
+          "Page 5"
+        ],
+        "found_pages": [
+          "Page 4",
+          "Page 1",
+          "Page 7",
+          "Page 7"
+        ],
+        "matched": true,
+        "reciprocal_rank": 0.5,
+        "query_used": "What examples of multimodal data types does the paper mention for oncology?",
+        "strategy_notes": [
+          "Planner intent: lookup.",
+          "Planner evidence spread: atomic.",
+          "Planner selected chunk_first with none constraints.",
+          "Planner source: deterministic at confidence 0.86.",
+          "Preferred content types: general, definition.",
+          "Chunk-first retrieval path used for exact grounding."
+        ],
+        "retrieval_plan": {
+          "intent_type": "lookup",
+          "evidence_spread": "atomic",
+          "constraint_mode": "none",
+          "preferred_route": "chunk_first",
+          "target_region_ids": [
+            "b6be1e198110b628-document-overview",
+            "Abstract"
+          ],
+          "target_region_kinds": [
+            "general",
+            "rules",
+            "definitions"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": false,
+          "planner_confidence": 0.86,
+          "planner_source": "deterministic",
+          "global_fallback_used": false
+        }
+      },
+      {
+        "question": "What major challenge does the paper identify around matched multimodal datasets?",
+        "expected_pages": [
+          "Page 8"
+        ],
+        "found_pages": [
+          "Page 7",
+          "Page 1",
+          "Page 8",
+          "Page 9"
+        ],
+        "matched": true,
+        "reciprocal_rank": 0.3333333333333333,
+        "query_used": "What major challenge does the paper identify around matched multimodal datasets?",
+        "strategy_notes": [
+          "Planner intent: lookup.",
+          "Planner evidence spread: atomic.",
+          "Planner selected chunk_first with none constraints.",
+          "Planner source: deterministic at confidence 0.86.",
+          "Preferred content types: general, definition.",
+          "Chunk-first retrieval path used for exact grounding."
+        ],
+        "retrieval_plan": {
+          "intent_type": "lookup",
+          "evidence_spread": "atomic",
+          "constraint_mode": "none",
+          "preferred_route": "chunk_first",
+          "target_region_ids": [
+            "b6be1e198110b628-document-overview",
+            "Abstract"
+          ],
+          "target_region_kinds": [
+            "general",
+            "rules",
+            "definitions"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": false,
+          "planner_confidence": 0.86,
+          "planner_source": "deterministic",
+          "global_fallback_used": false
+        }
+      },
+      {
+        "question": "What challenge does the paper identify for clinical adoption of deep learning models?",
+        "expected_pages": [
+          "Page 8"
+        ],
+        "found_pages": [
+          "Page 8",
+          "Page 1",
+          "Page 1",
+          "Page 2"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "What challenge does the paper identify for clinical adoption of deep learning models?",
+        "strategy_notes": [
+          "Planner intent: lookup.",
+          "Planner evidence spread: atomic.",
+          "Planner selected chunk_first with none constraints.",
+          "Planner source: deterministic at confidence 0.86.",
+          "Preferred content types: general, definition.",
+          "Chunk-first retrieval path used for exact grounding."
+        ],
+        "retrieval_plan": {
+          "intent_type": "lookup",
+          "evidence_spread": "atomic",
+          "constraint_mode": "none",
+          "preferred_route": "chunk_first",
+          "target_region_ids": [
+            "b6be1e198110b628-document-overview",
+            "Abstract"
+          ],
+          "target_region_kinds": [
+            "general",
+            "rules",
+            "definitions"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": false,
+          "planner_confidence": 0.86,
+          "planner_source": "deterministic",
+          "global_fallback_used": false
+        }
+      },
+      {
+        "question": "What role do DREAM and Kaggle competitions play according to the paper?",
+        "expected_pages": [
+          "Page 5",
+          "Page 9"
+        ],
+        "found_pages": [
+          "Page 5",
+          "Page 9",
+          "Page 4",
+          "Page 17"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "What role do DREAM and Kaggle competitions play according to the paper?",
+        "strategy_notes": [
+          "Planner intent: lookup.",
+          "Planner evidence spread: atomic.",
+          "Planner selected chunk_first with none constraints.",
+          "Planner source: deterministic at confidence 0.86.",
+          "Preferred content types: general, definition.",
+          "Chunk-first retrieval path used for exact grounding."
+        ],
+        "retrieval_plan": {
+          "intent_type": "lookup",
+          "evidence_spread": "atomic",
+          "constraint_mode": "none",
+          "preferred_route": "chunk_first",
+          "target_region_ids": [],
+          "target_region_kinds": [
+            "general",
+            "rules",
+            "definitions"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": false,
+          "planner_confidence": 0.86,
+          "planner_source": "deterministic",
+          "global_fallback_used": false
+        }
+      },
+      {
+        "question": "What does the paper say about OMOP in relation to multimodal data?",
+        "expected_pages": [
+          "Page 9"
+        ],
+        "found_pages": [
+          "Page 9",
+          "Page 6",
+          "Page 1",
+          "Page 5"
+        ],
+        "matched": true,
+        "reciprocal_rank": 1.0,
+        "query_used": "What does the paper say about OMOP in relation to multimodal data?",
+        "strategy_notes": [
+          "Planner intent: summary.",
+          "Planner evidence spread: sectional.",
+          "Planner selected synopsis_first with soft_local constraints.",
+          "Planner source: deterministic at confidence 0.74.",
+          "Preferred content types: general, results.",
+          "Synopsis-first routing prioritized 4 sections before chunk retrieval.",
+          "Top synopsis region: Document Overview."
+        ],
+        "retrieval_plan": {
+          "intent_type": "summary",
+          "evidence_spread": "sectional",
+          "constraint_mode": "soft_local",
+          "preferred_route": "synopsis_first",
+          "target_region_ids": [
+            "b6be1e198110b628-document-overview",
+            "Abstract",
+            "Abstract|Research, N. Comprehensive and Integrated Genomic Characterization of Adult Soft Tissue",
+            "Abstract|Using Multi-Directional Recurrent Neural Networks. IEEE Trans Biomed Eng 66, 1477\u20131490"
+          ],
+          "target_region_kinds": [
+            "overview",
+            "discussion",
+            "evidence"
+          ],
+          "hard_filters": {},
+          "use_global_fallback": true,
+          "planner_confidence": 0.74,
+          "planner_source": "deterministic",
+          "global_fallback_used": false
+        }
+      }
+    ]
+  },
+  "local_negative": {
+    "dataset_size": 5,
+    "abstention_rate": 1.0,
+    "results": [
+      {
+        "question": "What exact convolutional network accuracy did this review paper achieve on pancreatic CT classification?",
+        "abstained": true,
+        "answer_preview": "Not supported",
+        "note": "The provided evidence only contains reference lists and no results section or reported pancreatic CT classification accuracy for a convolutional network [Source 1][Source 2][Source 3][Source 4].",
+        "supported": false
+      },
+      {
+        "question": "What seven urinary biomarker features were used in the experiments of this paper?",
+        "abstained": true,
+        "answer_preview": "Not supported.",
+        "note": "The provided evidence does not mention any urinary biomarker features or list seven features used in experiments. It only discusses multimodal biomarker discovery and radiomics/radiogenomics in general [Source 1][Source 3][Source 4].",
+        "supported": false
+      },
+      {
+        "question": "What car-insurance dataset was integrated in the multimodal pipeline?",
+        "abstained": true,
+        "answer_preview": "Not supported.",
+        "note": "The evidence only mentions insurance coverage as a general source of missing modality in oncology data [Source 4], but it does not name any car-insurance dataset or describe a multimodal pipeline using one.",
+        "supported": false
+      },
+      {
+        "question": "What surgical treatment schedule does the paper recommend for PDAC patients?",
+        "abstained": true,
+        "answer_preview": "Not supported.",
+        "note": "The provided evidence only shows references and unrelated text; it does not mention PDAC surgical treatment or any recommended surgery schedule [Source 1][Source 2][Source 3][Source 4].",
+        "supported": false
+      },
+      {
+        "question": "What theorem proof does the paper provide for kernel convergence?",
+        "abstained": true,
+        "answer_preview": "Not supported.",
+        "note": "The provided evidence only shows discussion of kernel-based methods and a citation to a kernel-based integration paper, but it does not state any theorem or proof about kernel convergence [Source 1][Source 3].",
+        "supported": false
+      }
+    ]
+  },
+  "ragas": {
+    "available": true,
+    "dataset_size": 10,
+    "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\pancreas8.pdf",
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "faithfulness_mean": 0.925,
+    "answer_relevancy_mean": 0.5527202358292167,
+    "context_precision_mean": 0.8999999999598611,
+    "results": [
+      {
+        "question": "What is the main focus of the pancreas8 paper?",
+        "supported": true,
+        "route_used": [
+          "Planner intent: summary.",
+          "Planner evidence spread: global.",
+          "Planner selected synopsis_first with soft_multi_region constraints.",
+          "Planner source: deterministic at confidence 0.78.",
+          "Preferred content types: general, results.",
+          "Global-summary routing assembled 4 anchor sections.",
+          "Global-summary top synopsis: Document Overview.",
+          "Global-summary fallback added extra overview evidence outside the anchor sections.",
+          "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 1, Page 2, Page 14."
+        ],
+        "query_used": "What is the main focus of the pancreas8 paper?",
+        "citations": [
+          "pancreas8.pdf - Page 1",
+          "pancreas8.pdf - Page 2",
+          "pancreas8.pdf - Page 14",
+          "pancreas8.pdf - Page 11"
+        ],
+        "faithfulness": 0.75,
+        "answer_relevancy": 0.4266986074928554,
+        "context_precision": 0.99999999995
+      },
+      {
+        "question": "Why does the paper argue that multimodal fusion is needed in oncology?",
+        "supported": true,
+        "route_used": [
+          "Planner intent: lookup.",
+          "Planner evidence spread: atomic.",
+          "Planner selected chunk_first with none constraints.",
+          "Planner source: deterministic at confidence 0.86.",
+          "Preferred content types: general, definition.",
+          "Chunk-first retrieval path used for exact grounding."
+        ],
+        "query_used": "Why does the paper argue that multimodal fusion is needed in oncology?",
+        "citations": [
+          "pancreas8.pdf - Page 4",
+          "pancreas8.pdf - Page 7",
+          "pancreas8.pdf - Page 1",
+          "pancreas8.pdf - Page 1"
+        ],
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6840007635007898,
+        "context_precision": 0.999999999975
+      },
+      {
+        "question": "What three fusion stages does the paper describe?",
+        "supported": true,
+        "route_used": [
+          "Planner intent: lookup.",
+          "Planner evidence spread: atomic.",
+          "Planner selected chunk_first with none constraints.",
+          "Planner source: deterministic at confidence 0.86.",
+          "Preferred content types: general, definition.",
+          "Chunk-first retrieval path used for exact grounding."
+        ],
+        "query_used": "What three fusion stages does the paper describe?",
+        "citations": [
+          "pancreas8.pdf - Page 6",
+          "pancreas8.pdf - Page 6",
+          "pancreas8.pdf - Page 7",
+          "pancreas8.pdf - Page 6"
+        ],
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7156402242952421,
+        "context_precision": 0.9999999999666667
+      },
+      {
+        "question": "How does the paper describe early fusion?",
+        "supported": true,
+        "route_used": [
+          "Planner intent: procedure.",
+          "Planner evidence spread: sectional.",
+          "Planner selected synopsis_first with soft_local constraints.",
+          "Planner source: deterministic at confidence 0.74.",
+          "Preferred content types: methodology, general, results.",
+          "Synopsis-first routing prioritized 4 sections before chunk retrieval.",
+          "Top synopsis region: Research, N. Comprehensive and Integrated Genomic Characterization of Adult Soft Tissue.",
+          "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 6, Page 19."
+        ],
+        "query_used": "How does the paper describe early fusion?",
+        "citations": [
+          "pancreas8.pdf - Page 6",
+          "pancreas8.pdf - Page 19",
+          "pancreas8.pdf - Page 6",
+          "pancreas8.pdf - Page 6"
+        ],
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.4641892076823637,
+        "context_precision": 0.999999999975
+      },
+      {
+        "question": "What is one advantage and one limitation of late fusion according to the paper?",
+        "supported": true,
+        "route_used": [
+          "Planner intent: lookup.",
+          "Planner evidence spread: atomic.",
+          "Planner selected chunk_first with none constraints.",
+          "Planner source: deterministic at confidence 0.86.",
+          "Preferred content types: definition, general.",
+          "Chunk-first retrieval path used for exact grounding."
+        ],
+        "query_used": "What is one advantage and one limitation of late fusion according to the paper?",
+        "citations": [
+          "pancreas8.pdf - Page 6",
+          "pancreas8.pdf - Page 6",
+          "pancreas8.pdf - Page 6",
+          "pancreas8.pdf - Page 7"
+        ],
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.5120964099500488,
+        "context_precision": 0.9999999999666667
+      },
+      {
+        "question": "What examples of multimodal data types does the paper mention for oncology?",
+        "supported": true,
+        "route_used": [
+          "Planner intent: lookup.",
+          "Planner evidence spread: atomic.",
+          "Planner selected chunk_first with none constraints.",
+          "Planner source: deterministic at confidence 0.86.",
+          "Preferred content types: general, definition.",
+          "Chunk-first retrieval path used for exact grounding."
+        ],
+        "query_used": "What examples of multimodal data types does the paper mention for oncology?",
+        "citations": [
+          "pancreas8.pdf - Page 4",
+          "pancreas8.pdf - Page 1",
+          "pancreas8.pdf - Page 7",
+          "pancreas8.pdf - Page 7"
+        ],
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7648114046696713,
+        "context_precision": 0.499999999975
+      },
+      {
+        "question": "What major challenge does the paper identify around matched multimodal datasets?",
+        "supported": true,
+        "route_used": [
+          "Planner intent: lookup.",
+          "Planner evidence spread: atomic.",
+          "Planner selected chunk_first with none constraints.",
+          "Planner source: deterministic at confidence 0.86.",
+          "Preferred content types: general, definition.",
+          "Chunk-first retrieval path used for exact grounding."
+        ],
+        "query_used": "What major challenge does the paper identify around matched multimodal datasets?",
+        "citations": [
+          "pancreas8.pdf - Page 7",
+          "pancreas8.pdf - Page 1",
+          "pancreas8.pdf - Page 8",
+          "pancreas8.pdf - Page 9"
+        ],
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6417944470229376,
+        "context_precision": 0.5833333333041666
+      },
+      {
+        "question": "What challenge does the paper identify for clinical adoption of deep learning models?",
+        "supported": true,
+        "route_used": [
+          "Planner intent: lookup.",
+          "Planner evidence spread: atomic.",
+          "Planner selected chunk_first with none constraints.",
+          "Planner source: deterministic at confidence 0.86.",
+          "Preferred content types: general, definition.",
+          "Chunk-first retrieval path used for exact grounding."
+        ],
+        "query_used": "What challenge does the paper identify for clinical adoption of deep learning models?",
+        "citations": [
+          "pancreas8.pdf - Page 8",
+          "pancreas8.pdf - Page 1",
+          "pancreas8.pdf - Page 1",
+          "pancreas8.pdf - Page 2"
+        ],
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.3802590186103561,
+        "context_precision": 0.99999999995
+      },
+      {
+        "question": "What role do DREAM and Kaggle competitions play according to the paper?",
+        "supported": true,
+        "route_used": [
+          "Planner intent: lookup.",
+          "Planner evidence spread: atomic.",
+          "Planner selected chunk_first with none constraints.",
+          "Planner source: deterministic at confidence 0.86.",
+          "Preferred content types: general, definition.",
+          "Chunk-first retrieval path used for exact grounding."
+        ],
+        "query_used": "What role do DREAM and Kaggle competitions play according to the paper?",
+        "citations": [
+          "pancreas8.pdf - Page 5",
+          "pancreas8.pdf - Page 9",
+          "pancreas8.pdf - Page 4",
+          "pancreas8.pdf - Page 17"
+        ],
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.30909356005565375,
+        "context_precision": 0.9166666666361111
+      },
+      {
+        "question": "What does the paper say about OMOP in relation to multimodal data?",
+        "supported": true,
+        "route_used": [
+          "Planner intent: summary.",
+          "Planner evidence spread: sectional.",
+          "Planner selected synopsis_first with soft_local constraints.",
+          "Planner source: deterministic at confidence 0.74.",
+          "Preferred content types: general, results.",
+          "Synopsis-first routing prioritized 4 sections before chunk retrieval.",
+          "Top synopsis region: Document Overview.",
+          "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 9, Page 6."
+        ],
+        "query_used": "What does the paper say about OMOP in relation to multimodal data?",
+        "citations": [
+          "pancreas8.pdf - Page 9",
+          "pancreas8.pdf - Page 6",
+          "pancreas8.pdf - Page 1",
+          "pancreas8.pdf - Page 5"
+        ],
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6286187150122481,
+        "context_precision": 0.9999999999
+      }
+    ]
+  },
+  "openai_file_search": {
+    "dataset_size": 10,
+    "vector_store_id": "vs_69cd79937a908191912e2dc1ffc6c555",
+    "snippet_fragment_match_rate": 0.4,
+    "results": [
+      {
+        "question": "What is the main focus of the pancreas8 paper?",
+        "matched_fragment": true,
+        "snippets": [
+          "importance according to unimodal model (top) and joint multimodal model (bottom) for \r\ncancer survival prediction. e) Example of pathway importance visualisation based on the \r\nrespective gene SHAP-values in unimodal (top) versus joint multimodal (bottom) models \r\nwith respect to cancer survival prediction154\r\n.\r\nSteyaert et al. Page 21\r\nNat Mach Intell. Author manuscript; available in PMC 2023 Oc",
+          "Multimodal data fusion for cancer biomarker discovery with \r\ndeep learning\r\nSandra Steyaert1, Marija Pizurica1, Divya Nagaraj2, Priya Khandelwal2, Tina Hernandez\ufffeBoussard1,3, Andrew J Gentles1,3, Olivier Gevaert1,3\r\n1)Stanford Center for Biomedical Informatics Research (BMIR), Department of Medicine, Stanford \r\nUniversity.\r\n2)Department of Computer Science, Stanford University.\r\n3)Department of Bi",
+          "Fig. 3: Examples of model interpretability methods for histopathology and gene expression.\r\nHistopathology: a) Examples of informative tiles for predicting the presence of \r\nTP53 mutations from histopathology images in prostate cancer (unpublished data). b) \r\nVisualisation of regions within tiles most relevant to the prediction, derived via Grad\ufffeCAM151. c) Individual cells within informative tiles",
+          "price point to that of testing 5 to 10 targets individually10. Multi-target tests not only \r\nconserve time and tissue, but also have the potential to identify complex genetic interactions, \r\nthereby enhancing our understanding of tumour biology. While NGS is still in full swing, a \r\nthird wave of technologies featuring single-molecule, long-read and real-time sequencing is \r\nalready on the rise. P",
+          "To advance precision oncology, healthcare AI should not only inform about cancer incidence \r\nand tumour growth, but must identify the optimal treatment path, accounting for treatment\uffferelated side effects, socioeconomic factors, and care goals. Precision medicine can therefore \r\nonly be achieved by merging complex and diverse multimodal data that span space and \r\ntime. Single data modalities can be"
+        ]
+      },
+      {
+        "question": "Why does the paper argue that multimodal fusion is needed in oncology?",
+        "matched_fragment": false,
+        "snippets": [
+          "To advance precision oncology, healthcare AI should not only inform about cancer incidence \r\nand tumour growth, but must identify the optimal treatment path, accounting for treatment\uffferelated side effects, socioeconomic factors, and care goals. Precision medicine can therefore \r\nonly be achieved by merging complex and diverse multimodal data that span space and \r\ntime. Single data modalities can be",
+          "Multimodal data fusion for cancer biomarker discovery with \r\ndeep learning\r\nSandra Steyaert1, Marija Pizurica1, Divya Nagaraj2, Priya Khandelwal2, Tina Hernandez\ufffeBoussard1,3, Andrew J Gentles1,3, Olivier Gevaert1,3\r\n1)Stanford Center for Biomedical Informatics Research (BMIR), Department of Medicine, Stanford \r\nUniversity.\r\n2)Department of Computer Science, Stanford University.\r\n3)Department of Bi",
+          "Author manuscript; available in PMC 2023 October 06.\r\nAuthor Manuscript Author Manuscript Author Manuscript Author ManuscriptUnder the 21st Century Cures Act28, the FDA set a goal to advance precision medicine \r\nwhere the patient is at the centre of care. This act defines timelines for discovery, \r\ndevelopment, and delivery, and requires the fusion of evidence across modalities, with \r\nthe provisi",
+          "Author Manuscript Author Manuscript Author Manuscript Author Manuscriptencourages reutilisation and optimisation of existing work. However, the volume and \r\ncomplexity of multimodal biomedical data makes it increasingly difficult to produce and \r\nshare FAIR data and current solutions often require specific expertise and resources157\r\n. \r\nFurthermore, some modalities such as EHRs are not only extre",
+          "Also for breast cancer, the value of radiogenomics for risk prediction and better \r\nsubtype stratification has been shown118\u2013120\r\n.\r\nCurrent challenges and future directions for multimodal data fusion\r\nUse of multimodal data models is likely the only way to advance precision oncology, \r\nbut many challenges exist to realise their full potential. Although data availability is the \r\nmain driver of mu"
+        ]
+      },
+      {
+        "question": "What three fusion stages does the paper describe?",
+        "matched_fragment": true,
+        "snippets": [
+          "Fig. 2: Overview of different fusion strategies for multimodal data.\r\na) Raw data is processed into workable formats. b) For each modality features are extracted \r\nusing dedicated encoder algorithms. c) Early fusion. d) Intermediate fusion. e) Late fusion.\r\nSteyaert et al. Page 19\r\nNat Mach Intell. Author manuscript; available in PMC 2023 October 06.\r\nAuthor Manuscript Author Manuscript Author Man",
+          "Multimodal fusion often suffers from dealing with wide feature \r\nmatrices originating from very few samples with many features across modalities. Often \r\nadvanced feature extraction methods such as kernel-based methods, graphical models, or \r\nNNs are needed prior to or as part of the data fusion process to reduce the dimensionality \r\nwhile preserving most of the salient biological signals77\u201380. Me",
+          "Multimodal data fusion for cancer biomarker discovery with \r\ndeep learning\r\nSandra Steyaert1, Marija Pizurica1, Divya Nagaraj2, Priya Khandelwal2, Tina Hernandez\ufffeBoussard1,3, Andrew J Gentles1,3, Olivier Gevaert1,3\r\n1)Stanford Center for Biomedical Informatics Research (BMIR), Department of Medicine, Stanford \r\nUniversity.\r\n2)Department of Computer Science, Stanford University.\r\n3)Department of Bi",
+          "N Engl J Med 372, 2481\u20132498 (2015). [PubMed: 26061751] \r\n95. Cancer Genome Atlas Research, N. et al. Integrated genomic and molecular characterization of \r\ncervical cancer. Nature 543, 378\u2013384 (2017). [PubMed: 28112728] \r\n96. Cancer Genome Atlas Research Network. Electronic address, e.d.s.c. & Cancer Genome Atlas \r\nResearch, N. Comprehensive and Integrated Genomic Characterization of Adult Soft Ti",
+          "Mol Oncol 2, 115\u2013152 (2008). [PubMed: 19383333] \r\n54. Lanckriet GR, De Bie T, Cristianini N, Jordan MI & Noble WS. A statistical framework for \r\ngenomic data fusion. Bioinformatics 20, 2626\u20132635 (2004). [PubMed: 15130933] \r\n55. Gevaert O, De Smet F, Timmerman D, Moreau Y & De Moor B. Predicting the prognosis of breast \r\ncancer by integrating clinical and microarray data with Bayesian networks. Bio"
+        ]
+      },
+      {
+        "question": "How does the paper describe early fusion?",
+        "matched_fragment": false,
+        "snippets": [
+          "Multimodal fusion often suffers from dealing with wide feature \r\nmatrices originating from very few samples with many features across modalities. Often \r\nadvanced feature extraction methods such as kernel-based methods, graphical models, or \r\nNNs are needed prior to or as part of the data fusion process to reduce the dimensionality \r\nwhile preserving most of the salient biological signals77\u201380. Me",
+          "Long Short-Term Memory (LSTM) and Gated Recurrent Unit (GRU) \r\nare the most popular RNN architectures for this purpose63\u201365. While structured EHR data \r\nhave obvious value, integration with insights from unstructured clinical data has shown \r\nto greatly improve clinical phenotyping66. Fortunately, advances in NLP now make it \r\npossible mine the unstructured narratives of patient records. One way t",
+          "2b). Although dedicated inference algorithms must be developed for each model type, this \r\napproach attempts to exploit the advantages of both early and late fusion79, 83. One key \r\ndifference with early fusion is that the loss is propagated back to the inference algorithms \r\nduring training, thus creating updated feature representations per training iteration84\r\n. \r\nAlthough this allows to model ",
+          "Multimodal data fusion for cancer biomarker discovery with \r\ndeep learning\r\nSandra Steyaert1, Marija Pizurica1, Divya Nagaraj2, Priya Khandelwal2, Tina Hernandez\ufffeBoussard1,3, Andrew J Gentles1,3, Olivier Gevaert1,3\r\n1)Stanford Center for Biomedical Informatics Research (BMIR), Department of Medicine, Stanford \r\nUniversity.\r\n2)Department of Computer Science, Stanford University.\r\n3)Department of Bi",
+          "Fig. 2: Overview of different fusion strategies for multimodal data.\r\na) Raw data is processed into workable formats. b) For each modality features are extracted \r\nusing dedicated encoder algorithms. c) Early fusion. d) Intermediate fusion. e) Late fusion.\r\nSteyaert et al. Page 19\r\nNat Mach Intell. Author manuscript; available in PMC 2023 October 06.\r\nAuthor Manuscript Author Manuscript Author Man"
+        ]
+      },
+      {
+        "question": "What is one advantage and one limitation of late fusion according to the paper?",
+        "matched_fragment": false,
+        "snippets": [
+          "Multimodal fusion often suffers from dealing with wide feature \r\nmatrices originating from very few samples with many features across modalities. Often \r\nadvanced feature extraction methods such as kernel-based methods, graphical models, or \r\nNNs are needed prior to or as part of the data fusion process to reduce the dimensionality \r\nwhile preserving most of the salient biological signals77\u201380. Me",
+          "Long Short-Term Memory (LSTM) and Gated Recurrent Unit (GRU) \r\nare the most popular RNN architectures for this purpose63\u201365. While structured EHR data \r\nhave obvious value, integration with insights from unstructured clinical data has shown \r\nto greatly improve clinical phenotyping66. Fortunately, advances in NLP now make it \r\npossible mine the unstructured narratives of patient records. One way t",
+          "2b). Although dedicated inference algorithms must be developed for each model type, this \r\napproach attempts to exploit the advantages of both early and late fusion79, 83. One key \r\ndifference with early fusion is that the loss is propagated back to the inference algorithms \r\nduring training, thus creating updated feature representations per training iteration84\r\n. \r\nAlthough this allows to model ",
+          "Author Manuscript Author Manuscript Author Manuscript Author Manuscriptstrategy has its own strengths and weaknesses, and careful selection of effective approaches \r\nshould be based on the purpose and available data types57\r\n.\r\nMulti-scale data fusion\u2014Similar efforts as for multi-omics data fusion have been \r\nexplored for multi-scale data89, 102\u2013107. For example, Cheerla et al. used an intermediat",
+          "Multimodal data fusion for cancer biomarker discovery with \r\ndeep learning\r\nSandra Steyaert1, Marija Pizurica1, Divya Nagaraj2, Priya Khandelwal2, Tina Hernandez\ufffeBoussard1,3, Andrew J Gentles1,3, Olivier Gevaert1,3\r\n1)Stanford Center for Biomedical Informatics Research (BMIR), Department of Medicine, Stanford \r\nUniversity.\r\n2)Department of Computer Science, Stanford University.\r\n3)Department of Bi"
+        ]
+      },
+      {
+        "question": "What examples of multimodal data types does the paper mention for oncology?",
+        "matched_fragment": true,
+        "snippets": [
+          "[PubMed: 35777174] \r\n143. Park Y, Hauschild AC & Heider D. Transfer learning compensates limited data, batch effects and \r\ntechnological heterogeneity in single-cell sequencing. NAR Genom Bioinform 3, lqab104 (2021).\r\n144. Novakovsky G, Saraswat M, Fornes O, Mostafavi S & Wasserman WW. Biologically relevant \r\ntransfer learning improves transcription factor binding prediction. Genome Biol 22, 280 (",
+          "Learning gene functional classifications from multiple \r\ndata types. J Comput Biol 9, 401\u2013411 (2002). [PubMed: 12015889] \r\n82. Serra A, Galdi P & Tagliaferri R. Multiview Learning in Biomedical Applications (Chapter 13). \r\nArtificial Intelligence in the Age of Neural Networks and Brain Computing, 265\u2013280 (2019).\r\n83. Stahlschmidt SR, Ulfenborg B & Synnergren J. Multimodal deep learning for biomedi",
+          "Luo Y. Evaluating the state of the art in missing data imputation for clinical data. Brief Bioinform \r\n23 (2022).\r\n123. Yoon J, Zame WR & van der Schaar M. Estimating Missing Data in Temporal Data Streams \r\nUsing Multi-Directional Recurrent Neural Networks. IEEE Trans Biomed Eng 66, 1477\u20131490 \r\n(2019). [PubMed: 30296210] \r\n124. Zhou T, Liu M, Thung KH & Shen D. Latent Representation Learning for A",
+          "Computer Methods and Programs in Biomedicine \r\n135, 77\u201388 (2016). [PubMed: 27586481] \r\nSteyaert et al. Page 15\r\nNat Mach Intell. Author manuscript; available in PMC 2023 October 06.\r\nAuthor Manuscript Author Manuscript Author Manuscript Author Manuscript137. Dwarikanath M. Combining multiple expert annotations using semi-supervised learning and \r\ngraph cuts for medical image segmentation. Computer",
+          "diagnostic, \r\nstratification, drug response or treatment decision) tests are used51. As relevant as molecular \r\ndata are for precision medicine, they discard tissue architecture, spatial and morphological \r\ninformation.\r\nAlthough lower in resolution than genomic information, both WSI and radiographic images \r\npotentially harness orthogonal and complementary information. Digital pathology with \r\nWS"
+        ]
+      },
+      {
+        "question": "What major challenge does the paper identify around matched multimodal datasets?",
+        "matched_fragment": false,
+        "snippets": [
+          "Emerging evidence highlights that these cohorts \r\nare often biased, representing patients from higher socioeconomic status with continuous \r\naccess to care and high levels of patient engagement130, 131. Limiting analyses to patients \r\nwith complete data will lead to model overfitting, bias, and poor generalisation. Secondly, \r\nthe lack of large \u2018golden labelled\u2019 cohorts with matched multimodal dat",
+          "Multimodal data fusion for cancer biomarker discovery with \r\ndeep learning\r\nSandra Steyaert1, Marija Pizurica1, Divya Nagaraj2, Priya Khandelwal2, Tina Hernandez\ufffeBoussard1,3, Andrew J Gentles1,3, Olivier Gevaert1,3\r\n1)Stanford Center for Biomedical Informatics Research (BMIR), Department of Medicine, Stanford \r\nUniversity.\r\n2)Department of Computer Science, Stanford University.\r\n3)Department of Bi",
+          "Also for breast cancer, the value of radiogenomics for risk prediction and better \r\nsubtype stratification has been shown118\u2013120\r\n.\r\nCurrent challenges and future directions for multimodal data fusion\r\nUse of multimodal data models is likely the only way to advance precision oncology, \r\nbut many challenges exist to realise their full potential. Although data availability is the \r\nmain driver of mu",
+          "Author Manuscript Author Manuscript Author Manuscript Author Manuscriptencourages reutilisation and optimisation of existing work. However, the volume and \r\ncomplexity of multimodal biomedical data makes it increasingly difficult to produce and \r\nshare FAIR data and current solutions often require specific expertise and resources157\r\n. \r\nFurthermore, some modalities such as EHRs are not only extre",
+          "Long Short-Term Memory (LSTM) and Gated Recurrent Unit (GRU) \r\nare the most popular RNN architectures for this purpose63\u201365. While structured EHR data \r\nhave obvious value, integration with insights from unstructured clinical data has shown \r\nto greatly improve clinical phenotyping66. Fortunately, advances in NLP now make it \r\npossible mine the unstructured narratives of patient records. One way t"
+        ]
+      },
+      {
+        "question": "What challenge does the paper identify for clinical adoption of deep learning models?",
+        "matched_fragment": false,
+        "snippets": [
+          "Emerging evidence highlights that these cohorts \r\nare often biased, representing patients from higher socioeconomic status with continuous \r\naccess to care and high levels of patient engagement130, 131. Limiting analyses to patients \r\nwith complete data will lead to model overfitting, bias, and poor generalisation. Secondly, \r\nthe lack of large \u2018golden labelled\u2019 cohorts with matched multimodal dat",
+          "Also for breast cancer, the value of radiogenomics for risk prediction and better \r\nsubtype stratification has been shown118\u2013120\r\n.\r\nCurrent challenges and future directions for multimodal data fusion\r\nUse of multimodal data models is likely the only way to advance precision oncology, \r\nbut many challenges exist to realise their full potential. Although data availability is the \r\nmain driver of mu",
+          "Multimodal data fusion for cancer biomarker discovery with \r\ndeep learning\r\nSandra Steyaert1, Marija Pizurica1, Divya Nagaraj2, Priya Khandelwal2, Tina Hernandez\ufffeBoussard1,3, Andrew J Gentles1,3, Olivier Gevaert1,3\r\n1)Stanford Center for Biomedical Informatics Research (BMIR), Department of Medicine, Stanford \r\nUniversity.\r\n2)Department of Computer Science, Stanford University.\r\n3)Department of Bi",
+          "Long Short-Term Memory (LSTM) and Gated Recurrent Unit (GRU) \r\nare the most popular RNN architectures for this purpose63\u201365. While structured EHR data \r\nhave obvious value, integration with insights from unstructured clinical data has shown \r\nto greatly improve clinical phenotyping66. Fortunately, advances in NLP now make it \r\npossible mine the unstructured narratives of patient records. One way t",
+          "The last years, there have been several attempts to develop multimodal \r\napproaches, to a great degree stimulated by community-driven competitions such as \r\nDREAM and Kaggle (i.e. http://dreamchallenges.org/ and https://www.kaggle.com/). But \r\nmore work is needed to integrate routinely collected data modalities into clinical decision \r\nsystems.\r\nData fusion strategies for multimodal biomarker disc"
+        ]
+      },
+      {
+        "question": "What role do DREAM and Kaggle competitions play according to the paper?",
+        "matched_fragment": true,
+        "snippets": [
+          "Author Manuscript Author Manuscript Author Manuscript Author Manuscriptencourages reutilisation and optimisation of existing work. However, the volume and \r\ncomplexity of multimodal biomedical data makes it increasingly difficult to produce and \r\nshare FAIR data and current solutions often require specific expertise and resources157\r\n. \r\nFurthermore, some modalities such as EHRs are not only extre",
+          "3b)151. Similarly, for molecular \r\ndata, predictive features can be determined and visualised via Shapley Additive Explanation \r\n(SHAP)-based methods (Fig. 3d,e)150, 152\u2013154\r\n.\r\nMultimodal data adds additional complexity and needs careful evaluation of appropriate \r\nmethods before scaling to multimodal interpretability. However, multimodal approaches \r\nare starting to emerge with encouraging solut",
+          "diagnostic, \r\nstratification, drug response or treatment decision) tests are used51. As relevant as molecular \r\ndata are for precision medicine, they discard tissue architecture, spatial and morphological \r\ninformation.\r\nAlthough lower in resolution than genomic information, both WSI and radiographic images \r\npotentially harness orthogonal and complementary information. Digital pathology with \r\nWS",
+          "The last years, there have been several attempts to develop multimodal \r\napproaches, to a great degree stimulated by community-driven competitions such as \r\nDREAM and Kaggle (i.e. http://dreamchallenges.org/ and https://www.kaggle.com/). But \r\nmore work is needed to integrate routinely collected data modalities into clinical decision \r\nsystems.\r\nData fusion strategies for multimodal biomarker disc",
+          "150. Chen RJ et al. Pan-cancer integrative histology-genomic analysis via multimodal deep learning. \r\nCancer Cell 40, 865\u2013878 e866 (2022). [PubMed: 35944502] \r\n151. Selvaraju RR et al. Grad-CAM: Visual Explanations from Deep Networks via Gradient-based \r\nLocalization. arXiv, https://arxiv.org/abs/1610.02391 (2016).\r\n152. Lundberg SM & Lee SI. A Unified Approach to Interpreting Model Predictions. A"
+        ]
+      },
+      {
+        "question": "What does the paper say about OMOP in relation to multimodal data?",
+        "matched_fragment": false,
+        "snippets": [
+          "Author Manuscript Author Manuscript Author Manuscript Author Manuscriptencourages reutilisation and optimisation of existing work. However, the volume and \r\ncomplexity of multimodal biomedical data makes it increasingly difficult to produce and \r\nshare FAIR data and current solutions often require specific expertise and resources157\r\n. \r\nFurthermore, some modalities such as EHRs are not only extre",
+          "150. Chen RJ et al. Pan-cancer integrative histology-genomic analysis via multimodal deep learning. \r\nCancer Cell 40, 865\u2013878 e866 (2022). [PubMed: 35944502] \r\n151. Selvaraju RR et al. Grad-CAM: Visual Explanations from Deep Networks via Gradient-based \r\nLocalization. arXiv, https://arxiv.org/abs/1610.02391 (2016).\r\n152. Lundberg SM & Lee SI. A Unified Approach to Interpreting Model Predictions. A",
+          "3b)151. Similarly, for molecular \r\ndata, predictive features can be determined and visualised via Shapley Additive Explanation \r\n(SHAP)-based methods (Fig. 3d,e)150, 152\u2013154\r\n.\r\nMultimodal data adds additional complexity and needs careful evaluation of appropriate \r\nmethods before scaling to multimodal interpretability. However, multimodal approaches \r\nare starting to emerge with encouraging solut",
+          "Current use and costs of electronic health records for clinical trial research: a \r\ndescriptive study. CMAJ Open 7, E23\u2013E32 (2019).\r\n159. Mc Cord KA & Hemkens LG. Using electronic health records for clinical trials: Where do we \r\nstand and where can we go? CMAJ 191, E128\u2013E133 (2019). [PubMed: 30718337] \r\n160. Makadia R & Ryan PB. Transforming the Premier Perspective Hospital Database into the \r\nOb",
+          "To advance precision oncology, healthcare AI should not only inform about cancer incidence \r\nand tumour growth, but must identify the optimal treatment path, accounting for treatment\uffferelated side effects, socioeconomic factors, and care goals. Precision medicine can therefore \r\nonly be achieved by merging complex and diverse multimodal data that span space and \r\ntime. Single data modalities can be"
+        ]
+      }
+    ]
+  },
+  "vectara": {
+    "available": true,
+    "dataset_size": 10,
+    "corpus_key": "helpmate-pancreas8-b6be1e19",
+    "snippet_fragment_match_rate": 0.8,
+    "results": [
+      {
+        "question": "What is the main focus of the pancreas8 paper?",
+        "matched_fragment": true,
+        "snippets": [
+          "While often still problem-specific and experimental, the field is gaining knowledge\nto evaluate and define what methods excel given specific conditions and data modalities.",
+          "Abstract\nTechnological advances now make it possible to study a patient from multiple angles with high-\ndimensional, high-throughput multi-scale biomedical data.",
+          "Multi-target tests not only\nconserve time and tissue, but also have the potential to identify complex genetic interactions,\nthereby enhancing our understanding of tumour biology.",
+          "Although data availability is the\n                            main driver of multimodal data fusion, it also poses its major barrier.",
+          "Under the 21st Century Cures Act28, the FDA set a goal to advance precision medicine\nwhere the patient is at the centre of care."
+        ]
+      },
+      {
+        "question": "Why does the paper argue that multimodal fusion is needed in oncology?",
+        "matched_fragment": false,
+        "snippets": [
+          "Author Manuscript                        Author Manuscript                        Author Manuscript                        Author Manuscript\n\nThe need for multimodal data fusion in oncology\n                            Despite huge investments in cancer research and improved diagnosis and treatments, cancer\n                            prognosis is still bleak.",
+          "The need for multimodal data fusion in oncology",
+          "Current challenges and future directions for multimodal data fusion\n                            Use of multimodal data models is likely the only way to advance precision oncology,\n                            but many challenges exist to realise their full potential.",
+          "So far, most\nefforts have focused on multimodal cancer biomarkers to refine risk stratification, but with\ndedicated strategies multimodal data fusion could also assist in treatment decision or drug\nresponse.",
+          "Development of effective multimodal fusion approaches is becoming\nincreasingly important as a single modality might not be consistent and sufficient to capture\nthe heterogeneity of complex diseases to tailor medical care and improve personalised medicine."
+        ]
+      },
+      {
+        "question": "What three fusion stages does the paper describe?",
+        "matched_fragment": true,
+        "snippets": [
+          "c) Early fusion. d) Intermediate fusion.",
+          "A major decision that must be made is at what specific modelling stage the data fusion takes\nplace: (i) early, (ii) intermediate or (iii) late (Fig. 2)81\u201383.",
+          "However,\nfusion at the late stage ignores possible synergies between different modalities84.",
+          "Intermediate fusion\ndoes not merge input data, nor develops separate models for each modality, but instead\ninvolves the development of inference algorithms to generate a joint multimodal low-level\nfeature representation that retains the signal and properties of each individual modality (Fig.\n2b).",
+          "Fig. 2: Overview of different fusion strategies for multimodal data."
+        ]
+      },
+      {
+        "question": "How does the paper describe early fusion?",
+        "matched_fragment": true,
+        "snippets": [
+          "Early fusion is characterised by\nconcatenating feature vectors of different data modalities and only requires the training of\na single model (Fig. 2a).",
+          "Anything between\nearly and late fusion is defined as intermediate or joint data fusion84.",
+          "One key\ndifference with early fusion is that the loss is propagated back to the inference algorithms\nduring training, thus creating updated feature representations per training iteration84.",
+          "c) Early fusion. d) Intermediate fusion.",
+          "Similarly,\nanother study proposed a late fusion strategy to classify lung cancer."
+        ]
+      },
+      {
+        "question": "What is one advantage and one limitation of late fusion according to the paper?",
+        "matched_fragment": true,
+        "snippets": [
+          "Not only does late fusion allow the use of\na different, often more suitable, model for each modality but it also makes it more\nstraightforward to handle situations when some modalities are missing in the data.",
+          "In contrast, late fusion is based on developing models on each\ndata modality separately and integrating their single predictions with specific averaging,\nweighting, or other mechanisms (Fig. 2c).",
+          "While both early and late fusion approaches are model-agnostic, they are not specifically\ndesigned to cope with or take full advantage of multiple modalities.",
+          "One key\ndifference with early fusion is that the loss is propagated back to the inference algorithms\nduring training, thus creating updated feature representations per training iteration84.",
+          "Importantly, there is currently no\ndecisive evidence that one fusion strategy is superior, and the choice of a specific approach\nis usually empirically based on the available data and task84."
+        ]
+      },
+      {
+        "question": "What examples of multimodal data types does the paper mention for oncology?",
+        "matched_fragment": false,
+        "snippets": [
+          "Lipkova J et al. Artificial intelligence for multimodal data integration in oncology.",
+          "The need for multimodal data fusion in oncology",
+          "Current challenges and future directions for multimodal data fusion\n                            Use of multimodal data models is likely the only way to advance precision oncology,\n                            but many challenges exist to realise their full potential.",
+          "Author Manuscript                        Author Manuscript                        Author Manuscript                        Author Manuscript\n\nThe need for multimodal data fusion in oncology\n                            Despite huge investments in cancer research and improved diagnosis and treatments, cancer\n                            prognosis is still bleak.",
+          "Advances in multimodal biomarkers for patient stratification\n                            Multi-omics data fusion\u2014Although a single omics technology provides insights into the\n                            profile of a tumour, one technique alone does not fully capture the underlying biology."
+        ]
+      },
+      {
+        "question": "What major challenge does the paper identify around matched multimodal datasets?",
+        "matched_fragment": true,
+        "snippets": [
+          "Secondly,\nthe lack of large \u2018golden labelled\u2019 cohorts with matched multimodal data, mainly due to\nthe intense labour to annotate cancer datasets combined with privacy concerns.",
+          "Although data availability is the\n                            main driver of multimodal data fusion, it also poses its major barrier.",
+          "Current challenges and future directions for multimodal data fusion\n                            Use of multimodal data models is likely the only way to advance precision oncology,\n                            but many challenges exist to realise their full potential.",
+          "However, the volume and\ncomplexity of multimodal biomedical data makes it increasingly difficult to produce and\nshare FAIR data and current solutions often require specific expertise and resources157.",
+          "Current challenges and future directions for multimodal data fusion"
+        ]
+      },
+      {
+        "question": "What challenge does the paper identify for clinical adoption of deep learning models?",
+        "matched_fragment": true,
+        "snippets": [
+          "Despite its potential, a critical roadblock for the widespread adoption of DL in a clinical\nsetting is the lack of well-defined methods for model interpretation.",
+          "Here,\nwe cover these current challenges and reflect on opportunities through deep learning to tackle data\nsparsity and scarcity, multimodal interpretability, and standardisation of datasets.",
+          "Deep learning for electronic health records: A comparative review of\n       multiple deep neural architectures.",
+          "Multimodal deep learning models for\n          early detection of Alzheimer\u2019s disease stage.",
+          "The\nintroduction of deep learning has significantly advanced the analysis of biomedical data."
+        ]
+      },
+      {
+        "question": "What role do DREAM and Kaggle competitions play according to the paper?",
+        "matched_fragment": true,
+        "snippets": [
+          "In this\nspace, competitions such as DREAM and Kaggle have been an effective concept for making\nstandardised multimodal data available.",
+          "The last years, there have been several attempts to develop multimodal\napproaches, to a great degree stimulated by community-driven competitions such as\nDREAM and Kaggle (i.e. http://dreamchallenges.org/ and https://www.kaggle.com/).",
+          "The pivotal role of pathology in the management of lung\n       cancer.",
+          "Mukherkjee D, Saha P, Kaplun D, Sinitca A & Sarkar R. Brain tumor image generation using an\n          aggregation of GAN models with style transfer.",
+          "Various TME elements play a role in\n                            tumour development, but also in therapeutic response."
+        ]
+      },
+      {
+        "question": "What does the paper say about OMOP in relation to multimodal data?",
+        "matched_fragment": true,
+        "snippets": [
+          "Advances in multimodal biomarkers for patient stratification\n                            Multi-omics data fusion\u2014Although a single omics technology provides insights into the\n                            profile of a tumour, one technique alone does not fully capture the underlying biology.",
+          "Transforming the Premier Perspective Hospital Database into the\n          Observational Medical Outcomes Partnership (OMOP) Common Data Model.",
+          "However, so far most methods focused on only one specific data type at a time, leading to\nslow progress in approaches to integrate complementary data types with many remaining\nquestions about the technical, analytical and clinical aspect of multimodal integration32\u201335.",
+          "The need for multimodal data fusion in oncology",
+          "Wang T et al. MOGONET integrates multi-omics data using graph convolutional networks\n       allowing patient classification and biomarker identification."
+        ]
+      }
+    ]
+  },
+  "vendor_answer_eval": {
+    "openai": {
+      "dataset_size": 10,
+      "ragas_faithfulness_mean": 0.4,
+      "ragas_answer_relevancy_mean": 0.15354623326727188,
+      "ragas_context_precision_mean": 0.4422222221934537,
+      "results": [
+        {
+          "question": "What is the main focus of the pancreas8 paper?",
+          "supported": false,
+          "answer_preview": "Insufficient evidence.",
+          "citations": [
+            "OpenAI Result 1",
+            "OpenAI Result 2",
+            "OpenAI Result 3",
+            "OpenAI Result 4",
+            "OpenAI Result 5"
+          ],
+          "ragas": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.0
+          }
+        },
+        {
+          "question": "Why does the paper argue that multimodal fusion is needed in oncology?",
+          "supported": true,
+          "answer_preview": "To advance precision oncology because single data modalities are insufficient; fusion is needed to combine diverse data across space and time and to identify the optimal treatment path while accounting for side effects, socioeconomic factors, and care goals [Source 1][Source 5].",
+          "citations": [
+            "OpenAI Result 1",
+            "OpenAI Result 2",
+            "OpenAI Result 3",
+            "OpenAI Result 4",
+            "OpenAI Result 5"
+          ],
+          "ragas": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.6445739242182151,
+            "context_precision": 0.7555555555303703
+          }
+        },
+        {
+          "question": "What three fusion stages does the paper describe?",
+          "supported": true,
+          "answer_preview": "Early fusion, intermediate fusion, and late fusion [Source 1].",
+          "citations": [
+            "OpenAI Result 1",
+            "OpenAI Result 2",
+            "OpenAI Result 3",
+            "OpenAI Result 4",
+            "OpenAI Result 5"
+          ],
+          "ragas": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.6733899466532467,
+            "context_precision": 0.8333333332916666
+          }
+        },
+        {
+          "question": "How does the paper describe early fusion?",
+          "supported": false,
+          "answer_preview": "Not enough evidence.",
+          "citations": [
+            "OpenAI Result 1",
+            "OpenAI Result 2",
+            "OpenAI Result 3",
+            "OpenAI Result 4",
+            "OpenAI Result 5"
+          ],
+          "ragas": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.3333333333
+          }
+        },
+        {
+          "question": "What is one advantage and one limitation of late fusion according to the paper?",
+          "supported": false,
+          "answer_preview": "Insufficient evidence.",
+          "citations": [
+            "OpenAI Result 1",
+            "OpenAI Result 2",
+            "OpenAI Result 3",
+            "OpenAI Result 4",
+            "OpenAI Result 5"
+          ],
+          "ragas": {
+            "faithfulness": 0.5,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.0
+          }
+        },
+        {
+          "question": "What examples of multimodal data types does the paper mention for oncology?",
+          "supported": false,
+          "answer_preview": "Unsupported by the retrieved evidence.",
+          "citations": [
+            "OpenAI Result 1",
+            "OpenAI Result 2",
+            "OpenAI Result 3",
+            "OpenAI Result 4",
+            "OpenAI Result 5"
+          ],
+          "ragas": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.4166666666458333
+          }
+        },
+        {
+          "question": "What major challenge does the paper identify around matched multimodal datasets?",
+          "supported": false,
+          "answer_preview": "Insufficient evidence.",
+          "citations": [
+            "OpenAI Result 1",
+            "OpenAI Result 2",
+            "OpenAI Result 3",
+            "OpenAI Result 4",
+            "OpenAI Result 5"
+          ],
+          "ragas": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.8333333332916666
+          }
+        },
+        {
+          "question": "What challenge does the paper identify for clinical adoption of deep learning models?",
+          "supported": false,
+          "answer_preview": "Unsupported by the retrieved evidence.",
+          "citations": [
+            "OpenAI Result 1",
+            "OpenAI Result 2",
+            "OpenAI Result 3",
+            "OpenAI Result 4",
+            "OpenAI Result 5"
+          ],
+          "ragas": {
+            "faithfulness": 0.5,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.9999999999
+          }
+        },
+        {
+          "question": "What role do DREAM and Kaggle competitions play according to the paper?",
+          "supported": true,
+          "answer_preview": "They have stimulated the development of multimodal approaches [Source 4].",
+          "citations": [
+            "OpenAI Result 1",
+            "OpenAI Result 2",
+            "OpenAI Result 3",
+            "OpenAI Result 4",
+            "OpenAI Result 5"
+          ],
+          "ragas": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.21749846180125695,
+            "context_precision": 0.249999999975
+          }
+        },
+        {
+          "question": "What does the paper say about OMOP in relation to multimodal data?",
+          "supported": false,
+          "answer_preview": "Not enough evidence.",
+          "citations": [
+            "OpenAI Result 1",
+            "OpenAI Result 2",
+            "OpenAI Result 3",
+            "OpenAI Result 4",
+            "OpenAI Result 5"
+          ],
+          "ragas": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.0
+          }
+        }
+      ]
+    },
+    "vectara": {
+      "dataset_size": 10,
+      "ragas_faithfulness_mean": 0.7,
+      "ragas_answer_relevancy_mean": 0.39413801010320926,
+      "ragas_context_precision_mean": 0.669999999946,
+      "results": [
+        {
+          "question": "What is the main focus of the pancreas8 paper?",
+          "supported": false,
+          "answer_preview": "Not enough evidence.",
+          "citations": [
+            "Page 7",
+            "Page 1",
+            "Page 1",
+            "Page 7",
+            "Page 1"
+          ],
+          "ragas": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.0
+          }
+        },
+        {
+          "question": "Why does the paper argue that multimodal fusion is needed in oncology?",
+          "supported": true,
+          "answer_preview": "Because a single modality may be inconsistent and insufficient to capture the heterogeneity of cancer, so multimodal fusion is needed to advance precision oncology and improve personalized care [Source 5][Source 3].",
+          "citations": [
+            "Page 4",
+            "Page 4",
+            "Page 7",
+            "Page 7",
+            "Page 1"
+          ],
+          "ragas": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8246526460380696,
+            "context_precision": 0.99999999998
+          }
+        },
+        {
+          "question": "What three fusion stages does the paper describe?",
+          "supported": true,
+          "answer_preview": "The paper describes three fusion stages: early fusion, intermediate fusion, and late fusion [Source 2].",
+          "citations": [
+            "Page 19",
+            "Page 5",
+            "Page 5",
+            "Page 5",
+            "Page 19"
+          ],
+          "ragas": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9315033994898633,
+            "context_precision": 0.49999999995
+          }
+        },
+        {
+          "question": "How does the paper describe early fusion?",
+          "supported": true,
+          "answer_preview": "Early fusion is described as concatenating feature vectors from different data modalities and training a single model [Source 1].",
+          "citations": [
+            "Page 5",
+            "Page 5",
+            "Page 5",
+            "Page 19",
+            "Page 7"
+          ],
+          "ragas": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7005327256186655,
+            "context_precision": 0.9999999999
+          }
+        },
+        {
+          "question": "What is one advantage and one limitation of late fusion according to the paper?",
+          "supported": true,
+          "answer_preview": "Advantage: it allows using a different, often more suitable, model for each modality and can handle missing modalities more straightforwardly. Limitation: it is not specifically designed to cope with or take full advantage of multiple modalities [Source 1][Source 3].",
+          "citations": [
+            "Page 5",
+            "Page 5",
+            "Page 5",
+            "Page 5",
+            "Page 5"
+          ],
+          "ragas": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.4703370967229143,
+            "context_precision": 0.9999999999
+          }
+        },
+        {
+          "question": "What examples of multimodal data types does the paper mention for oncology?",
+          "supported": false,
+          "answer_preview": "Unsupported by the retrieved evidence.",
+          "citations": [
+            "Page 9",
+            "Page 4",
+            "Page 7",
+            "Page 4",
+            "Page 6"
+          ],
+          "ragas": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.19999999998
+          }
+        },
+        {
+          "question": "What major challenge does the paper identify around matched multimodal datasets?",
+          "supported": true,
+          "answer_preview": "The paper identifies a lack of large \u201cgolden labelled\u201d cohorts with matched multimodal data, driven by the intense labor needed to annotate cancer datasets and privacy concerns [Source 1].",
+          "citations": [
+            "Page 7",
+            "Page 7",
+            "Page 7",
+            "Page 7",
+            "Page 7"
+          ],
+          "ragas": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.49437936772016194,
+            "context_precision": 0.9999999999
+          }
+        },
+        {
+          "question": "What challenge does the paper identify for clinical adoption of deep learning models?",
+          "supported": true,
+          "answer_preview": "Lack of well-defined methods for model interpretation [Source 1].",
+          "citations": [
+            "Page 7",
+            "Page 1",
+            "Page 9",
+            "Page 9",
+            "Page 1"
+          ],
+          "ragas": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.3212752131232269,
+            "context_precision": 0.9999999999
+          }
+        },
+        {
+          "question": "What role do DREAM and Kaggle competitions play according to the paper?",
+          "supported": true,
+          "answer_preview": "They are community-driven competitions that stimulate multimodal approaches and help make standardised multimodal data available [Source 1][Source 2].",
+          "citations": [
+            "Page 7",
+            "Page 4",
+            "Page 9",
+            "Page 9",
+            "Page 4"
+          ],
+          "ragas": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.1986996523191913,
+            "context_precision": 0.99999999995
+          }
+        },
+        {
+          "question": "What does the paper say about OMOP in relation to multimodal data?",
+          "supported": false,
+          "answer_preview": "Not supported.",
+          "citations": [
+            "Page 6",
+            "Page 9",
+            "Page 1",
+            "Page 4",
+            "Page 9"
+          ],
+          "ragas": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.0
+          }
+        }
+      ]
+    }
+  }
+}

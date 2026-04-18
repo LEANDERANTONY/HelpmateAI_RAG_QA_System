@@ -20,9 +20,9 @@ Reason:
 | Document | Ours hit/MRR | Vectara retrieval | OpenAI retrieval |
 | --- | --- | --- | --- |
 | Health policy | `0.8462 / 0.7051` | `0.7692` | `0.6923` |
-| Thesis | `0.9167 / 0.6042` | `0.6667` | `0.6667` |
-| `pancreas7` | `0.8889 / 0.6944` | `0.5556` | `0.3333` |
-| `pancreas8` | `0.9000 / 0.8000` | `0.8000` | `0.4000` |
+| Thesis | `0.9167 / 0.5764` | `0.6667` | `0.6667` |
+| `pancreas7` | `0.7778 / 0.6111` | `0.5556` | `0.3333` |
+| `pancreas8` | `1.0000 / 0.8833` | `0.8000` | `0.4000` |
 
 ## Additional Report-Generation Retrieval Snapshot
 
@@ -44,41 +44,44 @@ Important note:
 
 | System | Faithfulness | Answer relevancy | Context precision |
 | --- | --- | --- | --- |
-| Ours | `0.8462` | `0.5995` | `0.8462` |
-| Vectara retrieval + shared answer model | `0.7692` | `0.4773` | `0.8833` |
-| OpenAI retrieval + shared answer model | `0.5769` | `0.1531` | `0.5927` |
+| Ours | `0.8846` | `0.6378` | `0.8825` |
+| Vectara retrieval + shared answer model | `0.7692` | `0.4504` | `0.8235` |
+| OpenAI retrieval + shared answer model | `0.6154` | `0.1357` | `0.4970` |
 
 ### Thesis
 
 | System | Faithfulness | Answer relevancy | Context precision |
 | --- | --- | --- | --- |
-| Ours | `1.0000` | `0.6310` | `0.8449` |
-| Vectara retrieval + shared answer model | `0.9167` | `0.6283` | `0.8406` |
-| OpenAI retrieval + shared answer model | `0.5069` | `0.4299` | `0.5687` |
+| Ours | `1.0000` | `0.6031` | `0.8588` |
+| Vectara retrieval + shared answer model | `0.8750` | `0.5579` | `0.8035` |
+| OpenAI retrieval + shared answer model | `0.3702` | `0.2944` | `0.6024` |
 
 ### `pancreas7`
 
 | System | Faithfulness | Answer relevancy | Context precision |
 | --- | --- | --- | --- |
-| Ours | `0.8889` | `0.5247` | `0.9599` |
-| Vectara retrieval + shared answer model | `0.7778` | `0.5045` | `0.7752` |
-| OpenAI retrieval + shared answer model | `0.5556` | `0.3606` | `0.4920` |
+| Ours | `0.9444` | `0.6499` | `1.0000` |
+| Vectara retrieval + shared answer model | `0.6111` | `0.5009` | `0.7350` |
+| OpenAI retrieval + shared answer model | `0.5556` | `0.2514` | `0.6210` |
 
 ### `pancreas8`
 
 | System | Faithfulness | Answer relevancy | Context precision |
 | --- | --- | --- | --- |
-| Ours | `0.8750` | `0.5034` | `0.9222` |
-| Vectara retrieval + shared answer model | `0.7667` | `0.5052` | `0.6337` |
-| OpenAI retrieval + shared answer model | `0.6000` | `0.2221` | `0.4887` |
+| Ours | `0.9250` | `0.5527` | `0.9000` |
+| Vectara retrieval + shared answer model | `0.7000` | `0.3941` | `0.6700` |
+| OpenAI retrieval + shared answer model | `0.4000` | `0.1535` | `0.4422` |
 
 ## Interpretation
 
-- Helpmate remains strongest overall on the health policy benchmark, with Vectara closest on context precision.
-- On the thesis benchmark, Helpmate has now recovered to a stronger retrieval snapshot and remains ahead of both external baselines overall.
-- On `pancreas7`, Helpmate leads both external baselines across all three `ragas` metrics.
-- On `pancreas8`, Helpmate still leads overall, but broad paper-summary retrieval remains the hardest remaining case.
+- Helpmate now leads both external baselines on the health-policy benchmark across all three `ragas` metrics.
+- On the thesis benchmark, Helpmate remains ahead of both external baselines overall, though OpenAI is still competitive on context precision.
+- On `pancreas7`, Helpmate now has one of the strongest gains in the project, leading both external baselines clearly across all three `ragas` metrics.
+- On `pancreas8`, Helpmate still leads overall, though this remains the hardest paper-summary case and the smallest context-precision margin over the older local snapshot.
 - OpenAI File Search is still the weakest external baseline across the document families we tested.
+- Averaged across the four main document families, Helpmate now leads:
+  - Vectara by `+0.1997` faithfulness, `+0.1350` answer relevancy, and `+0.1523` context precision
+  - OpenAI File Search by `+0.4532` faithfulness, `+0.4021` answer relevancy, and `+0.3697` context precision
 
 ## Structure-Aware Retrieval Snapshot
 
@@ -107,5 +110,5 @@ Notes:
 ## Next Step
 
 - keep Vectara as the main external retrieval benchmark and OpenAI as a reference baseline
-- keep the current architecture stable while frontend/product work continues
-- rerun the full OpenAI/Vectara external comparison once on the fully stabilized stack rather than after each internal tweak
+- treat the `2026-04-19` rerun as the current stabilized external benchmark snapshot
+- only rerun the full vendor comparison again after a materially new retrieval or answer-layer architecture change
