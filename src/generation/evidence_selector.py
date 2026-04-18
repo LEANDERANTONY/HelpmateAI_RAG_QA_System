@@ -39,19 +39,41 @@ class EvidenceSelector:
         # only used to sort candidates and are not comparable across queries.
         return candidate.fused_score
 
-    def _should_select(self, retrieval_result: RetrievalResult) -> bool:
+    def _selection_decision(self, retrieval_result: RetrievalResult) -> dict[str, object]:
+        base_decision = {
+            "should_select": False,
+            "spread": "",
+            "score_gap": None,
+            "weak_evidence_trigger": False,
+            "spread_trigger": False,
+            "ambiguity_trigger": False,
+        }
         if retrieval_result.evidence_status == "unsupported":
-            return False
+            return base_decision
         if self.client is None or not self.settings.evidence_selector_enabled:
-            return False
+            return base_decision
         if len(retrieval_result.candidates) < 2:
-            return False
+            return base_decision
         plan = retrieval_result.retrieval_plan or {}
         spread = str(plan.get("evidence_spread", ""))
         top_scores = [self._candidate_score(candidate) for candidate in retrieval_result.candidates[:2]]
         score_gap = abs(top_scores[0] - top_scores[1]) if len(top_scores) == 2 else 1.0
-        ambiguous = score_gap <= self.settings.evidence_selector_gap_threshold
-        return retrieval_result.weak_evidence or spread in {"global", "sectional"} or ambiguous
+        gap_threshold = self.settings.evidence_selector_gap_threshold
+        ambiguous = gap_threshold >= 1.0 or score_gap <= gap_threshold
+        weak_evidence_trigger = self.settings.evidence_selector_trigger_weak_evidence and retrieval_result.weak_evidence
+        spread_trigger = self.settings.evidence_selector_trigger_spread and spread in {"global", "sectional"}
+        ambiguity_trigger = self.settings.evidence_selector_trigger_ambiguity and ambiguous
+        return {
+            "should_select": weak_evidence_trigger or spread_trigger or ambiguity_trigger,
+            "spread": spread,
+            "score_gap": score_gap,
+            "weak_evidence_trigger": weak_evidence_trigger,
+            "spread_trigger": spread_trigger,
+            "ambiguity_trigger": ambiguity_trigger,
+        }
+
+    def _should_select(self, retrieval_result: RetrievalResult) -> bool:
+        return bool(self._selection_decision(retrieval_result)["should_select"])
 
     def _selection_prompt(self, question: str, candidates: list[RetrievalCandidate]) -> str:
         lines = [

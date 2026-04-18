@@ -109,3 +109,58 @@ def test_evidence_selector_can_reorder_without_pruning():
 
     assert [candidate.chunk_id for candidate in selected.candidates] == ["c2", "c1", "c3"]
     assert any("reordered evidence to start with" in note for note in selected.strategy_notes)
+
+
+def test_evidence_selector_trigger_toggles_can_disable_spread_trigger():
+    selector = EvidenceSelector(
+        Settings(
+            openai_api_key="test-key",
+            evidence_selector_enabled=True,
+            evidence_selector_trigger_weak_evidence=False,
+            evidence_selector_trigger_spread=False,
+            evidence_selector_trigger_ambiguity=False,
+        )
+    )
+    selector.client = _FakeClient('{"candidate_scores":{"c1":0.1,"c2":0.9},"selected_ids":["c2"]}')
+    retrieval = RetrievalResult(
+        question="Summarize the paper.",
+        candidates=[
+            RetrievalCandidate(chunk_id="c1", text="Overview.", metadata={"page_label": "Page 1"}, fused_score=0.4),
+            RetrievalCandidate(chunk_id="c2", text="Results.", metadata={"page_label": "Page 8"}, fused_score=0.35),
+        ],
+        evidence_status="strong",
+        retrieval_plan={"evidence_spread": "global"},
+    )
+
+    decision = selector._selection_decision(retrieval)
+
+    assert decision["should_select"] is False
+    assert decision["spread_trigger"] is False
+
+
+def test_evidence_selector_gap_threshold_one_behaves_as_always_on():
+    selector = EvidenceSelector(
+        Settings(
+            openai_api_key="test-key",
+            evidence_selector_enabled=True,
+            evidence_selector_gap_threshold=1.0,
+            evidence_selector_trigger_weak_evidence=False,
+            evidence_selector_trigger_spread=False,
+            evidence_selector_trigger_ambiguity=True,
+        )
+    )
+    selector.client = _FakeClient('{"candidate_scores":{"c1":0.1,"c2":0.9},"selected_ids":["c2"]}')
+    retrieval = RetrievalResult(
+        question="What changed?",
+        candidates=[
+            RetrievalCandidate(chunk_id="c1", text="Overview.", metadata={"page_label": "Page 1"}, fused_score=1.3),
+            RetrievalCandidate(chunk_id="c2", text="Results.", metadata={"page_label": "Page 8"}, fused_score=0.1),
+        ],
+        evidence_status="strong",
+        retrieval_plan={"evidence_spread": "local"},
+    )
+
+    decision = selector._selection_decision(retrieval)
+
+    assert decision["ambiguity_trigger"] is True
+    assert decision["should_select"] is True

@@ -1,0 +1,654 @@
+{
+  "variant_order": [
+    "regions_10",
+    "regions_8",
+    "regions_6",
+    "regions_5",
+    "regions_4",
+    "regions_3"
+  ],
+  "variants": {
+    "regions_3": {
+      "settings": {
+        "planner_candidate_region_limit": 3,
+        "synopsis_section_window": 4
+      },
+      "overall": {
+        "dataset_count": 7,
+        "top_k_page_hit_rate": 0.805006105006105,
+        "mean_reciprocal_rank": 0.6513278388278387,
+        "section_hit_rate": 0.805006105006105,
+        "region_hit_rate": 0.36666666666666664,
+        "plan_accuracy": 0.5813186813186813,
+        "global_fallback_recovery_rate": 0.7880952380952381,
+        "multi_region_recall": 0.5833333333333333,
+        "objective_score": 0.6642338217338217
+      },
+      "paper_family": {
+        "dataset_count": 5,
+        "top_k_page_hit_rate": 0.8744444444444444,
+        "mean_reciprocal_rank": 0.7041666666666666,
+        "section_hit_rate": 0.8744444444444444,
+        "region_hit_rate": 0.48,
+        "plan_accuracy": 0.5766666666666668,
+        "global_fallback_recovery_rate": 0.9033333333333333,
+        "multi_region_recall": 0.4666666666666667,
+        "objective_score": 0.7317222222222222
+      },
+      "per_dataset": {
+        "health_retrieval_eval_dataset.json": {
+          "dataset_size": 13,
+          "top_k_page_hit_rate": 0.8461538461538461,
+          "mean_reciprocal_rank": 0.7051282051282051,
+          "section_hit_rate": 0.8461538461538461,
+          "region_hit_rate": 0.0,
+          "plan_accuracy": 0.7692307692307693,
+          "global_fallback_recovery_rate": 0.0,
+          "multi_region_recall": 1.0,
+          "objective_score": 0.641025641025641
+        },
+        "pancreas7_retrieval_eval_dataset.json": {
+          "dataset_size": 9,
+          "top_k_page_hit_rate": 0.5555555555555556,
+          "mean_reciprocal_rank": 0.5,
+          "section_hit_rate": 0.5555555555555556,
+          "region_hit_rate": 0.3333333333333333,
+          "plan_accuracy": 0.3333333333333333,
+          "global_fallback_recovery_rate": 0.6,
+          "multi_region_recall": 0.25,
+          "objective_score": 0.47777777777777775
+        },
+        "pancreas8_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "top_k_page_hit_rate": 1.0,
+          "mean_reciprocal_rank": 0.8833333333333332,
+          "section_hit_rate": 1.0,
+          "region_hit_rate": 0.2,
+          "plan_accuracy": 0.8,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.0,
+          "objective_score": 0.7966666666666666
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "top_k_page_hit_rate": 1.0,
+          "mean_reciprocal_rank": 0.8166666666666667,
+          "section_hit_rate": 1.0,
+          "region_hit_rate": 0.5,
+          "plan_accuracy": 0.7,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.8333333333333334,
+          "objective_score": 0.8333333333333333
+        },
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "top_k_page_hit_rate": 0.9,
+          "mean_reciprocal_rank": 0.8,
+          "section_hit_rate": 0.9,
+          "region_hit_rate": 0.7,
+          "plan_accuracy": 0.8,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.75,
+          "objective_score": 0.8300000000000001
+        },
+        "retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "top_k_page_hit_rate": 0.4166666666666667,
+          "mean_reciprocal_rank": 0.3333333333333333,
+          "section_hit_rate": 0.4166666666666667,
+          "region_hit_rate": 0.16666666666666666,
+          "plan_accuracy": 0.4166666666666667,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.75,
+          "objective_score": 0.35000000000000003
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "top_k_page_hit_rate": 0.9166666666666666,
+          "mean_reciprocal_rank": 0.5208333333333334,
+          "section_hit_rate": 0.9166666666666666,
+          "region_hit_rate": 0.6666666666666666,
+          "plan_accuracy": 0.25,
+          "global_fallback_recovery_rate": 0.9166666666666666,
+          "multi_region_recall": 0.5,
+          "objective_score": 0.7208333333333333
+        }
+      }
+    },
+    "regions_4": {
+      "settings": {
+        "planner_candidate_region_limit": 4,
+        "synopsis_section_window": 4
+      },
+      "overall": {
+        "dataset_count": 7,
+        "top_k_page_hit_rate": 0.8208791208791208,
+        "mean_reciprocal_rank": 0.6731532356532356,
+        "section_hit_rate": 0.8208791208791208,
+        "region_hit_rate": 0.37857142857142856,
+        "plan_accuracy": 0.6273504273504272,
+        "global_fallback_recovery_rate": 0.8095238095238094,
+        "multi_region_recall": 0.5833333333333333,
+        "objective_score": 0.683519536019536
+      },
+      "paper_family": {
+        "dataset_count": 5,
+        "top_k_page_hit_rate": 0.8966666666666665,
+        "mean_reciprocal_rank": 0.7347222222222222,
+        "section_hit_rate": 0.8966666666666665,
+        "region_hit_rate": 0.4966666666666667,
+        "plan_accuracy": 0.6411111111111112,
+        "global_fallback_recovery_rate": 0.9333333333333332,
+        "multi_region_recall": 0.4666666666666667,
+        "objective_score": 0.7587222222222223
+      },
+      "per_dataset": {
+        "health_retrieval_eval_dataset.json": {
+          "dataset_size": 13,
+          "top_k_page_hit_rate": 0.8461538461538461,
+          "mean_reciprocal_rank": 0.7051282051282051,
+          "section_hit_rate": 0.8461538461538461,
+          "region_hit_rate": 0.0,
+          "plan_accuracy": 0.7692307692307693,
+          "global_fallback_recovery_rate": 0.0,
+          "multi_region_recall": 1.0,
+          "objective_score": 0.641025641025641
+        },
+        "pancreas7_retrieval_eval_dataset.json": {
+          "dataset_size": 9,
+          "top_k_page_hit_rate": 0.6666666666666666,
+          "mean_reciprocal_rank": 0.6111111111111112,
+          "section_hit_rate": 0.6666666666666666,
+          "region_hit_rate": 0.3333333333333333,
+          "plan_accuracy": 0.5555555555555556,
+          "global_fallback_recovery_rate": 0.75,
+          "multi_region_recall": 0.25,
+          "objective_score": 0.5777777777777777
+        },
+        "pancreas8_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "top_k_page_hit_rate": 1.0,
+          "mean_reciprocal_rank": 0.8833333333333332,
+          "section_hit_rate": 1.0,
+          "region_hit_rate": 0.2,
+          "plan_accuracy": 0.8,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.0,
+          "objective_score": 0.7966666666666666
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "top_k_page_hit_rate": 1.0,
+          "mean_reciprocal_rank": 0.8166666666666667,
+          "section_hit_rate": 1.0,
+          "region_hit_rate": 0.5,
+          "plan_accuracy": 0.8,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.8333333333333334,
+          "objective_score": 0.8433333333333333
+        },
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "top_k_page_hit_rate": 0.9,
+          "mean_reciprocal_rank": 0.8,
+          "section_hit_rate": 0.9,
+          "region_hit_rate": 0.7,
+          "plan_accuracy": 0.8,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.75,
+          "objective_score": 0.8300000000000001
+        },
+        "retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "top_k_page_hit_rate": 0.4166666666666667,
+          "mean_reciprocal_rank": 0.3333333333333333,
+          "section_hit_rate": 0.4166666666666667,
+          "region_hit_rate": 0.16666666666666666,
+          "plan_accuracy": 0.4166666666666667,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.75,
+          "objective_score": 0.35000000000000003
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "top_k_page_hit_rate": 0.9166666666666666,
+          "mean_reciprocal_rank": 0.5624999999999999,
+          "section_hit_rate": 0.9166666666666666,
+          "region_hit_rate": 0.75,
+          "plan_accuracy": 0.25,
+          "global_fallback_recovery_rate": 0.9166666666666666,
+          "multi_region_recall": 0.5,
+          "objective_score": 0.7458333333333333
+        }
+      }
+    },
+    "regions_5": {
+      "settings": {
+        "planner_candidate_region_limit": 5,
+        "synopsis_section_window": 4
+      },
+      "overall": {
+        "dataset_count": 7,
+        "top_k_page_hit_rate": 0.8486568986568986,
+        "mean_reciprocal_rank": 0.6929945054945055,
+        "section_hit_rate": 0.8486568986568986,
+        "region_hit_rate": 0.37857142857142856,
+        "plan_accuracy": 0.6551282051282051,
+        "global_fallback_recovery_rate": 0.7738095238095237,
+        "multi_region_recall": 0.5833333333333333,
+        "objective_score": 0.7041544566544565
+      },
+      "paper_family": {
+        "dataset_count": 5,
+        "top_k_page_hit_rate": 0.918888888888889,
+        "mean_reciprocal_rank": 0.7458333333333332,
+        "section_hit_rate": 0.918888888888889,
+        "region_hit_rate": 0.4966666666666667,
+        "plan_accuracy": 0.6633333333333333,
+        "global_fallback_recovery_rate": 0.8833333333333332,
+        "multi_region_recall": 0.4666666666666667,
+        "objective_score": 0.7742777777777777
+      },
+      "per_dataset": {
+        "health_retrieval_eval_dataset.json": {
+          "dataset_size": 13,
+          "top_k_page_hit_rate": 0.8461538461538461,
+          "mean_reciprocal_rank": 0.7051282051282051,
+          "section_hit_rate": 0.8461538461538461,
+          "region_hit_rate": 0.0,
+          "plan_accuracy": 0.7692307692307693,
+          "global_fallback_recovery_rate": 0.0,
+          "multi_region_recall": 1.0,
+          "objective_score": 0.641025641025641
+        },
+        "pancreas7_retrieval_eval_dataset.json": {
+          "dataset_size": 9,
+          "top_k_page_hit_rate": 0.7777777777777778,
+          "mean_reciprocal_rank": 0.6666666666666666,
+          "section_hit_rate": 0.7777777777777778,
+          "region_hit_rate": 0.3333333333333333,
+          "plan_accuracy": 0.6666666666666666,
+          "global_fallback_recovery_rate": 0.5,
+          "multi_region_recall": 0.25,
+          "objective_score": 0.6555555555555556
+        },
+        "pancreas8_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "top_k_page_hit_rate": 1.0,
+          "mean_reciprocal_rank": 0.8833333333333332,
+          "section_hit_rate": 1.0,
+          "region_hit_rate": 0.2,
+          "plan_accuracy": 0.8,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.0,
+          "objective_score": 0.7966666666666666
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "top_k_page_hit_rate": 1.0,
+          "mean_reciprocal_rank": 0.8166666666666667,
+          "section_hit_rate": 1.0,
+          "region_hit_rate": 0.5,
+          "plan_accuracy": 0.8,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.8333333333333334,
+          "objective_score": 0.8433333333333333
+        },
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "top_k_page_hit_rate": 0.9,
+          "mean_reciprocal_rank": 0.8,
+          "section_hit_rate": 0.9,
+          "region_hit_rate": 0.7,
+          "plan_accuracy": 0.8,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.75,
+          "objective_score": 0.8300000000000001
+        },
+        "retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "top_k_page_hit_rate": 0.5,
+          "mean_reciprocal_rank": 0.4166666666666667,
+          "section_hit_rate": 0.5,
+          "region_hit_rate": 0.16666666666666666,
+          "plan_accuracy": 0.5,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.75,
+          "objective_score": 0.4166666666666667
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "top_k_page_hit_rate": 0.9166666666666666,
+          "mean_reciprocal_rank": 0.5624999999999999,
+          "section_hit_rate": 0.9166666666666666,
+          "region_hit_rate": 0.75,
+          "plan_accuracy": 0.25,
+          "global_fallback_recovery_rate": 0.9166666666666666,
+          "multi_region_recall": 0.5,
+          "objective_score": 0.7458333333333333
+        }
+      }
+    },
+    "regions_6": {
+      "settings": {
+        "planner_candidate_region_limit": 6,
+        "synopsis_section_window": 4
+      },
+      "overall": {
+        "dataset_count": 7,
+        "top_k_page_hit_rate": 0.8605616605616605,
+        "mean_reciprocal_rank": 0.7048992673992673,
+        "section_hit_rate": 0.8605616605616605,
+        "region_hit_rate": 0.39285714285714285,
+        "plan_accuracy": 0.667032967032967,
+        "global_fallback_recovery_rate": 0.7023809523809523,
+        "multi_region_recall": 0.5833333333333333,
+        "objective_score": 0.7165354090354091
+      },
+      "paper_family": {
+        "dataset_count": 5,
+        "top_k_page_hit_rate": 0.918888888888889,
+        "mean_reciprocal_rank": 0.7458333333333332,
+        "section_hit_rate": 0.918888888888889,
+        "region_hit_rate": 0.5166666666666666,
+        "plan_accuracy": 0.6633333333333333,
+        "global_fallback_recovery_rate": 0.7833333333333333,
+        "multi_region_recall": 0.4666666666666667,
+        "objective_score": 0.7782777777777777
+      },
+      "per_dataset": {
+        "health_retrieval_eval_dataset.json": {
+          "dataset_size": 13,
+          "top_k_page_hit_rate": 0.8461538461538461,
+          "mean_reciprocal_rank": 0.7051282051282051,
+          "section_hit_rate": 0.8461538461538461,
+          "region_hit_rate": 0.0,
+          "plan_accuracy": 0.7692307692307693,
+          "global_fallback_recovery_rate": 0.0,
+          "multi_region_recall": 1.0,
+          "objective_score": 0.641025641025641
+        },
+        "pancreas7_retrieval_eval_dataset.json": {
+          "dataset_size": 9,
+          "top_k_page_hit_rate": 0.7777777777777778,
+          "mean_reciprocal_rank": 0.6666666666666666,
+          "section_hit_rate": 0.7777777777777778,
+          "region_hit_rate": 0.3333333333333333,
+          "plan_accuracy": 0.6666666666666666,
+          "global_fallback_recovery_rate": 0.0,
+          "multi_region_recall": 0.25,
+          "objective_score": 0.6555555555555556
+        },
+        "pancreas8_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "top_k_page_hit_rate": 1.0,
+          "mean_reciprocal_rank": 0.8833333333333332,
+          "section_hit_rate": 1.0,
+          "region_hit_rate": 0.2,
+          "plan_accuracy": 0.8,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.0,
+          "objective_score": 0.7966666666666666
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "top_k_page_hit_rate": 1.0,
+          "mean_reciprocal_rank": 0.8166666666666667,
+          "section_hit_rate": 1.0,
+          "region_hit_rate": 0.6,
+          "plan_accuracy": 0.8,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.8333333333333334,
+          "objective_score": 0.8633333333333333
+        },
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "top_k_page_hit_rate": 0.9,
+          "mean_reciprocal_rank": 0.8,
+          "section_hit_rate": 0.9,
+          "region_hit_rate": 0.7,
+          "plan_accuracy": 0.8,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.75,
+          "objective_score": 0.8300000000000001
+        },
+        "retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "top_k_page_hit_rate": 0.5833333333333334,
+          "mean_reciprocal_rank": 0.5,
+          "section_hit_rate": 0.5833333333333334,
+          "region_hit_rate": 0.16666666666666666,
+          "plan_accuracy": 0.5833333333333334,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.75,
+          "objective_score": 0.4833333333333334
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "top_k_page_hit_rate": 0.9166666666666666,
+          "mean_reciprocal_rank": 0.5624999999999999,
+          "section_hit_rate": 0.9166666666666666,
+          "region_hit_rate": 0.75,
+          "plan_accuracy": 0.25,
+          "global_fallback_recovery_rate": 0.9166666666666666,
+          "multi_region_recall": 0.5,
+          "objective_score": 0.7458333333333333
+        }
+      }
+    },
+    "regions_8": {
+      "settings": {
+        "planner_candidate_region_limit": 8,
+        "synopsis_section_window": 4
+      },
+      "overall": {
+        "dataset_count": 7,
+        "top_k_page_hit_rate": 0.8843711843711844,
+        "mean_reciprocal_rank": 0.7207722832722833,
+        "section_hit_rate": 0.8843711843711844,
+        "region_hit_rate": 0.39285714285714285,
+        "plan_accuracy": 0.6908424908424908,
+        "global_fallback_recovery_rate": 0.7023809523809523,
+        "multi_region_recall": 0.5833333333333333,
+        "objective_score": 0.7339957264957265
+      },
+      "paper_family": {
+        "dataset_count": 5,
+        "top_k_page_hit_rate": 0.918888888888889,
+        "mean_reciprocal_rank": 0.7347222222222222,
+        "section_hit_rate": 0.918888888888889,
+        "region_hit_rate": 0.5166666666666666,
+        "plan_accuracy": 0.6633333333333333,
+        "global_fallback_recovery_rate": 0.7833333333333333,
+        "multi_region_recall": 0.4666666666666667,
+        "objective_score": 0.7760555555555555
+      },
+      "per_dataset": {
+        "health_retrieval_eval_dataset.json": {
+          "dataset_size": 13,
+          "top_k_page_hit_rate": 0.8461538461538461,
+          "mean_reciprocal_rank": 0.7051282051282051,
+          "section_hit_rate": 0.8461538461538461,
+          "region_hit_rate": 0.0,
+          "plan_accuracy": 0.7692307692307693,
+          "global_fallback_recovery_rate": 0.0,
+          "multi_region_recall": 1.0,
+          "objective_score": 0.641025641025641
+        },
+        "pancreas7_retrieval_eval_dataset.json": {
+          "dataset_size": 9,
+          "top_k_page_hit_rate": 0.7777777777777778,
+          "mean_reciprocal_rank": 0.6111111111111112,
+          "section_hit_rate": 0.7777777777777778,
+          "region_hit_rate": 0.3333333333333333,
+          "plan_accuracy": 0.6666666666666666,
+          "global_fallback_recovery_rate": 0.0,
+          "multi_region_recall": 0.25,
+          "objective_score": 0.6444444444444444
+        },
+        "pancreas8_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "top_k_page_hit_rate": 1.0,
+          "mean_reciprocal_rank": 0.8833333333333332,
+          "section_hit_rate": 1.0,
+          "region_hit_rate": 0.2,
+          "plan_accuracy": 0.8,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.0,
+          "objective_score": 0.7966666666666666
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "top_k_page_hit_rate": 1.0,
+          "mean_reciprocal_rank": 0.8166666666666667,
+          "section_hit_rate": 1.0,
+          "region_hit_rate": 0.6,
+          "plan_accuracy": 0.8,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.8333333333333334,
+          "objective_score": 0.8633333333333333
+        },
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "top_k_page_hit_rate": 0.9,
+          "mean_reciprocal_rank": 0.8,
+          "section_hit_rate": 0.9,
+          "region_hit_rate": 0.7,
+          "plan_accuracy": 0.8,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.75,
+          "objective_score": 0.8300000000000001
+        },
+        "retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "top_k_page_hit_rate": 0.75,
+          "mean_reciprocal_rank": 0.6666666666666666,
+          "section_hit_rate": 0.75,
+          "region_hit_rate": 0.16666666666666666,
+          "plan_accuracy": 0.75,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.75,
+          "objective_score": 0.6166666666666667
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "top_k_page_hit_rate": 0.9166666666666666,
+          "mean_reciprocal_rank": 0.5624999999999999,
+          "section_hit_rate": 0.9166666666666666,
+          "region_hit_rate": 0.75,
+          "plan_accuracy": 0.25,
+          "global_fallback_recovery_rate": 0.9166666666666666,
+          "multi_region_recall": 0.5,
+          "objective_score": 0.7458333333333333
+        }
+      }
+    },
+    "regions_10": {
+      "settings": {
+        "planner_candidate_region_limit": 10,
+        "synopsis_section_window": 4
+      },
+      "overall": {
+        "dataset_count": 7,
+        "top_k_page_hit_rate": 0.9081807081807083,
+        "mean_reciprocal_rank": 0.744581807081807,
+        "section_hit_rate": 0.9081807081807083,
+        "region_hit_rate": 0.39285714285714285,
+        "plan_accuracy": 0.7146520146520147,
+        "global_fallback_recovery_rate": 0.7023809523809523,
+        "multi_region_recall": 0.5833333333333333,
+        "objective_score": 0.7530433455433455
+      },
+      "paper_family": {
+        "dataset_count": 5,
+        "top_k_page_hit_rate": 0.918888888888889,
+        "mean_reciprocal_rank": 0.7347222222222222,
+        "section_hit_rate": 0.918888888888889,
+        "region_hit_rate": 0.5166666666666666,
+        "plan_accuracy": 0.6633333333333333,
+        "global_fallback_recovery_rate": 0.7833333333333333,
+        "multi_region_recall": 0.4666666666666667,
+        "objective_score": 0.7760555555555555
+      },
+      "per_dataset": {
+        "health_retrieval_eval_dataset.json": {
+          "dataset_size": 13,
+          "top_k_page_hit_rate": 0.8461538461538461,
+          "mean_reciprocal_rank": 0.7051282051282051,
+          "section_hit_rate": 0.8461538461538461,
+          "region_hit_rate": 0.0,
+          "plan_accuracy": 0.7692307692307693,
+          "global_fallback_recovery_rate": 0.0,
+          "multi_region_recall": 1.0,
+          "objective_score": 0.641025641025641
+        },
+        "pancreas7_retrieval_eval_dataset.json": {
+          "dataset_size": 9,
+          "top_k_page_hit_rate": 0.7777777777777778,
+          "mean_reciprocal_rank": 0.6111111111111112,
+          "section_hit_rate": 0.7777777777777778,
+          "region_hit_rate": 0.3333333333333333,
+          "plan_accuracy": 0.6666666666666666,
+          "global_fallback_recovery_rate": 0.0,
+          "multi_region_recall": 0.25,
+          "objective_score": 0.6444444444444444
+        },
+        "pancreas8_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "top_k_page_hit_rate": 1.0,
+          "mean_reciprocal_rank": 0.8833333333333332,
+          "section_hit_rate": 1.0,
+          "region_hit_rate": 0.2,
+          "plan_accuracy": 0.8,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.0,
+          "objective_score": 0.7966666666666666
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "top_k_page_hit_rate": 1.0,
+          "mean_reciprocal_rank": 0.8166666666666667,
+          "section_hit_rate": 1.0,
+          "region_hit_rate": 0.6,
+          "plan_accuracy": 0.8,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.8333333333333334,
+          "objective_score": 0.8633333333333333
+        },
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "top_k_page_hit_rate": 0.9,
+          "mean_reciprocal_rank": 0.8,
+          "section_hit_rate": 0.9,
+          "region_hit_rate": 0.7,
+          "plan_accuracy": 0.8,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.75,
+          "objective_score": 0.8300000000000001
+        },
+        "retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "top_k_page_hit_rate": 0.9166666666666666,
+          "mean_reciprocal_rank": 0.8333333333333334,
+          "section_hit_rate": 0.9166666666666666,
+          "region_hit_rate": 0.16666666666666666,
+          "plan_accuracy": 0.9166666666666666,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.75,
+          "objective_score": 0.75
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "top_k_page_hit_rate": 0.9166666666666666,
+          "mean_reciprocal_rank": 0.5624999999999999,
+          "section_hit_rate": 0.9166666666666666,
+          "region_hit_rate": 0.75,
+          "plan_accuracy": 0.25,
+          "global_fallback_recovery_rate": 0.9166666666666666,
+          "multi_region_recall": 0.5,
+          "objective_score": 0.7458333333333333
+        }
+      }
+    }
+  }
+}

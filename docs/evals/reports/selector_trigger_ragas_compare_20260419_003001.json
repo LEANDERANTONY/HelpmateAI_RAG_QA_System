@@ -1,0 +1,182 @@
+{
+  "available": true,
+  "dataset_names": [
+    "health_retrieval_eval_dataset.json",
+    "thesis_retrieval_eval_dataset.json",
+    "pancreas7_retrieval_eval_dataset.json"
+  ],
+  "variant_order": [
+    "weak_only",
+    "spread_only",
+    "combined",
+    "always_on"
+  ],
+  "answer_model": "gpt-5.4-mini",
+  "embedding_model": "text-embedding-3-small",
+  "variants": {
+    "weak_only": {
+      "settings": {
+        "gap_threshold": 0.08,
+        "trigger_weak_evidence": true,
+        "trigger_spread": false,
+        "trigger_ambiguity": false,
+        "evidence_selector_prune": false
+      },
+      "dataset_size": 34,
+      "supported_rate": 0.9411764705882353,
+      "faithfulness_mean": 0.9093137254901961,
+      "answer_relevancy_mean": 0.6273558116341909,
+      "context_precision_mean": 0.9158496731725354,
+      "trigger_rate": 0.0,
+      "per_dataset": {
+        "health_retrieval_eval_dataset.json": {
+          "dataset_size": 13,
+          "supported_rate": 0.8461538461538461,
+          "faithfulness_mean": 0.8269230769230769,
+          "answer_relevancy_mean": 0.5938346802913288,
+          "context_precision_mean": 0.9166666666322649,
+          "trigger_rate": 0.0
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 1.0,
+          "answer_relevancy_mean": 0.6226776249745135,
+          "context_precision_mean": 0.851851851823341,
+          "trigger_rate": 0.0
+        },
+        "pancreas7_retrieval_eval_dataset.json": {
+          "dataset_size": 9,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 0.9074074074074074,
+          "answer_relevancy_mean": 0.6820128057867837,
+          "context_precision_mean": 0.9999999999740741,
+          "trigger_rate": 0.0
+        }
+      }
+    },
+    "spread_only": {
+      "settings": {
+        "gap_threshold": 0.08,
+        "trigger_weak_evidence": false,
+        "trigger_spread": true,
+        "trigger_ambiguity": false,
+        "evidence_selector_prune": false
+      },
+      "dataset_size": 34,
+      "supported_rate": 0.9705882352941176,
+      "faithfulness_mean": 0.9534313725490196,
+      "answer_relevancy_mean": 0.6501297297651538,
+      "context_precision_mean": 0.9403594770887527,
+      "trigger_rate": 0.5294117647058824,
+      "per_dataset": {
+        "health_retrieval_eval_dataset.json": {
+          "dataset_size": 13,
+          "supported_rate": 0.9230769230769231,
+          "faithfulness_mean": 0.8974358974358975,
+          "answer_relevancy_mean": 0.6316377165564653,
+          "context_precision_mean": 0.9123931623524928,
+          "trigger_rate": 0.38461538461538464
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 1.0,
+          "answer_relevancy_mean": 0.6703102851625007,
+          "context_precision_mean": 0.9328703703353395,
+          "trigger_rate": 0.8333333333333334
+        },
+        "pancreas7_retrieval_eval_dataset.json": {
+          "dataset_size": 9,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 0.9722222222222222,
+          "answer_relevancy_mean": 0.6499330083145747,
+          "context_precision_mean": 0.9907407407123456,
+          "trigger_rate": 0.3333333333333333
+        }
+      }
+    },
+    "combined": {
+      "settings": {
+        "gap_threshold": 0.08,
+        "trigger_weak_evidence": true,
+        "trigger_spread": true,
+        "trigger_ambiguity": true,
+        "evidence_selector_prune": false
+      },
+      "dataset_size": 34,
+      "supported_rate": 0.9411764705882353,
+      "faithfulness_mean": 0.9264705882352942,
+      "answer_relevancy_mean": 0.6087649544282421,
+      "context_precision_mean": 0.93464052284311,
+      "trigger_rate": 0.9411764705882353,
+      "per_dataset": {
+        "health_retrieval_eval_dataset.json": {
+          "dataset_size": 13,
+          "supported_rate": 0.8461538461538461,
+          "faithfulness_mean": 0.8461538461538461,
+          "answer_relevancy_mean": 0.5672440405049802,
+          "context_precision_mean": 0.9166666666294871,
+          "trigger_rate": 1.0
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 1.0,
+          "answer_relevancy_mean": 0.6092045186398877,
+          "context_precision_mean": 0.9050925925610339,
+          "trigger_rate": 0.8333333333333334
+        },
+        "pancreas7_retrieval_eval_dataset.json": {
+          "dataset_size": 9,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 0.9444444444444444,
+          "answer_relevancy_mean": 0.6681535222574262,
+          "context_precision_mean": 0.9999999999722222,
+          "trigger_rate": 1.0
+        }
+      }
+    },
+    "always_on": {
+      "settings": {
+        "gap_threshold": 1.0,
+        "trigger_weak_evidence": false,
+        "trigger_spread": false,
+        "trigger_ambiguity": true,
+        "evidence_selector_prune": false
+      },
+      "dataset_size": 34,
+      "supported_rate": 0.9411764705882353,
+      "faithfulness_mean": 0.9656862745098039,
+      "answer_relevancy_mean": 0.6415168004831575,
+      "context_precision_mean": 0.9566993463722767,
+      "trigger_rate": 1.0,
+      "per_dataset": {
+        "health_retrieval_eval_dataset.json": {
+          "dataset_size": 13,
+          "supported_rate": 0.8461538461538461,
+          "faithfulness_mean": 0.9230769230769231,
+          "answer_relevancy_mean": 0.6229673620939222,
+          "context_precision_mean": 0.9465811965423789,
+          "trigger_rate": 1.0
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 0.9861111111111112,
+          "answer_relevancy_mean": 0.6399934406068327,
+          "context_precision_mean": 0.9351851851533179,
+          "trigger_rate": 1.0
+        },
+        "pancreas7_retrieval_eval_dataset.json": {
+          "dataset_size": 9,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 1.0,
+          "answer_relevancy_mean": 0.6703415802138193,
+          "context_precision_mean": 0.9999999999740741,
+          "trigger_rate": 1.0
+        }
+      }
+    }
+  }
+}

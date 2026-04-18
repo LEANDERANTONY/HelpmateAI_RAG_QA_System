@@ -95,8 +95,11 @@ Notes:
 
 - section and region metrics are for local retrieval only
 - they are meant to explain planner/topology behavior, not replace hit rate, MRR, or `ragas`
-- the selector now runs in reorder-only mode by default, so it improves final evidence ordering without pruning away supporting chunks
+- the selector now runs in reorder-only mode with spread-only triggering by default, so it improves final evidence ordering without pruning away supporting chunks
 - the dedicated `global_summary_first` route also sits inside local retrieval behavior and is intended to improve broad paper-summary evidence assembly without disturbing exact factual paths
+- recent retrieval-default sweeps also refined two topology defaults:
+  - `global_fallback_top_k = 3`
+  - `planner_candidate_region_limit = 10`
 
 ## Next Step
 

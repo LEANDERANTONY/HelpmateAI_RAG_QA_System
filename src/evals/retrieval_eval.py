@@ -48,6 +48,12 @@ def run_retrieval_eval(
     lexical_top_k: int | None = None,
     fused_top_k: int | None = None,
     final_top_k: int | None = None,
+    synopsis_dense_top_k: int | None = None,
+    synopsis_lexical_top_k: int | None = None,
+    synopsis_fused_top_k: int | None = None,
+    synopsis_section_window: int | None = None,
+    planner_candidate_region_limit: int | None = None,
+    global_fallback_top_k: int | None = None,
 ) -> dict:
     dataset = json.loads(Path(dataset_path).read_text(encoding="utf-8"))
     settings = get_settings()
@@ -59,6 +65,12 @@ def run_retrieval_eval(
         lexical_top_k=lexical_top_k or settings.lexical_top_k,
         fused_top_k=fused_top_k or settings.fused_top_k,
         final_top_k=final_top_k or settings.final_top_k,
+        synopsis_dense_top_k=synopsis_dense_top_k or settings.synopsis_dense_top_k,
+        synopsis_lexical_top_k=synopsis_lexical_top_k or settings.synopsis_lexical_top_k,
+        synopsis_fused_top_k=synopsis_fused_top_k or settings.synopsis_fused_top_k,
+        synopsis_section_window=synopsis_section_window or settings.synopsis_section_window,
+        planner_candidate_region_limit=planner_candidate_region_limit or settings.planner_candidate_region_limit,
+        global_fallback_top_k=global_fallback_top_k or settings.global_fallback_top_k,
     )
     pipeline = HelpmatePipeline(settings)
     document = pipeline.ingest_document(document_path)
@@ -141,6 +153,9 @@ def run_retrieval_eval(
             "synopsis_dense_top_k": settings.synopsis_dense_top_k,
             "synopsis_lexical_top_k": settings.synopsis_lexical_top_k,
             "synopsis_fused_top_k": settings.synopsis_fused_top_k,
+            "synopsis_section_window": settings.synopsis_section_window,
+            "planner_candidate_region_limit": settings.planner_candidate_region_limit,
+            "global_fallback_top_k": settings.global_fallback_top_k,
         },
         "results": results,
     }

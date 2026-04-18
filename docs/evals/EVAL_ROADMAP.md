@@ -567,6 +567,59 @@ Current interpretation:
 - the earlier negative selector conclusion should be preserved as history for prune mode, not carried forward as the final selector verdict
 - this is now a benchmark-backed architecture change, not an intuition change
 
+### 8. Selector Calibration Follow-Up
+
+What was measured:
+
+- reorder-only weight sweep
+- gap-threshold sweep
+- threshold answer-layer compare
+- threshold focused `ragas` compare
+- trigger-source isolation on retrieval, answer-layer, and focused `ragas`
+
+What we learned:
+
+- reorder-only weight tuning is a broad plateau
+  - the current `0.25 / 0.75` blend remains valid
+- ambiguity-triggered selection is not the best production default
+  - threshold sweeps tied on retrieval objective, but ambiguity-heavy modes did not dominate once answer quality and trigger-rate cost were included
+- weak-evidence-only triggering is effectively inactive on the current benchmark
+- the real production tradeoff is:
+  - `spread_only` for lower trigger rate and strong answer quality
+  - `always_on` for maximum grounding at maximum selector cost
+
+Current interpretation:
+
+- the selector story is now complete enough to set a production trigger policy
+- the recommended production default is:
+  - reorder-only selector
+  - `rank_weight = 0.25`
+  - `llm_weight = 0.75`
+  - spread-only triggering
+
+### 9. Retrieval-Default Sweeps
+
+What was measured:
+
+- synopsis section-window sweep
+- synopsis dense/lexical/fused top-k grid
+- global fallback top-k sweep
+- planner candidate-region-limit sweep
+
+What we learned:
+
+- `synopsis_section_window = 4` remains the best current default
+- the tested synopsis top-k grid was effectively flat, so the current `8 / 8 / 5` pool remains justified
+- `global_fallback_top_k = 3` slightly outperformed the current `4`
+- `planner_candidate_region_limit = 10` clearly outperformed the current `6` on overall objective and plan accuracy
+
+Current interpretation:
+
+- the topology-aware retrieval defaults are now much less intuition-driven than before
+- the next remaining unvalidated retrieval-side questions are mostly:
+  - structure-repair calibration
+  - topology edge-type ablation
+
 ## Guiding Rule Going Forward
 
 For every major Helpmate layer, we should be able to say:
