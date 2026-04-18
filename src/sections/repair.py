@@ -49,6 +49,14 @@ _NOISY_TITLE_PATTERNS = (
     "available in pmc",
 )
 
+_DEFAULT_CONFIDENCE_PENALTIES = {
+    "long_document_too_few_sections": 0.28,
+    "coarse_for_length": 0.24,
+    "duplicate_titles": 0.14,
+    "noisy_titles": 0.22,
+    "weak_canonical_headings": 0.18,
+}
+
 
 @dataclass(frozen=True)
 class StructureRepairDecision:
@@ -75,12 +83,20 @@ class StructureRepairService:
         return any(pattern in lowered for pattern in _NOISY_TITLE_PATTERNS)
 
     @classmethod
-    def assess(cls, document: DocumentRecord, sections: list[SectionRecord]) -> StructureRepairDecision:
+    def assess(
+        cls,
+        document: DocumentRecord,
+        sections: list[SectionRecord],
+        *,
+        threshold: float = 0.62,
+        penalty_overrides: dict[str, float] | None = None,
+    ) -> StructureRepairDecision:
         reasons: list[str] = []
         if not sections:
             return StructureRepairDecision(confidence=0.0, should_repair=False, reasons=["No sections were available to assess."])
 
         confidence = 0.92
+        penalties = {**_DEFAULT_CONFIDENCE_PENALTIES, **(penalty_overrides or {})}
         page_count = document.page_count or len(document.metadata.get("pages", []))
         section_count = len(sections)
 
@@ -90,23 +106,23 @@ class StructureRepairService:
         canonical_count = sum(1 for section in sections if _extract_canonical_heading(section.text) or section.title.lower() in _SECTION_KIND_MAP)
 
         if page_count >= 12 and section_count <= 4:
-            confidence -= 0.28
+            confidence -= penalties["long_document_too_few_sections"]
             reasons.append("Long document collapsed into too few sections.")
         elif page_count >= 6 and section_count <= 2:
-            confidence -= 0.24
+            confidence -= penalties["coarse_for_length"]
             reasons.append("Document structure is too coarse for its length.")
         if duplicate_ratio >= 0.3:
-            confidence -= 0.14
+            confidence -= penalties["duplicate_titles"]
             reasons.append("Section titles are heavily duplicated.")
         if noisy_ratio >= 0.25:
-            confidence -= 0.22
+            confidence -= penalties["noisy_titles"]
             reasons.append("Repeated publisher/header noise appears in section titles.")
         if document.metadata.get("document_style") in {"research_paper", "thesis_document"} and canonical_count <= 2:
-            confidence -= 0.18
+            confidence -= penalties["weak_canonical_headings"]
             reasons.append("Research-style document has weak canonical heading coverage.")
 
         confidence = max(0.0, min(1.0, confidence))
-        should_repair = confidence < 0.62 and page_count >= 6
+        should_repair = confidence < threshold and page_count >= 6
         if not reasons:
             reasons.append("Deterministic structure extraction looked healthy.")
         return StructureRepairDecision(confidence=confidence, should_repair=should_repair, reasons=reasons)
@@ -255,7 +271,11 @@ class StructureRepairService:
         return sections
 
     def repair_if_needed(self, document: DocumentRecord, sections: list[SectionRecord]) -> tuple[list[SectionRecord], StructureRepairDecision]:
-        decision = self.assess(document, sections)
+        decision = self.assess(
+            document,
+            sections,
+            threshold=self.settings.structure_repair_confidence_threshold,
+        )
         if (
             not self.settings.structure_repair_enabled
             or decision.confidence >= self.settings.structure_repair_confidence_threshold

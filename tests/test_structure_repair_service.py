@@ -188,3 +188,111 @@ def test_structure_repair_replaces_noisy_overview_titles_with_canonical_heading(
 
     assert repaired_sections[0].title == "Document Overview"
     assert repaired_sections[1].title == "Abstract"
+
+
+def test_structure_repair_assess_respects_threshold_override():
+    settings = Settings(openai_api_key=None)
+    service = StructureRepairService(settings)
+    document = DocumentRecord(
+        document_id="doc4",
+        file_name="policy.pdf",
+        file_type="pdf",
+        source_path="policy.pdf",
+        fingerprint="jkl",
+        char_count=9000,
+        page_count=30,
+        metadata={"document_style": "policy_document"},
+    )
+    sections = [
+        SectionRecord(
+            section_id=f"s{index}",
+            document_id="doc4",
+            title=f"Section {index}",
+            summary="Summary.",
+            text="Section content.",
+            page_labels=[f"Page {index}"],
+            section_path=[f"Section {index}"],
+            clause_ids=[],
+            metadata={"section_kind": "general", "section_aliases": []},
+        )
+        for index in range(1, 5)
+    ]
+
+    conservative = service.assess(document, sections, threshold=0.62)
+    looser = service.assess(document, sections, threshold=0.70)
+
+    assert conservative.confidence == 0.64
+    assert conservative.should_repair is False
+    assert looser.should_repair is True
+
+
+def test_structure_repair_assess_penalty_overrides_can_disable_specific_signal():
+    settings = Settings(openai_api_key=None)
+    service = StructureRepairService(settings)
+    document = DocumentRecord(
+        document_id="doc5",
+        file_name="report.pdf",
+        file_type="pdf",
+        source_path="report.pdf",
+        fingerprint="mno",
+        char_count=5000,
+        page_count=20,
+        metadata={"document_style": "research_paper"},
+    )
+    sections = [
+        SectionRecord(
+            section_id="s1",
+            document_id="doc5",
+            title="Nature Medicine | Volume 31 | February 2025 | 599-608",
+            summary="Front matter summary.",
+            text="Nature Medicine | Volume 31 | February 2025 | 599-608\nArticle\nTitle page text.",
+            page_labels=["Page 1"],
+            section_path=["Nature Medicine | Volume 31 | February 2025 | 599-608"],
+            clause_ids=[],
+            metadata={"section_kind": "general", "section_aliases": ["Nature Medicine"]},
+        ),
+        SectionRecord(
+            section_id="s2",
+            document_id="doc5",
+            title="Nature Medicine | Volume 31 | February 2025 | 599-608",
+            summary="Repeated journal header summary.",
+            text="Repeated journal header content.",
+            page_labels=["Page 2"],
+            section_path=["Nature Medicine | Volume 31 | February 2025 | 599-608"],
+            clause_ids=[],
+            metadata={"section_kind": "general", "section_aliases": ["Nature Medicine"]},
+        ),
+        SectionRecord(
+            section_id="s3",
+            document_id="doc5",
+            title="Methods",
+            summary="Methods summary.",
+            text="Methods text.",
+            page_labels=["Page 3", "Page 4", "Page 5"],
+            section_path=["Methods"],
+            clause_ids=[],
+            metadata={"section_kind": "methodology", "section_aliases": ["Methods"]},
+        ),
+        SectionRecord(
+            section_id="s4",
+            document_id="doc5",
+            title="Results",
+            summary="Results summary.",
+            text="Results text.",
+            page_labels=["Page 6", "Page 7", "Page 8"],
+            section_path=["Results"],
+            clause_ids=[],
+            metadata={"section_kind": "results", "section_aliases": ["Results"]},
+        ),
+    ]
+
+    baseline = service.assess(document, sections, threshold=0.62)
+    no_noise_penalty = service.assess(
+        document,
+        sections,
+        threshold=0.62,
+        penalty_overrides={"noisy_titles": 0.0},
+    )
+
+    assert baseline.confidence < no_noise_penalty.confidence
+    assert any("publisher/header noise" in reason.lower() for reason in baseline.reasons)

@@ -1,0 +1,786 @@
+{
+  "variant_order": [
+    "threshold_0_55",
+    "threshold_0_5",
+    "threshold_0_62",
+    "threshold_0_75",
+    "threshold_0_68"
+  ],
+  "variants": {
+    "threshold_0_5": {
+      "settings": {
+        "structure_repair_confidence_threshold": 0.5,
+        "structure_repair_model": "gpt-5.4-nano"
+      },
+      "repair_rate": 0.25,
+      "noisy_trigger_rate": 0.5,
+      "healthy_false_positive_rate": 0.0,
+      "overall": {
+        "dataset_count": 4,
+        "top_k_page_hit_rate": 0.9407051282051282,
+        "mean_reciprocal_rank": 0.7370459401709402,
+        "section_hit_rate": 0.9407051282051282,
+        "region_hit_rate": 0.5125,
+        "plan_accuracy": 0.6798076923076923,
+        "global_fallback_recovery_rate": 0.4772727272727273,
+        "multi_region_recall": 0.7708333333333334,
+        "objective_score": 0.7882425213675213
+      },
+      "noisy_family": {
+        "dataset_count": 2,
+        "top_k_page_hit_rate": 1.0,
+        "mean_reciprocal_rank": 0.8333333333333333,
+        "section_hit_rate": 1.0,
+        "region_hit_rate": 0.6499999999999999,
+        "plan_accuracy": 0.8500000000000001,
+        "global_fallback_recovery_rate": 0.5,
+        "multi_region_recall": 0.7916666666666667,
+        "objective_score": 0.8816666666666666
+      },
+      "healthy_family": {
+        "dataset_count": 2,
+        "top_k_page_hit_rate": 0.8814102564102564,
+        "mean_reciprocal_rank": 0.640758547008547,
+        "section_hit_rate": 0.8814102564102564,
+        "region_hit_rate": 0.375,
+        "plan_accuracy": 0.5096153846153846,
+        "global_fallback_recovery_rate": 0.45454545454545453,
+        "multi_region_recall": 0.75,
+        "objective_score": 0.694818376068376
+      },
+      "documents": {
+        "health_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+          "document_id": "1a994e256c109513",
+          "fingerprint": "1a994e256c109513b5c495454dd0f43430a6e03b53c7187d2871a77971c07532",
+          "page_count": 122,
+          "base_section_count": 3,
+          "final_section_count": 3,
+          "confidence": 0.64,
+          "should_repair": false,
+          "repair_applied": false,
+          "reasons": [
+            "Long document collapsed into too few sections."
+          ]
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+          "document_id": "c459aa7631f3848f",
+          "fingerprint": "c459aa7631f3848f0a70bf23a5a191b3586e540e2e57d7be4750dbdd140e1691",
+          "page_count": 121,
+          "base_section_count": 101,
+          "final_section_count": 101,
+          "confidence": 0.92,
+          "should_repair": false,
+          "repair_applied": false,
+          "reasons": [
+            "Deterministic structure extraction looked healthy."
+          ]
+        },
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration.pdf",
+          "document_id": "b950f9666b1999a4",
+          "fingerprint": "b950f9666b1999a4f3cbf1f557a55034bfca8af1a887027269117ce2e5449680",
+          "page_count": 28,
+          "base_section_count": 4,
+          "final_section_count": 16,
+          "confidence": 0.42000000000000004,
+          "should_repair": true,
+          "repair_applied": true,
+          "reasons": [
+            "Long document collapsed into too few sections.",
+            "Repeated publisher/header noise appears in section titles."
+          ]
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration2.pdf",
+          "document_id": "c28685174b6bce75",
+          "fingerprint": "c28685174b6bce75cdc76b5fc3ed77364c925d76e5d64b86430deaac24fc94ca",
+          "page_count": 15,
+          "base_section_count": 16,
+          "final_section_count": 16,
+          "confidence": 0.74,
+          "should_repair": false,
+          "repair_applied": false,
+          "reasons": [
+            "Research-style document has weak canonical heading coverage."
+          ]
+        }
+      },
+      "per_dataset": {
+        "health_retrieval_eval_dataset.json": {
+          "dataset_size": 13,
+          "repair_confidence": 0.64,
+          "repair_applied": false,
+          "top_k_page_hit_rate": 0.8461538461538461,
+          "mean_reciprocal_rank": 0.7051282051282051,
+          "section_hit_rate": 0.8461538461538461,
+          "region_hit_rate": 0.0,
+          "plan_accuracy": 0.7692307692307693,
+          "global_fallback_recovery_rate": 0.0,
+          "multi_region_recall": 1.0,
+          "objective_score": 0.641025641025641
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "repair_confidence": 0.92,
+          "repair_applied": false,
+          "top_k_page_hit_rate": 0.9166666666666666,
+          "mean_reciprocal_rank": 0.5763888888888888,
+          "section_hit_rate": 0.9166666666666666,
+          "region_hit_rate": 0.75,
+          "plan_accuracy": 0.25,
+          "global_fallback_recovery_rate": 0.9090909090909091,
+          "multi_region_recall": 0.5,
+          "objective_score": 0.7486111111111111
+        },
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "repair_confidence": 0.42000000000000004,
+          "repair_applied": true,
+          "top_k_page_hit_rate": 1.0,
+          "mean_reciprocal_rank": 0.85,
+          "section_hit_rate": 1.0,
+          "region_hit_rate": 0.7,
+          "plan_accuracy": 0.9,
+          "global_fallback_recovery_rate": 0.0,
+          "multi_region_recall": 0.75,
+          "objective_score": 0.8999999999999999
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "repair_confidence": 0.74,
+          "repair_applied": false,
+          "top_k_page_hit_rate": 1.0,
+          "mean_reciprocal_rank": 0.8166666666666667,
+          "section_hit_rate": 1.0,
+          "region_hit_rate": 0.6,
+          "plan_accuracy": 0.8,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.8333333333333334,
+          "objective_score": 0.8633333333333333
+        }
+      }
+    },
+    "threshold_0_55": {
+      "settings": {
+        "structure_repair_confidence_threshold": 0.55,
+        "structure_repair_model": "gpt-5.4-nano"
+      },
+      "repair_rate": 0.25,
+      "noisy_trigger_rate": 0.5,
+      "healthy_false_positive_rate": 0.0,
+      "overall": {
+        "dataset_count": 4,
+        "top_k_page_hit_rate": 0.9407051282051282,
+        "mean_reciprocal_rank": 0.7495459401709401,
+        "section_hit_rate": 0.9407051282051282,
+        "region_hit_rate": 0.5125,
+        "plan_accuracy": 0.6798076923076923,
+        "global_fallback_recovery_rate": 0.7272727272727273,
+        "multi_region_recall": 0.7708333333333334,
+        "objective_score": 0.7907425213675213
+      },
+      "noisy_family": {
+        "dataset_count": 2,
+        "top_k_page_hit_rate": 1.0,
+        "mean_reciprocal_rank": 0.8583333333333334,
+        "section_hit_rate": 1.0,
+        "region_hit_rate": 0.6499999999999999,
+        "plan_accuracy": 0.8500000000000001,
+        "global_fallback_recovery_rate": 1.0,
+        "multi_region_recall": 0.7916666666666667,
+        "objective_score": 0.8866666666666666
+      },
+      "healthy_family": {
+        "dataset_count": 2,
+        "top_k_page_hit_rate": 0.8814102564102564,
+        "mean_reciprocal_rank": 0.640758547008547,
+        "section_hit_rate": 0.8814102564102564,
+        "region_hit_rate": 0.375,
+        "plan_accuracy": 0.5096153846153846,
+        "global_fallback_recovery_rate": 0.45454545454545453,
+        "multi_region_recall": 0.75,
+        "objective_score": 0.694818376068376
+      },
+      "documents": {
+        "health_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+          "document_id": "1a994e256c109513",
+          "fingerprint": "1a994e256c109513b5c495454dd0f43430a6e03b53c7187d2871a77971c07532",
+          "page_count": 122,
+          "base_section_count": 3,
+          "final_section_count": 3,
+          "confidence": 0.64,
+          "should_repair": false,
+          "repair_applied": false,
+          "reasons": [
+            "Long document collapsed into too few sections."
+          ]
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+          "document_id": "c459aa7631f3848f",
+          "fingerprint": "c459aa7631f3848f0a70bf23a5a191b3586e540e2e57d7be4750dbdd140e1691",
+          "page_count": 121,
+          "base_section_count": 101,
+          "final_section_count": 101,
+          "confidence": 0.92,
+          "should_repair": false,
+          "repair_applied": false,
+          "reasons": [
+            "Deterministic structure extraction looked healthy."
+          ]
+        },
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration.pdf",
+          "document_id": "b950f9666b1999a4",
+          "fingerprint": "b950f9666b1999a4f3cbf1f557a55034bfca8af1a887027269117ce2e5449680",
+          "page_count": 28,
+          "base_section_count": 4,
+          "final_section_count": 20,
+          "confidence": 0.42000000000000004,
+          "should_repair": true,
+          "repair_applied": true,
+          "reasons": [
+            "Long document collapsed into too few sections.",
+            "Repeated publisher/header noise appears in section titles."
+          ]
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration2.pdf",
+          "document_id": "c28685174b6bce75",
+          "fingerprint": "c28685174b6bce75cdc76b5fc3ed77364c925d76e5d64b86430deaac24fc94ca",
+          "page_count": 15,
+          "base_section_count": 16,
+          "final_section_count": 16,
+          "confidence": 0.74,
+          "should_repair": false,
+          "repair_applied": false,
+          "reasons": [
+            "Research-style document has weak canonical heading coverage."
+          ]
+        }
+      },
+      "per_dataset": {
+        "health_retrieval_eval_dataset.json": {
+          "dataset_size": 13,
+          "repair_confidence": 0.64,
+          "repair_applied": false,
+          "top_k_page_hit_rate": 0.8461538461538461,
+          "mean_reciprocal_rank": 0.7051282051282051,
+          "section_hit_rate": 0.8461538461538461,
+          "region_hit_rate": 0.0,
+          "plan_accuracy": 0.7692307692307693,
+          "global_fallback_recovery_rate": 0.0,
+          "multi_region_recall": 1.0,
+          "objective_score": 0.641025641025641
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "repair_confidence": 0.92,
+          "repair_applied": false,
+          "top_k_page_hit_rate": 0.9166666666666666,
+          "mean_reciprocal_rank": 0.5763888888888888,
+          "section_hit_rate": 0.9166666666666666,
+          "region_hit_rate": 0.75,
+          "plan_accuracy": 0.25,
+          "global_fallback_recovery_rate": 0.9090909090909091,
+          "multi_region_recall": 0.5,
+          "objective_score": 0.7486111111111111
+        },
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "repair_confidence": 0.42000000000000004,
+          "repair_applied": true,
+          "top_k_page_hit_rate": 1.0,
+          "mean_reciprocal_rank": 0.9,
+          "section_hit_rate": 1.0,
+          "region_hit_rate": 0.7,
+          "plan_accuracy": 0.9,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.75,
+          "objective_score": 0.9099999999999999
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "repair_confidence": 0.74,
+          "repair_applied": false,
+          "top_k_page_hit_rate": 1.0,
+          "mean_reciprocal_rank": 0.8166666666666667,
+          "section_hit_rate": 1.0,
+          "region_hit_rate": 0.6,
+          "plan_accuracy": 0.8,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.8333333333333334,
+          "objective_score": 0.8633333333333333
+        }
+      }
+    },
+    "threshold_0_62": {
+      "settings": {
+        "structure_repair_confidence_threshold": 0.62,
+        "structure_repair_model": "gpt-5.4-nano"
+      },
+      "repair_rate": 0.25,
+      "noisy_trigger_rate": 0.5,
+      "healthy_false_positive_rate": 0.0,
+      "overall": {
+        "dataset_count": 4,
+        "top_k_page_hit_rate": 0.9407051282051282,
+        "mean_reciprocal_rank": 0.7370459401709402,
+        "section_hit_rate": 0.9407051282051282,
+        "region_hit_rate": 0.5125,
+        "plan_accuracy": 0.6798076923076923,
+        "global_fallback_recovery_rate": 0.4772727272727273,
+        "multi_region_recall": 0.7708333333333334,
+        "objective_score": 0.7882425213675213
+      },
+      "noisy_family": {
+        "dataset_count": 2,
+        "top_k_page_hit_rate": 1.0,
+        "mean_reciprocal_rank": 0.8333333333333333,
+        "section_hit_rate": 1.0,
+        "region_hit_rate": 0.6499999999999999,
+        "plan_accuracy": 0.8500000000000001,
+        "global_fallback_recovery_rate": 0.5,
+        "multi_region_recall": 0.7916666666666667,
+        "objective_score": 0.8816666666666666
+      },
+      "healthy_family": {
+        "dataset_count": 2,
+        "top_k_page_hit_rate": 0.8814102564102564,
+        "mean_reciprocal_rank": 0.640758547008547,
+        "section_hit_rate": 0.8814102564102564,
+        "region_hit_rate": 0.375,
+        "plan_accuracy": 0.5096153846153846,
+        "global_fallback_recovery_rate": 0.45454545454545453,
+        "multi_region_recall": 0.75,
+        "objective_score": 0.694818376068376
+      },
+      "documents": {
+        "health_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+          "document_id": "1a994e256c109513",
+          "fingerprint": "1a994e256c109513b5c495454dd0f43430a6e03b53c7187d2871a77971c07532",
+          "page_count": 122,
+          "base_section_count": 3,
+          "final_section_count": 3,
+          "confidence": 0.64,
+          "should_repair": false,
+          "repair_applied": false,
+          "reasons": [
+            "Long document collapsed into too few sections."
+          ]
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+          "document_id": "c459aa7631f3848f",
+          "fingerprint": "c459aa7631f3848f0a70bf23a5a191b3586e540e2e57d7be4750dbdd140e1691",
+          "page_count": 121,
+          "base_section_count": 101,
+          "final_section_count": 101,
+          "confidence": 0.92,
+          "should_repair": false,
+          "repair_applied": false,
+          "reasons": [
+            "Deterministic structure extraction looked healthy."
+          ]
+        },
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration.pdf",
+          "document_id": "b950f9666b1999a4",
+          "fingerprint": "b950f9666b1999a4f3cbf1f557a55034bfca8af1a887027269117ce2e5449680",
+          "page_count": 28,
+          "base_section_count": 4,
+          "final_section_count": 16,
+          "confidence": 0.42000000000000004,
+          "should_repair": true,
+          "repair_applied": true,
+          "reasons": [
+            "Long document collapsed into too few sections.",
+            "Repeated publisher/header noise appears in section titles."
+          ]
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration2.pdf",
+          "document_id": "c28685174b6bce75",
+          "fingerprint": "c28685174b6bce75cdc76b5fc3ed77364c925d76e5d64b86430deaac24fc94ca",
+          "page_count": 15,
+          "base_section_count": 16,
+          "final_section_count": 16,
+          "confidence": 0.74,
+          "should_repair": false,
+          "repair_applied": false,
+          "reasons": [
+            "Research-style document has weak canonical heading coverage."
+          ]
+        }
+      },
+      "per_dataset": {
+        "health_retrieval_eval_dataset.json": {
+          "dataset_size": 13,
+          "repair_confidence": 0.64,
+          "repair_applied": false,
+          "top_k_page_hit_rate": 0.8461538461538461,
+          "mean_reciprocal_rank": 0.7051282051282051,
+          "section_hit_rate": 0.8461538461538461,
+          "region_hit_rate": 0.0,
+          "plan_accuracy": 0.7692307692307693,
+          "global_fallback_recovery_rate": 0.0,
+          "multi_region_recall": 1.0,
+          "objective_score": 0.641025641025641
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "repair_confidence": 0.92,
+          "repair_applied": false,
+          "top_k_page_hit_rate": 0.9166666666666666,
+          "mean_reciprocal_rank": 0.5763888888888888,
+          "section_hit_rate": 0.9166666666666666,
+          "region_hit_rate": 0.75,
+          "plan_accuracy": 0.25,
+          "global_fallback_recovery_rate": 0.9090909090909091,
+          "multi_region_recall": 0.5,
+          "objective_score": 0.7486111111111111
+        },
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "repair_confidence": 0.42000000000000004,
+          "repair_applied": true,
+          "top_k_page_hit_rate": 1.0,
+          "mean_reciprocal_rank": 0.85,
+          "section_hit_rate": 1.0,
+          "region_hit_rate": 0.7,
+          "plan_accuracy": 0.9,
+          "global_fallback_recovery_rate": 0.0,
+          "multi_region_recall": 0.75,
+          "objective_score": 0.8999999999999999
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "repair_confidence": 0.74,
+          "repair_applied": false,
+          "top_k_page_hit_rate": 1.0,
+          "mean_reciprocal_rank": 0.8166666666666667,
+          "section_hit_rate": 1.0,
+          "region_hit_rate": 0.6,
+          "plan_accuracy": 0.8,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.8333333333333334,
+          "objective_score": 0.8633333333333333
+        }
+      }
+    },
+    "threshold_0_68": {
+      "settings": {
+        "structure_repair_confidence_threshold": 0.68,
+        "structure_repair_model": "gpt-5.4-nano"
+      },
+      "repair_rate": 0.5,
+      "noisy_trigger_rate": 0.5,
+      "healthy_false_positive_rate": 0.5,
+      "overall": {
+        "dataset_count": 4,
+        "top_k_page_hit_rate": 0.8772435897435897,
+        "mean_reciprocal_rank": 0.7069177350427349,
+        "section_hit_rate": 0.8772435897435897,
+        "region_hit_rate": 0.5644230769230769,
+        "plan_accuracy": 0.635576923076923,
+        "global_fallback_recovery_rate": 0.6772727272727272,
+        "multi_region_recall": 0.7708333333333334,
+        "objective_score": 0.7564476495726495
+      },
+      "noisy_family": {
+        "dataset_count": 2,
+        "top_k_page_hit_rate": 0.95,
+        "mean_reciprocal_rank": 0.8083333333333333,
+        "section_hit_rate": 0.95,
+        "region_hit_rate": 0.6,
+        "plan_accuracy": 0.8,
+        "global_fallback_recovery_rate": 0.5,
+        "multi_region_recall": 0.7916666666666667,
+        "objective_score": 0.8366666666666667
+      },
+      "healthy_family": {
+        "dataset_count": 2,
+        "top_k_page_hit_rate": 0.8044871794871795,
+        "mean_reciprocal_rank": 0.6055021367521367,
+        "section_hit_rate": 0.8044871794871795,
+        "region_hit_rate": 0.5288461538461539,
+        "plan_accuracy": 0.47115384615384615,
+        "global_fallback_recovery_rate": 0.8545454545454545,
+        "multi_region_recall": 0.75,
+        "objective_score": 0.6762286324786324
+      },
+      "documents": {
+        "health_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+          "document_id": "1a994e256c109513",
+          "fingerprint": "1a994e256c109513b5c495454dd0f43430a6e03b53c7187d2871a77971c07532",
+          "page_count": 122,
+          "base_section_count": 3,
+          "final_section_count": 92,
+          "confidence": 0.64,
+          "should_repair": true,
+          "repair_applied": true,
+          "reasons": [
+            "Long document collapsed into too few sections."
+          ]
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+          "document_id": "c459aa7631f3848f",
+          "fingerprint": "c459aa7631f3848f0a70bf23a5a191b3586e540e2e57d7be4750dbdd140e1691",
+          "page_count": 121,
+          "base_section_count": 101,
+          "final_section_count": 101,
+          "confidence": 0.92,
+          "should_repair": false,
+          "repair_applied": false,
+          "reasons": [
+            "Deterministic structure extraction looked healthy."
+          ]
+        },
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration.pdf",
+          "document_id": "b950f9666b1999a4",
+          "fingerprint": "b950f9666b1999a4f3cbf1f557a55034bfca8af1a887027269117ce2e5449680",
+          "page_count": 28,
+          "base_section_count": 4,
+          "final_section_count": 16,
+          "confidence": 0.42000000000000004,
+          "should_repair": true,
+          "repair_applied": true,
+          "reasons": [
+            "Long document collapsed into too few sections.",
+            "Repeated publisher/header noise appears in section titles."
+          ]
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration2.pdf",
+          "document_id": "c28685174b6bce75",
+          "fingerprint": "c28685174b6bce75cdc76b5fc3ed77364c925d76e5d64b86430deaac24fc94ca",
+          "page_count": 15,
+          "base_section_count": 16,
+          "final_section_count": 16,
+          "confidence": 0.74,
+          "should_repair": false,
+          "repair_applied": false,
+          "reasons": [
+            "Research-style document has weak canonical heading coverage."
+          ]
+        }
+      },
+      "per_dataset": {
+        "health_retrieval_eval_dataset.json": {
+          "dataset_size": 13,
+          "repair_confidence": 0.64,
+          "repair_applied": true,
+          "top_k_page_hit_rate": 0.6923076923076923,
+          "mean_reciprocal_rank": 0.6346153846153846,
+          "section_hit_rate": 0.6923076923076923,
+          "region_hit_rate": 0.3076923076923077,
+          "plan_accuracy": 0.6923076923076923,
+          "global_fallback_recovery_rate": 0.8,
+          "multi_region_recall": 1.0,
+          "objective_score": 0.6038461538461538
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "repair_confidence": 0.92,
+          "repair_applied": false,
+          "top_k_page_hit_rate": 0.9166666666666666,
+          "mean_reciprocal_rank": 0.5763888888888888,
+          "section_hit_rate": 0.9166666666666666,
+          "region_hit_rate": 0.75,
+          "plan_accuracy": 0.25,
+          "global_fallback_recovery_rate": 0.9090909090909091,
+          "multi_region_recall": 0.5,
+          "objective_score": 0.7486111111111111
+        },
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "repair_confidence": 0.42000000000000004,
+          "repair_applied": true,
+          "top_k_page_hit_rate": 0.9,
+          "mean_reciprocal_rank": 0.8,
+          "section_hit_rate": 0.9,
+          "region_hit_rate": 0.6,
+          "plan_accuracy": 0.8,
+          "global_fallback_recovery_rate": 0.0,
+          "multi_region_recall": 0.75,
+          "objective_score": 0.81
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "repair_confidence": 0.74,
+          "repair_applied": false,
+          "top_k_page_hit_rate": 1.0,
+          "mean_reciprocal_rank": 0.8166666666666667,
+          "section_hit_rate": 1.0,
+          "region_hit_rate": 0.6,
+          "plan_accuracy": 0.8,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.8333333333333334,
+          "objective_score": 0.8633333333333333
+        }
+      }
+    },
+    "threshold_0_75": {
+      "settings": {
+        "structure_repair_confidence_threshold": 0.75,
+        "structure_repair_model": "gpt-5.4-nano"
+      },
+      "repair_rate": 0.75,
+      "noisy_trigger_rate": 1.0,
+      "healthy_false_positive_rate": 0.5,
+      "overall": {
+        "dataset_count": 4,
+        "top_k_page_hit_rate": 0.9022435897435898,
+        "mean_reciprocal_rank": 0.7194177350427351,
+        "section_hit_rate": 0.9022435897435898,
+        "region_hit_rate": 0.4701923076923077,
+        "plan_accuracy": 0.6163461538461539,
+        "global_fallback_recovery_rate": 0.9147727272727273,
+        "multi_region_recall": 0.7708333333333334,
+        "objective_score": 0.7506784188034188
+      },
+      "noisy_family": {
+        "dataset_count": 2,
+        "top_k_page_hit_rate": 1.0,
+        "mean_reciprocal_rank": 0.8333333333333333,
+        "section_hit_rate": 1.0,
+        "region_hit_rate": 0.44999999999999996,
+        "plan_accuracy": 0.8,
+        "global_fallback_recovery_rate": 1.0,
+        "multi_region_recall": 0.7916666666666667,
+        "objective_score": 0.8366666666666667
+      },
+      "healthy_family": {
+        "dataset_count": 2,
+        "top_k_page_hit_rate": 0.8044871794871795,
+        "mean_reciprocal_rank": 0.6055021367521367,
+        "section_hit_rate": 0.8044871794871795,
+        "region_hit_rate": 0.4903846153846154,
+        "plan_accuracy": 0.4326923076923077,
+        "global_fallback_recovery_rate": 0.8295454545454546,
+        "multi_region_recall": 0.75,
+        "objective_score": 0.6646901709401709
+      },
+      "documents": {
+        "health_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+          "document_id": "1a994e256c109513",
+          "fingerprint": "1a994e256c109513b5c495454dd0f43430a6e03b53c7187d2871a77971c07532",
+          "page_count": 122,
+          "base_section_count": 3,
+          "final_section_count": 97,
+          "confidence": 0.64,
+          "should_repair": true,
+          "repair_applied": true,
+          "reasons": [
+            "Long document collapsed into too few sections."
+          ]
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+          "document_id": "c459aa7631f3848f",
+          "fingerprint": "c459aa7631f3848f0a70bf23a5a191b3586e540e2e57d7be4750dbdd140e1691",
+          "page_count": 121,
+          "base_section_count": 101,
+          "final_section_count": 101,
+          "confidence": 0.92,
+          "should_repair": false,
+          "repair_applied": false,
+          "reasons": [
+            "Deterministic structure extraction looked healthy."
+          ]
+        },
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration.pdf",
+          "document_id": "b950f9666b1999a4",
+          "fingerprint": "b950f9666b1999a4f3cbf1f557a55034bfca8af1a887027269117ce2e5449680",
+          "page_count": 28,
+          "base_section_count": 4,
+          "final_section_count": 21,
+          "confidence": 0.42000000000000004,
+          "should_repair": true,
+          "repair_applied": true,
+          "reasons": [
+            "Long document collapsed into too few sections.",
+            "Repeated publisher/header noise appears in section titles."
+          ]
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration2.pdf",
+          "document_id": "c28685174b6bce75",
+          "fingerprint": "c28685174b6bce75cdc76b5fc3ed77364c925d76e5d64b86430deaac24fc94ca",
+          "page_count": 15,
+          "base_section_count": 16,
+          "final_section_count": 16,
+          "confidence": 0.74,
+          "should_repair": true,
+          "repair_applied": true,
+          "reasons": [
+            "Research-style document has weak canonical heading coverage."
+          ]
+        }
+      },
+      "per_dataset": {
+        "health_retrieval_eval_dataset.json": {
+          "dataset_size": 13,
+          "repair_confidence": 0.64,
+          "repair_applied": true,
+          "top_k_page_hit_rate": 0.6923076923076923,
+          "mean_reciprocal_rank": 0.6346153846153846,
+          "section_hit_rate": 0.6923076923076923,
+          "region_hit_rate": 0.23076923076923078,
+          "plan_accuracy": 0.6153846153846154,
+          "global_fallback_recovery_rate": 0.75,
+          "multi_region_recall": 1.0,
+          "objective_score": 0.5807692307692307
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "repair_confidence": 0.92,
+          "repair_applied": false,
+          "top_k_page_hit_rate": 0.9166666666666666,
+          "mean_reciprocal_rank": 0.5763888888888888,
+          "section_hit_rate": 0.9166666666666666,
+          "region_hit_rate": 0.75,
+          "plan_accuracy": 0.25,
+          "global_fallback_recovery_rate": 0.9090909090909091,
+          "multi_region_recall": 0.5,
+          "objective_score": 0.7486111111111111
+        },
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "repair_confidence": 0.42000000000000004,
+          "repair_applied": true,
+          "top_k_page_hit_rate": 1.0,
+          "mean_reciprocal_rank": 0.85,
+          "section_hit_rate": 1.0,
+          "region_hit_rate": 0.7,
+          "plan_accuracy": 0.9,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.75,
+          "objective_score": 0.8999999999999999
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "repair_confidence": 0.74,
+          "repair_applied": true,
+          "top_k_page_hit_rate": 1.0,
+          "mean_reciprocal_rank": 0.8166666666666667,
+          "section_hit_rate": 1.0,
+          "region_hit_rate": 0.2,
+          "plan_accuracy": 0.7,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.8333333333333334,
+          "objective_score": 0.7733333333333333
+        }
+      }
+    }
+  }
+}

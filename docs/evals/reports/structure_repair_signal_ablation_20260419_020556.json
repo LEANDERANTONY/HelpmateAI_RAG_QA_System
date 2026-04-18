@@ -1,0 +1,334 @@
+{
+  "variant_order": [
+    "baseline",
+    "no_coarse_for_length",
+    "no_duplicate_titles",
+    "no_weak_canonical_headings",
+    "no_long_document_too_few_sections",
+    "no_noisy_titles"
+  ],
+  "variants": {
+    "baseline": {
+      "penalty_overrides": {},
+      "false_positives": 0,
+      "false_negatives": 1,
+      "per_document": {
+        "health": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+          "page_count": 122,
+          "section_count": 3,
+          "expected_should_repair": false,
+          "confidence": 0.64,
+          "should_repair": false,
+          "reasons": [
+            "Long document collapsed into too few sections."
+          ]
+        },
+        "thesis": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+          "page_count": 121,
+          "section_count": 101,
+          "expected_should_repair": false,
+          "confidence": 0.92,
+          "should_repair": false,
+          "reasons": [
+            "Deterministic structure extraction looked healthy."
+          ]
+        },
+        "reportgeneration": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration.pdf",
+          "page_count": 28,
+          "section_count": 4,
+          "expected_should_repair": true,
+          "confidence": 0.42000000000000004,
+          "should_repair": true,
+          "reasons": [
+            "Long document collapsed into too few sections.",
+            "Repeated publisher/header noise appears in section titles."
+          ]
+        },
+        "reportgeneration2": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration2.pdf",
+          "page_count": 15,
+          "section_count": 16,
+          "expected_should_repair": true,
+          "confidence": 0.74,
+          "should_repair": false,
+          "reasons": [
+            "Research-style document has weak canonical heading coverage."
+          ]
+        }
+      }
+    },
+    "no_long_document_too_few_sections": {
+      "penalty_overrides": {
+        "long_document_too_few_sections": 0.0
+      },
+      "false_positives": 0,
+      "false_negatives": 2,
+      "per_document": {
+        "health": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+          "page_count": 122,
+          "section_count": 3,
+          "expected_should_repair": false,
+          "confidence": 0.92,
+          "should_repair": false,
+          "reasons": [
+            "Long document collapsed into too few sections."
+          ]
+        },
+        "thesis": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+          "page_count": 121,
+          "section_count": 101,
+          "expected_should_repair": false,
+          "confidence": 0.92,
+          "should_repair": false,
+          "reasons": [
+            "Deterministic structure extraction looked healthy."
+          ]
+        },
+        "reportgeneration": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration.pdf",
+          "page_count": 28,
+          "section_count": 4,
+          "expected_should_repair": true,
+          "confidence": 0.7000000000000001,
+          "should_repair": false,
+          "reasons": [
+            "Long document collapsed into too few sections.",
+            "Repeated publisher/header noise appears in section titles."
+          ]
+        },
+        "reportgeneration2": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration2.pdf",
+          "page_count": 15,
+          "section_count": 16,
+          "expected_should_repair": true,
+          "confidence": 0.74,
+          "should_repair": false,
+          "reasons": [
+            "Research-style document has weak canonical heading coverage."
+          ]
+        }
+      }
+    },
+    "no_coarse_for_length": {
+      "penalty_overrides": {
+        "coarse_for_length": 0.0
+      },
+      "false_positives": 0,
+      "false_negatives": 1,
+      "per_document": {
+        "health": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+          "page_count": 122,
+          "section_count": 3,
+          "expected_should_repair": false,
+          "confidence": 0.64,
+          "should_repair": false,
+          "reasons": [
+            "Long document collapsed into too few sections."
+          ]
+        },
+        "thesis": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+          "page_count": 121,
+          "section_count": 101,
+          "expected_should_repair": false,
+          "confidence": 0.92,
+          "should_repair": false,
+          "reasons": [
+            "Deterministic structure extraction looked healthy."
+          ]
+        },
+        "reportgeneration": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration.pdf",
+          "page_count": 28,
+          "section_count": 4,
+          "expected_should_repair": true,
+          "confidence": 0.42000000000000004,
+          "should_repair": true,
+          "reasons": [
+            "Long document collapsed into too few sections.",
+            "Repeated publisher/header noise appears in section titles."
+          ]
+        },
+        "reportgeneration2": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration2.pdf",
+          "page_count": 15,
+          "section_count": 16,
+          "expected_should_repair": true,
+          "confidence": 0.74,
+          "should_repair": false,
+          "reasons": [
+            "Research-style document has weak canonical heading coverage."
+          ]
+        }
+      }
+    },
+    "no_duplicate_titles": {
+      "penalty_overrides": {
+        "duplicate_titles": 0.0
+      },
+      "false_positives": 0,
+      "false_negatives": 1,
+      "per_document": {
+        "health": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+          "page_count": 122,
+          "section_count": 3,
+          "expected_should_repair": false,
+          "confidence": 0.64,
+          "should_repair": false,
+          "reasons": [
+            "Long document collapsed into too few sections."
+          ]
+        },
+        "thesis": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+          "page_count": 121,
+          "section_count": 101,
+          "expected_should_repair": false,
+          "confidence": 0.92,
+          "should_repair": false,
+          "reasons": [
+            "Deterministic structure extraction looked healthy."
+          ]
+        },
+        "reportgeneration": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration.pdf",
+          "page_count": 28,
+          "section_count": 4,
+          "expected_should_repair": true,
+          "confidence": 0.42000000000000004,
+          "should_repair": true,
+          "reasons": [
+            "Long document collapsed into too few sections.",
+            "Repeated publisher/header noise appears in section titles."
+          ]
+        },
+        "reportgeneration2": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration2.pdf",
+          "page_count": 15,
+          "section_count": 16,
+          "expected_should_repair": true,
+          "confidence": 0.74,
+          "should_repair": false,
+          "reasons": [
+            "Research-style document has weak canonical heading coverage."
+          ]
+        }
+      }
+    },
+    "no_noisy_titles": {
+      "penalty_overrides": {
+        "noisy_titles": 0.0
+      },
+      "false_positives": 0,
+      "false_negatives": 2,
+      "per_document": {
+        "health": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+          "page_count": 122,
+          "section_count": 3,
+          "expected_should_repair": false,
+          "confidence": 0.64,
+          "should_repair": false,
+          "reasons": [
+            "Long document collapsed into too few sections."
+          ]
+        },
+        "thesis": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+          "page_count": 121,
+          "section_count": 101,
+          "expected_should_repair": false,
+          "confidence": 0.92,
+          "should_repair": false,
+          "reasons": [
+            "Deterministic structure extraction looked healthy."
+          ]
+        },
+        "reportgeneration": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration.pdf",
+          "page_count": 28,
+          "section_count": 4,
+          "expected_should_repair": true,
+          "confidence": 0.64,
+          "should_repair": false,
+          "reasons": [
+            "Long document collapsed into too few sections.",
+            "Repeated publisher/header noise appears in section titles."
+          ]
+        },
+        "reportgeneration2": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration2.pdf",
+          "page_count": 15,
+          "section_count": 16,
+          "expected_should_repair": true,
+          "confidence": 0.74,
+          "should_repair": false,
+          "reasons": [
+            "Research-style document has weak canonical heading coverage."
+          ]
+        }
+      }
+    },
+    "no_weak_canonical_headings": {
+      "penalty_overrides": {
+        "weak_canonical_headings": 0.0
+      },
+      "false_positives": 0,
+      "false_negatives": 1,
+      "per_document": {
+        "health": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+          "page_count": 122,
+          "section_count": 3,
+          "expected_should_repair": false,
+          "confidence": 0.64,
+          "should_repair": false,
+          "reasons": [
+            "Long document collapsed into too few sections."
+          ]
+        },
+        "thesis": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+          "page_count": 121,
+          "section_count": 101,
+          "expected_should_repair": false,
+          "confidence": 0.92,
+          "should_repair": false,
+          "reasons": [
+            "Deterministic structure extraction looked healthy."
+          ]
+        },
+        "reportgeneration": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration.pdf",
+          "page_count": 28,
+          "section_count": 4,
+          "expected_should_repair": true,
+          "confidence": 0.42000000000000004,
+          "should_repair": true,
+          "reasons": [
+            "Long document collapsed into too few sections.",
+            "Repeated publisher/header noise appears in section titles."
+          ]
+        },
+        "reportgeneration2": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration2.pdf",
+          "page_count": 15,
+          "section_count": 16,
+          "expected_should_repair": true,
+          "confidence": 0.92,
+          "should_repair": false,
+          "reasons": [
+            "Research-style document has weak canonical heading coverage."
+          ]
+        }
+      }
+    }
+  }
+}

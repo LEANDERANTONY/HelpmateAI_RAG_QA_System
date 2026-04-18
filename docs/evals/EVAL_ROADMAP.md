@@ -617,8 +617,64 @@ Current interpretation:
 
 - the topology-aware retrieval defaults are now much less intuition-driven than before
 - the next remaining unvalidated retrieval-side questions are mostly:
-  - structure-repair calibration
-  - topology edge-type ablation
+  - external vendor reruns on the stabilized stack
+
+### 10. Structure Repair Calibration
+
+What was measured:
+
+- threshold sweep over:
+  - `0.50`
+  - `0.55`
+  - `0.62`
+  - `0.68`
+  - `0.75`
+- deterministic signal ablation removing one repair-confidence penalty at a time
+
+Reports:
+
+- `docs/evals/reports/structure_repair_threshold_sweep_20260419_021637.json`
+- `docs/evals/reports/structure_repair_signal_ablation_20260419_020556.json`
+
+What we learned:
+
+- thresholds `0.50`, `0.55`, and `0.62` all produced the same repair-trigger profile on the measured corpus
+- higher thresholds (`0.68`, `0.75`) started to produce false-positive repair on the health-policy benchmark
+- signal ablation showed:
+  - `long_document_too_few_sections` is load-bearing
+  - `noisy_titles` is also load-bearing
+  - `reportgeneration2` is not fixed by threshold tuning alone under the current deterministic heuristic
+
+Current interpretation:
+
+- no new repair threshold is justified by the benchmark
+- `structure_repair_confidence_threshold = 0.62` remains acceptable
+- the remaining repair gap is heuristic coverage for `reportgeneration2`, not calibration of the existing threshold
+
+### 11. Topology Edge-Type Ablation
+
+What was measured:
+
+- removal of each single edge-type family from section-scope expansion:
+  - no `previous_next`
+  - no `parent_child`
+  - no `same_region_family`
+  - no `semantic_neighbor`
+
+Report:
+
+- `docs/evals/reports/topology_edge_ablation_20260419_022708.json`
+
+What we learned:
+
+- the current eval corpus was effectively invariant across all tested edge-type removals
+- overall objective, policy/thesis objective, and paper-family objective remained flat
+
+Current interpretation:
+
+- topology edge types are now measured, but not newly optimized
+- the current edge sets can remain as-is
+- if this question is revisited, it should be with a broader corpus rather than more micro-tuning on the current one
 
 ## Guiding Rule Going Forward
 

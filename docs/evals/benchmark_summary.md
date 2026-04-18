@@ -100,9 +100,12 @@ Notes:
 - recent retrieval-default sweeps also refined two topology defaults:
   - `global_fallback_top_k = 3`
   - `planner_candidate_region_limit = 10`
+- later repair and topology-ablation sweeps did not justify further default changes:
+  - `structure_repair_confidence_threshold` stays `0.62`
+  - current topology edge sets stay unchanged
 
 ## Next Step
 
 - keep Vectara as the main external retrieval benchmark and OpenAI as a reference baseline
 - keep the current architecture stable while frontend/product work continues
-- when backend work resumes, focus only on the remaining weakest broad paper-summary cases rather than another global architecture rewrite
+- rerun the full OpenAI/Vectara external comparison once on the fully stabilized stack rather than after each internal tweak

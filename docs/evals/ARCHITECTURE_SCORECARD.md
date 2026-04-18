@@ -8,8 +8,10 @@ This document is the short, decision-oriented snapshot of what the evaluation st
 - keep the calibrated planner/router layer
 - keep the evidence selector in reorder-only mode
 - use spread-only selector triggering as the production policy
+- keep `structure_repair_confidence_threshold = 0.62`
 - keep `synopsis_section_window = 4`
 - keep the current synopsis top-k pool (`dense=8`, `lexical=8`, `fused=5`)
+- keep the current topology edge sets for `soft_local` and `soft_multi_region`
 - change `global_fallback_top_k` from `4` to `3`
 - change `planner_candidate_region_limit` from `6` to `10`
 
@@ -20,7 +22,9 @@ This document is the short, decision-oriented snapshot of what the evaluation st
 | Reranker | Measured | Strong positive | Adds memory and compute overhead | Keep |
 | Planner / router fallback | Measured | Small positive | Adds low-frequency LLM routing calls and logic complexity | Keep, but treat as modest |
 | Evidence selector | Re-tested and recalibrated | Positive in reorder-only mode | Adds an extra LLM call and more logic | Keep, spread-only trigger |
+| Structure repair threshold | Swept | No better threshold justified | Index-time LLM call on a minority of documents | Keep `0.62` |
 | Synopsis retrieval defaults | Swept | Stable plateau | Low runtime risk, medium logic importance | Keep current window and top-k pool |
+| Topology edge types | Ablated | Invariant on current benchmark | No extra runtime difference, but extra logic surface | Keep current edge sets |
 | Global fallback pool | Swept | Smaller pool is slightly better | Affects broad-summary recall and noise | Reduce to `3` |
 | Planner region limit | Swept | Broader candidate set helps overall routing quality | Minimal runtime/config complexity | Raise to `10` |
 
@@ -156,6 +160,55 @@ Decision:
 
 - raise `planner_candidate_region_limit` to `10`
 
+### Structure Repair Threshold
+
+Reports:
+
+- `docs/evals/reports/structure_repair_threshold_sweep_20260419_021637.json`
+- `docs/evals/reports/structure_repair_signal_ablation_20260419_020556.json`
+
+Result:
+
+- thresholds `0.50`, `0.55`, and `0.62` all produced the same repair profile:
+  - `reportgeneration` repaired
+  - `reportgeneration2` not repaired
+  - no healthy-document false positives
+- `0.68` and `0.75` began triggering false-positive repair on the health-policy benchmark
+- deterministic signal ablation showed:
+  - `long_document_too_few_sections` is load-bearing for `reportgeneration`
+  - `noisy_titles` is also load-bearing for `reportgeneration`
+  - `reportgeneration2` is not recoverable through threshold tuning alone under the current heuristic
+
+Decision:
+
+- keep `structure_repair_confidence_threshold = 0.62`
+- treat `reportgeneration2` as a heuristic-gap case rather than a threshold-calibration miss
+- keep the current penalty set; no simplification is justified yet
+
+### Topology Edge Types
+
+Report:
+
+- `docs/evals/reports/topology_edge_ablation_20260419_022708.json`
+
+Result:
+
+- removing any single edge type produced the same aggregate benchmark objective on the current eval corpus
+- tested variants:
+  - no `previous_next`
+  - no `parent_child`
+  - no `same_region_family`
+  - no `semantic_neighbor`
+- the benchmark was effectively invariant across those variants on:
+  - overall objective
+  - policy/thesis family objective
+  - paper-family objective
+
+Decision:
+
+- keep the current edge sets unchanged
+- record topology edges as benchmark-invariant on the current corpus, not as a newly optimized default
+
 ## Current Architecture Position
 
 If we had to choose today based on the benchmark stack:
@@ -173,13 +226,12 @@ If we had to choose today based on the benchmark stack:
   - `synopsis_dense_top_k = 8`
   - `synopsis_lexical_top_k = 8`
   - `synopsis_fused_top_k = 5`
+  - `structure_repair_confidence_threshold = 0.62`
+  - current topology edge sets
 - change:
   - `global_fallback_top_k = 3`
   - `planner_candidate_region_limit = 10`
 
 ## What Still Remains
 
-- structure-repair threshold calibration
-- structure-repair signal ablation
-- topology edge-type ablation
 - broader answer-layer and external `ragas` checks after the new retrieval defaults settle
