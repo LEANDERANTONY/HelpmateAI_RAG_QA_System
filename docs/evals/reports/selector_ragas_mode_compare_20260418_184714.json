@@ -1,0 +1,119 @@
+{
+  "available": true,
+  "dataset_names": [
+    "health_retrieval_eval_dataset.json",
+    "thesis_retrieval_eval_dataset.json",
+    "pancreas7_retrieval_eval_dataset.json"
+  ],
+  "variant_order": [
+    "planner_reranker",
+    "selector_prune",
+    "selector_reorder_only"
+  ],
+  "answer_model": "gpt-5.4-mini",
+  "embedding_model": "text-embedding-3-small",
+  "variants": {
+    "planner_reranker": {
+      "settings": {
+        "evidence_selector_enabled": false,
+        "evidence_selector_prune": true
+      },
+      "dataset_size": 34,
+      "supported_rate": 0.9705882352941176,
+      "faithfulness_mean": 0.9310224089635855,
+      "answer_relevancy_mean": 0.6555414800003938,
+      "context_precision_mean": 0.9035947712104847,
+      "per_dataset": {
+        "health_retrieval_eval_dataset.json": {
+          "dataset_size": 13,
+          "supported_rate": 0.9230769230769231,
+          "faithfulness_mean": 0.8388278388278388,
+          "answer_relevancy_mean": 0.642466539073818,
+          "context_precision_mean": 0.8653846153489316
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 1.0,
+          "answer_relevancy_mean": 0.6709314687841951,
+          "context_precision_mean": 0.893518518488966
+        },
+        "pancreas7_retrieval_eval_dataset.json": {
+          "dataset_size": 9,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 0.9722222222222222,
+          "answer_relevancy_mean": 0.653907520738157,
+          "context_precision_mean": 0.9722222221947531
+        }
+      }
+    },
+    "selector_prune": {
+      "settings": {
+        "evidence_selector_enabled": true,
+        "evidence_selector_prune": true
+      },
+      "dataset_size": 34,
+      "supported_rate": 0.9117647058823529,
+      "faithfulness_mean": 0.9173669467787114,
+      "answer_relevancy_mean": 0.6014950638169035,
+      "context_precision_mean": 0.9158496731546841,
+      "per_dataset": {
+        "health_retrieval_eval_dataset.json": {
+          "dataset_size": 13,
+          "supported_rate": 0.8461538461538461,
+          "faithfulness_mean": 0.8461538461538461,
+          "answer_relevancy_mean": 0.6083956473276825,
+          "context_precision_mean": 0.9230769230230769
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "supported_rate": 0.9166666666666666,
+          "faithfulness_mean": 0.9325396825396826,
+          "answer_relevancy_mean": 0.5952677708874518,
+          "context_precision_mean": 0.8449074073674383
+        },
+        "pancreas7_retrieval_eval_dataset.json": {
+          "dataset_size": 9,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 1.0,
+          "answer_relevancy_mean": 0.5998306115406029,
+          "context_precision_mean": 0.99999999995
+        }
+      }
+    },
+    "selector_reorder_only": {
+      "settings": {
+        "evidence_selector_enabled": true,
+        "evidence_selector_prune": false
+      },
+      "dataset_size": 34,
+      "supported_rate": 0.9411764705882353,
+      "faithfulness_mean": 0.9656862745098039,
+      "answer_relevancy_mean": 0.6435556313301796,
+      "context_precision_mean": 0.9607843136931372,
+      "per_dataset": {
+        "health_retrieval_eval_dataset.json": {
+          "dataset_size": 13,
+          "supported_rate": 0.8461538461538461,
+          "faithfulness_mean": 0.9230769230769231,
+          "answer_relevancy_mean": 0.6246523360567723,
+          "context_precision_mean": 0.9743589743241453
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 0.9861111111111112,
+          "answer_relevancy_mean": 0.6441783517265007,
+          "context_precision_mean": 0.9328703703374228
+        },
+        "pancreas7_retrieval_eval_dataset.json": {
+          "dataset_size": 9,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 1.0,
+          "answer_relevancy_mean": 0.670030097307784,
+          "context_precision_mean": 0.9783950617004115
+        }
+      }
+    }
+  }
+}

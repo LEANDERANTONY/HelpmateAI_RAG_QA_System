@@ -8,7 +8,7 @@ It is intentionally short and decision-oriented.
 
 - keep the reranker
 - keep the calibrated planner/router layer
-- do not currently treat the evidence selector as justified
+- keep the evidence selector in reorder-only mode
 
 ## Current Layer Summary
 
@@ -16,7 +16,7 @@ It is intentionally short and decision-oriented.
 | --- | --- | --- | --- | --- |
 | Reranker | Measured | Strong positive | Adds memory and compute overhead | Keep |
 | Planner / router fallback | Measured | Small positive | Adds low-frequency LLM routing calls and logic complexity | Keep, but treat as modest |
-| Evidence selector | Measured | Negative on current evidence and answer benchmarks | Adds an extra LLM call and more logic | Do not justify yet |
+| Evidence selector | Re-tested in reorder-only mode | Positive on answer support and context precision without pruning loss | Adds an extra LLM call and more logic | Keep in reorder-only mode |
 
 ## Latency / Cost Snapshot
 
@@ -37,8 +37,8 @@ Operational interpretation:
 
 - reranker adds moderate retrieval-time overhead for a large quality gain
 - planner adds noticeable latency because the LLM fallback activates on about `12.6%` of questions
-- selector is the most expensive incremental layer in the active stack, nearly doubling estimated LLM-stage calls per question versus reranker-only
-- the selector therefore currently loses on both quality and runtime
+- selector is still the most expensive incremental layer in the active stack, nearly doubling estimated LLM-stage calls per question versus reranker-only
+- the reorder-only design now justifies that extra cost on the current benchmark, but it should remain benchmark-governed because latency is still real
 
 ## External `ragas` Check
 
@@ -57,7 +57,7 @@ Scope:
   - `planner_reranker`
   - `full_stack`
 
-Top-line `ragas` results:
+Original top-line `ragas` results for the prune-based selector run:
 
 | Variant | Supported rate | Faithfulness | Answer relevancy | Context precision |
 | --- | --- | --- | --- | --- |
@@ -65,15 +65,27 @@ Top-line `ragas` results:
 | Planner + reranker | `0.9412` | `0.9412` | `0.5679` | `0.8840` |
 | Full stack | `0.9412` | `0.8672` | `0.6533` | `0.9853` |
 
+This comparison is now historical.
+
+The prune-based selector conclusion was overturned by the later reorder-only ablation recorded in:
+
+- `docs/evals/reports/selector_ragas_mode_compare_20260418_184714.json`
+
+Reorder-only result vs planner+rereanker:
+
+- planner+rereanker:
+  - faithfulness `0.9310`
+  - answer relevancy `0.6555`
+  - context precision `0.9036`
+- selector reorder-only:
+  - faithfulness `0.9657`
+  - answer relevancy `0.6436`
+  - context precision `0.9608`
+
 Interpretation:
 
-- `planner_reranker` is the strongest variant on faithfulness in this external check
-- `full_stack` improves context precision and answer relevancy, but does so while reducing faithfulness
-- that tradeoff does not overturn the current internal benchmark result, because the selector still looks worse on the safer and more architecture-critical grounding signals
-- the external check therefore reinforces the current position:
-  - reranker stays
-  - planner stays as a modest positive
-  - selector remains interesting, but not currently justified as the default production path
+- the original negative selector finding was caused by evidence pruning, not by evidence reordering itself
+- once the selector was allowed to reorder without dropping support, it became a net positive layer again
 
 ## Evidence Selector
 
@@ -93,27 +105,60 @@ Reason:
 
 Important caveat:
 
-- tuning the selector weights did not prove the selector itself is valuable
-- it only found the best version of the selector among the tested weight settings
+- tuning the selector weights did not by itself prove the selector was valuable
+- the earlier prune-based selector still failed the first benchmark pass
+- the later reorder-only ablation is what actually justified re-enabling the layer
 
-### Selector On / Off Result
+### Prune vs Reorder-Only Result
 
-On the current evidence-level ablation:
+Retrieval-level comparison:
 
 - selector off objective: `0.7674`
-- selector on objective: `0.7255`
-- page hit rate: `0.8421 -> 0.7763`
-- fragment recall: `0.7202 -> 0.6726`
+- selector prune objective: `0.7255`
+- selector reorder-only objective: `0.7757`
 
-Answer-layer comparison also showed selector-on underperforming the same stack without selector:
+Answer-layer comparison:
 
-- supported rate: `0.8816 -> 0.8553`
-- citation page-hit rate: `0.8684 -> 0.7763`
-- evidence fragment recall mean: `0.7364 -> 0.6526`
+- planner+rereanker supported rate: `0.8421`
+- selector prune supported rate: `0.8289`
+- selector reorder-only supported rate: `0.8553`
+
+Evidence coverage:
+
+- citation page-hit:
+  - planner+rereanker: `0.8421`
+  - selector prune: `0.7632`
+  - selector reorder-only: `0.8421`
+- evidence fragment recall:
+  - planner+rereanker: `0.6971`
+  - selector prune: `0.6434`
+  - selector reorder-only: `0.6971`
+
+Focused `ragas` comparison:
+
+- planner+rereanker:
+  - faithfulness `0.9310`
+  - answer relevancy `0.6555`
+  - context precision `0.9036`
+- selector prune:
+  - faithfulness `0.9174`
+  - answer relevancy `0.6015`
+  - context precision `0.9158`
+- selector reorder-only:
+  - faithfulness `0.9657`
+  - answer relevancy `0.6436`
+  - context precision `0.9608`
+
+Selector gate usage on the benchmark:
+
+- positive eval set: `68 / 76` = `89.5%`
+- focused `ragas` subset: `32 / 34` = `94.1%`
 
 Current interpretation:
 
-- the selector is not currently earning its place in the architecture
+- the original selector failure came from pruning away support
+- reorder-only selection preserves evidence coverage while improving ordering
+- the selector is now justified again, but only in reorder-only mode
 
 ## Reranker
 
@@ -195,10 +240,9 @@ If we had to choose today based only on benchmark evidence:
 - keep:
   - reranker
   - calibrated planner/router fallback
+  - reorder-only evidence selector
 - keep under review:
-  - selector weight tuning machinery
-- do not currently justify:
-  - selector as an active production layer
+  - whether selector trigger conditions can be narrowed to reduce latency without losing the current gain
 
 ## What Still Remains
 

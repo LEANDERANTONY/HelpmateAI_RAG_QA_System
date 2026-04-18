@@ -1,0 +1,186 @@
+{
+  "case_count": 76,
+  "settings": {
+    "top_k": 4,
+    "max_evidence": 2,
+    "rank_weight": 0.25,
+    "llm_weight": 0.75,
+    "model": "gpt-5.4-nano"
+  },
+  "selector_off": {
+    "dataset_size": 76,
+    "page_hit_rate": 0.8421052631578947,
+    "mean_reciprocal_rank": 0.6820175438596492,
+    "mean_fragment_recall": 0.720175438596491,
+    "objective_score": 0.7674122807017544
+  },
+  "selector_prune": {
+    "dataset_size": 76,
+    "page_hit_rate": 0.7763157894736842,
+    "mean_reciprocal_rank": 0.7039473684210527,
+    "mean_fragment_recall": 0.6725877192982456,
+    "objective_score": 0.7255372807017544
+  },
+  "selector_reorder_only": {
+    "dataset_size": 76,
+    "page_hit_rate": 0.8421052631578947,
+    "mean_reciprocal_rank": 0.7236842105263158,
+    "mean_fragment_recall": 0.720175438596491,
+    "objective_score": 0.7757456140350877
+  },
+  "per_dataset": {
+    "selector_off": {
+      "health_retrieval_eval_dataset.json": {
+        "dataset_size": 13,
+        "page_hit_rate": 0.8461538461538461,
+        "mean_reciprocal_rank": 0.6987179487179487,
+        "mean_fragment_recall": 0.7692307692307693,
+        "objective_score": 0.7897435897435896
+      },
+      "pancreas7_retrieval_eval_dataset.json": {
+        "dataset_size": 9,
+        "page_hit_rate": 0.8888888888888888,
+        "mean_reciprocal_rank": 0.6944444444444444,
+        "mean_fragment_recall": 0.7777777777777778,
+        "objective_score": 0.8111111111111111
+      },
+      "pancreas8_retrieval_eval_dataset.json": {
+        "dataset_size": 10,
+        "page_hit_rate": 0.9,
+        "mean_reciprocal_rank": 0.8,
+        "mean_fragment_recall": 0.8333333333333333,
+        "objective_score": 0.8566666666666667
+      },
+      "reportgeneration2_retrieval_eval_dataset.json": {
+        "dataset_size": 10,
+        "page_hit_rate": 1.0,
+        "mean_reciprocal_rank": 0.8333333333333333,
+        "mean_fragment_recall": 0.6666666666666667,
+        "objective_score": 0.85
+      },
+      "reportgeneration_retrieval_eval_dataset.json": {
+        "dataset_size": 10,
+        "page_hit_rate": 0.8,
+        "mean_reciprocal_rank": 0.7,
+        "mean_fragment_recall": 0.6983333333333334,
+        "objective_score": 0.7444166666666667
+      },
+      "retrieval_eval_dataset.json": {
+        "dataset_size": 12,
+        "page_hit_rate": 0.5833333333333334,
+        "mean_reciprocal_rank": 0.48611111111111116,
+        "mean_fragment_recall": 0.5694444444444444,
+        "objective_score": 0.5590277777777778
+      },
+      "thesis_retrieval_eval_dataset.json": {
+        "dataset_size": 12,
+        "page_hit_rate": 0.9166666666666666,
+        "mean_reciprocal_rank": 0.611111111111111,
+        "mean_fragment_recall": 0.7430555555555557,
+        "objective_score": 0.7947916666666667
+      }
+    },
+    "selector_prune": {
+      "health_retrieval_eval_dataset.json": {
+        "dataset_size": 13,
+        "page_hit_rate": 0.7692307692307693,
+        "mean_reciprocal_rank": 0.6923076923076923,
+        "mean_fragment_recall": 0.717948717948718,
+        "objective_score": 0.735897435897436
+      },
+      "pancreas7_retrieval_eval_dataset.json": {
+        "dataset_size": 9,
+        "page_hit_rate": 0.6666666666666666,
+        "mean_reciprocal_rank": 0.6111111111111112,
+        "mean_fragment_recall": 0.7777777777777778,
+        "objective_score": 0.6944444444444444
+      },
+      "pancreas8_retrieval_eval_dataset.json": {
+        "dataset_size": 10,
+        "page_hit_rate": 0.9,
+        "mean_reciprocal_rank": 0.85,
+        "mean_fragment_recall": 0.7,
+        "objective_score": 0.8200000000000001
+      },
+      "reportgeneration2_retrieval_eval_dataset.json": {
+        "dataset_size": 10,
+        "page_hit_rate": 1.0,
+        "mean_reciprocal_rank": 0.9,
+        "mean_fragment_recall": 0.6416666666666667,
+        "objective_score": 0.8545833333333334
+      },
+      "reportgeneration_retrieval_eval_dataset.json": {
+        "dataset_size": 10,
+        "page_hit_rate": 0.7,
+        "mean_reciprocal_rank": 0.65,
+        "mean_fragment_recall": 0.6783333333333335,
+        "objective_score": 0.6824166666666667
+      },
+      "retrieval_eval_dataset.json": {
+        "dataset_size": 12,
+        "page_hit_rate": 0.5833333333333334,
+        "mean_reciprocal_rank": 0.5416666666666666,
+        "mean_fragment_recall": 0.5416666666666666,
+        "objective_score": 0.5604166666666666
+      },
+      "thesis_retrieval_eval_dataset.json": {
+        "dataset_size": 12,
+        "page_hit_rate": 0.8333333333333334,
+        "mean_reciprocal_rank": 0.7083333333333334,
+        "mean_fragment_recall": 0.673611111111111,
+        "objective_score": 0.7524305555555556
+      }
+    },
+    "selector_reorder_only": {
+      "health_retrieval_eval_dataset.json": {
+        "dataset_size": 13,
+        "page_hit_rate": 0.8461538461538461,
+        "mean_reciprocal_rank": 0.7115384615384616,
+        "mean_fragment_recall": 0.7692307692307693,
+        "objective_score": 0.7923076923076923
+      },
+      "pancreas7_retrieval_eval_dataset.json": {
+        "dataset_size": 9,
+        "page_hit_rate": 0.8888888888888888,
+        "mean_reciprocal_rank": 0.6851851851851851,
+        "mean_fragment_recall": 0.7777777777777778,
+        "objective_score": 0.8092592592592592
+      },
+      "pancreas8_retrieval_eval_dataset.json": {
+        "dataset_size": 10,
+        "page_hit_rate": 0.9,
+        "mean_reciprocal_rank": 0.85,
+        "mean_fragment_recall": 0.8333333333333333,
+        "objective_score": 0.8666666666666667
+      },
+      "reportgeneration2_retrieval_eval_dataset.json": {
+        "dataset_size": 10,
+        "page_hit_rate": 1.0,
+        "mean_reciprocal_rank": 0.9,
+        "mean_fragment_recall": 0.6666666666666667,
+        "objective_score": 0.8633333333333334
+      },
+      "reportgeneration_retrieval_eval_dataset.json": {
+        "dataset_size": 10,
+        "page_hit_rate": 0.8,
+        "mean_reciprocal_rank": 0.6833333333333333,
+        "mean_fragment_recall": 0.6983333333333334,
+        "objective_score": 0.7410833333333334
+      },
+      "retrieval_eval_dataset.json": {
+        "dataset_size": 12,
+        "page_hit_rate": 0.5833333333333334,
+        "mean_reciprocal_rank": 0.5416666666666666,
+        "mean_fragment_recall": 0.5694444444444444,
+        "objective_score": 0.570138888888889
+      },
+      "thesis_retrieval_eval_dataset.json": {
+        "dataset_size": 12,
+        "page_hit_rate": 0.9166666666666666,
+        "mean_reciprocal_rank": 0.7291666666666666,
+        "mean_fragment_recall": 0.7430555555555557,
+        "objective_score": 0.8184027777777778
+      }
+    }
+  }
+}

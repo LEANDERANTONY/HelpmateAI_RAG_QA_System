@@ -36,6 +36,33 @@ Improvements:
 - evidence selector is now documented as experimental instead of implicitly assumed to be part of the best default architecture
 - Helpmate now has a proper evidence trail for why each major layer stays or remains under review
 
+## Day 15: Selector Pruning Bug Isolated And Overturned
+
+- Revisited the selector conclusion from the earlier stack ablations.
+- Traced the selector path and confirmed the old implementation was not just reranking evidence:
+  - it was pruning the final answer context down to a bounded shortlist
+- Added a reorder-only selector mode controlled by:
+  - `HELPMATE_EVIDENCE_SELECTOR_ENABLED`
+  - `HELPMATE_EVIDENCE_SELECTOR_PRUNE`
+- Added matched comparison harnesses for:
+  - retrieval-only selector-off vs prune vs reorder-only
+  - answer-layer selector-off vs prune vs reorder-only
+  - focused `ragas` selector-off vs prune vs reorder-only
+- Recorded the architecture update in a new ADR.
+
+Challenges:
+
+- the earlier selector verdict was correct for the code we had, but it was not isolating the true variable
+- the first selector-specific `ragas` rerun also had a harness issue and had to be discarded before we could trust the final result
+- the selector gate turned out to fire on most benchmark questions, so any production recommendation had to accept a real latency tradeoff rather than a tiny edge-case cost
+
+Improvements:
+
+- proved the regression came from pruning, not from evidence reordering itself
+- reorder-only selector outperformed both selector-off and prune mode on the matched retrieval and answer-layer comparisons
+- focused `ragas` also flipped in favor of reorder-only, with stronger faithfulness and context precision than the planner+rereanker baseline
+- selector is now promoted back into the default stack, but only in reorder-only mode
+
 ## Day 11: Document-Topology Retrieval Upgrade
 
 - Added a deterministic `RetrievalPlan` layer ahead of retrieval.

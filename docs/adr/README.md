@@ -13,6 +13,7 @@ Current ADRs:
 - `ADR-007-document-topology-planning-and-bounded-evidence-selection.md`
 - `ADR-008-benchmark-driven-stack-defaults-and-experimental-selector.md`
 - `ADR-009-benchmark-driven-chunking-default-1200-240.md`
+- `ADR-010-reorder-only-evidence-selector-promoted-to-default.md`
 
 Usage notes:
 
@@ -32,6 +33,6 @@ Current state note:
 - the newest architecture governance change is:
   - benchmark-driven confirmation that reranker stays
   - planner/router stays as a modest positive
-  - evidence selector remains experimental rather than default
+  - prune-based evidence selection was rejected, but reorder-only evidence selection is now benchmark-validated and promoted to the default stack
 - the newest retrieval-tuning governance change is:
   - chunking default promoted from `1200 / 180` to `1200 / 240` after retrieval, answer-layer, and focused `ragas` validation

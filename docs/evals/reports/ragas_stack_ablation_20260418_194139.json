@@ -1,0 +1,2540 @@
+{
+  "available": true,
+  "dataset_names": [
+    "health_retrieval_eval_dataset.json",
+    "thesis_retrieval_eval_dataset.json",
+    "pancreas7_retrieval_eval_dataset.json"
+  ],
+  "variant_order": [
+    "reranker_only",
+    "planner_reranker",
+    "full_stack"
+  ],
+  "answer_model": "gpt-5.4-mini",
+  "embedding_model": "text-embedding-3-small",
+  "variants": {
+    "reranker_only": {
+      "settings": {
+        "reranker_enabled": true,
+        "evidence_selector_enabled": false,
+        "planner_confidence_threshold": 2.0,
+        "router_confidence_threshold": 1.0,
+        "router_llm_enabled": false
+      },
+      "dataset_size": 34,
+      "supported_rate": 0.9705882352941176,
+      "faithfulness_mean": 0.945855614973262,
+      "answer_relevancy_mean": 0.6382368978392603,
+      "context_precision_mean": 0.8954248365706426,
+      "per_dataset": {
+        "health_retrieval_eval_dataset.json": {
+          "dataset_size": 13,
+          "supported_rate": 0.9230769230769231,
+          "faithfulness_mean": 0.8846153846153846,
+          "answer_relevancy_mean": 0.6279965995975778,
+          "context_precision_mean": 0.8974358974011751
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 0.9924242424242424,
+          "answer_relevancy_mean": 0.6311160662639791,
+          "context_precision_mean": 0.851851851823341
+        },
+        "pancreas7_retrieval_eval_dataset.json": {
+          "dataset_size": 9,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 0.9722222222222222,
+          "answer_relevancy_mean": 0.6625228818442878,
+          "context_precision_mean": 0.9506172839229423
+        }
+      },
+      "results": [
+        {
+          "question": "What is the cashless facility under this policy?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 4",
+            "HealthInsurance_Policy.pdf - Page 90",
+            "HealthInsurance_Policy.pdf - Page 93",
+            "HealthInsurance_Policy.pdf - Page 44"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: definition, general.",
+            "Chunk-first retrieval path used for exact grounding."
+          ],
+          "query_used": "What is the cashless facility under this policy?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.8290376423736386,
+          "context_precision": 0.99999999995
+        },
+        {
+          "question": "How is the grace period defined and how long is it for monthly versus other premium payment modes?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 6",
+            "HealthInsurance_Policy.pdf - Page 85",
+            "HealthInsurance_Policy.pdf - Page 43",
+            "HealthInsurance_Policy.pdf - Page 3"
+          ],
+          "route_used": [
+            "Planner intent: comparison.",
+            "Planner evidence spread: distributed.",
+            "Planner selected synopsis_first with soft_multi_region constraints.",
+            "Planner source: deterministic at confidence 0.66.",
+            "Preferred content types: definition, general.",
+            "Synopsis-first routing prioritized 3 sections before chunk retrieval.",
+            "Top synopsis region: . PREAMBLE."
+          ],
+          "query_used": "How is the grace period defined and how long is it for monthly versus other premium payment modes?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.8611813870638946,
+          "context_precision": 0.99999999995
+        },
+        {
+          "question": "What counts as maternity expenses in this policy?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 8",
+            "HealthInsurance_Policy.pdf - Page 36",
+            "HealthInsurance_Policy.pdf - Page 35",
+            "HealthInsurance_Policy.pdf - Page 36"
+          ],
+          "route_used": [
+            "Planner intent: numeric.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: results, general.",
+            "Synopsis-first routing prioritized 3 sections before chunk retrieval.",
+            "Top synopsis region: Care Health Insurance Limited."
+          ],
+          "query_used": "What counts as maternity expenses in this policy?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.5656621721701169,
+          "context_precision": 0.8333333332916666
+        },
+        {
+          "question": "How does the policy define a network provider?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 9",
+            "HealthInsurance_Policy.pdf - Page 18",
+            "HealthInsurance_Policy.pdf - Page 91",
+            "HealthInsurance_Policy.pdf - Page 92"
+          ],
+          "route_used": [
+            "Planner intent: procedure.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: definition, general.",
+            "Synopsis-first routing prioritized 3 sections before chunk retrieval.",
+            "Top synopsis region: . PREAMBLE."
+          ],
+          "query_used": "How does the policy define a network provider?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.7702940688215619,
+          "context_precision": 0.99999999995
+        },
+        {
+          "question": "How does the policy define a pre-existing disease?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 9",
+            "HealthInsurance_Policy.pdf - Page 40",
+            "HealthInsurance_Policy.pdf - Page 70",
+            "HealthInsurance_Policy.pdf - Page 40"
+          ],
+          "route_used": [
+            "Planner intent: procedure.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: definition, general.",
+            "Synopsis-first routing prioritized 3 sections before chunk retrieval.",
+            "Top synopsis region: . PREAMBLE."
+          ],
+          "query_used": "How does the policy define a pre-existing disease?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.8837962541776369,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What does renewal mean in this policy wording?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 10",
+            "HealthInsurance_Policy.pdf - Page 3",
+            "HealthInsurance_Policy.pdf - Page 84",
+            "HealthInsurance_Policy.pdf - Page 27"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: definition, general.",
+            "Chunk-first retrieval path used for exact grounding."
+          ],
+          "query_used": "What does renewal mean in this policy wording?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.7132387421557667,
+          "context_precision": 0.8333333332916666
+        },
+        {
+          "question": "How many days of pre-hospitalization and post-hospitalization expenses are covered?",
+          "supported": false,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 10",
+            "HealthInsurance_Policy.pdf - Page 29",
+            "HealthInsurance_Policy.pdf - Page 9",
+            "HealthInsurance_Policy.pdf - Page 98"
+          ],
+          "route_used": [
+            "Planner intent: numeric.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: results, general.",
+            "Synopsis-first routing prioritized 3 sections before chunk retrieval.",
+            "Top synopsis region: Care Health Insurance Limited."
+          ],
+          "query_used": "How many days of pre-hospitalization and post-hospitalization expenses are covered?",
+          "faithfulness": 0.0,
+          "answer_relevancy": 0.0,
+          "context_precision": 0.9999999999666667
+        },
+        {
+          "question": "What waiting period applies to pre-existing diseases?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 40",
+            "HealthInsurance_Policy.pdf - Page 70",
+            "HealthInsurance_Policy.pdf - Page 70",
+            "HealthInsurance_Policy.pdf - Page 10"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: general, definition.",
+            "Chunk-first retrieval path used for exact grounding."
+          ],
+          "query_used": "What waiting period applies to pre-existing diseases?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.587137937201062,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What is the named ailment waiting period and where is the disease list described?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 10",
+            "HealthInsurance_Policy.pdf - Page 40",
+            "HealthInsurance_Policy.pdf - Page 41",
+            "HealthInsurance_Policy.pdf - Page 38"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: definition, general.",
+            "Chunk-first retrieval path used for exact grounding."
+          ],
+          "query_used": "What is the named ailment waiting period and where is the disease list described?",
+          "faithfulness": 0.5,
+          "answer_relevancy": 0.6596622597736291,
+          "context_precision": 0.5833333333041666
+        },
+        {
+          "question": "What is the 30-day waiting period in this health policy?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 41",
+            "HealthInsurance_Policy.pdf - Page 10",
+            "HealthInsurance_Policy.pdf - Page 72",
+            "HealthInsurance_Policy.pdf - Page 33"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: definition, general.",
+            "Chunk-first retrieval path used for exact grounding."
+          ],
+          "query_used": "What is the 30-day waiting period in this health policy?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.5951357144793803,
+          "context_precision": 0.8055555555287036
+        },
+        {
+          "question": "What happens if an installment premium is not received within the grace period?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 85",
+            "HealthInsurance_Policy.pdf - Page 6",
+            "HealthInsurance_Policy.pdf - Page 3",
+            "HealthInsurance_Policy.pdf - Page 84"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: general, definition.",
+            "Chunk-first retrieval path used for exact grounding."
+          ],
+          "query_used": "What happens if an installment premium is not received within the grace period?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.44914167397445964,
+          "context_precision": 0.8055555555287036
+        },
+        {
+          "question": "How can an insured person avail cashless treatment at a network provider?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 90",
+            "HealthInsurance_Policy.pdf - Page 91",
+            "HealthInsurance_Policy.pdf - Page 91",
+            "HealthInsurance_Policy.pdf - Page 90"
+          ],
+          "route_used": [
+            "Planner intent: procedure.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: methodology, general, results.",
+            "Synopsis-first routing prioritized 3 sections before chunk retrieval.",
+            "Top synopsis region: Care Health Insurance Limited."
+          ],
+          "query_used": "How can an insured person avail cashless treatment at a network provider?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.4766813692520977,
+          "context_precision": 0.8055555555287036
+        },
+        {
+          "question": "How is co-payment applied during claim assessment?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 4",
+            "HealthInsurance_Policy.pdf - Page 42",
+            "HealthInsurance_Policy.pdf - Page 96",
+            "HealthInsurance_Policy.pdf - Page 67"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: general, definition.",
+            "Chunk-first retrieval path used for exact grounding."
+          ],
+          "query_used": "How is co-payment applied during claim assessment?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.7729865733252678,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What is the main aim of this thesis?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 20",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 90",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 5",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 20"
+          ],
+          "route_used": [
+            "Planner intent: summary.",
+            "Planner evidence spread: global.",
+            "Planner selected synopsis_first with soft_multi_region constraints.",
+            "Planner source: deterministic at confidence 0.78.",
+            "Preferred content types: general, results.",
+            "Global-summary routing assembled 4 anchor sections.",
+            "Global-summary top synopsis: Research Aim.",
+            "Global-summary fallback added extra overview evidence outside the anchor sections."
+          ],
+          "query_used": "What is the main aim of this thesis?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.4550941436063653,
+          "context_precision": 0.99999999995
+        },
+        {
+          "question": "What were the three main research objectives of the study?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 90",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 90",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 20",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 20"
+          ],
+          "route_used": [
+            "Planner intent: summary.",
+            "Planner evidence spread: global.",
+            "Planner selected synopsis_first with soft_multi_region constraints.",
+            "Planner source: deterministic at confidence 0.78.",
+            "Preferred content types: general, results.",
+            "Global-summary routing assembled 4 anchor sections.",
+            "Global-summary top synopsis: Introduction.",
+            "Global-summary fallback added extra overview evidence outside the anchor sections."
+          ],
+          "query_used": "What were the three main research objectives of the study?",
+          "faithfulness": 0.9090909090909091,
+          "answer_relevancy": 0.9094933655049467,
+          "context_precision": 0.5833333333041666
+        },
+        {
+          "question": "How many CT patients were used in the processed cohort and how were they split?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 40",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 54",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 21",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 91"
+          ],
+          "route_used": [
+            "Planner intent: procedure.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: methodology, general, results.",
+            "Synopsis-first routing prioritized 7 sections before chunk retrieval.",
+            "Top synopsis region: Figure 5.2: CT test-set performance.",
+            "Global fallback added extra evidence outside the prioritized regions."
+          ],
+          "query_used": "How many CT patients were used in the processed cohort and how were they split?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.5517384879451438,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What was the baseline bias AUC and what did extreme standardization reduce it to?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 93",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 43",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 73",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 35"
+          ],
+          "route_used": [
+            "Planner intent: numeric.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: results, general.",
+            "Synopsis-first routing prioritized 8 sections before chunk retrieval.",
+            "Top synopsis region: Spatial Bias Detection and Mitigation.",
+            "Global fallback added extra evidence outside the prioritized regions."
+          ],
+          "query_used": "What was the baseline bias AUC and what did extreme standardization reduce it to?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.3531247382246934,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What CT model architecture was used in the thesis?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 62",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 45",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 116",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 92"
+          ],
+          "route_used": [
+            "Planner intent: procedure.",
+            "Planner evidence spread: sectional.",
+            "Planner selected hybrid_both with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: methodology, general, results.",
+            "Synopsis-first routing prioritized 6 sections before chunk retrieval.",
+            "Top synopsis region: Model Architecture.",
+            "Global fallback added extra evidence outside the prioritized regions.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval."
+          ],
+          "query_used": "What CT model architecture was used in the thesis?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.3702615860122828,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What seven urinary biomarker features were used for the biomarker model?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 80",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 30",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 46",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 45"
+          ],
+          "route_used": [
+            "Planner intent: procedure.",
+            "Planner evidence spread: sectional.",
+            "Planner selected hybrid_both with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: methodology, general, results.",
+            "Synopsis-first routing prioritized 7 sections before chunk retrieval.",
+            "Top synopsis region: Biomarker Classification Model Results.",
+            "Global fallback added extra evidence outside the prioritized regions.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval."
+          ],
+          "query_used": "What seven urinary biomarker features were used for the biomarker model?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.4203033022345706,
+          "context_precision": 0.9166666666361111
+        },
+        {
+          "question": "How many biomarker samples were used and what was the train validation test split?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 80",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 61",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 80",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 46"
+          ],
+          "route_used": [
+            "Planner intent: numeric.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: results, general.",
+            "Synopsis-first routing prioritized 7 sections before chunk retrieval.",
+            "Top synopsis region: Biomarker Classification Model.",
+            "Global fallback added extra evidence outside the prioritized regions."
+          ],
+          "query_used": "How many biomarker samples were used and what was the train validation test split?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.8114701612429561,
+          "context_precision": 0.9166666666361111
+        },
+        {
+          "question": "What AUC did the biomarker MLP achieve and how did it compare with the original study?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 81",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 94",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 87",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 81"
+          ],
+          "route_used": [
+            "Planner intent: comparison.",
+            "Planner evidence spread: distributed.",
+            "Planner selected synopsis_first with soft_multi_region constraints.",
+            "Planner source: deterministic at confidence 0.66.",
+            "Preferred content types: results, general.",
+            "Synopsis-first routing prioritized 9 sections before chunk retrieval.",
+            "Top synopsis region: Comparison with Original Study.",
+            "Global fallback added extra evidence outside the prioritized regions."
+          ],
+          "query_used": "What AUC did the biomarker MLP achieve and how did it compare with the original study?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.9977800079444692,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What did the thesis conclude about multimodal fusion under synthetic pairing?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 94",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 38",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 83",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 33"
+          ],
+          "route_used": [
+            "Planner intent: summary.",
+            "Planner evidence spread: global.",
+            "Planner selected synopsis_first with soft_multi_region constraints.",
+            "Planner source: deterministic at confidence 0.78.",
+            "Preferred content types: general, results.",
+            "Global-summary routing assembled 4 anchor sections.",
+            "Global-summary top synopsis: Feature-Level Fusion.",
+            "Global-summary fallback added extra overview evidence outside the anchor sections."
+          ],
+          "query_used": "What did the thesis conclude about multimodal fusion under synthetic pairing?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 1.0,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What happened in the label-mismatch control when the CT weight was 0.3 versus 0.7?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 92",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 84",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 84",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 83"
+          ],
+          "route_used": [
+            "Planner intent: comparison.",
+            "Planner evidence spread: distributed.",
+            "Planner selected synopsis_first with soft_multi_region constraints.",
+            "Planner source: deterministic at confidence 0.66.",
+            "Preferred content types: general, definition, results.",
+            "Synopsis-first routing prioritized 8 sections before chunk retrieval.",
+            "Top synopsis region: Multimodal Fusion Results.",
+            "Global fallback added extra evidence outside the prioritized regions."
+          ],
+          "query_used": "What happened in the label-mismatch control when the CT weight was 0.3 versus 0.7?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.8101475067825068,
+          "context_precision": 0.6388888888675925
+        },
+        {
+          "question": "How was multimodal fusion implemented in the thesis?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 66",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 92",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 8",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 83"
+          ],
+          "route_used": [
+            "Planner intent: procedure.",
+            "Planner evidence spread: sectional.",
+            "Planner selected hybrid_both with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: methodology, general, results.",
+            "Synopsis-first routing prioritized 7 sections before chunk retrieval.",
+            "Top synopsis region: Feature-Level Fusion.",
+            "Global fallback added extra evidence outside the prioritized regions.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval."
+          ],
+          "query_used": "How was multimodal fusion implemented in the thesis?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.47282698097786957,
+          "context_precision": 0.9166666666361111
+        },
+        {
+          "question": "What kinds of future work or next steps does the thesis suggest?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 96",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 9",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 88",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 98"
+          ],
+          "route_used": [
+            "Planner intent: summary.",
+            "Planner evidence spread: global.",
+            "Planner selected synopsis_first with soft_multi_region constraints.",
+            "Planner source: deterministic at confidence 0.78.",
+            "Preferred content types: general, results.",
+            "Global-summary routing assembled 4 anchor sections.",
+            "Global-summary top synopsis: Recommendations for Future Work.",
+            "Global-summary fallback added extra overview evidence outside the anchor sections."
+          ],
+          "query_used": "What kinds of future work or next steps does the thesis suggest?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.42115251469194503,
+          "context_precision": 0.249999999975
+        },
+        {
+          "question": "What was the goal of the pancreas7 study?",
+          "supported": true,
+          "citations": [
+            "pancreas7.pdf - Page 3",
+            "pancreas7.pdf - Page 3",
+            "pancreas7.pdf - Page 8",
+            "pancreas7.pdf - Page 3"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: general, definition.",
+            "Chunk-first retrieval path used for exact grounding."
+          ],
+          "query_used": "What was the goal of the pancreas7 study?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.4754452519983105,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What CNN architecture did the paper use?",
+          "supported": true,
+          "citations": [
+            "pancreas7.pdf - Page 4",
+            "pancreas7.pdf - Page 8",
+            "pancreas7.pdf - Page 5",
+            "pancreas7.pdf - Page 5"
+          ],
+          "route_used": [
+            "Planner intent: procedure.",
+            "Planner evidence spread: sectional.",
+            "Planner selected hybrid_both with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: methodology, general, results.",
+            "Synopsis-first routing prioritized 7 sections before chunk retrieval.",
+            "Top synopsis region: CT images.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval."
+          ],
+          "query_used": "What CNN architecture did the paper use?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.4263720538169226,
+          "context_precision": 0.8333333332916666
+        },
+        {
+          "question": "What CT phases were included in the datasets?",
+          "supported": true,
+          "citations": [
+            "pancreas7.pdf - Page 7",
+            "pancreas7.pdf - Page 5",
+            "pancreas7.pdf - Page 1",
+            "pancreas7.pdf - Page 3"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: general, definition.",
+            "Chunk-first retrieval path used for exact grounding."
+          ],
+          "query_used": "What CT phases were included in the datasets?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.6465041305501305,
+          "context_precision": 0.9166666666361111
+        },
+        {
+          "question": "How many patients and images were included in total?",
+          "supported": true,
+          "citations": [
+            "pancreas7.pdf - Page 7",
+            "pancreas7.pdf - Page 3",
+            "pancreas7.pdf - Page 3",
+            "pancreas7.pdf - Page 1"
+          ],
+          "route_used": [
+            "Planner intent: numeric.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: results, general.",
+            "Synopsis-first routing prioritized 8 sections before chunk retrieval.",
+            "Top synopsis region: Total."
+          ],
+          "query_used": "How many patients and images were included in total?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.8342942817398026,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "How many pancreatic cancer patients and control patients were used in the binary classification experiments?",
+          "supported": true,
+          "citations": [
+            "pancreas7.pdf - Page 1",
+            "pancreas7.pdf - Page 7",
+            "pancreas7.pdf - Page 7",
+            "pancreas7.pdf - Page 3"
+          ],
+          "route_used": [
+            "Planner intent: numeric.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: results, general.",
+            "Synopsis-first routing prioritized 6 sections before chunk retrieval.",
+            "Top synopsis region: ORIGINAL ARTICLE."
+          ],
+          "query_used": "How many pancreatic cancer patients and control patients were used in the binary classification experiments?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.8173289957021592,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What binary classification accuracy did the CNN achieve across the three CT phases?",
+          "supported": true,
+          "citations": [
+            "pancreas7.pdf - Page 7",
+            "pancreas7.pdf - Page 7",
+            "pancreas7.pdf - Page 9",
+            "pancreas7.pdf - Page 2"
+          ],
+          "route_used": [
+            "Planner intent: cross_cutting.",
+            "Planner evidence spread: distributed.",
+            "Planner selected synopsis_first with soft_multi_region constraints.",
+            "Planner source: deterministic at confidence 0.66.",
+            "Preferred content types: general, definition, results.",
+            "Synopsis-first routing prioritized 8 sections before chunk retrieval.",
+            "Top synopsis region: Accuracy 0.820568 0.790633 0.788076 1.074 0.585."
+          ],
+          "query_used": "What binary classification accuracy did the CNN achieve across the three CT phases?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.4423530737861985,
+          "context_precision": 0.8055555555287036
+        },
+        {
+          "question": "How did the CNN compare with gastroenterologists and trainees on plain scan accuracy?",
+          "supported": true,
+          "citations": [
+            "pancreas7.pdf - Page 7",
+            "pancreas7.pdf - Page 9",
+            "pancreas7.pdf - Page 7",
+            "pancreas7.pdf - Page 2"
+          ],
+          "route_used": [
+            "Planner intent: comparison.",
+            "Planner evidence spread: distributed.",
+            "Planner selected synopsis_first with soft_multi_region constraints.",
+            "Planner source: deterministic at confidence 0.66.",
+            "Preferred content types: general, definition, results.",
+            "Synopsis-first routing prioritized 8 sections before chunk retrieval.",
+            "Top synopsis region: Accuracy 0.820568 0.790633 0.788076 1.074 0.585.",
+            "Global fallback added extra evidence outside the prioritized regions."
+          ],
+          "query_used": "How did the CNN compare with gastroenterologists and trainees on plain scan accuracy?",
+          "faithfulness": 0.75,
+          "answer_relevancy": 0.9300573574888048,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "Which phase had the highest sensitivity for head and neck pancreatic malignancies in the ternary classifier?",
+          "supported": true,
+          "citations": [
+            "pancreas7.pdf - Page 10",
+            "pancreas7.pdf - Page 2",
+            "pancreas7.pdf - Page 7",
+            "pancreas7.pdf - Page 9"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: general, definition.",
+            "Chunk-first retrieval path used for exact grounding."
+          ],
+          "query_used": "Which phase had the highest sensitivity for head and neck pancreatic malignancies in the ternary classifier?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.4701683605673324,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "Why did the authors say plain phase could be sufficient for the binary classifier?",
+          "supported": true,
+          "citations": [
+            "pancreas7.pdf - Page 11",
+            "pancreas7.pdf - Page 2",
+            "pancreas7.pdf - Page 10",
+            "pancreas7.pdf - Page 9"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: general, definition.",
+            "Chunk-first retrieval path used for exact grounding."
+          ],
+          "query_used": "Why did the authors say plain phase could be sufficient for the binary classifier?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.9201824309489289,
+          "context_precision": 0.999999999975
+        }
+      ]
+    },
+    "planner_reranker": {
+      "settings": {
+        "reranker_enabled": true,
+        "evidence_selector_enabled": false,
+        "planner_confidence_threshold": 0.7,
+        "router_confidence_threshold": 0.62,
+        "router_llm_enabled": true
+      },
+      "dataset_size": 34,
+      "supported_rate": 0.9411764705882353,
+      "faithfulness_mean": 0.9227941176470589,
+      "answer_relevancy_mean": 0.6415671358040079,
+      "context_precision_mean": 0.8864379084664896,
+      "per_dataset": {
+        "health_retrieval_eval_dataset.json": {
+          "dataset_size": 13,
+          "supported_rate": 0.8461538461538461,
+          "faithfulness_mean": 0.7980769230769231,
+          "answer_relevancy_mean": 0.5623546814083076,
+          "context_precision_mean": 0.905982905947792
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 1.0,
+          "answer_relevancy_mean": 0.7261172844740854,
+          "context_precision_mean": 0.7870370370092978
+        },
+        "pancreas7_retrieval_eval_dataset.json": {
+          "dataset_size": 9,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 1.0,
+          "answer_relevancy_mean": 0.6432515939265829,
+          "context_precision_mean": 0.9907407407141975
+        }
+      },
+      "results": [
+        {
+          "question": "What is the cashless facility under this policy?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 4",
+            "HealthInsurance_Policy.pdf - Page 90",
+            "HealthInsurance_Policy.pdf - Page 93",
+            "HealthInsurance_Policy.pdf - Page 44"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: definition, general.",
+            "Chunk-first retrieval path used for exact grounding."
+          ],
+          "query_used": "What is the cashless facility under this policy?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.47194847822841596,
+          "context_precision": 0.9166666666361111
+        },
+        {
+          "question": "How is the grace period defined and how long is it for monthly versus other premium payment modes?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 6",
+            "HealthInsurance_Policy.pdf - Page 85",
+            "HealthInsurance_Policy.pdf - Page 43",
+            "HealthInsurance_Policy.pdf - Page 3"
+          ],
+          "route_used": [
+            "Planner intent: comparison.",
+            "Planner evidence spread: distributed.",
+            "Planner selected hybrid_both with soft_multi_region constraints.",
+            "Planner source: llm_fallback at confidence 0.72.",
+            "Preferred content types: definition, general.",
+            "Synopsis-first routing prioritized 3 sections before chunk retrieval.",
+            "Top synopsis region: . PREAMBLE.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval."
+          ],
+          "query_used": "How is the grace period defined and how long is it for monthly versus other premium payment modes?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.9472357291957191,
+          "context_precision": 0.99999999995
+        },
+        {
+          "question": "What counts as maternity expenses in this policy?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 8",
+            "HealthInsurance_Policy.pdf - Page 36",
+            "HealthInsurance_Policy.pdf - Page 35",
+            "HealthInsurance_Policy.pdf - Page 36"
+          ],
+          "route_used": [
+            "Planner intent: numeric.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: results, general.",
+            "Synopsis-first routing prioritized 3 sections before chunk retrieval.",
+            "Top synopsis region: Care Health Insurance Limited."
+          ],
+          "query_used": "What counts as maternity expenses in this policy?",
+          "faithfulness": 0.875,
+          "answer_relevancy": 0.6396644832254924,
+          "context_precision": 0.8333333332916666
+        },
+        {
+          "question": "How does the policy define a network provider?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 9",
+            "HealthInsurance_Policy.pdf - Page 18",
+            "HealthInsurance_Policy.pdf - Page 91",
+            "HealthInsurance_Policy.pdf - Page 92"
+          ],
+          "route_used": [
+            "Planner intent: procedure.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: definition, general.",
+            "Synopsis-first routing prioritized 3 sections before chunk retrieval.",
+            "Top synopsis region: . PREAMBLE."
+          ],
+          "query_used": "How does the policy define a network provider?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.3846223106590451,
+          "context_precision": 0.9999999999666667
+        },
+        {
+          "question": "How does the policy define a pre-existing disease?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 9",
+            "HealthInsurance_Policy.pdf - Page 40",
+            "HealthInsurance_Policy.pdf - Page 70",
+            "HealthInsurance_Policy.pdf - Page 40"
+          ],
+          "route_used": [
+            "Planner intent: procedure.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: definition, general.",
+            "Synopsis-first routing prioritized 3 sections before chunk retrieval.",
+            "Top synopsis region: . PREAMBLE."
+          ],
+          "query_used": "How does the policy define a pre-existing disease?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.9139130735278824,
+          "context_precision": 0.8333333332916666
+        },
+        {
+          "question": "What does renewal mean in this policy wording?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 10",
+            "HealthInsurance_Policy.pdf - Page 3",
+            "HealthInsurance_Policy.pdf - Page 84",
+            "HealthInsurance_Policy.pdf - Page 27"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: definition, general.",
+            "Chunk-first retrieval path used for exact grounding."
+          ],
+          "query_used": "What does renewal mean in this policy wording?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.8270448440193509,
+          "context_precision": 0.8333333332916666
+        },
+        {
+          "question": "How many days of pre-hospitalization and post-hospitalization expenses are covered?",
+          "supported": false,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 10",
+            "HealthInsurance_Policy.pdf - Page 29",
+            "HealthInsurance_Policy.pdf - Page 9",
+            "HealthInsurance_Policy.pdf - Page 98"
+          ],
+          "route_used": [
+            "Planner intent: numeric.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: results, general.",
+            "Synopsis-first routing prioritized 3 sections before chunk retrieval.",
+            "Top synopsis region: Care Health Insurance Limited."
+          ],
+          "query_used": "How many days of pre-hospitalization and post-hospitalization expenses are covered?",
+          "faithfulness": 0.0,
+          "answer_relevancy": 0.0,
+          "context_precision": 0.9999999999666667
+        },
+        {
+          "question": "What waiting period applies to pre-existing diseases?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 40",
+            "HealthInsurance_Policy.pdf - Page 70",
+            "HealthInsurance_Policy.pdf - Page 70",
+            "HealthInsurance_Policy.pdf - Page 10"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: general, definition.",
+            "Chunk-first retrieval path used for exact grounding."
+          ],
+          "query_used": "What waiting period applies to pre-existing diseases?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.2752475439628864,
+          "context_precision": 0.9166666666361111
+        },
+        {
+          "question": "What is the named ailment waiting period and where is the disease list described?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 10",
+            "HealthInsurance_Policy.pdf - Page 40",
+            "HealthInsurance_Policy.pdf - Page 41",
+            "HealthInsurance_Policy.pdf - Page 38"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: definition, general.",
+            "Chunk-first retrieval path used for exact grounding."
+          ],
+          "query_used": "What is the named ailment waiting period and where is the disease list described?",
+          "faithfulness": 0.5,
+          "answer_relevancy": 0.7336793852236313,
+          "context_precision": 0.9999999999666667
+        },
+        {
+          "question": "What is the 30-day waiting period in this health policy?",
+          "supported": false,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 41",
+            "HealthInsurance_Policy.pdf - Page 10",
+            "HealthInsurance_Policy.pdf - Page 72",
+            "HealthInsurance_Policy.pdf - Page 33"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: definition, general.",
+            "Chunk-first retrieval path used for exact grounding."
+          ],
+          "query_used": "What is the 30-day waiting period in this health policy?",
+          "faithfulness": 0.0,
+          "answer_relevancy": 0.0,
+          "context_precision": 0.8055555555287036
+        },
+        {
+          "question": "What happens if an installment premium is not received within the grace period?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 85",
+            "HealthInsurance_Policy.pdf - Page 6",
+            "HealthInsurance_Policy.pdf - Page 3",
+            "HealthInsurance_Policy.pdf - Page 84"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: general, definition.",
+            "Chunk-first retrieval path used for exact grounding."
+          ],
+          "query_used": "What happens if an installment premium is not received within the grace period?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.4505248722257919,
+          "context_precision": 0.8333333332916666
+        },
+        {
+          "question": "How can an insured person avail cashless treatment at a network provider?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 90",
+            "HealthInsurance_Policy.pdf - Page 91",
+            "HealthInsurance_Policy.pdf - Page 91",
+            "HealthInsurance_Policy.pdf - Page 90"
+          ],
+          "route_used": [
+            "Planner intent: procedure.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: methodology, general, results.",
+            "Synopsis-first routing prioritized 3 sections before chunk retrieval.",
+            "Top synopsis region: Care Health Insurance Limited."
+          ],
+          "query_used": "How can an insured person avail cashless treatment at a network provider?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.7744321889394318,
+          "context_precision": 0.8055555555287036
+        },
+        {
+          "question": "How is co-payment applied during claim assessment?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 4",
+            "HealthInsurance_Policy.pdf - Page 42",
+            "HealthInsurance_Policy.pdf - Page 96",
+            "HealthInsurance_Policy.pdf - Page 67"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: general, definition.",
+            "Chunk-first retrieval path used for exact grounding."
+          ],
+          "query_used": "How is co-payment applied during claim assessment?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.8922979491003519,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What is the main aim of this thesis?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 20",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 90",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 5",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 20"
+          ],
+          "route_used": [
+            "Planner intent: summary.",
+            "Planner evidence spread: global.",
+            "Planner selected synopsis_first with soft_multi_region constraints.",
+            "Planner source: deterministic at confidence 0.78.",
+            "Preferred content types: general, results.",
+            "Global-summary routing assembled 4 anchor sections.",
+            "Global-summary top synopsis: Research Aim.",
+            "Global-summary fallback added extra overview evidence outside the anchor sections."
+          ],
+          "query_used": "What is the main aim of this thesis?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.8651090990304192,
+          "context_precision": 0.99999999995
+        },
+        {
+          "question": "What were the three main research objectives of the study?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 90",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 90",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 20",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 20"
+          ],
+          "route_used": [
+            "Planner intent: summary.",
+            "Planner evidence spread: global.",
+            "Planner selected synopsis_first with soft_multi_region constraints.",
+            "Planner source: deterministic at confidence 0.78.",
+            "Preferred content types: general, results.",
+            "Global-summary routing assembled 4 anchor sections.",
+            "Global-summary top synopsis: Introduction.",
+            "Global-summary fallback added extra overview evidence outside the anchor sections."
+          ],
+          "query_used": "What were the three main research objectives of the study?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.9133666410843704,
+          "context_precision": 0.5833333333041666
+        },
+        {
+          "question": "How many CT patients were used in the processed cohort and how were they split?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 40",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 54",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 21",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 91"
+          ],
+          "route_used": [
+            "Planner intent: procedure.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: methodology, general, results.",
+            "Synopsis-first routing prioritized 7 sections before chunk retrieval.",
+            "Top synopsis region: Figure 5.2: CT test-set performance.",
+            "Global fallback added extra evidence outside the prioritized regions."
+          ],
+          "query_used": "How many CT patients were used in the processed cohort and how were they split?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.6036441730825921,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What was the baseline bias AUC and what did extreme standardization reduce it to?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 93",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 43",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 73",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 35"
+          ],
+          "route_used": [
+            "Planner intent: numeric.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: results, general.",
+            "Synopsis-first routing prioritized 8 sections before chunk retrieval.",
+            "Top synopsis region: Spatial Bias Detection and Mitigation.",
+            "Global fallback added extra evidence outside the prioritized regions."
+          ],
+          "query_used": "What was the baseline bias AUC and what did extreme standardization reduce it to?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.9794061560333379,
+          "context_precision": 0.6388888888675925
+        },
+        {
+          "question": "What CT model architecture was used in the thesis?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 62",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 45",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 116",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 92"
+          ],
+          "route_used": [
+            "Planner intent: procedure.",
+            "Planner evidence spread: sectional.",
+            "Planner selected hybrid_both with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: methodology, general, results.",
+            "Synopsis-first routing prioritized 6 sections before chunk retrieval.",
+            "Top synopsis region: Model Architecture.",
+            "Global fallback added extra evidence outside the prioritized regions.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval."
+          ],
+          "query_used": "What CT model architecture was used in the thesis?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.36637871987170084,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What seven urinary biomarker features were used for the biomarker model?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 80",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 30",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 46",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 45"
+          ],
+          "route_used": [
+            "Planner intent: procedure.",
+            "Planner evidence spread: sectional.",
+            "Planner selected hybrid_both with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: methodology, general, results.",
+            "Synopsis-first routing prioritized 7 sections before chunk retrieval.",
+            "Top synopsis region: Biomarker Classification Model Results.",
+            "Global fallback added extra evidence outside the prioritized regions.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval."
+          ],
+          "query_used": "What seven urinary biomarker features were used for the biomarker model?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.5542217699031183,
+          "context_precision": 0.499999999975
+        },
+        {
+          "question": "How many biomarker samples were used and what was the train validation test split?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 80",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 61",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 80",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 46"
+          ],
+          "route_used": [
+            "Planner intent: numeric.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: results, general.",
+            "Synopsis-first routing prioritized 7 sections before chunk retrieval.",
+            "Top synopsis region: Biomarker Classification Model.",
+            "Global fallback added extra evidence outside the prioritized regions."
+          ],
+          "query_used": "How many biomarker samples were used and what was the train validation test split?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.8114905642343385,
+          "context_precision": 0.9166666666361111
+        },
+        {
+          "question": "What AUC did the biomarker MLP achieve and how did it compare with the original study?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 81",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 94",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 87",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 81"
+          ],
+          "route_used": [
+            "Planner intent: comparison.",
+            "Planner evidence spread: distributed.",
+            "Planner selected hybrid_both with soft_multi_region constraints.",
+            "Planner source: llm_fallback at confidence 0.72.",
+            "Preferred content types: results, general.",
+            "Synopsis-first routing prioritized 9 sections before chunk retrieval.",
+            "Top synopsis region: Comparison with Original Study.",
+            "Global fallback added extra evidence outside the prioritized regions.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval."
+          ],
+          "query_used": "What AUC did the biomarker MLP achieve and how did it compare with the original study?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.9810967529949587,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What did the thesis conclude about multimodal fusion under synthetic pairing?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 94",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 38",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 83",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 33"
+          ],
+          "route_used": [
+            "Planner intent: summary.",
+            "Planner evidence spread: global.",
+            "Planner selected synopsis_first with soft_multi_region constraints.",
+            "Planner source: deterministic at confidence 0.78.",
+            "Preferred content types: general, results.",
+            "Global-summary routing assembled 4 anchor sections.",
+            "Global-summary top synopsis: Feature-Level Fusion.",
+            "Global-summary fallback added extra overview evidence outside the anchor sections."
+          ],
+          "query_used": "What did the thesis conclude about multimodal fusion under synthetic pairing?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 1.0,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What happened in the label-mismatch control when the CT weight was 0.3 versus 0.7?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 92",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 84",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 84",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 92"
+          ],
+          "route_used": [
+            "Planner intent: comparison.",
+            "Planner evidence spread: distributed.",
+            "Planner selected hybrid_both with soft_multi_region constraints.",
+            "Planner source: llm_fallback at confidence 0.72.",
+            "Preferred content types: general, definition, results.",
+            "Synopsis-first routing prioritized 8 sections before chunk retrieval.",
+            "Top synopsis region: Multimodal Fusion Results.",
+            "Global fallback added extra evidence outside the prioritized regions.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval."
+          ],
+          "query_used": "What happened in the label-mismatch control when the CT weight was 0.3 versus 0.7?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.7462805589077571,
+          "context_precision": 0.6388888888675925
+        },
+        {
+          "question": "How was multimodal fusion implemented in the thesis?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 66",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 92",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 8",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 83"
+          ],
+          "route_used": [
+            "Planner intent: procedure.",
+            "Planner evidence spread: sectional.",
+            "Planner selected hybrid_both with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: methodology, general, results.",
+            "Synopsis-first routing prioritized 7 sections before chunk retrieval.",
+            "Top synopsis region: Feature-Level Fusion.",
+            "Global fallback added extra evidence outside the prioritized regions.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval."
+          ],
+          "query_used": "How was multimodal fusion implemented in the thesis?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.37236876320749096,
+          "context_precision": 0.9166666666361111
+        },
+        {
+          "question": "What kinds of future work or next steps does the thesis suggest?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 96",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 9",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 88",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 98"
+          ],
+          "route_used": [
+            "Planner intent: summary.",
+            "Planner evidence spread: global.",
+            "Planner selected synopsis_first with soft_multi_region constraints.",
+            "Planner source: deterministic at confidence 0.78.",
+            "Preferred content types: general, results.",
+            "Global-summary routing assembled 4 anchor sections.",
+            "Global-summary top synopsis: Recommendations for Future Work.",
+            "Global-summary fallback added extra overview evidence outside the anchor sections."
+          ],
+          "query_used": "What kinds of future work or next steps does the thesis suggest?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.520044215338941,
+          "context_precision": 0.249999999975
+        },
+        {
+          "question": "What was the goal of the pancreas7 study?",
+          "supported": true,
+          "citations": [
+            "pancreas7.pdf - Page 3",
+            "pancreas7.pdf - Page 3",
+            "pancreas7.pdf - Page 8",
+            "pancreas7.pdf - Page 3"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: general, definition.",
+            "Chunk-first retrieval path used for exact grounding."
+          ],
+          "query_used": "What was the goal of the pancreas7 study?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.47266928386211804,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What CNN architecture did the paper use?",
+          "supported": true,
+          "citations": [
+            "pancreas7.pdf - Page 4",
+            "pancreas7.pdf - Page 8",
+            "pancreas7.pdf - Page 5",
+            "pancreas7.pdf - Page 5"
+          ],
+          "route_used": [
+            "Planner intent: procedure.",
+            "Planner evidence spread: sectional.",
+            "Planner selected hybrid_both with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: methodology, general, results.",
+            "Synopsis-first routing prioritized 7 sections before chunk retrieval.",
+            "Top synopsis region: CT images.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval."
+          ],
+          "query_used": "What CNN architecture did the paper use?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.7374150125770068,
+          "context_precision": 0.9999999999666667
+        },
+        {
+          "question": "What CT phases were included in the datasets?",
+          "supported": true,
+          "citations": [
+            "pancreas7.pdf - Page 7",
+            "pancreas7.pdf - Page 5",
+            "pancreas7.pdf - Page 1",
+            "pancreas7.pdf - Page 3"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: general, definition.",
+            "Chunk-first retrieval path used for exact grounding."
+          ],
+          "query_used": "What CT phases were included in the datasets?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.6508284379175415,
+          "context_precision": 0.9166666666361111
+        },
+        {
+          "question": "How many patients and images were included in total?",
+          "supported": true,
+          "citations": [
+            "pancreas7.pdf - Page 7",
+            "pancreas7.pdf - Page 3",
+            "pancreas7.pdf - Page 3",
+            "pancreas7.pdf - Page 1"
+          ],
+          "route_used": [
+            "Planner intent: numeric.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: results, general.",
+            "Synopsis-first routing prioritized 8 sections before chunk retrieval.",
+            "Top synopsis region: Total."
+          ],
+          "query_used": "How many patients and images were included in total?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.8342942817398026,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "How many pancreatic cancer patients and control patients were used in the binary classification experiments?",
+          "supported": true,
+          "citations": [
+            "pancreas7.pdf - Page 1",
+            "pancreas7.pdf - Page 7",
+            "pancreas7.pdf - Page 7",
+            "pancreas7.pdf - Page 3"
+          ],
+          "route_used": [
+            "Planner intent: numeric.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: results, general.",
+            "Synopsis-first routing prioritized 6 sections before chunk retrieval.",
+            "Top synopsis region: ORIGINAL ARTICLE."
+          ],
+          "query_used": "How many pancreatic cancer patients and control patients were used in the binary classification experiments?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.8173351219285437,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What binary classification accuracy did the CNN achieve across the three CT phases?",
+          "supported": true,
+          "citations": [
+            "pancreas7.pdf - Page 7",
+            "pancreas7.pdf - Page 7",
+            "pancreas7.pdf - Page 9",
+            "pancreas7.pdf - Page 2"
+          ],
+          "route_used": [
+            "Planner intent: cross_cutting.",
+            "Planner evidence spread: distributed.",
+            "Planner selected hybrid_both with soft_multi_region constraints.",
+            "Planner source: llm_fallback at confidence 0.72.",
+            "Preferred content types: general, definition, results.",
+            "Synopsis-first routing prioritized 8 sections before chunk retrieval.",
+            "Top synopsis region: Accuracy 0.820568 0.790633 0.788076 1.074 0.585.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval."
+          ],
+          "query_used": "What binary classification accuracy did the CNN achieve across the three CT phases?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.43072938020930884,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "How did the CNN compare with gastroenterologists and trainees on plain scan accuracy?",
+          "supported": true,
+          "citations": [
+            "pancreas7.pdf - Page 7",
+            "pancreas7.pdf - Page 9",
+            "pancreas7.pdf - Page 7",
+            "pancreas7.pdf - Page 2"
+          ],
+          "route_used": [
+            "Planner intent: comparison.",
+            "Planner evidence spread: distributed.",
+            "Planner selected hybrid_both with soft_multi_region constraints.",
+            "Planner source: llm_fallback at confidence 0.72.",
+            "Preferred content types: general, definition, results.",
+            "Synopsis-first routing prioritized 8 sections before chunk retrieval.",
+            "Top synopsis region: Accuracy 0.820568 0.790633 0.788076 1.074 0.585.",
+            "Global fallback added extra evidence outside the prioritized regions.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval."
+          ],
+          "query_used": "How did the CNN compare with gastroenterologists and trainees on plain scan accuracy?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.9165391147698393,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "Which phase had the highest sensitivity for head and neck pancreatic malignancies in the ternary classifier?",
+          "supported": true,
+          "citations": [
+            "pancreas7.pdf - Page 10",
+            "pancreas7.pdf - Page 2",
+            "pancreas7.pdf - Page 7",
+            "pancreas7.pdf - Page 9"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: general, definition.",
+            "Chunk-first retrieval path used for exact grounding."
+          ],
+          "query_used": "Which phase had the highest sensitivity for head and neck pancreatic malignancies in the ternary classifier?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.4701683605673324,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "Why did the authors say plain phase could be sufficient for the binary classifier?",
+          "supported": true,
+          "citations": [
+            "pancreas7.pdf - Page 11",
+            "pancreas7.pdf - Page 2",
+            "pancreas7.pdf - Page 10",
+            "pancreas7.pdf - Page 9"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: general, definition.",
+            "Chunk-first retrieval path used for exact grounding."
+          ],
+          "query_used": "Why did the authors say plain phase could be sufficient for the binary classifier?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.4592853517677529,
+          "context_precision": 0.999999999975
+        }
+      ]
+    },
+    "full_stack": {
+      "settings": {
+        "reranker_enabled": true,
+        "evidence_selector_enabled": true,
+        "planner_confidence_threshold": 0.7,
+        "router_confidence_threshold": 0.62,
+        "router_llm_enabled": true
+      },
+      "dataset_size": 34,
+      "supported_rate": 0.9117647058823529,
+      "faithfulness_mean": 0.9338235294117647,
+      "answer_relevancy_mean": 0.6111079037019833,
+      "context_precision_mean": 0.9419934640197032,
+      "per_dataset": {
+        "health_retrieval_eval_dataset.json": {
+          "dataset_size": 13,
+          "supported_rate": 0.7692307692307693,
+          "faithfulness_mean": 0.8461538461538461,
+          "answer_relevancy_mean": 0.5667814031815639,
+          "context_precision_mean": 0.9401709401343661
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 1.0,
+          "answer_relevancy_mean": 0.6032035728347547,
+          "context_precision_mean": 0.9004629629317901
+        },
+        "pancreas7_retrieval_eval_dataset.json": {
+          "dataset_size": 9,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 0.9722222222222222,
+          "answer_relevancy_mean": 0.6856741789433386,
+          "context_precision_mean": 0.9999999999712963
+        }
+      },
+      "results": [
+        {
+          "question": "What is the cashless facility under this policy?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 4",
+            "HealthInsurance_Policy.pdf - Page 90",
+            "HealthInsurance_Policy.pdf - Page 93",
+            "HealthInsurance_Policy.pdf - Page 44"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: definition, general.",
+            "Chunk-first retrieval path used for exact grounding.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 4, Page 90."
+          ],
+          "query_used": "What is the cashless facility under this policy?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.47194847822841596,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "How is the grace period defined and how long is it for monthly versus other premium payment modes?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 6",
+            "HealthInsurance_Policy.pdf - Page 85",
+            "HealthInsurance_Policy.pdf - Page 43",
+            "HealthInsurance_Policy.pdf - Page 3"
+          ],
+          "route_used": [
+            "Planner intent: comparison.",
+            "Planner evidence spread: distributed.",
+            "Planner selected hybrid_both with soft_multi_region constraints.",
+            "Planner source: llm_fallback at confidence 0.72.",
+            "Preferred content types: definition, general.",
+            "Synopsis-first routing prioritized 3 sections before chunk retrieval.",
+            "Top synopsis region: . PREAMBLE.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 6, Page 85."
+          ],
+          "query_used": "How is the grace period defined and how long is it for monthly versus other premium payment modes?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.9370148916564061,
+          "context_precision": 0.99999999995
+        },
+        {
+          "question": "What counts as maternity expenses in this policy?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 8",
+            "HealthInsurance_Policy.pdf - Page 35",
+            "HealthInsurance_Policy.pdf - Page 36",
+            "HealthInsurance_Policy.pdf - Page 36"
+          ],
+          "route_used": [
+            "Planner intent: numeric.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: results, general.",
+            "Synopsis-first routing prioritized 3 sections before chunk retrieval.",
+            "Top synopsis region: Care Health Insurance Limited.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 8, Page 35."
+          ],
+          "query_used": "What counts as maternity expenses in this policy?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.9022474856369108,
+          "context_precision": 0.99999999995
+        },
+        {
+          "question": "How does the policy define a network provider?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 9",
+            "HealthInsurance_Policy.pdf - Page 18",
+            "HealthInsurance_Policy.pdf - Page 91",
+            "HealthInsurance_Policy.pdf - Page 92"
+          ],
+          "route_used": [
+            "Planner intent: procedure.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: definition, general.",
+            "Synopsis-first routing prioritized 3 sections before chunk retrieval.",
+            "Top synopsis region: . PREAMBLE.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 9, Page 18."
+          ],
+          "query_used": "How does the policy define a network provider?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.7702940688215619,
+          "context_precision": 0.9999999999666667
+        },
+        {
+          "question": "How does the policy define a pre-existing disease?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 9",
+            "HealthInsurance_Policy.pdf - Page 40",
+            "HealthInsurance_Policy.pdf - Page 40",
+            "HealthInsurance_Policy.pdf - Page 70"
+          ],
+          "route_used": [
+            "Planner intent: procedure.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: definition, general.",
+            "Synopsis-first routing prioritized 3 sections before chunk retrieval.",
+            "Top synopsis region: . PREAMBLE.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 9, Page 40."
+          ],
+          "query_used": "How does the policy define a pre-existing disease?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.8235639788793933,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What does renewal mean in this policy wording?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 10",
+            "HealthInsurance_Policy.pdf - Page 84",
+            "HealthInsurance_Policy.pdf - Page 3",
+            "HealthInsurance_Policy.pdf - Page 27"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: definition, general.",
+            "Chunk-first retrieval path used for exact grounding.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 10, Page 84."
+          ],
+          "query_used": "What does renewal mean in this policy wording?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.7954307857948558,
+          "context_precision": 0.99999999995
+        },
+        {
+          "question": "How many days of pre-hospitalization and post-hospitalization expenses are covered?",
+          "supported": false,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 29",
+            "HealthInsurance_Policy.pdf - Page 9",
+            "HealthInsurance_Policy.pdf - Page 10",
+            "HealthInsurance_Policy.pdf - Page 98"
+          ],
+          "route_used": [
+            "Planner intent: numeric.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: results, general.",
+            "Synopsis-first routing prioritized 3 sections before chunk retrieval.",
+            "Top synopsis region: Care Health Insurance Limited.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 29, Page 9."
+          ],
+          "query_used": "How many days of pre-hospitalization and post-hospitalization expenses are covered?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.0,
+          "context_precision": 0.99999999995
+        },
+        {
+          "question": "What waiting period applies to pre-existing diseases?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 40",
+            "HealthInsurance_Policy.pdf - Page 70",
+            "HealthInsurance_Policy.pdf - Page 70",
+            "HealthInsurance_Policy.pdf - Page 10"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: general, definition.",
+            "Chunk-first retrieval path used for exact grounding.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 40, Page 70."
+          ],
+          "query_used": "What waiting period applies to pre-existing diseases?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.5625212375158185,
+          "context_precision": 0.9166666666361111
+        },
+        {
+          "question": "What is the named ailment waiting period and where is the disease list described?",
+          "supported": false,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 10",
+            "HealthInsurance_Policy.pdf - Page 40",
+            "HealthInsurance_Policy.pdf - Page 41",
+            "HealthInsurance_Policy.pdf - Page 38"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: definition, general.",
+            "Chunk-first retrieval path used for exact grounding.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 10, Page 40."
+          ],
+          "query_used": "What is the named ailment waiting period and where is the disease list described?",
+          "faithfulness": 0.0,
+          "answer_relevancy": 0.0,
+          "context_precision": 0.8333333332916666
+        },
+        {
+          "question": "What is the 30-day waiting period in this health policy?",
+          "supported": false,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 41",
+            "HealthInsurance_Policy.pdf - Page 33",
+            "HealthInsurance_Policy.pdf - Page 10",
+            "HealthInsurance_Policy.pdf - Page 72"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: definition, general.",
+            "Chunk-first retrieval path used for exact grounding.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 41, Page 33."
+          ],
+          "query_used": "What is the 30-day waiting period in this health policy?",
+          "faithfulness": 0.0,
+          "answer_relevancy": 0.0,
+          "context_precision": 0.7499999999625
+        },
+        {
+          "question": "What happens if an installment premium is not received within the grace period?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 85",
+            "HealthInsurance_Policy.pdf - Page 6",
+            "HealthInsurance_Policy.pdf - Page 3",
+            "HealthInsurance_Policy.pdf - Page 84"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: general, definition.",
+            "Chunk-first retrieval path used for exact grounding.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 85, Page 6."
+          ],
+          "query_used": "What happens if an installment premium is not received within the grace period?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.4491498900886482,
+          "context_precision": 0.8055555555287036
+        },
+        {
+          "question": "How can an insured person avail cashless treatment at a network provider?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 90",
+            "HealthInsurance_Policy.pdf - Page 90",
+            "HealthInsurance_Policy.pdf - Page 91",
+            "HealthInsurance_Policy.pdf - Page 91"
+          ],
+          "route_used": [
+            "Planner intent: procedure.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: methodology, general, results.",
+            "Synopsis-first routing prioritized 3 sections before chunk retrieval.",
+            "Top synopsis region: Care Health Insurance Limited.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 90, Page 90."
+          ],
+          "query_used": "How can an insured person avail cashless treatment at a network provider?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.7947156078909986,
+          "context_precision": 0.9166666666361111
+        },
+        {
+          "question": "How is co-payment applied during claim assessment?",
+          "supported": true,
+          "citations": [
+            "HealthInsurance_Policy.pdf - Page 42",
+            "HealthInsurance_Policy.pdf - Page 4",
+            "HealthInsurance_Policy.pdf - Page 96",
+            "HealthInsurance_Policy.pdf - Page 67"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: general, definition.",
+            "Chunk-first retrieval path used for exact grounding.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 42, Page 4."
+          ],
+          "query_used": "How is co-payment applied during claim assessment?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.8612718168473211,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What is the main aim of this thesis?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 20",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 90",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 5",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 20"
+          ],
+          "route_used": [
+            "Planner intent: summary.",
+            "Planner evidence spread: global.",
+            "Planner selected synopsis_first with soft_multi_region constraints.",
+            "Planner source: deterministic at confidence 0.78.",
+            "Preferred content types: general, results.",
+            "Global-summary routing assembled 4 anchor sections.",
+            "Global-summary top synopsis: Research Aim.",
+            "Global-summary fallback added extra overview evidence outside the anchor sections.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 20, Page 90, Page 5."
+          ],
+          "query_used": "What is the main aim of this thesis?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.3451873806048691,
+          "context_precision": 0.99999999995
+        },
+        {
+          "question": "What were the three main research objectives of the study?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 20",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 90",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 90",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 20"
+          ],
+          "route_used": [
+            "Planner intent: summary.",
+            "Planner evidence spread: global.",
+            "Planner selected synopsis_first with soft_multi_region constraints.",
+            "Planner source: deterministic at confidence 0.78.",
+            "Preferred content types: general, results.",
+            "Global-summary routing assembled 4 anchor sections.",
+            "Global-summary top synopsis: Introduction.",
+            "Global-summary fallback added extra overview evidence outside the anchor sections.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 20, Page 90."
+          ],
+          "query_used": "What were the three main research objectives of the study?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.9283700370487812,
+          "context_precision": 0.8333333332916666
+        },
+        {
+          "question": "How many CT patients were used in the processed cohort and how were they split?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 40",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 54",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 21",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 91"
+          ],
+          "route_used": [
+            "Planner intent: procedure.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: methodology, general, results.",
+            "Synopsis-first routing prioritized 7 sections before chunk retrieval.",
+            "Top synopsis region: Figure 5.2: CT test-set performance.",
+            "Global fallback added extra evidence outside the prioritized regions.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 40, Page 54."
+          ],
+          "query_used": "How many CT patients were used in the processed cohort and how were they split?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.5517977208456362,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What was the baseline bias AUC and what did extreme standardization reduce it to?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 35",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 73",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 93",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 43"
+          ],
+          "route_used": [
+            "Planner intent: numeric.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: results, general.",
+            "Synopsis-first routing prioritized 8 sections before chunk retrieval.",
+            "Top synopsis region: Spatial Bias Detection and Mitigation.",
+            "Global fallback added extra evidence outside the prioritized regions.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 35, Page 73."
+          ],
+          "query_used": "What was the baseline bias AUC and what did extreme standardization reduce it to?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.3650829399836822,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What CT model architecture was used in the thesis?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 62",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 45",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 116",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 92"
+          ],
+          "route_used": [
+            "Planner intent: procedure.",
+            "Planner evidence spread: sectional.",
+            "Planner selected hybrid_both with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: methodology, general, results.",
+            "Synopsis-first routing prioritized 6 sections before chunk retrieval.",
+            "Top synopsis region: Model Architecture.",
+            "Global fallback added extra evidence outside the prioritized regions.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 62, Page 45."
+          ],
+          "query_used": "What CT model architecture was used in the thesis?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.39215482339903573,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What seven urinary biomarker features were used for the biomarker model?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 80",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 46",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 30",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 45"
+          ],
+          "route_used": [
+            "Planner intent: procedure.",
+            "Planner evidence spread: sectional.",
+            "Planner selected hybrid_both with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: methodology, general, results.",
+            "Synopsis-first routing prioritized 7 sections before chunk retrieval.",
+            "Top synopsis region: Biomarker Classification Model Results.",
+            "Global fallback added extra evidence outside the prioritized regions.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 80, Page 46."
+          ],
+          "query_used": "What seven urinary biomarker features were used for the biomarker model?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.368703564327779,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "How many biomarker samples were used and what was the train validation test split?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 80",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 61",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 80",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 46"
+          ],
+          "route_used": [
+            "Planner intent: numeric.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: results, general.",
+            "Synopsis-first routing prioritized 7 sections before chunk retrieval.",
+            "Top synopsis region: Biomarker Classification Model.",
+            "Global fallback added extra evidence outside the prioritized regions.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 80, Page 61."
+          ],
+          "query_used": "How many biomarker samples were used and what was the train validation test split?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.811437458532643,
+          "context_precision": 0.9166666666361111
+        },
+        {
+          "question": "What AUC did the biomarker MLP achieve and how did it compare with the original study?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 81",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 94",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 87",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 81"
+          ],
+          "route_used": [
+            "Planner intent: comparison.",
+            "Planner evidence spread: distributed.",
+            "Planner selected hybrid_both with soft_multi_region constraints.",
+            "Planner source: llm_fallback at confidence 0.72.",
+            "Preferred content types: results, general.",
+            "Synopsis-first routing prioritized 9 sections before chunk retrieval.",
+            "Top synopsis region: Comparison with Original Study.",
+            "Global fallback added extra evidence outside the prioritized regions.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval."
+          ],
+          "query_used": "What AUC did the biomarker MLP achieve and how did it compare with the original study?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.9927888204979736,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What did the thesis conclude about multimodal fusion under synthetic pairing?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 83",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 94",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 33",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 38"
+          ],
+          "route_used": [
+            "Planner intent: summary.",
+            "Planner evidence spread: global.",
+            "Planner selected synopsis_first with soft_multi_region constraints.",
+            "Planner source: deterministic at confidence 0.78.",
+            "Preferred content types: general, results.",
+            "Global-summary routing assembled 4 anchor sections.",
+            "Global-summary top synopsis: Feature-Level Fusion.",
+            "Global-summary fallback added extra overview evidence outside the anchor sections.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 83, Page 94, Page 33."
+          ],
+          "query_used": "What did the thesis conclude about multimodal fusion under synthetic pairing?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.8555142261565741,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What happened in the label-mismatch control when the CT weight was 0.3 versus 0.7?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 92",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 84",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 84",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 92"
+          ],
+          "route_used": [
+            "Planner intent: comparison.",
+            "Planner evidence spread: distributed.",
+            "Planner selected hybrid_both with soft_multi_region constraints.",
+            "Planner source: llm_fallback at confidence 0.72.",
+            "Preferred content types: general, definition, results.",
+            "Synopsis-first routing prioritized 8 sections before chunk retrieval.",
+            "Top synopsis region: Multimodal Fusion Results.",
+            "Global fallback added extra evidence outside the prioritized regions.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval."
+          ],
+          "query_used": "What happened in the label-mismatch control when the CT weight was 0.3 versus 0.7?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.7475070482584597,
+          "context_precision": 0.6388888888675925
+        },
+        {
+          "question": "How was multimodal fusion implemented in the thesis?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 66",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 92",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 8",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 83"
+          ],
+          "route_used": [
+            "Planner intent: procedure.",
+            "Planner evidence spread: sectional.",
+            "Planner selected hybrid_both with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: methodology, general, results.",
+            "Synopsis-first routing prioritized 7 sections before chunk retrieval.",
+            "Top synopsis region: Feature-Level Fusion.",
+            "Global fallback added extra evidence outside the prioritized regions.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 66, Page 92."
+          ],
+          "query_used": "How was multimodal fusion implemented in the thesis?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.3938237587095861,
+          "context_precision": 0.9166666666361111
+        },
+        {
+          "question": "What kinds of future work or next steps does the thesis suggest?",
+          "supported": true,
+          "citations": [
+            "Final_Thesis_Leander_Antony_A.pdf - Page 96",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 98",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 88",
+            "Final_Thesis_Leander_Antony_A.pdf - Page 9"
+          ],
+          "route_used": [
+            "Planner intent: summary.",
+            "Planner evidence spread: global.",
+            "Planner selected synopsis_first with soft_multi_region constraints.",
+            "Planner source: deterministic at confidence 0.78.",
+            "Preferred content types: general, results.",
+            "Global-summary routing assembled 4 anchor sections.",
+            "Global-summary top synopsis: Recommendations for Future Work.",
+            "Global-summary fallback added extra overview evidence outside the anchor sections.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 96, Page 98, Page 88."
+          ],
+          "query_used": "What kinds of future work or next steps does the thesis suggest?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.48607509565203627,
+          "context_precision": 0.49999999995
+        },
+        {
+          "question": "What was the goal of the pancreas7 study?",
+          "supported": true,
+          "citations": [
+            "pancreas7.pdf - Page 8",
+            "pancreas7.pdf - Page 3",
+            "pancreas7.pdf - Page 3",
+            "pancreas7.pdf - Page 3"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: general, definition.",
+            "Chunk-first retrieval path used for exact grounding.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 8, Page 3."
+          ],
+          "query_used": "What was the goal of the pancreas7 study?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.5570174614680479,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What CNN architecture did the paper use?",
+          "supported": true,
+          "citations": [
+            "pancreas7.pdf - Page 4",
+            "pancreas7.pdf - Page 5",
+            "pancreas7.pdf - Page 8",
+            "pancreas7.pdf - Page 5"
+          ],
+          "route_used": [
+            "Planner intent: procedure.",
+            "Planner evidence spread: sectional.",
+            "Planner selected hybrid_both with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: methodology, general, results.",
+            "Synopsis-first routing prioritized 7 sections before chunk retrieval.",
+            "Top synopsis region: CT images.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 4, Page 5."
+          ],
+          "query_used": "What CNN architecture did the paper use?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.5300313526589203,
+          "context_precision": 0.99999999995
+        },
+        {
+          "question": "What CT phases were included in the datasets?",
+          "supported": true,
+          "citations": [
+            "pancreas7.pdf - Page 7",
+            "pancreas7.pdf - Page 5",
+            "pancreas7.pdf - Page 1",
+            "pancreas7.pdf - Page 3"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: general, definition.",
+            "Chunk-first retrieval path used for exact grounding.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 7, Page 5."
+          ],
+          "query_used": "What CT phases were included in the datasets?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.6769429022625085,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "How many patients and images were included in total?",
+          "supported": true,
+          "citations": [
+            "pancreas7.pdf - Page 3",
+            "pancreas7.pdf - Page 1",
+            "pancreas7.pdf - Page 7",
+            "pancreas7.pdf - Page 3"
+          ],
+          "route_used": [
+            "Planner intent: numeric.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: results, general.",
+            "Synopsis-first routing prioritized 8 sections before chunk retrieval.",
+            "Top synopsis region: Total.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 3, Page 1."
+          ],
+          "query_used": "How many patients and images were included in total?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.8807964400295273,
+          "context_precision": 0.9999999999666667
+        },
+        {
+          "question": "How many pancreatic cancer patients and control patients were used in the binary classification experiments?",
+          "supported": true,
+          "citations": [
+            "pancreas7.pdf - Page 3",
+            "pancreas7.pdf - Page 7",
+            "pancreas7.pdf - Page 1",
+            "pancreas7.pdf - Page 7"
+          ],
+          "route_used": [
+            "Planner intent: numeric.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_local constraints.",
+            "Planner source: deterministic at confidence 0.74.",
+            "Preferred content types: results, general.",
+            "Synopsis-first routing prioritized 6 sections before chunk retrieval.",
+            "Top synopsis region: ORIGINAL ARTICLE.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 3, Page 7."
+          ],
+          "query_used": "How many pancreatic cancer patients and control patients were used in the binary classification experiments?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.8173289957021592,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What binary classification accuracy did the CNN achieve across the three CT phases?",
+          "supported": true,
+          "citations": [
+            "pancreas7.pdf - Page 7",
+            "pancreas7.pdf - Page 2",
+            "pancreas7.pdf - Page 7",
+            "pancreas7.pdf - Page 9"
+          ],
+          "route_used": [
+            "Planner intent: cross_cutting.",
+            "Planner evidence spread: distributed.",
+            "Planner selected hybrid_both with soft_multi_region constraints.",
+            "Planner source: llm_fallback at confidence 0.72.",
+            "Preferred content types: general, definition, results.",
+            "Synopsis-first routing prioritized 8 sections before chunk retrieval.",
+            "Top synopsis region: Accuracy 0.820568 0.790633 0.788076 1.074 0.585.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 7, Page 2."
+          ],
+          "query_used": "What binary classification accuracy did the CNN achieve across the three CT phases?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.4307553995796694,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "How did the CNN compare with gastroenterologists and trainees on plain scan accuracy?",
+          "supported": true,
+          "citations": [
+            "pancreas7.pdf - Page 7",
+            "pancreas7.pdf - Page 2",
+            "pancreas7.pdf - Page 9",
+            "pancreas7.pdf - Page 7"
+          ],
+          "route_used": [
+            "Planner intent: comparison.",
+            "Planner evidence spread: distributed.",
+            "Planner selected hybrid_both with soft_multi_region constraints.",
+            "Planner source: llm_fallback at confidence 0.72.",
+            "Preferred content types: general, definition, results.",
+            "Synopsis-first routing prioritized 8 sections before chunk retrieval.",
+            "Top synopsis region: Accuracy 0.820568 0.790633 0.788076 1.074 0.585.",
+            "Global fallback added extra evidence outside the prioritized regions.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 7, Page 2."
+          ],
+          "query_used": "How did the CNN compare with gastroenterologists and trainees on plain scan accuracy?",
+          "faithfulness": 0.75,
+          "answer_relevancy": 0.9302884396328674,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "Which phase had the highest sensitivity for head and neck pancreatic malignancies in the ternary classifier?",
+          "supported": true,
+          "citations": [
+            "pancreas7.pdf - Page 9",
+            "pancreas7.pdf - Page 10",
+            "pancreas7.pdf - Page 2",
+            "pancreas7.pdf - Page 7"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: general, definition.",
+            "Chunk-first retrieval path used for exact grounding.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 9, Page 10."
+          ],
+          "query_used": "Which phase had the highest sensitivity for head and neck pancreatic malignancies in the ternary classifier?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.4252964016126919,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "Why did the authors say plain phase could be sufficient for the binary classifier?",
+          "supported": true,
+          "citations": [
+            "pancreas7.pdf - Page 11",
+            "pancreas7.pdf - Page 9",
+            "pancreas7.pdf - Page 2",
+            "pancreas7.pdf - Page 10"
+          ],
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: atomic.",
+            "Planner selected chunk_first with none constraints.",
+            "Planner source: deterministic at confidence 0.86.",
+            "Preferred content types: general, definition.",
+            "Chunk-first retrieval path used for exact grounding.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 11, Page 9."
+          ],
+          "query_used": "Why did the authors say plain phase could be sufficient for the binary classifier?",
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.9226102175436558,
+          "context_precision": 0.999999999975
+        }
+      ]
+    }
+  }
+}

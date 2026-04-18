@@ -95,7 +95,8 @@ class EvidenceSelector:
         if not self._should_select(retrieval_result):
             return retrieval_result
 
-        candidates = retrieval_result.candidates[: self.settings.evidence_selector_top_k]
+        original_candidates = retrieval_result.candidates
+        candidates = original_candidates[: self.settings.evidence_selector_top_k]
         prompt = self._selection_prompt(question, candidates)
         try:
             response = self.client.chat.completions.create(
@@ -170,12 +171,26 @@ class EvidenceSelector:
                 if is_global_summary:
                     seen_pages.add(candidate.metadata.get("page_label", ""))
 
-        note = (
-            f"Evidence selector reviewed top {len(candidates)} chunks and chose "
-            f"{', '.join(candidate.metadata.get('page_label', candidate.chunk_id) for candidate in chosen)}."
-        )
+        if self.settings.evidence_selector_prune:
+            final_candidates = chosen
+            note = (
+                f"Evidence selector reviewed top {len(candidates)} chunks and chose "
+                f"{', '.join(candidate.metadata.get('page_label', candidate.chunk_id) for candidate in chosen)}."
+            )
+        else:
+            selected_chunk_ids = {candidate.chunk_id for candidate in chosen}
+            prioritized = list(chosen)
+            for candidate in original_candidates:
+                if candidate.chunk_id in selected_chunk_ids:
+                    continue
+                prioritized.append(candidate)
+            final_candidates = prioritized
+            note = (
+                f"Evidence selector reviewed top {len(candidates)} chunks and reordered evidence to start with "
+                f"{', '.join(candidate.metadata.get('page_label', candidate.chunk_id) for candidate in chosen)}."
+            )
         return replace(
             retrieval_result,
-            candidates=chosen,
+            candidates=final_candidates,
             strategy_notes=[*retrieval_result.strategy_notes, note],
         )

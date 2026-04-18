@@ -366,8 +366,11 @@ What we learned:
 
 Current interpretation:
 
-- the selector is not yet justified at the evidence-selection layer
-- it may still help final answer quality, but that must be proven in a later answer-layer eval
+- the original prune-based selector was not justified at the evidence-selection layer
+- that result turned out to conflate two effects:
+  - evidence reordering
+  - evidence pruning
+- the later reorder-only experiment isolated those effects and overturned the selector conclusion
 
 ### 2. Reranker
 
@@ -479,7 +482,8 @@ Current interpretation:
 
 - reranker should remain part of the architecture
 - planner/router can remain, but should be treated as a modest incremental improvement rather than a dramatic win
-- selector should not currently be treated as justified by the benchmark evidence
+- the prune-based selector should not be used as the default selector design
+- however, this answer-layer comparison did not yet isolate prune vs reorder-only behavior
 
 ### 6. Focused External `ragas` Cross-Check
 
@@ -503,18 +507,65 @@ Metrics:
 
 What we learned:
 
-- `planner_reranker` produced the strongest faithfulness score in the external check
-- `full_stack` produced the strongest context precision and answer relevancy
-- however, `full_stack` did so with a noticeable drop in faithfulness compared with both `reranker_only` and `planner_reranker`
-- this means the selector is not uniformly bad, but its current effect is still a tradeoff rather than a net positive
+- the original focused external check used the prune-based selector behavior
+- that run was useful, but it did not isolate whether the regression came from reordering itself or from shrinking the evidence set
 
 Current interpretation:
 
-- the external check does not overturn the internal benchmark conclusion
-- it does clarify the selector's current profile:
-  - better on narrow context precision
-  - worse on answer faithfulness
-- for Helpmate, faithfulness remains the more important production criterion, so the selector still does not currently justify itself as the default path
+- this external check should now be treated as historical context for the prune-based selector only
+- the controlling selector decision must instead follow the later isolate-pruning experiment
+
+### 7. Selector Reorder-Only Follow-Up
+
+What was measured:
+
+- retrieval-only compare on the same cached selector cases:
+  - selector off
+  - selector prune
+  - selector reorder-only
+- answer-layer compare on the same positive and negative datasets
+- focused `ragas` compare on the same three representative document families:
+  - health policy
+  - thesis
+  - `pancreas7`
+
+Reports:
+
+- `docs/evals/reports/evidence_selector_mode_compare_20260418_164811.json`
+- `docs/evals/reports/selector_answer_mode_compare_20260418_170916.json`
+- `docs/evals/reports/selector_ragas_mode_compare_20260418_184714.json`
+
+What we learned:
+
+- pruning was the source of the earlier selector regression
+- retrieval objective:
+  - selector off `0.7674`
+  - selector prune `0.7255`
+  - selector reorder-only `0.7757`
+- answer-layer supported rate:
+  - planner+rereanker `0.8421`
+  - selector prune `0.8289`
+  - selector reorder-only `0.8553`
+- focused `ragas`:
+  - planner+rereanker:
+    - faithfulness `0.9310`
+    - answer relevancy `0.6555`
+    - context precision `0.9036`
+  - selector reorder-only:
+    - faithfulness `0.9657`
+    - answer relevancy `0.6436`
+    - context precision `0.9608`
+
+Selector gate usage on the benchmark:
+
+- positive eval set: `68 / 76` = `89.5%`
+- focused `ragas` subset: `32 / 34` = `94.1%`
+
+Current interpretation:
+
+- the selector is now justified again, but only in reorder-only mode
+- the earlier negative selector conclusion should be preserved as history for prune mode, not carried forward as the final selector verdict
+- this is now a benchmark-backed architecture change, not an intuition change
 
 ## Guiding Rule Going Forward
 

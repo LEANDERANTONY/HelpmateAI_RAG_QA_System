@@ -95,7 +95,7 @@ Notes:
 
 - section and region metrics are for local retrieval only
 - they are meant to explain planner/topology behavior, not replace hit rate, MRR, or `ragas`
-- the new bounded evidence selector runs after retrieval, so it improves final evidence choice without changing the retrieval benchmark itself
+- the selector now runs in reorder-only mode by default, so it improves final evidence ordering without pruning away supporting chunks
 - the dedicated `global_summary_first` route also sits inside local retrieval behavior and is intended to improve broad paper-summary evidence assembly without disturbing exact factual paths
 
 ## Next Step
