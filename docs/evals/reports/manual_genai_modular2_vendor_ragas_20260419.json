@@ -1,0 +1,370 @@
+{
+  "dataset_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\reports\\manual_questions_genai_modular2_20260419.json",
+  "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\test\\GENAI_modular2.pdf",
+  "question_count": 6,
+  "ours": {
+    "faithfulness": 0.8055555555555556,
+    "answer_relevancy": 0.5959528440765681,
+    "context_precision": 0.9999999999666667
+  },
+  "vectara": {
+    "faithfulness": 1.0,
+    "answer_relevancy": 0.37065860780577514,
+    "context_precision": 0.5277777777435185
+  },
+  "openai": {
+    "faithfulness": 0.6666666666666666,
+    "answer_relevancy": 0.4966169014815309,
+    "context_precision": 0.7020833333033738
+  },
+  "ours_results": [
+    {
+      "question": "What is the main goal of this paper on generative spatial AI for sustainable smart cities?",
+      "supported": true,
+      "route_used": [
+        "Planner intent: lookup.",
+        "Planner evidence spread: atomic.",
+        "Planner selected chunk_first with none constraints.",
+        "Planner source: deterministic at confidence 0.86.",
+        "Preferred content types: definition, general.",
+        "Chunk-first retrieval path used for exact grounding."
+      ],
+      "query_used": "What is the main goal of this paper on generative spatial AI for sustainable smart cities?",
+      "citations": [
+        "GENAI_modular2.pdf - Page 1",
+        "GENAI_modular2.pdf - Page 8",
+        "GENAI_modular2.pdf - Page 5",
+        "GENAI_modular2.pdf - Page 5"
+      ],
+      "faithfulness": 0.5,
+      "answer_relevancy": 0.4777832404473347,
+      "context_precision": 0.999999999975
+    },
+    {
+      "question": "How does the paper describe the Generative Spatial AI framework or large flow model for urban digital twins?",
+      "supported": true,
+      "route_used": [
+        "Planner intent: procedure.",
+        "Planner evidence spread: sectional.",
+        "Planner selected synopsis_first with soft_local constraints.",
+        "Planner source: deterministic at confidence 0.74.",
+        "Preferred content types: methodology, general, results.",
+        "Synopsis-first routing prioritized 10 sections before chunk retrieval.",
+        "Top synopsis region: Original Research.",
+        "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 1, Page 2."
+      ],
+      "query_used": "How does the paper describe the Generative Spatial AI framework or large flow model for urban digital twins?",
+      "citations": [
+        "GENAI_modular2.pdf - Page 1",
+        "GENAI_modular2.pdf - Page 2",
+        "GENAI_modular2.pdf - Page 1",
+        "GENAI_modular2.pdf - Page 28"
+      ],
+      "faithfulness": 0.8333333333333334,
+      "answer_relevancy": 0.6467051172631556,
+      "context_precision": 0.9999999999666667
+    },
+    {
+      "question": "What role do data collection and aggregation play in the proposed smart-city modeling approach?",
+      "supported": true,
+      "route_used": [
+        "Planner intent: lookup.",
+        "Planner evidence spread: atomic.",
+        "Planner selected chunk_first with none constraints.",
+        "Planner source: deterministic at confidence 0.86.",
+        "Preferred content types: general, definition.",
+        "Chunk-first retrieval path used for exact grounding."
+      ],
+      "query_used": "What role do data collection and aggregation play in the proposed smart-city modeling approach?",
+      "citations": [
+        "GENAI_modular2.pdf - Page 17",
+        "GENAI_modular2.pdf - Page 8",
+        "GENAI_modular2.pdf - Page 14",
+        "GENAI_modular2.pdf - Page 2"
+      ],
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.303140805588698,
+      "context_precision": 0.9999999999666667
+    },
+    {
+      "question": "How does the paper explain the Blue City large flow model and its pretraining or development process?",
+      "supported": true,
+      "route_used": [
+        "Planner intent: procedure.",
+        "Planner evidence spread: sectional.",
+        "Planner selected synopsis_first with soft_local constraints.",
+        "Planner source: deterministic at confidence 0.74.",
+        "Preferred content types: methodology, general, results.",
+        "Synopsis-first routing prioritized 10 sections before chunk retrieval.",
+        "Top synopsis region: The Blue City large\ufb02ow model.",
+        "Global fallback added extra evidence outside the prioritized regions.",
+        "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 16, Page 19."
+      ],
+      "query_used": "How does the paper explain the Blue City large flow model and its pretraining or development process?",
+      "citations": [
+        "GENAI_modular2.pdf - Page 16",
+        "GENAI_modular2.pdf - Page 19",
+        "GENAI_modular2.pdf - Page 14",
+        "GENAI_modular2.pdf - Page 23"
+      ],
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7198226858733867,
+      "context_precision": 0.9999999999666667
+    },
+    {
+      "question": "What validation, verification, or prototyping steps are described for the system?",
+      "supported": true,
+      "route_used": [
+        "Planner intent: procedure.",
+        "Planner evidence spread: sectional.",
+        "Planner selected synopsis_first with soft_local constraints.",
+        "Planner source: deterministic at confidence 0.74.",
+        "Preferred content types: methodology, general, results.",
+        "Synopsis-first routing prioritized 10 sections before chunk retrieval.",
+        "Top synopsis region: Prototyping and initial development.",
+        "Global fallback added extra evidence outside the prioritized regions.",
+        "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 15, Page 14."
+      ],
+      "query_used": "What validation, verification, or prototyping steps are described for the system?",
+      "citations": [
+        "GENAI_modular2.pdf - Page 15",
+        "GENAI_modular2.pdf - Page 14",
+        "GENAI_modular2.pdf - Page 14",
+        "GENAI_modular2.pdf - Page 21"
+      ],
+      "faithfulness": 0.5,
+      "answer_relevancy": 0.8257198198801273,
+      "context_precision": 0.99999999995
+    },
+    {
+      "question": "What future research directions, constraints, or sustainability concerns does the paper discuss?",
+      "supported": true,
+      "route_used": [
+        "Planner intent: lookup.",
+        "Planner evidence spread: atomic.",
+        "Planner selected chunk_first with none constraints.",
+        "Planner source: deterministic at confidence 0.86.",
+        "Preferred content types: general, definition.",
+        "Chunk-first retrieval path used for exact grounding."
+      ],
+      "query_used": "What future research directions, constraints, or sustainability concerns does the paper discuss?",
+      "citations": [
+        "GENAI_modular2.pdf - Page 25",
+        "GENAI_modular2.pdf - Page 22",
+        "GENAI_modular2.pdf - Page 25",
+        "GENAI_modular2.pdf - Page 5"
+      ],
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.6025453954067065,
+      "context_precision": 0.999999999975
+    }
+  ],
+  "vectara_results": [
+    {
+      "question": "What is the main goal of this paper on generative spatial AI for sustainable smart cities?",
+      "supported": true,
+      "answer_preview": "To advance urban digital twin planning and design by focusing on urban flows for sustainable smart cities [Source 4].",
+      "citations": [
+        "Vectara Result 1",
+        "Page 1",
+        "Page 1",
+        "Page 23",
+        "Page 5"
+      ],
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.5656820668175152,
+        "context_precision": 0.249999999975
+      }
+    },
+    {
+      "question": "How does the paper describe the Generative Spatial AI framework or large flow model for urban digital twins?",
+      "supported": false,
+      "answer_preview": "Not enough evidence.",
+      "citations": [
+        "Vectara Result 1",
+        "Page 1",
+        "Page 1",
+        "Page 26",
+        "Page 13"
+      ],
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.0
+      }
+    },
+    {
+      "question": "What role do data collection and aggregation play in the proposed smart-city modeling approach?",
+      "supported": true,
+      "answer_preview": "They are the first step in the LFM process, collecting and aggregating diverse urban data to capture spatial and temporal patterns that enable modeling, prediction, and simulation [Source 1] [Source 2].",
+      "citations": [
+        "Page 17",
+        "Page 5",
+        "Page 17",
+        "Page 26",
+        "Page 4"
+      ],
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.21056656255557968,
+        "context_precision": 0.99999999995
+      }
+    },
+    {
+      "question": "How does the paper explain the Blue City large flow model and its pretraining or development process?",
+      "supported": false,
+      "answer_preview": "Insufficient evidence.",
+      "citations": [
+        "Page 16",
+        "Page 16",
+        "Page 16",
+        "Page 14",
+        "Page 13"
+      ],
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.0
+      }
+    },
+    {
+      "question": "What validation, verification, or prototyping steps are described for the system?",
+      "supported": true,
+      "answer_preview": "Validation assesses whether the model produces realistic, actionable insights; verification confirms components work cohesively; prototyping tests and refines preliminary designs, and initial development validates the LFM's conceptual design [Source 1] [Source 2] [Source 4].",
+      "citations": [
+        "Page 15",
+        "Page 14",
+        "Page 15",
+        "Page 19",
+        "Page 18"
+      ],
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.747129460420285,
+        "context_precision": 0.9166666666361111
+      }
+    },
+    {
+      "question": "What future research directions, constraints, or sustainability concerns does the paper discuss?",
+      "supported": true,
+      "answer_preview": "The paper says the current LFM relies on data from a specific large-scale project, but its architecture is designed to allow further training on broader datasets [Source 1]. It also frames the work around addressing gaps and limitations to advance AI-driven, environmentally sustainable urban develop",
+      "citations": [
+        "Page 25",
+        "Page 25",
+        "Page 9",
+        "Page 5",
+        "Page 5"
+      ],
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7005735570412709,
+        "context_precision": 0.9999999999
+      }
+    }
+  ],
+  "openai_results": [
+    {
+      "question": "What is the main goal of this paper on generative spatial AI for sustainable smart cities?",
+      "supported": true,
+      "answer_preview": "To develop a generative spatial AI framework for urban digital twins that can model urban flows and support sustainable urban planning and design [Source 2][Source 3][Source 5].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "ragas": {
+        "faithfulness": 0.3333333333333333,
+        "answer_relevancy": 0.7496231197167639,
+        "context_precision": 0.99999999998
+      }
+    },
+    {
+      "question": "How does the paper describe the Generative Spatial AI framework or large flow model for urban digital twins?",
+      "supported": true,
+      "answer_preview": "It is described as a framework that integrates theoretical concepts, practical insights, and empirical evidence to improve urban digital twins\u2019 modeling and simulation for sustainable decision-making [Source 2]. The large flow model is a specialized generative model focused on learning and modeling ",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "ragas": {
+        "faithfulness": 0.6666666666666666,
+        "answer_relevancy": 0.6434279976790028,
+        "context_precision": 0.5333333333155555
+      }
+    },
+    {
+      "question": "What role do data collection and aggregation play in the proposed smart-city modeling approach?",
+      "supported": false,
+      "answer_preview": "Insufficient evidence.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.0
+      }
+    },
+    {
+      "question": "How does the paper explain the Blue City large flow model and its pretraining or development process?",
+      "supported": true,
+      "answer_preview": "It says the Blue City LFM is built in steps: collect structural and dynamic flow data, then select and standardize the data, and prepare training inputs with embeddings and positional encoding [Source 1]. It is described as a foundational architecture trained and tested on the Blue City Project\u2019s di",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.5003946796367204,
+        "context_precision": 0.999999999975
+      }
+    },
+    {
+      "question": "What validation, verification, or prototyping steps are described for the system?",
+      "supported": true,
+      "answer_preview": "Rigorous testing is described, along with fine-tuning the algorithms to optimize simulation and prediction under various conditions [Source 1].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.38339837501940194,
+        "context_precision": 0.9999999999
+      }
+    },
+    {
+      "question": "What future research directions, constraints, or sustainability concerns does the paper discuss?",
+      "supported": true,
+      "answer_preview": "Future work includes improving transparency/explainability, building auditing tools, developing more efficient and scalable architectures, adding better validation for synthetic data, and scaling the model to other cities [Source 2][Source 3][Source 4]. The paper also notes constraints such as high ",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7028572368372964,
+        "context_precision": 0.6791666666496875
+      }
+    }
+  ]
+}

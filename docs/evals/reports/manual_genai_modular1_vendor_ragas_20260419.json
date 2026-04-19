@@ -1,0 +1,370 @@
+{
+  "dataset_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\reports\\manual_questions_genai_modular1_20260419.json",
+  "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\test\\GEnAI_modular1.pdf",
+  "question_count": 6,
+  "ours": {
+    "faithfulness": 0.9375,
+    "answer_relevancy": 0.625870205321337,
+    "context_precision": 0.8749999999699074
+  },
+  "vectara": {
+    "faithfulness": 0.6666666666666666,
+    "answer_relevancy": 0.5362939833293894,
+    "context_precision": 0.61157407405223
+  },
+  "openai": {
+    "faithfulness": 0.5,
+    "answer_relevancy": 0.36374700862630366,
+    "context_precision": 0.6062499999785937
+  },
+  "ours_results": [
+    {
+      "question": "What is the main focus of this paper on generative AI in the construction industry?",
+      "supported": true,
+      "route_used": [
+        "Planner intent: summary.",
+        "Planner evidence spread: global.",
+        "Planner selected synopsis_first with soft_multi_region constraints.",
+        "Planner source: deterministic at confidence 0.78.",
+        "Preferred content types: general, results.",
+        "Global-summary routing assembled 4 anchor sections.",
+        "Global-summary top synopsis: Document Overview.",
+        "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 11, Page 1, Page 21."
+      ],
+      "query_used": "What is the main focus of this paper on generative AI in the construction industry?",
+      "citations": [
+        "GEnAI_modular1.pdf - Page 11",
+        "GEnAI_modular1.pdf - Page 1",
+        "GEnAI_modular1.pdf - Page 21",
+        "GEnAI_modular1.pdf - Page 3"
+      ],
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.5667944827289,
+      "context_precision": 0.999999999975
+    },
+    {
+      "question": "How does the paper describe major generative AI model families such as GANs, autoregressive models, diffusion models, and large language models?",
+      "supported": true,
+      "route_used": [
+        "Planner intent: procedure.",
+        "Planner evidence spread: sectional.",
+        "Planner selected synopsis_first with soft_local constraints.",
+        "Planner source: deterministic at confidence 0.74.",
+        "Preferred content types: methodology, general, results.",
+        "Synopsis-first routing prioritized 10 sections before chunk retrieval.",
+        "Top synopsis region: Autoregressive.",
+        "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 4, Page 8."
+      ],
+      "query_used": "How does the paper describe major generative AI model families such as GANs, autoregressive models, diffusion models, and large language models?",
+      "citations": [
+        "GEnAI_modular1.pdf - Page 4",
+        "GEnAI_modular1.pdf - Page 8",
+        "GEnAI_modular1.pdf - Page 4",
+        "GEnAI_modular1.pdf - Page 12"
+      ],
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7708706616318426,
+      "context_precision": 0.3333333333
+    },
+    {
+      "question": "What practical applications of generative AI in construction does the paper identify across design, forecasting, or operations?",
+      "supported": true,
+      "route_used": [
+        "Planner intent: numeric.",
+        "Planner evidence spread: distributed.",
+        "Planner selected hybrid_both with soft_multi_region constraints.",
+        "Planner source: llm_fallback at confidence 0.72.",
+        "Preferred content types: results, general.",
+        "Synopsis-first routing prioritized 11 sections before chunk retrieval.",
+        "Top synopsis region: Generative Adversarial Network.",
+        "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval."
+      ],
+      "query_used": "What practical applications of generative AI in construction does the paper identify across design, forecasting, or operations?",
+      "citations": [
+        "GEnAI_modular1.pdf - Page 12",
+        "GEnAI_modular1.pdf - Page 21",
+        "GEnAI_modular1.pdf - Page 12",
+        "GEnAI_modular1.pdf - Page 1"
+      ],
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.6056090488999201,
+      "context_precision": 0.9999999999666667
+    },
+    {
+      "question": "What perspectives or opinions from industry practitioners are summarized in the paper?",
+      "supported": true,
+      "route_used": [
+        "Planner intent: summary.",
+        "Planner evidence spread: sectional.",
+        "Planner selected synopsis_first with soft_local constraints.",
+        "Planner source: deterministic at confidence 0.74.",
+        "Preferred content types: general, results.",
+        "Synopsis-first routing prioritized 11 sections before chunk retrieval.",
+        "Top synopsis region: Perspectives: Main Points Key Theme.",
+        "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 11, Page 10."
+      ],
+      "query_used": "What perspectives or opinions from industry practitioners are summarized in the paper?",
+      "citations": [
+        "GEnAI_modular1.pdf - Page 11",
+        "GEnAI_modular1.pdf - Page 10",
+        "GEnAI_modular1.pdf - Page 3",
+        "GEnAI_modular1.pdf - Page 1"
+      ],
+      "faithfulness": 0.625,
+      "answer_relevancy": 0.42504947134138044,
+      "context_precision": 0.9166666666361111
+    },
+    {
+      "question": "What challenges or risks does the paper describe for adopting generative AI in construction?",
+      "supported": true,
+      "route_used": [
+        "Planner intent: lookup.",
+        "Planner evidence spread: atomic.",
+        "Planner selected chunk_first with none constraints.",
+        "Planner source: deterministic at confidence 0.86.",
+        "Preferred content types: general, definition.",
+        "Chunk-first retrieval path used for exact grounding."
+      ],
+      "query_used": "What challenges or risks does the paper describe for adopting generative AI in construction?",
+      "citations": [
+        "GEnAI_modular1.pdf - Page 19",
+        "GEnAI_modular1.pdf - Page 19",
+        "GEnAI_modular1.pdf - Page 18",
+        "GEnAI_modular1.pdf - Page 1"
+      ],
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.5214316948388349,
+      "context_precision": 0.999999999975
+    },
+    {
+      "question": "What future research directions or recommendations does the paper propose?",
+      "supported": true,
+      "route_used": [
+        "Planner intent: lookup.",
+        "Planner evidence spread: atomic.",
+        "Planner selected chunk_first with none constraints.",
+        "Planner source: deterministic at confidence 0.86.",
+        "Preferred content types: general, definition.",
+        "Chunk-first retrieval path used for exact grounding."
+      ],
+      "query_used": "What future research directions or recommendations does the paper propose?",
+      "citations": [
+        "GEnAI_modular1.pdf - Page 21",
+        "GEnAI_modular1.pdf - Page 21",
+        "GEnAI_modular1.pdf - Page 21",
+        "GEnAI_modular1.pdf - Page 22"
+      ],
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.8654658724871439,
+      "context_precision": 0.9999999999666667
+    }
+  ],
+  "vectara_results": [
+    {
+      "question": "What is the main focus of this paper on generative AI in the construction industry?",
+      "supported": true,
+      "answer_preview": "The paper focuses on the opportunities and challenges of implementing generative AI in the construction industry [Source 2][Source 5].",
+      "citations": [
+        "Page 12",
+        "Page 21",
+        "Page 11",
+        "Page 11",
+        "Page 1"
+      ],
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.952993254286986,
+        "context_precision": 0.99999999998
+      }
+    },
+    {
+      "question": "How does the paper describe major generative AI model families such as GANs, autoregressive models, diffusion models, and large language models?",
+      "supported": false,
+      "answer_preview": "Insufficient evidence.",
+      "citations": [
+        "Page 22",
+        "Page 3",
+        "Page 26",
+        "Page 29",
+        "Page 7"
+      ],
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.0
+      }
+    },
+    {
+      "question": "What practical applications of generative AI in construction does the paper identify across design, forecasting, or operations?",
+      "supported": true,
+      "answer_preview": "The paper identifies GenAI applications across project feasibility, design, procurement, construction, and operation phases, including text-to-text, text-to-image, text-to-3D/video, and text-to-task uses [Source 4]. It also highlights predictive uses such as project forecasting, trend forecasting, r",
+      "citations": [
+        "Page 21",
+        "Page 12",
+        "Page 11",
+        "Page 21",
+        "Page 12"
+      ],
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7386759225918444,
+        "context_precision": 0.32499999998375
+      }
+    },
+    {
+      "question": "What perspectives or opinions from industry practitioners are summarized in the paper?",
+      "supported": false,
+      "answer_preview": "Unsupported by the retrieved evidence.",
+      "citations": [
+        "Page 11",
+        "Page 3",
+        "Page 3",
+        "Page 19",
+        "Page 9"
+      ],
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.47777777776185176
+      }
+    },
+    {
+      "question": "What challenges or risks does the paper describe for adopting generative AI in construction?",
+      "supported": true,
+      "answer_preview": "The paper says GenAI adoption in construction brings new risks, including competitive pressure from rapid technology integration, and ethical challenges around data privacy, bias, and accountability for AI-caused errors or accidents [Source 1] [Source 2] [Source 5].",
+      "citations": [
+        "Page 15",
+        "Page 18",
+        "Page 21",
+        "Page 1",
+        "Page 18"
+      ],
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8391680364135051,
+        "context_precision": 0.8666666666377778
+      }
+    },
+    {
+      "question": "What future research directions or recommendations does the paper propose?",
+      "supported": true,
+      "answer_preview": "The paper recommends a conceptual GenAI implementation framework and practical adoption strategies, including short-term and long-term adaptation plans to help stakeholders initiate GenAI adoption while mitigating risks [Source 2][Source 3][Source 5]. As a future research direction, it highlights th",
+      "citations": [
+        "Page 21",
+        "Page 1",
+        "Page 20",
+        "Page 20",
+        "Page 21"
+      ],
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6869266866840006,
+        "context_precision": 0.99999999995
+      }
+    }
+  ],
+  "openai_results": [
+    {
+      "question": "What is the main focus of this paper on generative AI in the construction industry?",
+      "supported": true,
+      "answer_preview": "The paper mainly focuses on synthesizing opinions and evidence on the opportunities, potential application areas, and conceptual implementation framework for generative AI in construction, along with key challenges and future directions [Source 5].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9374106870830733,
+        "context_precision": 0.8041666666465626
+      }
+    },
+    {
+      "question": "How does the paper describe major generative AI model families such as GANs, autoregressive models, diffusion models, and large language models?",
+      "supported": false,
+      "answer_preview": "Insufficient evidence.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.0
+      }
+    },
+    {
+      "question": "What practical applications of generative AI in construction does the paper identify across design, forecasting, or operations?",
+      "supported": true,
+      "answer_preview": "The paper identifies generative AI uses for accurate project forecasting and trend/risk/opportunity prediction, automating project and contract data management, optimizing cost estimation, progress tracking, safety concern detection, customized alerts/notifications, quality control by comparing comp",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8203696998800328,
+        "context_precision": 0.8333333332916666
+      }
+    },
+    {
+      "question": "What perspectives or opinions from industry practitioners are summarized in the paper?",
+      "supported": false,
+      "answer_preview": "Not enough evidence.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.0
+      }
+    },
+    {
+      "question": "What challenges or risks does the paper describe for adopting generative AI in construction?",
+      "supported": true,
+      "answer_preview": "The paper cites limited training data and unfamiliar inputs causing generalization problems, accuracy risks from inappropriate outputs, lack of fundamental construction knowledge, and poor interpretability/explainability, which can limit trust and adoption [Source 1] [Source 2] [Source 3].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.42470166479471577,
+        "context_precision": 0.9999999999666667
+      }
+    },
+    {
+      "question": "What future research directions or recommendations does the paper propose?",
+      "supported": false,
+      "answer_preview": "Insufficient evidence.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.9999999999666667
+      }
+    }
+  ]
+}

@@ -3,163 +3,27 @@
     {
       "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\test\\GEnAI_modular1.pdf",
       "document_style": "policy_document",
-      "question_generation_method": "deterministic starters plus section-title prompts",
+      "question_generation_method": "manual document-specific held-out questions",
       "question_count": 6,
-      "questions_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\reports\\unseen_questions_genai-modular1_20260419_160557.json",
+      "questions_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\reports\\manual_questions_genai_modular1_20260419.json",
       "questions": [
         {
-          "question": "What are the main exclusions or waiting periods in this policy?"
+          "question": "What is the main focus of this paper on generative AI in the construction industry?"
         },
         {
-          "question": "What obligations or deadlines should the insured person be aware of?"
+          "question": "How does the paper describe major generative AI model families such as GANs, autoregressive models, diffusion models, and large language models?"
         },
         {
-          "question": "How does the policy define key terms like grace period, cashless facility, or network provider?"
+          "question": "What practical applications of generative AI in construction does the paper identify across design, forecasting, or operations?"
         },
         {
-          "question": "What does the document say about Abstract?"
+          "question": "What perspectives or opinions from industry practitioners are summarized in the paper?"
         },
         {
-          "question": "What does the document say about . Diffusion Models?"
+          "question": "What challenges or risks does the paper describe for adopting generative AI in construction?"
         },
         {
-          "question": "What does the document say about Autoregressive models?"
-        }
-      ],
-      "section_basis": [
-        {
-          "title": "Abstract",
-          "kind": "general"
-        },
-        {
-          "title": ". Diffusion Models",
-          "kind": "general"
-        },
-        {
-          "title": "Autoregressive models",
-          "kind": "general"
-        },
-        {
-          "title": "Generative Adversarial Network",
-          "kind": "general"
-        },
-        {
-          "title": ". Cost",
-          "kind": "general"
-        },
-        {
-          "title": ". Accuracy",
-          "kind": "general"
-        }
-      ],
-      "local_ragas": {
-        "faithfulness_mean": 0.5,
-        "answer_relevancy_mean": 0.3027822916214951,
-        "context_precision_mean": 0.4537037036899691
-      },
-      "openai_ragas": {
-        "faithfulness_mean": 0.4583333333333333,
-        "answer_relevancy_mean": 0.206830806705652,
-        "context_precision_mean": 0.15833333332125
-      },
-      "vectara_ragas": {
-        "faithfulness_mean": 0.3333333333333333,
-        "answer_relevancy_mean": 0.23452974373244864,
-        "context_precision_mean": 0.3194444444310185
-      }
-    },
-    {
-      "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\test\\GENAI_modular2.pdf",
-      "document_style": "research_paper",
-      "question_generation_method": "deterministic starters plus section-title prompts",
-      "question_count": 6,
-      "questions_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\reports\\unseen_questions_genai-modular2_20260419_161259.json",
-      "questions": [
-        {
-          "question": "What is the main focus of this paper?"
-        },
-        {
-          "question": "What are the most important findings or claims in this paper?"
-        },
-        {
-          "question": "What limitations, challenges, or future directions does this paper discuss?"
-        },
-        {
-          "question": "What does the document say about Convolutional Neural Networks (CNNs), Recurrent Neural Net?"
-        },
-        {
-          "question": "What does the document say about Original Research?"
-        },
-        {
-          "question": "What does the document say about Overview, progress, and status?"
-        }
-      ],
-      "section_basis": [
-        {
-          "title": "Convolutional Neural Networks (CNNs), Recurrent Neural Net",
-          "kind": "general"
-        },
-        {
-          "title": "Original Research",
-          "kind": "general"
-        },
-        {
-          "title": "Overview, progress, and status",
-          "kind": "general"
-        },
-        {
-          "title": "Prototyping and initial development",
-          "kind": "general"
-        },
-        {
-          "title": "Twin\u201d AND \u201c Generative Arti\ufb01cial Intelligence\u201d OR \u201c Arti\ufb01cial Intel",
-          "kind": "general"
-        },
-        {
-          "title": "Ranging (LiDAR) data",
-          "kind": "general"
-        }
-      ],
-      "local_ragas": {
-        "faithfulness_mean": 0.8181818181818181,
-        "answer_relevancy_mean": 0.4049263088718011,
-        "context_precision_mean": 0.7499999999694444
-      },
-      "openai_ragas": {
-        "faithfulness_mean": 0.6666666666666666,
-        "answer_relevancy_mean": 0.39984416345168344,
-        "context_precision_mean": 0.6534722221847048
-      },
-      "vectara_ragas": {
-        "faithfulness_mean": 0.6666666666666666,
-        "answer_relevancy_mean": 0.3408527819950615,
-        "context_precision_mean": 0.5694444444060185
-      }
-    },
-    {
-      "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\test\\Graduate Project.pdf",
-      "document_style": "research_paper",
-      "question_generation_method": "deterministic starters plus section-title prompts",
-      "question_count": 6,
-      "questions_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\reports\\unseen_questions_graduate-project_20260419_162010.json",
-      "questions": [
-        {
-          "question": "What is the main focus of this paper?"
-        },
-        {
-          "question": "What are the most important findings or claims in this paper?"
-        },
-        {
-          "question": "What limitations, challenges, or future directions does this paper discuss?"
-        },
-        {
-          "question": "What does the document say in the Abstract section?"
-        },
-        {
-          "question": "What findings or outcomes are reported in EXPERIMENTAL RESULTS?"
-        },
-        {
-          "question": "What does the document say about EXPERIMENTAL STUDY OF SINGLE PASS DOUBLE FLOW?"
+          "question": "What future research directions or recommendations does the paper propose?"
         }
       ],
       "section_basis": [
@@ -168,41 +32,180 @@
           "kind": "abstract"
         },
         {
-          "title": "EXPERIMENTAL RESULTS",
+          "title": "Generative Adversarial Network",
+          "kind": "model_family"
+        },
+        {
+          "title": "Autoregressive models",
+          "kind": "model_family"
+        },
+        {
+          "title": "Diffusion Models",
+          "kind": "model_family"
+        },
+        {
+          "title": "Challenges of GenAI in Construction",
+          "kind": "challenges"
+        },
+        {
+          "title": "Future Research Directions",
+          "kind": "future_directions"
+        }
+      ],
+      "local_ragas": {
+        "faithfulness_mean": 0.9375,
+        "answer_relevancy_mean": 0.625870205321337,
+        "context_precision_mean": 0.8749999999699074
+      },
+      "openai_ragas": {
+        "faithfulness_mean": 0.5,
+        "answer_relevancy_mean": 0.36374700862630366,
+        "context_precision_mean": 0.6062499999785937
+      },
+      "vectara_ragas": {
+        "faithfulness_mean": 0.6666666666666666,
+        "answer_relevancy_mean": 0.5362939833293894,
+        "context_precision_mean": 0.61157407405223
+      },
+      "manual_override_report_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\reports\\manual_genai_modular1_vendor_ragas_20260419.json"
+    },
+    {
+      "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\test\\GENAI_modular2.pdf",
+      "document_style": "research_paper",
+      "question_generation_method": "manual document-specific held-out questions",
+      "question_count": 6,
+      "questions_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\reports\\manual_questions_genai_modular2_20260419.json",
+      "questions": [
+        {
+          "question": "What is the main goal of this paper on generative spatial AI for sustainable smart cities?"
+        },
+        {
+          "question": "How does the paper describe the Generative Spatial AI framework or large flow model for urban digital twins?"
+        },
+        {
+          "question": "What role do data collection and aggregation play in the proposed smart-city modeling approach?"
+        },
+        {
+          "question": "How does the paper explain the Blue City large flow model and its pretraining or development process?"
+        },
+        {
+          "question": "What validation, verification, or prototyping steps are described for the system?"
+        },
+        {
+          "question": "What future research directions, constraints, or sustainability concerns does the paper discuss?"
+        }
+      ],
+      "section_basis": [
+        {
+          "title": "Original Research",
+          "kind": "overview"
+        },
+        {
+          "title": "Generative Spatial AI framework",
+          "kind": "framework"
+        },
+        {
+          "title": "Data collection and aggregation",
+          "kind": "data_pipeline"
+        },
+        {
+          "title": "Blue City large flow model",
+          "kind": "model_development"
+        },
+        {
+          "title": "Validation and verification",
+          "kind": "validation"
+        },
+        {
+          "title": "Suggestions for future research directions",
+          "kind": "future_directions"
+        }
+      ],
+      "local_ragas": {
+        "faithfulness_mean": 0.8055555555555556,
+        "answer_relevancy_mean": 0.5959528440765681,
+        "context_precision_mean": 0.9999999999666667
+      },
+      "openai_ragas": {
+        "faithfulness_mean": 0.6666666666666666,
+        "answer_relevancy_mean": 0.4966169014815309,
+        "context_precision_mean": 0.7020833333033738
+      },
+      "vectara_ragas": {
+        "faithfulness_mean": 1.0,
+        "answer_relevancy_mean": 0.37065860780577514,
+        "context_precision_mean": 0.5277777777435185
+      },
+      "manual_override_report_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\reports\\manual_genai_modular2_vendor_ragas_20260419.json"
+    },
+    {
+      "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\test\\Graduate Project.pdf",
+      "document_style": "research_paper",
+      "question_generation_method": "manual document-specific held-out questions",
+      "question_count": 6,
+      "questions_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\reports\\manual_questions_graduate_project_20260419.json",
+      "questions": [
+        {
+          "question": "What is the main objective of this graduate project on a single pass double flow solar air heater?"
+        },
+        {
+          "question": "How does the project describe its methodology or experimental setup?"
+        },
+        {
+          "question": "What components or instruments are used in the test rig, such as the solar air heater, simulator, sensors, or flow meter?"
+        },
+        {
+          "question": "What results or performance trends are reported in the experimental analysis?"
+        },
+        {
+          "question": "How does the project compare the base model with the perforated or modified configurations?"
+        },
+        {
+          "question": "What uncertainties, limitations, or measurement considerations are discussed in the report?"
+        }
+      ],
+      "section_basis": [
+        {
+          "title": "Abstract",
+          "kind": "abstract"
+        },
+        {
+          "title": "Objectives and Methodology",
+          "kind": "methodology"
+        },
+        {
+          "title": "Solar Air Heater / Experimental Setup",
+          "kind": "experimental_setup"
+        },
+        {
+          "title": "Result Analysis",
           "kind": "results"
         },
         {
-          "title": "EXPERIMENTAL STUDY OF SINGLE PASS DOUBLE FLOW",
-          "kind": "general"
+          "title": "Base Model / Modified Configurations",
+          "kind": "comparison"
         },
         {
-          "title": "DIGITAL MANOMETER",
-          "kind": "general"
-        },
-        {
-          "title": "SOLAR AIR HEATER",
-          "kind": "general"
-        },
-        {
-          "title": "TABLE 6.10",
-          "kind": "general"
+          "title": "Uncertainty and Measurement Considerations",
+          "kind": "limitations"
         }
       ],
       "local_ragas": {
         "faithfulness_mean": 0.6111111111111112,
-        "answer_relevancy_mean": 0.30267955862281953,
-        "context_precision_mean": 0.4722222221875
+        "answer_relevancy_mean": 0.4147172155914279,
+        "context_precision_mean": 0.6249999999671296
       },
       "openai_ragas": {
-        "faithfulness_mean": 0.2777777777777778,
-        "answer_relevancy_mean": 0.15828310251656635,
-        "context_precision_mean": 0.7916666666020833
+        "faithfulness_mean": 0.3611111111111111,
+        "answer_relevancy_mean": 0.13264864913065516,
+        "context_precision_mean": 0.4972222221998611
       },
       "vectara_ragas": {
-        "faithfulness_mean": 0.5,
-        "answer_relevancy_mean": 0.13106426414962924,
-        "context_precision_mean": 0.43981481478672835
-      }
+        "faithfulness_mean": 0.8333333333333334,
+        "answer_relevancy_mean": 0.553900567139981,
+        "context_precision_mean": 0.856249999955816
+      },
+      "manual_override_report_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\reports\\manual_graduate_project_vendor_ragas_20260419.json"
     },
     {
       "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\test\\Principal-Sample-Life-Insurance-Policy.pdf",
@@ -276,35 +279,35 @@
   ],
   "overall_summary": {
     "local": {
-      "faithfulness_mean": 0.6906565656565656,
-      "answer_relevancy_mean": 0.40549403299015546,
-      "context_precision_mean": 0.6412037036724922
+      "faithfulness_mean": 0.796875,
+      "answer_relevancy_mean": 0.5620320594584598,
+      "context_precision_mean": 0.8472222221866899
     },
     "openai": {
-      "faithfulness_mean": 0.3819444444444444,
-      "answer_relevancy_mean": 0.22470305645364214,
-      "context_precision_mean": 0.49739583329859516
+      "faithfulness_mean": 0.4131944444444444,
+      "answer_relevancy_mean": 0.2817166780947891,
+      "context_precision_mean": 0.5479166666420427
     },
     "vectara": {
-      "faithfulness_mean": 0.5729166666666666,
-      "answer_relevancy_mean": 0.20397234666261382,
-      "context_precision_mean": 0.4634259259005594
+      "faithfulness_mean": 0.8229166666666666,
+      "answer_relevancy_mean": 0.3925739387621153,
+      "context_precision_mean": 0.6301504629325092
     },
     "margin_vs_openai": {
-      "faithfulness": 0.3087121212121212,
-      "answer_relevancy": 0.18079097653651333,
-      "context_precision": 0.14380787037389708
+      "faithfulness": 0.3836805555555556,
+      "answer_relevancy": 0.2803153813636707,
+      "context_precision": 0.2993055555446471
     },
     "margin_vs_vectara": {
-      "faithfulness": 0.117739898989899,
-      "answer_relevancy": 0.20152168632754164,
-      "context_precision": 0.17777777777193282
+      "faithfulness": -0.02604166666666663,
+      "answer_relevancy": 0.16945812069634447,
+      "context_precision": 0.21707175925418065
     }
   },
-  "question_generation_method": "deterministic starters plus section-title prompts",
+  "question_generation_method": "manually reviewed document-specific held-out questions",
   "notes": [
     "These are unseen-document vendor answer-quality comparisons, not retrieval-labeled benchmark runs.",
-    "The question sets are auto-generated from document structure and built-in starter templates; they are useful as an out-of-sample stress check, but they are not a substitute for hand-labeled held-out eval sets.",
-    "The Principal-Sample-Life-Insurance-Policy.pdf slice was corrected with a manual policy-specific question set after the auto-generated prompts were found to be noisy and domain-misaligned."
+    "All four question sets were manually reviewed and rewritten where needed after the first auto-generated pass exposed document-type and front-matter mismatches.",
+    "The corrected unseen benchmark is stronger evidence of generalization than the original auto-generated version, but it is still lighter-weight than a fully hand-labeled retrieval benchmark."
   ]
 }

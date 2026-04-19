@@ -1,0 +1,371 @@
+{
+  "dataset_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\reports\\manual_questions_graduate_project_20260419.json",
+  "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\test\\Graduate Project.pdf",
+  "question_count": 6,
+  "ours": {
+    "faithfulness": 0.6111111111111112,
+    "answer_relevancy": 0.4147172155914279,
+    "context_precision": 0.6249999999671296
+  },
+  "vectara": {
+    "faithfulness": 0.8333333333333334,
+    "answer_relevancy": 0.553900567139981,
+    "context_precision": 0.856249999955816
+  },
+  "openai": {
+    "faithfulness": 0.3611111111111111,
+    "answer_relevancy": 0.13264864913065516,
+    "context_precision": 0.4972222221998611
+  },
+  "ours_results": [
+    {
+      "question": "What is the main objective of this graduate project on a single pass double flow solar air heater?",
+      "supported": true,
+      "route_used": [
+        "Planner intent: lookup.",
+        "Planner evidence spread: atomic.",
+        "Planner selected chunk_first with none constraints.",
+        "Planner source: deterministic at confidence 0.86.",
+        "Preferred content types: definition, general.",
+        "Chunk-first retrieval path used for exact grounding."
+      ],
+      "query_used": "What is the main objective of this graduate project on a single pass double flow solar air heater?",
+      "citations": [
+        "Graduate Project.pdf - Page 41",
+        "Graduate Project.pdf - Page 2",
+        "Graduate Project.pdf - Page 4",
+        "Graduate Project.pdf - Page 1"
+      ],
+      "faithfulness": 0.6666666666666666,
+      "answer_relevancy": 0.6241069030036357,
+      "context_precision": 0.8333333332916666
+    },
+    {
+      "question": "How does the project describe its methodology or experimental setup?",
+      "supported": false,
+      "route_used": [
+        "Planner intent: procedure.",
+        "Planner evidence spread: sectional.",
+        "Planner selected synopsis_first with soft_local constraints.",
+        "Planner source: deterministic at confidence 0.74.",
+        "Preferred content types: methodology, general, results.",
+        "Synopsis-first routing prioritized 11 sections before chunk retrieval.",
+        "Top synopsis region: ACKNOWLEDGEMENTS.",
+        "Global fallback added extra evidence outside the prioritized regions.",
+        "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 5, Page 15."
+      ],
+      "query_used": "How does the project describe its methodology or experimental setup?",
+      "citations": [
+        "Graduate Project.pdf - Page 5",
+        "Graduate Project.pdf - Page 15",
+        "Graduate Project.pdf - Page 2",
+        "Graduate Project.pdf - Page 30"
+      ],
+      "faithfulness": 0.0,
+      "answer_relevancy": 0.0,
+      "context_precision": 0.0
+    },
+    {
+      "question": "What components or instruments are used in the test rig, such as the solar air heater, simulator, sensors, or flow meter?",
+      "supported": true,
+      "route_used": [
+        "Planner intent: lookup.",
+        "Planner evidence spread: atomic.",
+        "Planner selected chunk_first with none constraints.",
+        "Planner source: deterministic at confidence 0.86.",
+        "Preferred content types: general, definition.",
+        "Chunk-first retrieval path used for exact grounding."
+      ],
+      "query_used": "What components or instruments are used in the test rig, such as the solar air heater, simulator, sensors, or flow meter?",
+      "citations": [
+        "Graduate Project.pdf - Page 24",
+        "Graduate Project.pdf - Page 17",
+        "Graduate Project.pdf - Page 19",
+        "Graduate Project.pdf - Page 21"
+      ],
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7072560961602233,
+      "context_precision": 0.9999999999
+    },
+    {
+      "question": "What results or performance trends are reported in the experimental analysis?",
+      "supported": false,
+      "route_used": [
+        "Planner intent: lookup.",
+        "Planner evidence spread: atomic.",
+        "Planner selected chunk_first with none constraints.",
+        "Planner source: deterministic at confidence 0.86.",
+        "Preferred content types: general, definition.",
+        "Chunk-first retrieval path used for exact grounding."
+      ],
+      "query_used": "What results or performance trends are reported in the experimental analysis?",
+      "citations": [
+        "Graduate Project.pdf - Page 30",
+        "Graduate Project.pdf - Page 1",
+        "Graduate Project.pdf - Page 24",
+        "Graduate Project.pdf - Page 2"
+      ],
+      "faithfulness": 0.0,
+      "answer_relevancy": 0.0,
+      "context_precision": 0.0
+    },
+    {
+      "question": "How does the project compare the base model with the perforated or modified configurations?",
+      "supported": true,
+      "route_used": [
+        "Planner intent: comparison.",
+        "Planner evidence spread: distributed.",
+        "Planner selected hybrid_both with soft_multi_region constraints.",
+        "Planner source: llm_fallback at confidence 0.72.",
+        "Preferred content types: methodology, general, results.",
+        "Synopsis-first routing prioritized 11 sections before chunk retrieval.",
+        "Top synopsis region: TABLE 6.11.",
+        "Global fallback added extra evidence outside the prioritized regions.",
+        "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval."
+      ],
+      "query_used": "How does the project compare the base model with the perforated or modified configurations?",
+      "citations": [
+        "Graduate Project.pdf - Page 29",
+        "Graduate Project.pdf - Page 28",
+        "Graduate Project.pdf - Page 40",
+        "Graduate Project.pdf - Page 31"
+      ],
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.5827357231891995,
+      "context_precision": 0.999999999975
+    },
+    {
+      "question": "What uncertainties, limitations, or measurement considerations are discussed in the report?",
+      "supported": true,
+      "route_used": [
+        "Planner intent: numeric.",
+        "Planner evidence spread: sectional.",
+        "Planner selected synopsis_first with soft_local constraints.",
+        "Planner source: deterministic at confidence 0.74.",
+        "Preferred content types: results, general.",
+        "Synopsis-first routing prioritized 12 sections before chunk retrieval.",
+        "Top synopsis region: Conclusions.",
+        "Global fallback added extra evidence outside the prioritized regions.",
+        "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 28, Page 29."
+      ],
+      "query_used": "What uncertainties, limitations, or measurement considerations are discussed in the report?",
+      "citations": [
+        "Graduate Project.pdf - Page 28",
+        "Graduate Project.pdf - Page 29",
+        "Graduate Project.pdf - Page 8",
+        "Graduate Project.pdf - Page 25"
+      ],
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.5742045711955086,
+      "context_precision": 0.9166666666361111
+    }
+  ],
+  "vectara_results": [
+    {
+      "question": "What is the main objective of this graduate project on a single pass double flow solar air heater?",
+      "supported": true,
+      "answer_preview": "To improve the performance of a single pass double flow solar air heater, using perforations [Source 2][Source 3].",
+      "citations": [
+        "Page 41",
+        "Vectara Result 2",
+        "Page 1",
+        "Page 42",
+        "Page 14"
+      ],
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7783094730384176,
+        "context_precision": 0.9999999999666667
+      }
+    },
+    {
+      "question": "How does the project describe its methodology or experimental setup?",
+      "supported": true,
+      "answer_preview": "The project uses a solar simulator-based experimental setup with an experimental test rig, and records temperatures at different Reynolds numbers (flow rates) using a data logger. The rig includes a solar air heater, pyranometer, temperature sensors, a vortex flow meter, blowers, a data logger and m",
+      "citations": [
+        "Page 15",
+        "Page 15",
+        "Page 16",
+        "Page 5",
+        "Page 16"
+      ],
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.48352834954469487,
+        "context_precision": 0.8333333332916666
+      }
+    },
+    {
+      "question": "What components or instruments are used in the test rig, such as the solar air heater, simulator, sensors, or flow meter?",
+      "supported": true,
+      "answer_preview": "The test rig uses a solar air heater, solar simulator, pyranometer, temperature sensors, vortex flow meter, blowers, data logger and multiplexer, and a digital manometer [Source 1].",
+      "citations": [
+        "Page 16",
+        "Page 16",
+        "Page 15",
+        "Page 21",
+        "Page 9"
+      ],
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7072560961602233,
+        "context_precision": 0.9999999999
+      }
+    },
+    {
+      "question": "What results or performance trends are reported in the experimental analysis?",
+      "supported": false,
+      "answer_preview": "Insufficient evidence.",
+      "citations": [
+        "Page 30",
+        "Page 43",
+        "Vectara Result 3",
+        "Page 1",
+        "Page 15"
+      ],
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.49999999995
+      }
+    },
+    {
+      "question": "How does the project compare the base model with the perforated or modified configurations?",
+      "supported": true,
+      "answer_preview": "The project compares the base model with modified perforated absorber plate configurations: a base model with no perforations, a perforated configuration with 5 mm holes, and a perforated configuration with 8 mm holes [Source 4].",
+      "citations": [
+        "Page 15",
+        "Page 28",
+        "Page 33",
+        "Page 17",
+        "Page 18"
+      ],
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6305669637393804,
+        "context_precision": 0.99999999998
+      }
+    },
+    {
+      "question": "What uncertainties, limitations, or measurement considerations are discussed in the report?",
+      "supported": true,
+      "answer_preview": "The report discusses uncertainties in the estimation of independent variables, gives a general uncertainty formula for a result, and includes tables of measurement uncertainties for thermal efficiency and thermohydraulic efficiency across all configurations [Source 3] [Source 4] [Source 2] [Source 1",
+      "citations": [
+        "Page 29",
+        "Page 28",
+        "Page 26",
+        "Page 25",
+        "Page 26"
+      ],
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7237425203571699,
+        "context_precision": 0.8041666666465626
+      }
+    }
+  ],
+  "openai_results": [
+    {
+      "question": "What is the main objective of this graduate project on a single pass double flow solar air heater?",
+      "supported": true,
+      "answer_preview": "To experimentally study how perforations affect the flow behavior and performance of a single-pass double-flow solar air heater under a wide range of operating conditions [Source 2].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "ragas": {
+        "faithfulness": 0.6666666666666666,
+        "answer_relevancy": 0.795891894783931,
+        "context_precision": 0.5833333333041666
+      }
+    },
+    {
+      "question": "How does the project describe its methodology or experimental setup?",
+      "supported": false,
+      "answer_preview": "Insufficient evidence.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "ragas": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.499999999975
+      }
+    },
+    {
+      "question": "What components or instruments are used in the test rig, such as the solar air heater, simulator, sensors, or flow meter?",
+      "supported": false,
+      "answer_preview": "Insufficient evidence.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.19999999998
+      }
+    },
+    {
+      "question": "What results or performance trends are reported in the experimental analysis?",
+      "supported": false,
+      "answer_preview": "Not enough evidence.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.699999999965
+      }
+    },
+    {
+      "question": "How does the project compare the base model with the perforated or modified configurations?",
+      "supported": false,
+      "answer_preview": "Not enough evidence.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.0
+      }
+    },
+    {
+      "question": "What uncertainties, limitations, or measurement considerations are discussed in the report?",
+      "supported": false,
+      "answer_preview": "Unsupported by the retrieved evidence.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.999999999975
+      }
+    }
+  ]
+}
