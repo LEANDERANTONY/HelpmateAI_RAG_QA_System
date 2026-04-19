@@ -8,7 +8,7 @@ HelpmateAI now deploys cleanly as a split product:
 
 Current recommended production shape:
 
-- `www.helpmateai.xyz` -> Framer
+- `helpmateai.xyz` -> Framer
 - `app.helpmateai.xyz` -> `Next.js`
 - `api.helpmateai.xyz` -> `FastAPI`
 

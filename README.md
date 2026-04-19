@@ -8,7 +8,9 @@ HelpmateAI is a grounded long-document QA system for PDFs and DOCX files. Upload
 
 The current product is a `Next.js + FastAPI` experience on top of a benchmark-driven Python retrieval core, deployed with a VPS-ready backend path. The system is designed to stay inspectable: retrieval is hybrid, answers are citation-aware, and the supporting passages remain visible instead of being hidden behind a polished summary.
 
-Live workspace: https://app.helpmateai.xyz
+Live landing page: https://helpmateai.xyz
+
+Workspace app: https://app.helpmateai.xyz
 
 ## Why This Project Stands Out
 
