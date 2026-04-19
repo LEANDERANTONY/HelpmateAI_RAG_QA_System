@@ -30,7 +30,7 @@ Recommended deployment shape:
 7. retrieve evidence through chunk-first, synopsis-first, dedicated global-summary retrieval, legacy section-first fallback, or hybrid retrieval
 8. grade evidence as `strong`, `weak`, or `unsupported`
 9. adapt retrieval through structural guidance and global fallback instead of query rewriting
-10. optionally run a bounded post-rerank evidence selector over the top candidates
+10. optionally run a reorder-only post-rerank evidence selector over the top candidates when the spread-trigger policy fires
 11. generate a grounded answer with explicit support status
 12. cache safe answer results for repeated questions
 
@@ -190,6 +190,8 @@ Properties:
 - only sees the top retrieved candidates
 - uses ranking order as a prior, not as an absolute rule
 - can promote a lower-ranked candidate when it is clearly more direct than rank 1
+- currently runs in reorder-only mode rather than prune mode
+- by default triggers only on spread-heavy questions rather than all queries
 - never invents evidence and never bypasses unsupported retrieval guardrails
 - is most useful when the correct evidence is already in top `k` but not at rank 1
 
@@ -197,7 +199,7 @@ This layer is intentionally narrower than a planner or rewriter:
 
 - it does not change the query
 - it does not retrieve new chunks
-- it only chooses the best one or two finalists from the existing retrieval result
+- it only reorders the final evidence list from the existing retrieval result
 
 ## Weak-Evidence And Guardrail Flow
 
@@ -286,10 +288,13 @@ The current product surface is centered on the `Next.js + FastAPI` workspace.
 The active app now carries:
 
 - upload and ask workflows
+- Google/Supabase sign-in
+- one active document per user with resumable `24h` sliding retention
 - starter-question guidance tied to the active document
 - answer support states, citations, and evidence panels
+- direct-to-API upload support for larger files
 - cleaner landing and workspace presentation
-- a more credible product-facing UI boundary for future auth and persistence work
+- a credible deployed product boundary rather than only an internal prototype shell
 
 ## Current Strengths
 
@@ -301,6 +306,8 @@ The active app now carries:
 - deterministic retrieval planning is now explicit and inspectable
 - chunk-first and synopsis-first retrieval paths are both live
 - structure is now an active retrieval control signal rather than passive metadata
+- reorder-only evidence selection is now benchmark-validated and active in the default stack
+- live deployment now reflects the benchmarked architecture instead of a separate demo shell
 - evaluation policy is now simpler and more credible:
   - Vectara as main external retrieval baseline
   - OpenAI as historical/reference retrieval baseline
@@ -310,9 +317,10 @@ The active app now carries:
 
 - clause-level misses still happen when relevant content spans adjacent sections
 - narrative and synthesis-heavy questions are harder than factual clause lookups
-- thesis aim/method questions are still weaker than we want
+- the broadest paper-summary questions are still the hardest benchmark family
+- `reportgeneration2` remains a structure-repair heuristic-gap case
 - region-hit metrics are newer than page-hit metrics, so they still need interpretation before they become optimization targets
-- the new frontend is still under active buildout, so the product shell is not fully aligned with backend maturity yet
+- answer-quality eval coverage is still deeper on the main four document families than on the newer report-generation sets
 
 ## Likely Next Product Step
 
@@ -320,15 +328,16 @@ The most justified next improvements are now split into two tracks.
 
 Backend-quality track:
 
-- improve the remaining weakest broad-summary cases after the new global-summary route
-- refine synopsis ranking and overview/finding balance without overfitting to the current report papers
-- better suppression of references, appendices, and front-matter noise
-- possible selective expansion of the bounded evidence-selector layer if it continues helping rank-order mistakes
+- add answer-quality eval coverage for the newer report-generation papers
+- add gold-answer coverage for a selected subset of benchmark questions
+- extend external vendor comparison only after a materially new retrieval or answer-layer change
+- close the remaining structure-repair gap on `reportgeneration2`
 
 Frontend/product track:
 
 - continue refining the `Next.js + FastAPI` product shell
 - keep the existing Python retrieval core intact
 - keep benchmark and retrieval-debug visibility available without reintroducing a second UI stack
+- harden product ergonomics around larger uploads, auth, and user-scoped resume behavior
 
 The architecture now supports these improvements without another major restructure.

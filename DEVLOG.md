@@ -8,6 +8,94 @@ Historical note:
 - later entries add quality-control, benchmarking, and document-intelligence work on top of that baseline
 - the project is still evolving, so later entries refine earlier architectural assumptions without erasing them
 
+## Day 24: Final Vendor Rerun On The Stabilized Stack
+
+- Reran the external `ragas` benchmark suite against both:
+  - OpenAI File Search
+  - Vectara retrieval
+- Fixed the local `ragas` harness so selector-enabled generation is evaluated the same way the live pipeline behaves.
+- Updated the published benchmark summary to the new `2026-04-19` stabilized snapshot.
+
+Challenges:
+
+- the external comparisons are expensive enough that they only make sense after the internal defaults settle
+- the local answer-quality harness had quietly drifted from the live selector-enabled path and needed correction before the final rerun was trustworthy
+
+Improvements:
+
+- the repo now has a fresh external benchmark snapshot on the current shipping architecture
+- Helpmate now leads Vectara by `+0.1997 / +0.1350 / +0.1523` and OpenAI File Search by `+0.4532 / +0.4021 / +0.3697` on average for faithfulness / answer relevancy / context precision across the four main document families
+
+## Day 23: Deployment, Auth, Retention, And Cleanup Finally Matched The Retrieval Core
+
+- Finished the `Next.js + FastAPI` product path.
+- Deployed:
+  - `app.helpmateai.xyz` on Vercel
+  - `api.helpmateai.xyz` on a VPS behind Caddy
+- Added Google/Supabase sign-in.
+- Added one-active-document-per-user with resumable `24h` sliding retention.
+- Added VPS-side cleanup for:
+  - uploads
+  - local indexes
+  - stale answer-cache files
+- Switched larger browser uploads to the direct API path to avoid Vercel request-size limits.
+
+Challenges:
+
+- the product shell had fallen behind the maturity of the retrieval stack
+- retention needed to clean both database state and local disk artifacts, even when users never returned
+- browser uploads through the Vercel proxy broke on larger files
+
+Improvements:
+
+- the live product now behaves like the architecture we benchmark
+- large uploads no longer depend on Vercel's body-size ceiling
+- workspace resume and expiry are now real product behavior, not just a backend concept
+
+## Day 22: Selector Calibration Closed The Loop On The Earlier Architecture Doubt
+
+- Completed reorder-only selector follow-up sweeps for:
+  - weight blend
+  - gap threshold
+  - trigger-source policy
+- Promoted the selector back into the default stack in reorder-only mode.
+- Set production selector policy to:
+  - `spread-only`
+  - no ambiguity trigger
+  - no weak-evidence-only trigger
+
+Challenges:
+
+- the selector had already been disabled once, so re-enabling it needed stronger evidence than a single win
+- always-on selection improved grounding, but we needed a cleaner production tradeoff than "best metric at any cost"
+
+Improvements:
+
+- reorder-only selector is now a benchmarked default rather than an unresolved experiment
+- the selector only activates where it helps most, instead of behaving like a universal second-stage answer tax
+
+## Day 21: Chunking, Reranker Model Choice, And Default Retrieval Settings Became Measured Choices
+
+- Ran the first real chunking sweep and answer-layer follow-up.
+- Promoted chunk overlap from `180` to `240`.
+- Compared reranker models and kept `cross-encoder/ms-marco-MiniLM-L-6-v2`.
+- Completed retrieval-default sweeps for:
+  - synopsis section window
+  - synopsis top-k pool
+  - global fallback pool
+  - planner candidate region limit
+- Completed repair-threshold and topology-edge sweeps.
+
+Challenges:
+
+- several important defaults had grown from "reasonable" intuition rather than direct measurement
+- the first chunking experiment exposed an index-reuse bug, so the evaluation harness itself had to be corrected before the result could be trusted
+
+Improvements:
+
+- the stack defaults now reflect measured tradeoffs instead of inherited settings
+- the project gained a much stronger documentation and interview story around benchmark discipline
+
 ## Day 14: Architecture Ablations, Threshold Calibration, And Stack Scorecard
 
 - Added a layered architecture-eval workflow rather than relying on a single benchmark.

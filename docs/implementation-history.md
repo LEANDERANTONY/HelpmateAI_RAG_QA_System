@@ -258,142 +258,132 @@ Improvement:
 
 - reranker is now clearly justified instead of merely assumed useful
 - planner/router now has calibrated thresholds and a measured, modest quality gain
-- evidence selector is now treated as experimental because current benchmarks do not justify it as the default path
-- the repo now contains an architecture record explaining why these choices were made
-- the next major product step is clearer: a stronger custom frontend on top of the current Python core
+- selector was initially documented as experimental because the first benchmarked implementation regressed
 
-## 16. FastAPI And Next.js Transition
+## 17. Chunking And Reranker Defaults Were Finally Benchmarked, Not Guessed
 
 Change:
 
-- started moving the product shell to `FastAPI + Next.js` while keeping Streamlit for internal benchmarking
+- added dedicated chunking sweeps, answer-layer comparisons, and focused `ragas` checks
+- added reranker-model comparisons rather than assuming the first strong cross-encoder was the right default
+- promoted the chunking default from `1200 / 180` to `1200 / 240`
+- kept `cross-encoder/ms-marco-MiniLM-L-6-v2` as the reranker after model comparison
 
 Challenge:
 
-- the retrieval core had become more mature than the existing frontend presentation
-- we needed a cleaner user-facing shell without rewriting the Python retrieval system again
+- several important inner-loop defaults had grown from sensible heuristics rather than direct measurement
+- the first chunking sweep also exposed an index-reuse bug, so the earlier readout could not be trusted
 
 Improvement:
 
-- the project now has a clearer production-facing direction
-- the transport boundary is cleaner and more reusable than before
+- chunking now reflects a measured quality tradeoff rather than an inherited default
+- the reranker model choice is now benchmarked instead of arbitrary
+- the evaluation story became strong enough to defend in documentation and interviews
 
-## 17. Retrieval Simplification And Guardrails
+## 18. The Selector Regression Turned Out To Be A Pruning Bug, Not A Reordering Failure
 
 Change:
 
-- removed model-based query rewriting
-- moved to deterministic weak-evidence recovery plus explicit unsupported guardrails
+- traced the selector path and isolated prune mode from reorder-only mode
+- added matched retrieval, answer-layer, and focused `ragas` comparisons for:
+  - selector off
+  - selector prune
+  - selector reorder-only
+- promoted reorder-only selection back into the default stack
+- later calibrated the selector trigger policy to spread-only activation
 
 Challenge:
 
-- rewrite variability was helping some questions while hurting others
-- obviously irrelevant questions needed to fail early, not after a full answer-generation pass
+- the original benchmark conclusion was valid for the code at the time, but it conflated two effects:
+  - evidence reordering
+  - loss of supporting context
 
 Improvement:
 
-- retrieval behavior became more predictable
-- unsupported questions now short-circuit cleanly through retrieval guardrails
+- the project now has a much cleaner evidence-selection design
+- selector value is benchmark-justified again
+- architecture governance improved because later experiments were designed to overturn or confirm earlier findings honestly
 
-## 18. Document-Topology Retrieval
+## 19. Product Deployment, Auth, Retention, And Cleanup Caught Up To The Backend
 
 Change:
 
-- added deterministic retrieval planning
-- added section synopses and topology edges
-- added synopsis-first hierarchical retrieval with soft multi-region guidance and global fallback
+- completed the `Next.js + FastAPI` product surface
+- deployed the frontend on Vercel and the backend on a VPS behind Caddy
+- added user-scoped workspaces with Google/Supabase auth
+- added resumable `24h` sliding retention
+- added VPS-side cleanup for stale uploads, indexes, and cached answers
+- added direct-to-API upload handling for larger files
 
 Challenge:
 
-- structure existed in the system, but was still too passive
-- broad narrative questions needed section-aware control without losing the multi-page retrieval behavior that already worked well
+- the product shell had lagged behind the maturity of the retrieval core
+- browser uploads through the Vercel proxy hit request-size limits
+- retention needed to clear both database rows and local disk artifacts even when users never returned
 
 Improvement:
 
-- structure is now an active retrieval control signal
-- thesis, policy, and research-paper workflows now share a more general retrieval shape based on question type and evidence spread
+- the deployed product now matches the architecture we benchmark
+- large uploads work through the direct API path
+- workspace retention is now a real lifecycle, not just a UI concept
 
-## 19. Bounded Post-Rerank Evidence Selection
+## 20. Final Internal Sweeps Closed The Remaining Major Default Questions
 
 Change:
 
-- added a post-rerank evidence selector before answer generation
+- completed selector trigger sweeps, synopsis/topology retrieval-default sweeps, structure-repair threshold sweeps, and topology edge ablations
+- promoted:
+  - `global_fallback_top_k = 3`
+  - `planner_candidate_region_limit = 10`
+- kept:
+  - `synopsis_section_window = 4`
+  - synopsis top-k pool `8 / 8 / 5`
+  - `structure_repair_confidence_threshold = 0.62`
+  - current topology edge sets
 
 Challenge:
 
-- some failures were not true retrieval failures
-- the right chunk was already present in top `k`, but not at rank 1
+- several retrieval defaults were still reasonable but not fully benchmark-backed
+- some components showed wide performance plateaus, which makes decision-making harder rather than easier
 
 Improvement:
 
-- the system can now prefer a lower-ranked but more direct chunk without rerunning retrieval
-- this keeps the intervention bounded and inspectable
-- unsupported-question guardrails still apply before the selector can run
-- `pancreas8` improved materially
-- thesis future-work style questions became better supported
+- the default stack is now mostly measured end to end
+- later retrieval changes can be judged against a much stronger baseline
 
-## 20. Benchmark Refresh After Retrieval Simplification
+## 21. Final External Vendor Rerun On The Stabilized Stack
 
 Change:
 
-- reran the full four-document benchmark suite after the section-retrieval and guardrail changes
+- reran the OpenAI and Vectara comparisons against the stabilized local stack
+- fixed the local `ragas` harness so selector behavior is reflected in evaluation just as it is in the live app
+- refreshed the published benchmark summary with the new external numbers
 
 Challenge:
 
-- the suite is slow because each document combines multiple eval families and vendor comparisons
-- long wrapper processes can exceed local tool windows even when underlying reports complete
+- vendor comparisons are expensive enough that they should be rerun only after the internal stack stabilizes
+- the local answer-quality harness had to match the selector-enabled production path to make the comparison credible
 
 Improvement:
 
-- confirmed no meaningful regression from removing model-based query rewriting
-- confirmed the strongest win on `pancreas8`
-- clarified that thesis and `pancreas7` are now the most justified retrieval-quality targets
+- Helpmate now has a current external benchmark snapshot on the stabilized architecture
+- the project can now say, with a fresher evidence trail, that it leads both tested external baselines on the four main document families
+- the repo now has a much cleaner architecture record than it did during the earlier streamlit-first phase
 
-## 21. Low-Confidence Structure Repair During Indexing
+## Current Position
 
-Change:
+The architecture is now in a different phase than the one this document began with.
 
-- added an indexing-time structure-repair layer for low-confidence journal-style PDFs
-- kept deterministic parsing first
-- only used a small model when structural confidence looked suspicious
+The main transitions are complete:
 
-Challenge:
+- the product surface is deployed on `Next.js + FastAPI`
+- the retrieval stack defaults are benchmark-backed rather than mostly intuition-backed
+- the selector story is resolved in favor of reorder-only selection
+- the external OpenAI and Vectara comparisons have been rerun on the stabilized stack
 
-- some publisher-formatted papers flattened section boundaries badly enough that topology and synopsis retrieval were being built on weak structure
-- doing more LLM work in the live query path would have increased latency and instability
+So the next justified work is no longer "make the stack real." It is:
 
-Improvement:
-
-- messy PDFs can now get a cleaner section map before topology is built
-- the repair cost is paid once at indexing time, not on every question
-- the old benchmark docs did not regress after adding this layer
-
-## 22. Dedicated Global-Summary Evidence Route
-
-Change:
-
-- added a dedicated `global_summary_first` evidence route for broad paper-summary questions
-- improved prompt handling for global-summary answers
-- added report-generation retrieval and negative eval datasets
-
-Challenge:
-
-- some broad paper questions were still failing even when retrieval already surfaced relevant evidence
-- the system needed a better overview/findings/conclusion evidence bundle rather than another retrieval rewrite
-
-Improvement:
-
-- `reportgeneration` broad summary behavior improved meaningfully
-- `reportgeneration2` main-contribution behavior recovered
-- the four benchmark documents stayed stable or slightly better while the dedicated summary route was added
-
-## What This Means For The Next Step
-
-The architecture is now strong enough that the next improvement should not be another repo restructure.
-
-The most justified next steps are now:
-
-- build a stronger custom frontend on top of the existing core
-- keep the current retrieval architecture stable unless the remaining broad-summary edge cases justify a small targeted pass
-- add harder benchmark sets spanning multiple document families
-- expose the backend more cleanly if the new frontend later needs an API boundary
+- broaden the eval corpus
+- add answer-quality coverage for the newer report-generation datasets
+- add gold-answer coverage for a selected benchmark subset
+- revisit external vendor comparisons only after materially new architecture changes

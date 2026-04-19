@@ -36,3 +36,7 @@ Current state note:
   - prune-based evidence selection was rejected, but reorder-only evidence selection is now benchmark-validated and promoted to the default stack
 - the newest retrieval-tuning governance change is:
   - chunking default promoted from `1200 / 180` to `1200 / 240` after retrieval, answer-layer, and focused `ragas` validation
+- the newest calibration closure is:
+  - selector trigger policy now defaults to spread-only activation
+  - structure-repair threshold remains `0.62`
+  - topology edge sets remained benchmark-invariant on the current corpus

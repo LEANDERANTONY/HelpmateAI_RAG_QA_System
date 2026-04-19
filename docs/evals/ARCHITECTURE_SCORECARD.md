@@ -234,4 +234,6 @@ If we had to choose today based on the benchmark stack:
 
 ## What Still Remains
 
-- broader answer-layer and external `ragas` checks after the new retrieval defaults settle
+- add answer-quality eval coverage for the newer report-generation datasets
+- add optional gold-answer fields for a selected benchmark subset
+- rerun the external vendor comparison only after a materially new retrieval or answer-layer change

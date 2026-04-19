@@ -44,7 +44,7 @@ flowchart TD
 
     V --> W["Evidence grading\nstrong / weak / unsupported"]
     W -->|unsupported| X["Retrieval guardrail\nreject unsupported question"]
-    W -->|strong or weak| Y["Bounded evidence selector\n(top-k only)"]
+    W -->|strong or weak| Y["Reorder-only evidence selector\n(spread-triggered, top-k only)"]
     Y --> Z["Grounded answer generation\n(raw chunk evidence only)"]
     Z --> AA["Answer + citations + evidence + notes"]
 ```
@@ -160,7 +160,7 @@ That means:
 - irrelevant questions do not flow into answer generation
 - unsupported answers fail honestly
 
-### 5. Bounded evidence selection
+### 5. Reorder-only evidence selection
 
 If evidence is plausible, the system can run a small selector over top retrieved chunks.
 
@@ -169,6 +169,7 @@ It:
 - only sees the top candidates
 - uses rank as a prior
 - can promote a lower-ranked chunk if it is clearly more direct
+- keeps the remaining retrieved chunks instead of pruning them away
 - never invents evidence
 
 This exists to fix cases where the right chunk was already in top `k` but not at rank 1.
@@ -203,13 +204,15 @@ It is now:
 - strong policy-document behavior
 - recovered thesis performance
 - improved paper/report handling through topology and structure repair
+- reorder-only evidence selection is now benchmark-validated in the default stack
 - explicit unsupported-question guardrails
 - benchmarked against internal and external baselines
 
 ## Current Weakest Area
 
-The hardest remaining case is still:
+The hardest remaining cases are still:
 
 - the broadest paper-summary prompts on some journal-style PDFs
+- the remaining unrepaired `reportgeneration2` structure-noise case
 
 That is much narrower than before, which is a good sign. The architecture is now stable enough that further work can be more targeted rather than another big rewrite.

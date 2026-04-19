@@ -75,9 +75,9 @@ Important note:
 ## Interpretation
 
 - Helpmate now leads both external baselines on the health-policy benchmark across all three `ragas` metrics.
-- On the thesis benchmark, Helpmate remains ahead of both external baselines overall, though OpenAI is still competitive on context precision.
+- On the thesis benchmark, Helpmate remains ahead of both external baselines across all three `ragas` metrics.
 - On `pancreas7`, Helpmate now has one of the strongest gains in the project, leading both external baselines clearly across all three `ragas` metrics.
-- On `pancreas8`, Helpmate still leads overall, though this remains the hardest paper-summary case and the smallest context-precision margin over the older local snapshot.
+- On `pancreas8`, Helpmate still leads overall across all three `ragas` metrics, though this remains the hardest paper-summary case in the benchmark mix.
 - OpenAI File Search is still the weakest external baseline across the document families we tested.
 - Averaged across the four main document families, Helpmate now leads:
   - Vectara by `+0.1997` faithfulness, `+0.1350` answer relevancy, and `+0.1523` context precision

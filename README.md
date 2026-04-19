@@ -8,7 +8,7 @@ HelpmateAI is a grounded long-document QA system for PDFs and DOCX files. Upload
 
 The current product is a `Next.js + FastAPI` experience on top of a benchmark-driven Python retrieval core, deployed with a VPS-ready backend path. The system is designed to stay inspectable: retrieval is hybrid, answers are citation-aware, and the supporting passages remain visible instead of being hidden behind a polished summary.
 
-Live app: https://helpmateai.xyz
+Live workspace: https://app.helpmateai.xyz
 
 ## Why This Project Stands Out
 
@@ -43,11 +43,11 @@ Live app: https://helpmateai.xyz
 
 ## Benchmark Highlights
 
-- In an independent `ragas` answer-quality comparison across health-policy, thesis, and scientific-paper benchmarks, Helpmate outperformed OpenAI File Search on faithfulness, answer relevancy, and context precision in every document family we tested.
-- Helpmate also outperformed the stronger Vectara retrieval baseline overall: health policy `0.8462 / 0.5995 / 0.8462` vs Vectara `0.7692 / 0.4773 / 0.8833`, thesis `1.0000 / 0.6310 / 0.8449` vs `0.9167 / 0.6283 / 0.8406`, `pancreas7` `0.8889 / 0.5247 / 0.9599` vs `0.7778 / 0.5045 / 0.7752`, and `pancreas8` `0.8750 / 0.5034 / 0.9222` vs `0.7667 / 0.5052 / 0.6337` for `ragas` faithfulness / answer relevancy / context precision.
-- OpenAI File Search was the weakest external baseline in the same `ragas` check: health policy `0.5769 / 0.1531 / 0.5927`, thesis `0.5069 / 0.4299 / 0.5687`, `pancreas7` `0.5556 / 0.3606 / 0.4920`, and `pancreas8` `0.6000 / 0.2221 / 0.4887`.
+- On the stabilized `2026-04-19` vendor rerun, Helpmate outperformed both external baselines across all four main document families we track: health policy, thesis, `pancreas7`, and `pancreas8`.
+- Averaged across those four families, Helpmate now leads Vectara by `+0.1997` faithfulness, `+0.1350` answer relevancy, and `+0.1523` context precision, and leads OpenAI File Search by `+0.4532`, `+0.4021`, and `+0.3697` on the same `ragas` metrics.
+- Current answer-quality snapshot versus Vectara: health policy `0.8846 / 0.6378 / 0.8825` vs `0.7692 / 0.4504 / 0.8235`, thesis `1.0000 / 0.6031 / 0.8588` vs `0.8750 / 0.5579 / 0.8035`, `pancreas7` `0.9444 / 0.6499 / 1.0000` vs `0.6111 / 0.5009 / 0.7350`, and `pancreas8` `0.9250 / 0.5527 / 0.9000` vs `0.7000 / 0.3941 / 0.6700` for `ragas` faithfulness / answer relevancy / context precision.
 - Internal ablations still justify the current stack: reranker improved answer-layer supported rate from `0.8026` to `0.8816`, improved citation page-hit rate from `0.6974` to `0.8684`, and planner plus reranker lifted evidence-fragment recall to `0.7364`.
-- Reorder-only evidence selection is now benchmark-validated: it improved supported-answer rate to `0.8553`, raised focused-`ragas` faithfulness to `0.9657`, and lifted context precision to `0.9608` versus the selector-off planner+rereanker stack.
+- The evidence selector is now benchmark-validated in reorder-only mode rather than prune mode. In production, the spread-triggered selector keeps strong answer quality (`0.8816` supported-answer rate, `0.9534` focused-`ragas` faithfulness, `0.6501` answer relevancy, `0.9404` context precision) without paying the always-on cost on every query.
 
 ## Project Shape
 

@@ -35,14 +35,16 @@ This is important because a system can retrieve the right page while still give 
 
 ## Current Summary Table
 
+As of the stabilized `2026-04-19` snapshot, the repo treats these tables as the current reference view of the benchmark stack.
+
 ### Retrieval-Level Comparison
 
 | Document | Ours hit/MRR | Vectara retrieval | OpenAI retrieval |
 | --- | --- | --- | --- |
 | Health policy | `0.8462 / 0.7051` | `0.7692` | `0.6923` |
-| Thesis | `0.9167 / 0.6042` | `0.6667` | `0.6667` |
-| `pancreas7` | `0.8889 / 0.6944` | `0.5556` | `0.3333` |
-| `pancreas8` | `0.9000 / 0.8000` | `0.8000` | `0.4000` |
+| Thesis | `0.9167 / 0.5764` | `0.6667` | `0.6667` |
+| `pancreas7` | `0.7778 / 0.6111` | `0.5556` | `0.3333` |
+| `pancreas8` | `1.0000 / 0.8833` | `0.8000` | `0.4000` |
 
 ### Answer-Quality Comparison
 
@@ -50,18 +52,23 @@ These scores use either our own pipeline answers or a shared answer model on top
 
 | Document | System | Ragas faithfulness | Ragas answer relevancy | Ragas context precision |
 | --- | --- | --- | --- | --- |
-| Health policy | Ours | `0.8462` | `0.5995` | `0.8462` |
-| Health policy | Vectara retrieval + shared answer model | `0.7692` | `0.4773` | `0.8833` |
-| Health policy | OpenAI retrieval + shared answer model | `0.5769` | `0.1531` | `0.5927` |
-| Thesis | Ours | `1.0000` | `0.6310` | `0.8449` |
-| Thesis | Vectara retrieval + shared answer model | `0.9167` | `0.6283` | `0.8406` |
-| Thesis | OpenAI retrieval + shared answer model | `0.5069` | `0.4299` | `0.5687` |
-| `pancreas7` | Ours | `0.8889` | `0.5247` | `0.9599` |
-| `pancreas7` | Vectara retrieval + shared answer model | `0.7778` | `0.5045` | `0.7752` |
-| `pancreas7` | OpenAI retrieval + shared answer model | `0.5556` | `0.3606` | `0.4920` |
-| `pancreas8` | Ours | `0.8750` | `0.5034` | `0.9222` |
-| `pancreas8` | Vectara retrieval + shared answer model | `0.7667` | `0.5052` | `0.6337` |
-| `pancreas8` | OpenAI retrieval + shared answer model | `0.6000` | `0.2221` | `0.4887` |
+| Health policy | Ours | `0.8846` | `0.6378` | `0.8825` |
+| Health policy | Vectara retrieval + shared answer model | `0.7692` | `0.4504` | `0.8235` |
+| Health policy | OpenAI retrieval + shared answer model | `0.6154` | `0.1357` | `0.4970` |
+| Thesis | Ours | `1.0000` | `0.6031` | `0.8588` |
+| Thesis | Vectara retrieval + shared answer model | `0.8750` | `0.5579` | `0.8035` |
+| Thesis | OpenAI retrieval + shared answer model | `0.3702` | `0.2944` | `0.6024` |
+| `pancreas7` | Ours | `0.9444` | `0.6499` | `1.0000` |
+| `pancreas7` | Vectara retrieval + shared answer model | `0.6111` | `0.5009` | `0.7350` |
+| `pancreas7` | OpenAI retrieval + shared answer model | `0.5556` | `0.2514` | `0.6210` |
+| `pancreas8` | Ours | `0.9250` | `0.5527` | `0.9000` |
+| `pancreas8` | Vectara retrieval + shared answer model | `0.7000` | `0.3941` | `0.6700` |
+| `pancreas8` | OpenAI retrieval + shared answer model | `0.4000` | `0.1535` | `0.4422` |
+
+Average current margin:
+
+- versus `Vectara`: `+0.1997` faithfulness, `+0.1350` answer relevancy, `+0.1523` context precision
+- versus `OpenAI File Search`: `+0.4532` faithfulness, `+0.4021` answer relevancy, `+0.3697` context precision
 
 ## Structure-Aware Metrics
 
@@ -95,7 +102,7 @@ Interpretation:
 - the remaining challenge is the broadest paper-summary phrasing, not raw evidence discovery
 - that is why the latest architecture work focused on a dedicated global-summary evidence route instead of another retrieval rewrite
 
-## Evidence-Selector Weight Tuning
+## Evidence-Selector Calibration
 
 The evidence selector combines:
 
@@ -125,6 +132,19 @@ Why that default was chosen:
 - it keeps the LLM score as the dominant signal when the selector is invoked
 - it still preserves a meaningful retrieval prior for tie-breaking and stability
 - it outperforms the older `0.65 / 0.35` hand-set blend on fragment recall while keeping the same page-hit and MRR on the current benchmark
+
+Current production selector policy:
+
+- `reorder-only`, not prune mode
+- `spread-only` trigger policy
+- `weak_evidence=false`
+- `ambiguity=false`
+
+Why:
+
+- the selector's original regression came from pruning away support, not from reordering itself
+- spread-only gives the best current production tradeoff between answer quality and activation frequency
+- always-on remains a useful reference mode, but not the default shipping policy
 
 ## Baseline Policy
 
@@ -170,11 +190,11 @@ Reports are saved under `docs/evals/reports/`.
 
 ## Next Eval Upgrades
 
-- add answer-quality eval coverage for the new report-generation datasets
+- add answer-quality eval coverage for the newer report-generation datasets
 - add optional gold-answer fields to selected datasets
 - add stronger academic-synthesis eval questions
-- keep Vectara as the main external benchmark and de-emphasize OpenAI in routine benchmark loops
-- keep `ragas` as the only answer-quality meter in routine benchmarking
+- keep Vectara as the main external benchmark and OpenAI as a reference baseline in routine benchmark loops
+- keep `ragas` as the main answer-quality meter in routine benchmarking
 - compare against additional vendors when credentials are available:
   - Google Vertex AI Search
   - Cohere

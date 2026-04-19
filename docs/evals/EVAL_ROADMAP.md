@@ -4,6 +4,15 @@ This document captures the evaluation suite we intend to build for HelpmateAI so
 
 The goal is not only to know whether the app works end to end, but also to know which internal layers are earning their place in the architecture.
 
+Current status note:
+
+- most of the core architecture ablations described here are now completed
+- the current production decisions live in [ARCHITECTURE_SCORECARD.md](./ARCHITECTURE_SCORECARD.md)
+- the current external benchmark snapshot lives in [benchmark_summary.md](./benchmark_summary.md)
+- this roadmap should now be read as:
+  - a record of how the evaluation stack was built
+  - and a guide to the remaining deeper-quality work
+
 ## Why We Need This
 
 Helpmate is not a single-model system. It is a pipeline with many interacting parts:
@@ -616,8 +625,8 @@ What we learned:
 Current interpretation:
 
 - the topology-aware retrieval defaults are now much less intuition-driven than before
-- the next remaining unvalidated retrieval-side questions are mostly:
-  - external vendor reruns on the stabilized stack
+- the stabilized external vendor rerun is now complete
+- the next remaining retrieval-side questions are broader-corpus questions rather than immediate default-setting gaps
 
 ### 10. Structure Repair Calibration
 
