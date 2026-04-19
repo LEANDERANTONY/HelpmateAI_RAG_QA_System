@@ -1,0 +1,20 @@
+[
+  {
+    "question": "What is the main focus of this paper?"
+  },
+  {
+    "question": "What are the most important findings or claims in this paper?"
+  },
+  {
+    "question": "What limitations, challenges, or future directions does this paper discuss?"
+  },
+  {
+    "question": "What does the document say about Convolutional Neural Networks (CNNs), Recurrent Neural Net?"
+  },
+  {
+    "question": "What does the document say about Original Research?"
+  },
+  {
+    "question": "What does the document say about Overview, progress, and status?"
+  }
+]

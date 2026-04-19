@@ -1,0 +1,364 @@
+{
+  "dataset_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\reports\\manual_questions_principal_sample_life_insurance_policy_20260419.json",
+  "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\test\\Principal-Sample-Life-Insurance-Policy.pdf",
+  "question_count": 6,
+  "ours": {
+    "faithfulness": 0.8333333333333334,
+    "answer_relevancy": 0.6115879728445062,
+    "context_precision": 0.8888888888430555
+  },
+  "vectara": {
+    "faithfulness": 0.7916666666666666,
+    "answer_relevancy": 0.10944259677331586,
+    "context_precision": 0.5249999999784722
+  },
+  "openai": {
+    "faithfulness": 0.125,
+    "answer_relevancy": 0.1338541531406667,
+    "context_precision": 0.38611111108634255
+  },
+  "ours_results": [
+    {
+      "question": "What key definitions or core terms does the policy establish in Part I?",
+      "supported": true,
+      "route_used": [
+        "Planner intent: lookup.",
+        "Planner evidence spread: atomic.",
+        "Planner selected chunk_first with none constraints.",
+        "Planner source: deterministic at confidence 0.86.",
+        "Preferred content types: general, definition.",
+        "Chunk-first retrieval path used for exact grounding."
+      ],
+      "query_used": "What key definitions or core terms does the policy establish in Part I?",
+      "citations": [
+        "Principal-Sample-Life-Insurance-Policy.pdf - Page 9",
+        "Principal-Sample-Life-Insurance-Policy.pdf - Page 13",
+        "Principal-Sample-Life-Insurance-Policy.pdf - Page 12",
+        "Principal-Sample-Life-Insurance-Policy.pdf - Page 15"
+      ],
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7303518114440576,
+      "context_precision": 0.9999999999666667
+    },
+    {
+      "question": "What does Part II say about policy administration or the contract between the employer and Principal?",
+      "supported": true,
+      "route_used": [
+        "Planner intent: numeric.",
+        "Planner evidence spread: sectional.",
+        "Planner selected synopsis_first with soft_local constraints.",
+        "Planner source: deterministic at confidence 0.74.",
+        "Preferred content types: definition, general.",
+        "Synopsis-first routing prioritized 10 sections before chunk retrieval.",
+        "Top synopsis region: PART II - POLICY ADMINISTRATION.",
+        "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 19, Page 16."
+      ],
+      "query_used": "What does Part II say about policy administration or the contract between the employer and Principal?",
+      "citations": [
+        "Principal-Sample-Life-Insurance-Policy.pdf - Page 19",
+        "Principal-Sample-Life-Insurance-Policy.pdf - Page 16",
+        "Principal-Sample-Life-Insurance-Policy.pdf - Page 18",
+        "Principal-Sample-Life-Insurance-Policy.pdf - Page 17"
+      ],
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7360072163394301,
+      "context_precision": 0.99999999995
+    },
+    {
+      "question": "What eligibility requirements or individual rights are described in Part III?",
+      "supported": true,
+      "route_used": [
+        "Planner intent: lookup.",
+        "Planner evidence spread: atomic.",
+        "Planner selected chunk_first with none constraints.",
+        "Planner source: deterministic at confidence 0.86.",
+        "Preferred content types: general, definition.",
+        "Chunk-first retrieval path used for exact grounding."
+      ],
+      "query_used": "What eligibility requirements or individual rights are described in Part III?",
+      "citations": [
+        "Principal-Sample-Life-Insurance-Policy.pdf - Page 6",
+        "Principal-Sample-Life-Insurance-Policy.pdf - Page 27",
+        "Principal-Sample-Life-Insurance-Policy.pdf - Page 26",
+        "Principal-Sample-Life-Insurance-Policy.pdf - Page 44"
+      ],
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.6399647711941191,
+      "context_precision": 0.499999999975
+    },
+    {
+      "question": "What member life insurance benefits are described in Part IV?",
+      "supported": false,
+      "route_used": [
+        "Planner intent: lookup.",
+        "Planner evidence spread: atomic.",
+        "Planner selected chunk_first with none constraints.",
+        "Planner source: deterministic at confidence 0.86.",
+        "Preferred content types: general, definition.",
+        "Chunk-first retrieval path used for exact grounding."
+      ],
+      "query_used": "What member life insurance benefits are described in Part IV?",
+      "citations": [
+        "Principal-Sample-Life-Insurance-Policy.pdf - Page 47",
+        "Principal-Sample-Life-Insurance-Policy.pdf - Page 46",
+        "Principal-Sample-Life-Insurance-Policy.pdf - Page 49",
+        "Principal-Sample-Life-Insurance-Policy.pdf - Page 46"
+      ],
+      "faithfulness": 0.0,
+      "answer_relevancy": 0.0,
+      "context_precision": 0.9999999999
+    },
+    {
+      "question": "What does the policy say about when member insurance ends or what continuation or conversion rights a member may have?",
+      "supported": true,
+      "route_used": [
+        "Planner intent: lookup.",
+        "Planner evidence spread: atomic.",
+        "Planner selected chunk_first with none constraints.",
+        "Planner source: deterministic at confidence 0.86.",
+        "Preferred content types: definition, general.",
+        "Chunk-first retrieval path used for exact grounding."
+      ],
+      "query_used": "What does the policy say about when member insurance ends or what continuation or conversion rights a member may have?",
+      "citations": [
+        "Principal-Sample-Life-Insurance-Policy.pdf - Page 38",
+        "Principal-Sample-Life-Insurance-Policy.pdf - Page 38",
+        "Principal-Sample-Life-Insurance-Policy.pdf - Page 35",
+        "Principal-Sample-Life-Insurance-Policy.pdf - Page 42"
+      ],
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.8222119508280504,
+      "context_precision": 0.999999999975
+    },
+    {
+      "question": "What claim, notice, or proof requirements does the policy describe for receiving benefits?",
+      "supported": true,
+      "route_used": [
+        "Planner intent: lookup.",
+        "Planner evidence spread: atomic.",
+        "Planner selected chunk_first with none constraints.",
+        "Planner source: deterministic at confidence 0.86.",
+        "Preferred content types: general, definition.",
+        "Chunk-first retrieval path used for exact grounding."
+      ],
+      "query_used": "What claim, notice, or proof requirements does the policy describe for receiving benefits?",
+      "citations": [
+        "Principal-Sample-Life-Insurance-Policy.pdf - Page 61",
+        "Principal-Sample-Life-Insurance-Policy.pdf - Page 61",
+        "Principal-Sample-Life-Insurance-Policy.pdf - Page 49",
+        "Principal-Sample-Life-Insurance-Policy.pdf - Page 19"
+      ],
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7409920872613801,
+      "context_precision": 0.8333333332916666
+    }
+  ],
+  "vectara_results": [
+    {
+      "question": "What key definitions or core terms does the policy establish in Part I?",
+      "supported": false,
+      "answer_preview": "Not enough evidence.",
+      "citations": [
+        "Page 9",
+        "Page 6",
+        "Page 11",
+        "Page 9",
+        "Page 10"
+      ],
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.0
+      }
+    },
+    {
+      "question": "What does Part II say about policy administration or the contract between the employer and Principal?",
+      "supported": false,
+      "answer_preview": "Unsupported by the retrieved evidence.",
+      "citations": [
+        "Page 17",
+        "Page 16",
+        "Page 18",
+        "Page 6",
+        "Page 16"
+      ],
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.9999999999666667
+      }
+    },
+    {
+      "question": "What eligibility requirements or individual rights are described in Part III?",
+      "supported": false,
+      "answer_preview": "Not specified in the provided evidence.",
+      "citations": [
+        "Page 26",
+        "Page 27",
+        "Page 6",
+        "Page 26",
+        "Page 35"
+      ],
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.699999999965
+      }
+    },
+    {
+      "question": "What member life insurance benefits are described in Part IV?",
+      "supported": false,
+      "answer_preview": "Not enough information.",
+      "citations": [
+        "Page 46",
+        "Page 49",
+        "Page 47",
+        "Page 50",
+        "Page 48"
+      ],
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.6999999999766667
+      }
+    },
+    {
+      "question": "What does the policy say about when member insurance ends or what continuation or conversion rights a member may have?",
+      "supported": false,
+      "answer_preview": "Not fully supported.",
+      "citations": [
+        "Page 38",
+        "Page 38",
+        "Page 40",
+        "Page 42",
+        "Page 38"
+      ],
+      "ragas": {
+        "faithfulness": 0.75,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.7499999999625
+      }
+    },
+    {
+      "question": "What claim, notice, or proof requirements does the policy describe for receiving benefits?",
+      "supported": true,
+      "answer_preview": "A claimant must send written notice to The Principal to file a claim, and The Principal then provides claim forms for filing proof of loss. Legal action for benefits cannot begin until at least 90 days after required proof of loss is filed and after appeal procedures are exhausted. Proof of Good Hea",
+      "citations": [
+        "Page 61",
+        "Page 62",
+        "Page 32",
+        "Page 31",
+        "Page 61"
+      ],
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6566555806398952,
+        "context_precision": 0.0
+      }
+    }
+  ],
+  "openai_results": [
+    {
+      "question": "What key definitions or core terms does the policy establish in Part I?",
+      "supported": false,
+      "answer_preview": "Not enough evidence.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.49999999995
+      }
+    },
+    {
+      "question": "What does Part II say about policy administration or the contract between the employer and Principal?",
+      "supported": false,
+      "answer_preview": "Insufficient evidence.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.0
+      }
+    },
+    {
+      "question": "What eligibility requirements or individual rights are described in Part III?",
+      "supported": false,
+      "answer_preview": "Not enough evidence.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.36666666664833336
+      }
+    },
+    {
+      "question": "What member life insurance benefits are described in Part IV?",
+      "supported": false,
+      "answer_preview": "Not enough evidence.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.3333333333
+      }
+    },
+    {
+      "question": "What does the policy say about when member insurance ends or what continuation or conversion rights a member may have?",
+      "supported": false,
+      "answer_preview": "Insufficient evidence.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.5333333333155555
+      }
+    },
+    {
+      "question": "What claim, notice, or proof requirements does the policy describe for receiving benefits?",
+      "supported": true,
+      "answer_preview": "The policy requires notice of claim and proof of loss forms; failure to give notice on time does not invalidate a claim if notice is given as soon as reasonably possible. It also requires written proof of ADL Disability or Total Disability within one year of onset, with further proof if requested [S",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "ragas": {
+        "faithfulness": 0.75,
+        "answer_relevancy": 0.8031249188440003,
+        "context_precision": 0.5833333333041666
+      }
+    }
+  ]
+}

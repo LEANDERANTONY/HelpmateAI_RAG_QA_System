@@ -1,0 +1,310 @@
+{
+  "documents": [
+    {
+      "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\test\\GEnAI_modular1.pdf",
+      "document_style": "policy_document",
+      "question_generation_method": "deterministic starters plus section-title prompts",
+      "question_count": 6,
+      "questions_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\reports\\unseen_questions_genai-modular1_20260419_160557.json",
+      "questions": [
+        {
+          "question": "What are the main exclusions or waiting periods in this policy?"
+        },
+        {
+          "question": "What obligations or deadlines should the insured person be aware of?"
+        },
+        {
+          "question": "How does the policy define key terms like grace period, cashless facility, or network provider?"
+        },
+        {
+          "question": "What does the document say about Abstract?"
+        },
+        {
+          "question": "What does the document say about . Diffusion Models?"
+        },
+        {
+          "question": "What does the document say about Autoregressive models?"
+        }
+      ],
+      "section_basis": [
+        {
+          "title": "Abstract",
+          "kind": "general"
+        },
+        {
+          "title": ". Diffusion Models",
+          "kind": "general"
+        },
+        {
+          "title": "Autoregressive models",
+          "kind": "general"
+        },
+        {
+          "title": "Generative Adversarial Network",
+          "kind": "general"
+        },
+        {
+          "title": ". Cost",
+          "kind": "general"
+        },
+        {
+          "title": ". Accuracy",
+          "kind": "general"
+        }
+      ],
+      "local_ragas": {
+        "faithfulness_mean": 0.5,
+        "answer_relevancy_mean": 0.3027822916214951,
+        "context_precision_mean": 0.4537037036899691
+      },
+      "openai_ragas": {
+        "faithfulness_mean": 0.4583333333333333,
+        "answer_relevancy_mean": 0.206830806705652,
+        "context_precision_mean": 0.15833333332125
+      },
+      "vectara_ragas": {
+        "faithfulness_mean": 0.3333333333333333,
+        "answer_relevancy_mean": 0.23452974373244864,
+        "context_precision_mean": 0.3194444444310185
+      }
+    },
+    {
+      "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\test\\GENAI_modular2.pdf",
+      "document_style": "research_paper",
+      "question_generation_method": "deterministic starters plus section-title prompts",
+      "question_count": 6,
+      "questions_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\reports\\unseen_questions_genai-modular2_20260419_161259.json",
+      "questions": [
+        {
+          "question": "What is the main focus of this paper?"
+        },
+        {
+          "question": "What are the most important findings or claims in this paper?"
+        },
+        {
+          "question": "What limitations, challenges, or future directions does this paper discuss?"
+        },
+        {
+          "question": "What does the document say about Convolutional Neural Networks (CNNs), Recurrent Neural Net?"
+        },
+        {
+          "question": "What does the document say about Original Research?"
+        },
+        {
+          "question": "What does the document say about Overview, progress, and status?"
+        }
+      ],
+      "section_basis": [
+        {
+          "title": "Convolutional Neural Networks (CNNs), Recurrent Neural Net",
+          "kind": "general"
+        },
+        {
+          "title": "Original Research",
+          "kind": "general"
+        },
+        {
+          "title": "Overview, progress, and status",
+          "kind": "general"
+        },
+        {
+          "title": "Prototyping and initial development",
+          "kind": "general"
+        },
+        {
+          "title": "Twin\u201d AND \u201c Generative Arti\ufb01cial Intelligence\u201d OR \u201c Arti\ufb01cial Intel",
+          "kind": "general"
+        },
+        {
+          "title": "Ranging (LiDAR) data",
+          "kind": "general"
+        }
+      ],
+      "local_ragas": {
+        "faithfulness_mean": 0.8181818181818181,
+        "answer_relevancy_mean": 0.4049263088718011,
+        "context_precision_mean": 0.7499999999694444
+      },
+      "openai_ragas": {
+        "faithfulness_mean": 0.6666666666666666,
+        "answer_relevancy_mean": 0.39984416345168344,
+        "context_precision_mean": 0.6534722221847048
+      },
+      "vectara_ragas": {
+        "faithfulness_mean": 0.6666666666666666,
+        "answer_relevancy_mean": 0.3408527819950615,
+        "context_precision_mean": 0.5694444444060185
+      }
+    },
+    {
+      "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\test\\Graduate Project.pdf",
+      "document_style": "research_paper",
+      "question_generation_method": "deterministic starters plus section-title prompts",
+      "question_count": 6,
+      "questions_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\reports\\unseen_questions_graduate-project_20260419_162010.json",
+      "questions": [
+        {
+          "question": "What is the main focus of this paper?"
+        },
+        {
+          "question": "What are the most important findings or claims in this paper?"
+        },
+        {
+          "question": "What limitations, challenges, or future directions does this paper discuss?"
+        },
+        {
+          "question": "What does the document say in the Abstract section?"
+        },
+        {
+          "question": "What findings or outcomes are reported in EXPERIMENTAL RESULTS?"
+        },
+        {
+          "question": "What does the document say about EXPERIMENTAL STUDY OF SINGLE PASS DOUBLE FLOW?"
+        }
+      ],
+      "section_basis": [
+        {
+          "title": "Abstract",
+          "kind": "abstract"
+        },
+        {
+          "title": "EXPERIMENTAL RESULTS",
+          "kind": "results"
+        },
+        {
+          "title": "EXPERIMENTAL STUDY OF SINGLE PASS DOUBLE FLOW",
+          "kind": "general"
+        },
+        {
+          "title": "DIGITAL MANOMETER",
+          "kind": "general"
+        },
+        {
+          "title": "SOLAR AIR HEATER",
+          "kind": "general"
+        },
+        {
+          "title": "TABLE 6.10",
+          "kind": "general"
+        }
+      ],
+      "local_ragas": {
+        "faithfulness_mean": 0.6111111111111112,
+        "answer_relevancy_mean": 0.30267955862281953,
+        "context_precision_mean": 0.4722222221875
+      },
+      "openai_ragas": {
+        "faithfulness_mean": 0.2777777777777778,
+        "answer_relevancy_mean": 0.15828310251656635,
+        "context_precision_mean": 0.7916666666020833
+      },
+      "vectara_ragas": {
+        "faithfulness_mean": 0.5,
+        "answer_relevancy_mean": 0.13106426414962924,
+        "context_precision_mean": 0.43981481478672835
+      }
+    },
+    {
+      "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\test\\Principal-Sample-Life-Insurance-Policy.pdf",
+      "document_style": "policy_document",
+      "question_generation_method": "manual policy-specific held-out questions",
+      "question_count": 6,
+      "questions_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\reports\\manual_questions_principal_sample_life_insurance_policy_20260419.json",
+      "questions": [
+        {
+          "question": "What key definitions or core terms does the policy establish in Part I?"
+        },
+        {
+          "question": "What does Part II say about policy administration or the contract between the employer and Principal?"
+        },
+        {
+          "question": "What eligibility requirements or individual rights are described in Part III?"
+        },
+        {
+          "question": "What member life insurance benefits are described in Part IV?"
+        },
+        {
+          "question": "What does the policy say about when member insurance ends or what continuation or conversion rights a member may have?"
+        },
+        {
+          "question": "What claim, notice, or proof requirements does the policy describe for receiving benefits?"
+        }
+      ],
+      "section_basis": [
+        {
+          "title": "PART I - DEFINITIONS",
+          "kind": "definitions"
+        },
+        {
+          "title": "PART II - POLICY ADMINISTRATION",
+          "kind": "policy_administration"
+        },
+        {
+          "title": "PART III - INDIVIDUAL REQUIREMENTS AND RIGHTS",
+          "kind": "individual_rights"
+        },
+        {
+          "title": "PART IV - BENEFITS",
+          "kind": "benefits"
+        },
+        {
+          "title": "Continuation / Conversion / Termination",
+          "kind": "continuation_conversion"
+        },
+        {
+          "title": "Claims / Notice / Proof Requirements",
+          "kind": "claims_requirements"
+        }
+      ],
+      "local_ragas": {
+        "faithfulness_mean": 0.8333333333333334,
+        "answer_relevancy_mean": 0.6115879728445062,
+        "context_precision_mean": 0.8888888888430555
+      },
+      "openai_ragas": {
+        "faithfulness_mean": 0.125,
+        "answer_relevancy_mean": 0.1338541531406667,
+        "context_precision_mean": 0.38611111108634255
+      },
+      "vectara_ragas": {
+        "faithfulness_mean": 0.7916666666666666,
+        "answer_relevancy_mean": 0.10944259677331586,
+        "context_precision_mean": 0.5249999999784722
+      },
+      "manual_override_report_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\reports\\manual_principal_sample_life_insurance_vendor_ragas_20260419.json"
+    }
+  ],
+  "overall_summary": {
+    "local": {
+      "faithfulness_mean": 0.6906565656565656,
+      "answer_relevancy_mean": 0.40549403299015546,
+      "context_precision_mean": 0.6412037036724922
+    },
+    "openai": {
+      "faithfulness_mean": 0.3819444444444444,
+      "answer_relevancy_mean": 0.22470305645364214,
+      "context_precision_mean": 0.49739583329859516
+    },
+    "vectara": {
+      "faithfulness_mean": 0.5729166666666666,
+      "answer_relevancy_mean": 0.20397234666261382,
+      "context_precision_mean": 0.4634259259005594
+    },
+    "margin_vs_openai": {
+      "faithfulness": 0.3087121212121212,
+      "answer_relevancy": 0.18079097653651333,
+      "context_precision": 0.14380787037389708
+    },
+    "margin_vs_vectara": {
+      "faithfulness": 0.117739898989899,
+      "answer_relevancy": 0.20152168632754164,
+      "context_precision": 0.17777777777193282
+    }
+  },
+  "question_generation_method": "deterministic starters plus section-title prompts",
+  "notes": [
+    "These are unseen-document vendor answer-quality comparisons, not retrieval-labeled benchmark runs.",
+    "The question sets are auto-generated from document structure and built-in starter templates; they are useful as an out-of-sample stress check, but they are not a substitute for hand-labeled held-out eval sets.",
+    "The Principal-Sample-Life-Insurance-Policy.pdf slice was corrected with a manual policy-specific question set after the auto-generated prompts were found to be noisy and domain-misaligned."
+  ]
+}

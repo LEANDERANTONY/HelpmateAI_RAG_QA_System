@@ -25,6 +25,14 @@ class VectaraBenchmark:
     def _fingerprint(path: str | Path) -> str:
         return hashlib.sha256(Path(path).read_bytes()).hexdigest()
 
+    @staticmethod
+    def _safe_key_fragment(value: str) -> str:
+        cleaned = "".join(char if char.isalnum() or char in {"_", "-", "="} else "-" for char in value.lower())
+        while "--" in cleaned:
+            cleaned = cleaned.replace("--", "-")
+        cleaned = cleaned.strip("-") or "document"
+        return cleaned[:32].rstrip("-") or "document"
+
     def _registry_path(self, root: Path) -> Path:
         return root / "data" / "vectara_corpus_registry.json"
 
@@ -118,7 +126,7 @@ class VectaraBenchmark:
         if existing:
             return existing["corpus_key"]
 
-        corpus_key = f"helpmate-{doc_path.stem.lower()}-{fingerprint[:8]}"
+        corpus_key = f"helpmate-{self._safe_key_fragment(doc_path.stem)}-{fingerprint[:8]}"
         self._create_corpus(corpus_key)
         self._upload_file(corpus_key, doc_path)
         registry[fingerprint] = {

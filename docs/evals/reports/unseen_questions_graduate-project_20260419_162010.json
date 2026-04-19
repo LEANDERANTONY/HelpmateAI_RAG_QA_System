@@ -1,0 +1,20 @@
+[
+  {
+    "question": "What is the main focus of this paper?"
+  },
+  {
+    "question": "What are the most important findings or claims in this paper?"
+  },
+  {
+    "question": "What limitations, challenges, or future directions does this paper discuss?"
+  },
+  {
+    "question": "What does the document say in the Abstract section?"
+  },
+  {
+    "question": "What findings or outcomes are reported in EXPERIMENTAL RESULTS?"
+  },
+  {
+    "question": "What does the document say about EXPERIMENTAL STUDY OF SINGLE PASS DOUBLE FLOW?"
+  }
+]
