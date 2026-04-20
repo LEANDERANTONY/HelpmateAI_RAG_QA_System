@@ -4,7 +4,7 @@ import shutil
 from pathlib import Path
 
 from src.cache import AnswerCache
-from src.chunking import chunk_document
+from src.chunking import ChunkSemanticsService, chunk_document
 from src.config import Settings, get_settings
 from src.generation import AnswerGenerator, EvidenceSelector
 from src.ingest import ingest_document
@@ -12,7 +12,7 @@ from src.retrieval import ChromaIndexStore, HybridRetriever
 from src.sections import build_sections
 from src.sections.repair import StructureRepairService
 from src.schemas import AnswerResult, CacheStatus, DocumentRecord, IndexRecord, RetrievalResult
-from src.topology import DocumentTopologyService
+from src.topology import DocumentTopologyService, SynopsisSemanticsService
 
 
 class HelpmatePipeline:
@@ -24,7 +24,9 @@ class HelpmatePipeline:
         self.generator = AnswerGenerator(self.settings)
         self.answer_cache = AnswerCache(self.settings.cache_dir)
         self.topology_service = DocumentTopologyService()
+        self.synopsis_semantics_service = SynopsisSemanticsService(self.settings)
         self.structure_repair_service = StructureRepairService(self.settings)
+        self.chunk_semantics_service = ChunkSemanticsService(self.settings)
 
     def _persist_upload(self, source_path: str | Path) -> Path:
         source = Path(source_path)
@@ -66,10 +68,12 @@ class HelpmatePipeline:
         sections, repair_decision = self.structure_repair_service.repair_if_needed(document, sections)
         chunks = chunk_document(document, self.settings.chunk_size, self.settings.chunk_overlap)
         self._apply_section_metadata_to_chunks(chunks, sections)
+        chunks = self.chunk_semantics_service.annotate_chunks(document, chunks)
         for section in sections:
             section.metadata.setdefault("structure_confidence", repair_decision.confidence)
             section.metadata.setdefault("structure_repair_reasons", list(repair_decision.reasons))
         synopses, topology_edges = self.topology_service.build(sections)
+        synopses = self.synopsis_semantics_service.annotate_synopses(document, sections, synopses)
         return self.store.get_or_create_index(
             fingerprint=document.fingerprint,
             document_id=document.document_id,

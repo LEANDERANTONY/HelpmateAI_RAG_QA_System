@@ -147,3 +147,31 @@ def test_topology_service_marks_table_of_contents_as_low_value():
     service = DocumentTopologyService()
 
     assert service._is_low_value_text("TABLE OF CONTENTS\nChapter 1 ............ 12\nChapter 2 ............ 18")
+
+
+def test_topology_service_respects_low_value_section_flags_from_indexing():
+    service = DocumentTopologyService()
+    sections = [
+        SectionRecord(
+            section_id="ack",
+            document_id="doc1",
+            title="Acknowledgements",
+            summary="We thank the faculty and laboratory staff for their support.",
+            text="We thank the faculty and laboratory staff for their support.",
+            page_labels=["Page 3"],
+            section_path=["Acknowledgements"],
+            clause_ids=[],
+            metadata={
+                "section_kind": "general",
+                "source_file": "report.pdf",
+                "section_aliases": ["Acknowledgements"],
+                "front_matter_kind": "acknowledgements",
+                "front_matter_score": 0.92,
+                "low_value_section_flag": True,
+            },
+        )
+    ]
+
+    synopses, _ = service.build(sections)
+
+    assert synopses[0].metadata["topology_low_value"] is True

@@ -1,0 +1,149 @@
+{
+  "variant_order": [
+    "layer2_selective",
+    "layer3_gated_synopsis"
+  ],
+  "variants": {
+    "layer2_selective": {
+      "settings": {
+        "synopsis_semantics_enabled": false,
+        "synopsis_semantics_gate_mode": "targeted",
+        "planner_llm_enabled": false,
+        "router_llm_enabled": false,
+        "reranker_enabled": true,
+        "evidence_selector_enabled": true,
+        "index_schema_version": "ff-base",
+        "retrieval_version": "ff-base",
+        "generation_version": "v5-base"
+      },
+      "positive_per_dataset": {
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "supported_rate": 1.0,
+          "citation_page_hit_rate": 1.0,
+          "evidence_fragment_recall_mean": 0.7066666666666668
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "supported_rate": 1.0,
+          "citation_page_hit_rate": 1.0,
+          "evidence_fragment_recall_mean": 0.6166666666666667
+        },
+        "health_retrieval_eval_dataset.json": {
+          "dataset_size": 13,
+          "supported_rate": 0.7692307692307693,
+          "citation_page_hit_rate": 0.7692307692307693,
+          "evidence_fragment_recall_mean": 0.6666666666666666
+        },
+        "graduate_manual_questions": {
+          "dataset_size": 6,
+          "supported_rate": 1.0,
+          "citation_page_hit_rate": null,
+          "evidence_fragment_recall_mean": null
+        }
+      },
+      "negative_per_dataset": {
+        "reportgeneration_negative_eval_dataset.json": {
+          "dataset_size": 5,
+          "abstention_rate": 1.0,
+          "false_support_rate": 0.0
+        },
+        "reportgeneration2_negative_eval_dataset.json": {
+          "dataset_size": 5,
+          "abstention_rate": 1.0,
+          "false_support_rate": 0.0
+        },
+        "health_negative_eval_dataset.json": {
+          "dataset_size": 5,
+          "abstention_rate": 1.0,
+          "false_support_rate": 0.0
+        }
+      },
+      "positive_overall": {
+        "dataset_size": 39,
+        "supported_rate": 0.9230769230769231,
+        "citation_page_hit_rate": 0.9090909090909091,
+        "evidence_fragment_recall_mean": 0.6636363636363638
+      },
+      "negative_overall": {
+        "dataset_size": 15,
+        "abstention_rate": 1.0,
+        "false_support_rate": 0.0
+      }
+    },
+    "layer3_gated_synopsis": {
+      "settings": {
+        "synopsis_semantics_enabled": true,
+        "synopsis_semantics_gate_mode": "targeted",
+        "planner_llm_enabled": false,
+        "router_llm_enabled": false,
+        "reranker_enabled": true,
+        "evidence_selector_enabled": true,
+        "index_schema_version": "ff-gated",
+        "retrieval_version": "ff-gated",
+        "generation_version": "v5-gated"
+      },
+      "positive_per_dataset": {
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "supported_rate": 1.0,
+          "citation_page_hit_rate": 1.0,
+          "evidence_fragment_recall_mean": 0.7066666666666668
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "supported_rate": 1.0,
+          "citation_page_hit_rate": 0.9,
+          "evidence_fragment_recall_mean": 0.6416666666666667
+        },
+        "health_retrieval_eval_dataset.json": {
+          "dataset_size": 13,
+          "supported_rate": 0.7692307692307693,
+          "citation_page_hit_rate": 0.7692307692307693,
+          "evidence_fragment_recall_mean": 0.6666666666666666
+        },
+        "graduate_manual_questions": {
+          "dataset_size": 6,
+          "supported_rate": 1.0,
+          "citation_page_hit_rate": null,
+          "evidence_fragment_recall_mean": null
+        }
+      },
+      "negative_per_dataset": {
+        "reportgeneration_negative_eval_dataset.json": {
+          "dataset_size": 5,
+          "abstention_rate": 1.0,
+          "false_support_rate": 0.0
+        },
+        "reportgeneration2_negative_eval_dataset.json": {
+          "dataset_size": 5,
+          "abstention_rate": 1.0,
+          "false_support_rate": 0.0
+        },
+        "health_negative_eval_dataset.json": {
+          "dataset_size": 5,
+          "abstention_rate": 1.0,
+          "false_support_rate": 0.0
+        }
+      },
+      "positive_overall": {
+        "dataset_size": 39,
+        "supported_rate": 0.9230769230769231,
+        "citation_page_hit_rate": 0.8787878787878788,
+        "evidence_fragment_recall_mean": 0.6712121212121214
+      },
+      "negative_overall": {
+        "dataset_size": 15,
+        "abstention_rate": 1.0,
+        "false_support_rate": 0.0
+      }
+    }
+  },
+  "delta": {
+    "positive_supported_rate": 0.0,
+    "negative_abstention_rate": 0.0,
+    "negative_false_support_rate": 0.0,
+    "graduate_supported_rate": 0.0,
+    "reportgeneration2_supported_rate": 0.0
+  }
+}

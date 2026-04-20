@@ -1,0 +1,92 @@
+{
+  "variant_order": [
+    "layer2_selective",
+    "layer3_gated_synopsis"
+  ],
+  "dataset_names": [
+    "manual_questions_genai_modular1_20260419.json",
+    "manual_questions_genai_modular2_20260419.json",
+    "manual_questions_graduate_project_20260419.json",
+    "manual_questions_principal_sample_life_insurance_policy_20260419.json"
+  ],
+  "variants": {
+    "layer2_selective": {
+      "supported_rate": 1.0,
+      "faithfulness_mean": 0.9776785714285714,
+      "answer_relevancy_mean": 0.6571633344568831,
+      "context_precision_mean": 0.9016203703296682,
+      "per_dataset": {
+        "manual_questions_genai_modular1_20260419.json": {
+          "dataset_size": 6,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 0.9523809523809523,
+          "answer_relevancy_mean": 0.7438762715523056,
+          "context_precision_mean": 0.9861111110671297
+        },
+        "manual_questions_genai_modular2_20260419.json": {
+          "dataset_size": 6,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 1.0,
+          "answer_relevancy_mean": 0.5397432236924649,
+          "context_precision_mean": 0.9583333332993056
+        },
+        "manual_questions_graduate_project_20260419.json": {
+          "dataset_size": 6,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 0.9583333333333334,
+          "answer_relevancy_mean": 0.6042689959397941,
+          "context_precision_mean": 0.8333333332923611
+        },
+        "manual_questions_principal_sample_life_insurance_policy_20260419.json": {
+          "dataset_size": 6,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 1.0,
+          "answer_relevancy_mean": 0.7407648466429682,
+          "context_precision_mean": 0.8287037036598766
+        }
+      }
+    },
+    "layer3_gated_synopsis": {
+      "supported_rate": 1.0,
+      "faithfulness_mean": 0.9862351190476191,
+      "answer_relevancy_mean": 0.6792249378267595,
+      "context_precision_mean": 0.8958333332979745,
+      "per_dataset": {
+        "manual_questions_genai_modular1_20260419.json": {
+          "dataset_size": 6,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 0.9761904761904762,
+          "answer_relevancy_mean": 0.7361913703546275,
+          "context_precision_mean": 0.9861111110824075
+        },
+        "manual_questions_genai_modular2_20260419.json": {
+          "dataset_size": 6,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 0.9791666666666666,
+          "answer_relevancy_mean": 0.6267289712663071,
+          "context_precision_mean": 0.9444444444136574
+        },
+        "manual_questions_graduate_project_20260419.json": {
+          "dataset_size": 6,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 1.0,
+          "answer_relevancy_mean": 0.5873304443543125,
+          "context_precision_mean": 0.8333333332923611
+        },
+        "manual_questions_principal_sample_life_insurance_policy_20260419.json": {
+          "dataset_size": 6,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 0.9895833333333334,
+          "answer_relevancy_mean": 0.7666489653317913,
+          "context_precision_mean": 0.8194444444034722
+        }
+      }
+    }
+  },
+  "delta_layer3_vs_layer2": {
+    "supported_rate": 0.0,
+    "faithfulness_mean": 0.008556547619047672,
+    "answer_relevancy_mean": 0.022061603369876392,
+    "context_precision_mean": -0.005787037031693698
+  }
+}

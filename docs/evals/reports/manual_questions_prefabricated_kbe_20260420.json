@@ -1,0 +1,20 @@
+[
+  {
+    "question": "What core design and standardization problems with prefabricated cantilevered components is this paper trying to solve?"
+  },
+  {
+    "question": "How does the paper combine KBE, secondary split modularization, and Revit secondary development in its research methodology?"
+  },
+  {
+    "question": "What kinds of cantilevered structural components are discussed, and what design challenges do traditional 3D modeling methods create for them?"
+  },
+  {
+    "question": "What functions or workflow advantages does the modular design tool provide during modeling, reinforcement modification, or component management?"
+  },
+  {
+    "question": "What quantitative results does the case comparison report for the modular design tool versus traditional modeling, including efficiency improvement and component coverage?"
+  },
+  {
+    "question": "What limitations of the current system and future research directions does the paper identify?"
+  }
+]

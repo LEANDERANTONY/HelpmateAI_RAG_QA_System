@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import json
 import re
+from collections import Counter
 from dataclasses import dataclass
 
 from src.config import Settings
@@ -53,6 +54,7 @@ _DEFAULT_CONFIDENCE_PENALTIES = {
     "long_document_too_few_sections": 0.28,
     "coarse_for_length": 0.24,
     "duplicate_titles": 0.14,
+    "header_dominated_titles": 0.18,
     "noisy_titles": 0.22,
     "weak_canonical_headings": 0.18,
 }
@@ -63,6 +65,7 @@ class StructureRepairDecision:
     confidence: float
     should_repair: bool
     reasons: list[str]
+    reason_codes: list[str]
 
 
 class StructureRepairService:
@@ -82,6 +85,31 @@ class StructureRepairService:
         lowered = title.lower()
         return any(pattern in lowered for pattern in _NOISY_TITLE_PATTERNS)
 
+    @staticmethod
+    def _header_signature(title: str) -> str:
+        compact = _clean_line(title).lower()
+        compact = compact.replace("…", " ")
+        compact = re.sub(r"\bpage\s+\d+\b", " ", compact)
+        compact = re.sub(r"\b\d+\b", " ", compact)
+        compact = re.sub(r"\s+", " ", compact).strip(" .,:;|-")
+        return compact
+
+    @classmethod
+    def _is_header_dominated_title(cls, title: str) -> bool:
+        lowered = _clean_line(title).lower()
+        if cls._is_noisy_title(title):
+            return True
+        if lowered.count(",") >= 3:
+            return True
+        if re.match(r"^\d+\s+[a-z]", lowered):
+            return True
+        if re.search(r"\bgeneration\s+\d+\b", lowered):
+            return True
+        signature = cls._header_signature(title)
+        if len(signature) >= 28 and any(char.isdigit() for char in lowered):
+            return True
+        return False
+
     @classmethod
     def assess(
         cls,
@@ -92,8 +120,14 @@ class StructureRepairService:
         penalty_overrides: dict[str, float] | None = None,
     ) -> StructureRepairDecision:
         reasons: list[str] = []
+        reason_codes: list[str] = []
         if not sections:
-            return StructureRepairDecision(confidence=0.0, should_repair=False, reasons=["No sections were available to assess."])
+            return StructureRepairDecision(
+                confidence=0.0,
+                should_repair=False,
+                reasons=["No sections were available to assess."],
+                reason_codes=["no_sections"],
+            )
 
         confidence = 0.92
         penalties = {**_DEFAULT_CONFIDENCE_PENALTIES, **(penalty_overrides or {})}
@@ -103,29 +137,61 @@ class StructureRepairService:
         unique_titles = {section.title.strip().lower() for section in sections if section.title.strip()}
         duplicate_ratio = 1 - (len(unique_titles) / max(section_count, 1))
         noisy_ratio = sum(1 for section in sections if cls._is_noisy_title(section.title)) / max(section_count, 1)
+        header_like_ratio = sum(1 for section in sections if cls._is_header_dominated_title(section.title)) / max(section_count, 1)
+        signatures = Counter(
+            signature
+            for section in sections
+            for signature in [cls._header_signature(section.title)]
+            if signature
+        )
+        repeated_header_ratio = max(signatures.values(), default=0) / max(section_count, 1)
         canonical_count = sum(1 for section in sections if _extract_canonical_heading(section.text) or section.title.lower() in _SECTION_KIND_MAP)
 
         if page_count >= 12 and section_count <= 4:
             confidence -= penalties["long_document_too_few_sections"]
             reasons.append("Long document collapsed into too few sections.")
+            reason_codes.append("long_document_too_few_sections")
         elif page_count >= 6 and section_count <= 2:
             confidence -= penalties["coarse_for_length"]
             reasons.append("Document structure is too coarse for its length.")
+            reason_codes.append("coarse_for_length")
         if duplicate_ratio >= 0.3:
             confidence -= penalties["duplicate_titles"]
             reasons.append("Section titles are heavily duplicated.")
+            reason_codes.append("duplicate_titles")
+        if (
+            document.metadata.get("document_style") in {"research_paper", "thesis_document"}
+            and header_like_ratio >= 0.25
+            and repeated_header_ratio >= 0.15
+        ):
+            confidence -= penalties["header_dominated_titles"]
+            reasons.append("Section titles look like running headers instead of semantic headings.")
+            reason_codes.append("header_dominated_titles")
         if noisy_ratio >= 0.25:
             confidence -= penalties["noisy_titles"]
             reasons.append("Repeated publisher/header noise appears in section titles.")
+            reason_codes.append("noisy_titles")
         if document.metadata.get("document_style") in {"research_paper", "thesis_document"} and canonical_count <= 2:
             confidence -= penalties["weak_canonical_headings"]
             reasons.append("Research-style document has weak canonical heading coverage.")
+            reason_codes.append("weak_canonical_headings")
 
         confidence = max(0.0, min(1.0, confidence))
         should_repair = confidence < threshold and page_count >= 6
         if not reasons:
             reasons.append("Deterministic structure extraction looked healthy.")
-        return StructureRepairDecision(confidence=confidence, should_repair=should_repair, reasons=reasons)
+            reason_codes.append("healthy_structure")
+        return StructureRepairDecision(
+            confidence=confidence,
+            should_repair=should_repair,
+            reasons=reasons,
+            reason_codes=reason_codes,
+        )
+
+    def _should_apply_llm_repair(self, decision: StructureRepairDecision) -> bool:
+        if not self.settings.structure_repair_require_header_dominated:
+            return True
+        return "header_dominated_titles" in decision.reason_codes
 
     @staticmethod
     def _page_brief(page: dict[str, object]) -> dict[str, str]:
@@ -280,6 +346,7 @@ class StructureRepairService:
             not self.settings.structure_repair_enabled
             or decision.confidence >= self.settings.structure_repair_confidence_threshold
             or self.client is None
+            or not self._should_apply_llm_repair(decision)
         ):
             return sections, decision
 
@@ -300,4 +367,5 @@ class StructureRepairService:
             confidence=decision.confidence,
             should_repair=True,
             reasons=updated_reasons,
+            reason_codes=list(decision.reason_codes),
         )

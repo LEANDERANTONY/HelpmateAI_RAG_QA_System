@@ -159,11 +159,14 @@ _LATE_REGION_QUERY_TERMS = {
 _LOW_VALUE_PATTERNS = (
     "author manuscript",
     "available in pmc",
+    "acknowledgements",
+    "certificate",
     "copyright holder",
     "extended data",
-    "table of contents",
     "list of figures",
     "list of tables",
+    "table of contents",
+    "table of contents",
     "nih-pa author manuscript",
     "pmcid",
     "pmid",
@@ -316,9 +319,8 @@ class DocumentTopologyService:
                         **section.metadata,
                         "section_path": list(section.section_path),
                         "section_heading": section.title,
-                        "topology_low_value": self._is_low_value_text(
-                            " ".join([section.title, section.summary, section.text[:400]])
-                        ),
+                        "topology_low_value": bool(section.metadata.get("low_value_section_flag"))
+                        or self._is_low_value_text(" ".join([section.title, section.summary, section.text[:400]])),
                     },
                 )
             )
@@ -438,6 +440,10 @@ class DocumentTopologyService:
                 score += 0.22
             if synopsis.metadata.get("topology_low_value"):
                 score -= 0.45
+            front_matter_kind = str(synopsis.metadata.get("front_matter_kind", "")).lower()
+            front_matter_score = float(synopsis.metadata.get("front_matter_score", 0.0) or 0.0)
+            if front_matter_kind and front_matter_kind != "body":
+                score -= 0.25 * front_matter_score
             if explicit_terms:
                 explicit_hit = any(
                     term in synopsis.title.lower()

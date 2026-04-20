@@ -81,6 +81,15 @@ Candidate metrics:
 Why it matters:
 - if the structural representation is weak, all later retrieval and answer metrics are partly misleading
 
+Current strategic note:
+
+- the first indexing-redesign sprint showed that deterministic indexing should stay relatively light
+- the more durable path is:
+  - deterministic indexing as a signal/metadata backbone
+  - selective semantic indexing as the main interpretation layer
+  - benchmark-backed gating after that
+- in other words, future indexing work should prioritize semantic section/chunk/synopsis adjudication over adding more brittle rule-based retrieval penalties
+
 ### 2. Planner / Routing Eval
 
 Purpose:

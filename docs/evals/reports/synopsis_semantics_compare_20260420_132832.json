@@ -1,0 +1,864 @@
+{
+  "variant_order": [
+    "layer2_selective",
+    "layer2_selective_synopsis_semantics"
+  ],
+  "variants": {
+    "layer2_selective": {
+      "settings": {
+        "synopsis_semantics_enabled": false,
+        "synopsis_semantics_model": "gpt-5.4-nano",
+        "synopsis_semantics_max_sections": 6,
+        "index_schema_version": "v14-layer2_selective",
+        "retrieval_version": "v14-layer2_selective"
+      },
+      "documents": {
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration.pdf",
+          "document_id": "b950f9666b1999a4",
+          "fingerprint": "b950f9666b1999a4f3cbf1f557a55034bfca8af1a887027269117ce2e5449680",
+          "page_count": 28,
+          "base_section_count": 4,
+          "final_section_count": 4,
+          "confidence": 0.42000000000000004,
+          "should_repair": true,
+          "repair_applied": false,
+          "reasons": [
+            "Long document collapsed into too few sections.",
+            "Repeated publisher/header noise appears in section titles."
+          ]
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration2.pdf",
+          "document_id": "c28685174b6bce75",
+          "fingerprint": "c28685174b6bce75cdc76b5fc3ed77364c925d76e5d64b86430deaac24fc94ca",
+          "page_count": 15,
+          "base_section_count": 16,
+          "final_section_count": 16,
+          "confidence": 0.56,
+          "should_repair": true,
+          "repair_applied": true,
+          "reasons": [
+            "Section titles look like running headers instead of semantic headings.",
+            "Research-style document has weak canonical heading coverage."
+          ]
+        },
+        "health_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+          "document_id": "1a994e256c109513",
+          "fingerprint": "1a994e256c109513b5c495454dd0f43430a6e03b53c7187d2871a77971c07532",
+          "page_count": 122,
+          "base_section_count": 3,
+          "final_section_count": 3,
+          "confidence": 0.64,
+          "should_repair": false,
+          "repair_applied": false,
+          "reasons": [
+            "Long document collapsed into too few sections."
+          ]
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+          "document_id": "c459aa7631f3848f",
+          "fingerprint": "c459aa7631f3848f0a70bf23a5a191b3586e540e2e57d7be4750dbdd140e1691",
+          "page_count": 121,
+          "base_section_count": 101,
+          "final_section_count": 101,
+          "confidence": 0.92,
+          "should_repair": false,
+          "repair_applied": false,
+          "reasons": [
+            "Deterministic structure extraction looked healthy."
+          ]
+        }
+      },
+      "per_dataset": {
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "repair_confidence": 0.42000000000000004,
+          "repair_applied": false,
+          "top_k_page_hit_rate": 1.0,
+          "mean_reciprocal_rank": 0.85,
+          "section_hit_rate": 1.0,
+          "region_hit_rate": 0.5,
+          "plan_accuracy": 0.9,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.75,
+          "objective_score": 0.8599999999999999,
+          "misses": []
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "repair_confidence": 0.56,
+          "repair_applied": true,
+          "top_k_page_hit_rate": 1.0,
+          "mean_reciprocal_rank": 0.8166666666666667,
+          "section_hit_rate": 1.0,
+          "region_hit_rate": 0.3,
+          "plan_accuracy": 0.6,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.8333333333333334,
+          "objective_score": 0.7833333333333334,
+          "misses": []
+        },
+        "health_retrieval_eval_dataset.json": {
+          "dataset_size": 13,
+          "repair_confidence": 0.64,
+          "repair_applied": false,
+          "top_k_page_hit_rate": 0.7692307692307693,
+          "mean_reciprocal_rank": 0.6794871794871795,
+          "section_hit_rate": 0.7692307692307693,
+          "region_hit_rate": 0.0,
+          "plan_accuracy": 0.6923076923076923,
+          "global_fallback_recovery_rate": 0.0,
+          "multi_region_recall": 1.0,
+          "objective_score": 0.5897435897435898,
+          "misses": [
+            {
+              "question": "How many days of pre-hospitalization and post-hospitalization expenses are covered?",
+              "expected_pages": [
+                "Page 22",
+                "Page 23"
+              ],
+              "found_pages": [
+                "Page 10",
+                "Page 29",
+                "Page 9",
+                "Page 98"
+              ],
+              "strategy_notes": [
+                "Planner intent: numeric.",
+                "Planner evidence spread: sectional.",
+                "Planner selected synopsis_first with soft_local constraints.",
+                "Planner source: deterministic at confidence 0.74.",
+                "Preferred content types: results, general.",
+                "Synopsis-first routing prioritized 3 sections before chunk retrieval."
+              ],
+              "retrieval_plan": {
+                "intent_type": "numeric",
+                "evidence_spread": "sectional",
+                "constraint_mode": "soft_local",
+                "preferred_route": "synopsis_first",
+                "target_region_ids": [
+                  "Ultimate Care -CHIHLIP25044V012425",
+                  "Ultimate Care -CHIHLIP25044V012425|Ultimate Care -CHIHLIP25044V012425 Ver: Jan/25/AS"
+                ],
+                "target_region_kinds": [
+                  "evidence",
+                  "discussion",
+                  "general"
+                ],
+                "hard_filters": {},
+                "use_global_fallback": true,
+                "planner_confidence": 0.74,
+                "planner_source": "deterministic",
+                "global_fallback_used": false
+              }
+            },
+            {
+              "question": "What is the named ailment waiting period and where is the disease list described?",
+              "expected_pages": [
+                "Page 70",
+                "Page 71"
+              ],
+              "found_pages": [
+                "Page 10",
+                "Page 40",
+                "Page 41",
+                "Page 38"
+              ],
+              "strategy_notes": [
+                "Planner intent: lookup.",
+                "Planner evidence spread: atomic.",
+                "Planner selected chunk_first with none constraints.",
+                "Planner source: deterministic at confidence 0.86.",
+                "Preferred content types: definition, general.",
+                "Chunk-first retrieval path used for exact grounding."
+              ],
+              "retrieval_plan": {
+                "intent_type": "lookup",
+                "evidence_spread": "atomic",
+                "constraint_mode": "none",
+                "preferred_route": "chunk_first",
+                "target_region_ids": [],
+                "target_region_kinds": [
+                  "definitions",
+                  "general"
+                ],
+                "hard_filters": {},
+                "use_global_fallback": false,
+                "planner_confidence": 0.86,
+                "planner_source": "deterministic",
+                "global_fallback_used": false
+              }
+            },
+            {
+              "question": "What is the 30-day waiting period in this health policy?",
+              "expected_pages": [
+                "Page 71",
+                "Page 72"
+              ],
+              "found_pages": [
+                "Page 122",
+                "Page 122"
+              ],
+              "strategy_notes": [
+                "Planner intent: lookup.",
+                "Planner evidence spread: atomic.",
+                "Planner selected chunk_first with none constraints.",
+                "Planner source: deterministic at confidence 0.86.",
+                "Preferred content types: definition, general.",
+                "Chunk-first retrieval path used for exact grounding."
+              ],
+              "retrieval_plan": {
+                "intent_type": "lookup",
+                "evidence_spread": "atomic",
+                "constraint_mode": "none",
+                "preferred_route": "chunk_first",
+                "target_region_ids": [
+                  "Ultimate Care -CHIHLIP25044V012425|Ultimate Care -CHIHLIP25044V012425 Ver: Jan/25/AS"
+                ],
+                "target_region_kinds": [
+                  "definitions",
+                  "general"
+                ],
+                "hard_filters": {},
+                "use_global_fallback": false,
+                "planner_confidence": 0.86,
+                "planner_source": "deterministic",
+                "global_fallback_used": false
+              }
+            }
+          ]
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "repair_confidence": 0.92,
+          "repair_applied": false,
+          "top_k_page_hit_rate": 0.8333333333333334,
+          "mean_reciprocal_rank": 0.5555555555555555,
+          "section_hit_rate": 0.8333333333333334,
+          "region_hit_rate": 0.6666666666666666,
+          "plan_accuracy": 0.25,
+          "global_fallback_recovery_rate": 0.8181818181818182,
+          "multi_region_recall": 1.0,
+          "objective_score": 0.6861111111111111,
+          "misses": [
+            {
+              "question": "What seven urinary biomarker features were used for the biomarker model?",
+              "expected_pages": [
+                "Page 45",
+                "Page 61",
+                "Page 65"
+              ],
+              "found_pages": [
+                "Page 80",
+                "Page 30",
+                "Page 46",
+                "Page 64"
+              ],
+              "strategy_notes": [
+                "Planner intent: procedure.",
+                "Planner evidence spread: sectional.",
+                "Planner selected hybrid_both with soft_local constraints.",
+                "Planner source: deterministic at confidence 0.74.",
+                "Preferred content types: methodology, general, results.",
+                "Synopsis-first routing prioritized 11 sections before chunk retrieval."
+              ],
+              "retrieval_plan": {
+                "intent_type": "procedure",
+                "evidence_spread": "sectional",
+                "constraint_mode": "soft_local",
+                "preferred_route": "hybrid_both",
+                "target_region_ids": [
+                  "Biomarker Classification Model Results",
+                  "Datasets|REG1B, TFF1, and REG1A",
+                  "Dataset Bias Detection and Mitigation",
+                  "Dataset Bias Detection and Mitigation|CT results in Chapter 5",
+                  "Dataset Bias Detection and Mitigation|Biomarker Classification Model",
+                  "Dataset Bias Detection and Mitigation|Decision-Level Fusion",
+                  "Data Preparation and Preprocessing|Property Value",
+                  "Comparison with Existing Literature|Study Modality Method AUC Key Notes",
+                  "Dataset Bias Detection and Mitigation|Fusion Model Evaluation",
+                  "Data Preparation and Preprocessing|Biomarker Classification Model (MLP)"
+                ],
+                "target_region_kinds": [
+                  "procedure",
+                  "evidence",
+                  "general"
+                ],
+                "hard_filters": {},
+                "use_global_fallback": true,
+                "planner_confidence": 0.74,
+                "planner_source": "deterministic",
+                "global_fallback_used": true
+              }
+            },
+            {
+              "question": "What kinds of future work or next steps does the thesis suggest?",
+              "expected_pages": [
+                "Page 10"
+              ],
+              "found_pages": [
+                "Page 96",
+                "Page 9",
+                "Page 88",
+                "Page 98"
+              ],
+              "strategy_notes": [
+                "Planner intent: summary.",
+                "Planner evidence spread: global.",
+                "Planner selected synopsis_first with soft_multi_region constraints.",
+                "Planner source: deterministic at confidence 0.78.",
+                "Preferred content types: general, results.",
+                "Global-summary routing assembled 4 anchor sections."
+              ],
+              "retrieval_plan": {
+                "intent_type": "summary",
+                "evidence_spread": "global",
+                "constraint_mode": "soft_multi_region",
+                "preferred_route": "synopsis_first",
+                "target_region_ids": [
+                  "Recommendations for Future Work",
+                  "Recommendations for Future Work|Extending Clinical Scope",
+                  "Recommendations for Future Work|Enabling Genuine Multimodal Evaluation",
+                  "Limitations",
+                  "Summary|CHAPTER 6",
+                  "Chapter Summary|CHAPTER 2",
+                  "Summary|Objective 3: Multimodal Fusion Investigation",
+                  "Summary|Objective 2: Unimodal Model Development and Evaluation",
+                  "Summary|CHAPTER 5",
+                  "Summary|Library Version Role"
+                ],
+                "target_region_kinds": [
+                  "overview",
+                  "discussion",
+                  "evidence"
+                ],
+                "hard_filters": {},
+                "use_global_fallback": true,
+                "planner_confidence": 0.78,
+                "planner_source": "deterministic",
+                "global_fallback_used": true
+              }
+            }
+          ]
+        }
+      },
+      "overall": {
+        "dataset_count": 4,
+        "top_k_page_hit_rate": 0.9006410256410257,
+        "mean_reciprocal_rank": 0.7254273504273503,
+        "section_hit_rate": 0.9006410256410257,
+        "region_hit_rate": 0.3666666666666667,
+        "plan_accuracy": 0.6105769230769231,
+        "global_fallback_recovery_rate": 0.7045454545454546,
+        "multi_region_recall": 0.8958333333333334,
+        "objective_score": 0.7297970085470085
+      },
+      "weak_family": {
+        "dataset_count": 2,
+        "top_k_page_hit_rate": 1.0,
+        "mean_reciprocal_rank": 0.8333333333333333,
+        "section_hit_rate": 1.0,
+        "region_hit_rate": 0.4,
+        "plan_accuracy": 0.75,
+        "global_fallback_recovery_rate": 1.0,
+        "multi_region_recall": 0.7916666666666667,
+        "objective_score": 0.8216666666666667
+      },
+      "guardrails": {
+        "dataset_count": 2,
+        "top_k_page_hit_rate": 0.8012820512820513,
+        "mean_reciprocal_rank": 0.6175213675213675,
+        "section_hit_rate": 0.8012820512820513,
+        "region_hit_rate": 0.3333333333333333,
+        "plan_accuracy": 0.47115384615384615,
+        "global_fallback_recovery_rate": 0.4090909090909091,
+        "multi_region_recall": 1.0,
+        "objective_score": 0.6379273504273504
+      }
+    },
+    "layer2_selective_synopsis_semantics": {
+      "settings": {
+        "synopsis_semantics_enabled": true,
+        "synopsis_semantics_model": "gpt-5.4-nano",
+        "synopsis_semantics_max_sections": 6,
+        "index_schema_version": "v14-layer2_selective_synopsis_semantics",
+        "retrieval_version": "v14-layer2_selective_synopsis_semantics"
+      },
+      "documents": {
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration.pdf",
+          "document_id": "b950f9666b1999a4",
+          "fingerprint": "b950f9666b1999a4f3cbf1f557a55034bfca8af1a887027269117ce2e5449680",
+          "page_count": 28,
+          "base_section_count": 4,
+          "final_section_count": 4,
+          "confidence": 0.42000000000000004,
+          "should_repair": true,
+          "repair_applied": false,
+          "reasons": [
+            "Long document collapsed into too few sections.",
+            "Repeated publisher/header noise appears in section titles."
+          ]
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration2.pdf",
+          "document_id": "c28685174b6bce75",
+          "fingerprint": "c28685174b6bce75cdc76b5fc3ed77364c925d76e5d64b86430deaac24fc94ca",
+          "page_count": 15,
+          "base_section_count": 16,
+          "final_section_count": 15,
+          "confidence": 0.56,
+          "should_repair": true,
+          "repair_applied": true,
+          "reasons": [
+            "Section titles look like running headers instead of semantic headings.",
+            "Research-style document has weak canonical heading coverage."
+          ]
+        },
+        "health_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+          "document_id": "1a994e256c109513",
+          "fingerprint": "1a994e256c109513b5c495454dd0f43430a6e03b53c7187d2871a77971c07532",
+          "page_count": 122,
+          "base_section_count": 3,
+          "final_section_count": 3,
+          "confidence": 0.64,
+          "should_repair": false,
+          "repair_applied": false,
+          "reasons": [
+            "Long document collapsed into too few sections."
+          ]
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+          "document_id": "c459aa7631f3848f",
+          "fingerprint": "c459aa7631f3848f0a70bf23a5a191b3586e540e2e57d7be4750dbdd140e1691",
+          "page_count": 121,
+          "base_section_count": 101,
+          "final_section_count": 101,
+          "confidence": 0.92,
+          "should_repair": false,
+          "repair_applied": false,
+          "reasons": [
+            "Deterministic structure extraction looked healthy."
+          ]
+        }
+      },
+      "per_dataset": {
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "repair_confidence": 0.42000000000000004,
+          "repair_applied": false,
+          "top_k_page_hit_rate": 1.0,
+          "mean_reciprocal_rank": 0.85,
+          "section_hit_rate": 1.0,
+          "region_hit_rate": 0.5,
+          "plan_accuracy": 0.9,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.75,
+          "objective_score": 0.8599999999999999,
+          "misses": []
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "repair_confidence": 0.56,
+          "repair_applied": true,
+          "top_k_page_hit_rate": 1.0,
+          "mean_reciprocal_rank": 0.8083333333333332,
+          "section_hit_rate": 1.0,
+          "region_hit_rate": 0.5,
+          "plan_accuracy": 0.7,
+          "global_fallback_recovery_rate": 1.0,
+          "multi_region_recall": 0.6666666666666666,
+          "objective_score": 0.8316666666666666,
+          "misses": []
+        },
+        "health_retrieval_eval_dataset.json": {
+          "dataset_size": 13,
+          "repair_confidence": 0.64,
+          "repair_applied": false,
+          "top_k_page_hit_rate": 0.5384615384615384,
+          "mean_reciprocal_rank": 0.4487179487179487,
+          "section_hit_rate": 0.5384615384615384,
+          "region_hit_rate": 0.0,
+          "plan_accuracy": 0.46153846153846156,
+          "global_fallback_recovery_rate": 0.0,
+          "multi_region_recall": 1.0,
+          "objective_score": 0.40512820512820513,
+          "misses": [
+            {
+              "question": "What is the cashless facility under this policy?",
+              "expected_pages": [
+                "Page 4"
+              ],
+              "found_pages": [],
+              "strategy_notes": [
+                "Planner intent: lookup.",
+                "Planner evidence spread: atomic.",
+                "Planner selected chunk_first with none constraints.",
+                "Planner source: deterministic at confidence 0.86.",
+                "Preferred content types: definition, general.",
+                "Chunk-first retrieval path used for exact grounding."
+              ],
+              "retrieval_plan": {
+                "intent_type": "lookup",
+                "evidence_spread": "atomic",
+                "constraint_mode": "none",
+                "preferred_route": "chunk_first",
+                "target_region_ids": [
+                  "Ultimate Care -CHIHLIP25044V012425",
+                  "Ultimate Care -CHIHLIP25044V012425|Ultimate Care -CHIHLIP25044V012425 Ver: Jan/25/AS"
+                ],
+                "target_region_kinds": [
+                  "definitions",
+                  "general"
+                ],
+                "hard_filters": {},
+                "use_global_fallback": false,
+                "planner_confidence": 0.86,
+                "planner_source": "deterministic",
+                "global_fallback_used": false
+              }
+            },
+            {
+              "question": "What does renewal mean in this policy wording?",
+              "expected_pages": [
+                "Page 10"
+              ],
+              "found_pages": [],
+              "strategy_notes": [
+                "Planner intent: lookup.",
+                "Planner evidence spread: atomic.",
+                "Planner selected chunk_first with none constraints.",
+                "Planner source: deterministic at confidence 0.86.",
+                "Preferred content types: definition, general.",
+                "Chunk-first retrieval path used for exact grounding."
+              ],
+              "retrieval_plan": {
+                "intent_type": "lookup",
+                "evidence_spread": "atomic",
+                "constraint_mode": "none",
+                "preferred_route": "chunk_first",
+                "target_region_ids": [
+                  "Ultimate Care -CHIHLIP25044V012425"
+                ],
+                "target_region_kinds": [
+                  "definitions",
+                  "general"
+                ],
+                "hard_filters": {},
+                "use_global_fallback": false,
+                "planner_confidence": 0.86,
+                "planner_source": "deterministic",
+                "global_fallback_used": false
+              }
+            },
+            {
+              "question": "How many days of pre-hospitalization and post-hospitalization expenses are covered?",
+              "expected_pages": [
+                "Page 22",
+                "Page 23"
+              ],
+              "found_pages": [
+                "Page 10",
+                "Page 29",
+                "Page 9",
+                "Page 98"
+              ],
+              "strategy_notes": [
+                "Planner intent: numeric.",
+                "Planner evidence spread: sectional.",
+                "Planner selected synopsis_first with soft_local constraints.",
+                "Planner source: deterministic at confidence 0.74.",
+                "Preferred content types: results, general.",
+                "Synopsis-first routing prioritized 3 sections before chunk retrieval."
+              ],
+              "retrieval_plan": {
+                "intent_type": "numeric",
+                "evidence_spread": "sectional",
+                "constraint_mode": "soft_local",
+                "preferred_route": "synopsis_first",
+                "target_region_ids": [
+                  "Ultimate Care -CHIHLIP25044V012425",
+                  "Ultimate Care -CHIHLIP25044V012425|Ultimate Care -CHIHLIP25044V012425 Ver: Jan/25/AS"
+                ],
+                "target_region_kinds": [
+                  "evidence",
+                  "discussion",
+                  "general"
+                ],
+                "hard_filters": {},
+                "use_global_fallback": true,
+                "planner_confidence": 0.74,
+                "planner_source": "deterministic",
+                "global_fallback_used": false
+              }
+            },
+            {
+              "question": "What is the named ailment waiting period and where is the disease list described?",
+              "expected_pages": [
+                "Page 70",
+                "Page 71"
+              ],
+              "found_pages": [],
+              "strategy_notes": [
+                "Planner intent: lookup.",
+                "Planner evidence spread: atomic.",
+                "Planner selected chunk_first with none constraints.",
+                "Planner source: deterministic at confidence 0.86.",
+                "Preferred content types: definition, general.",
+                "Chunk-first retrieval path used for exact grounding."
+              ],
+              "retrieval_plan": {
+                "intent_type": "lookup",
+                "evidence_spread": "atomic",
+                "constraint_mode": "none",
+                "preferred_route": "chunk_first",
+                "target_region_ids": [
+                  "Ultimate Care -CHIHLIP25044V012425",
+                  "Ultimate Care -CHIHLIP25044V012425|Ultimate Care -CHIHLIP25044V012425 Ver: Jan/25/AS"
+                ],
+                "target_region_kinds": [
+                  "definitions",
+                  "general"
+                ],
+                "hard_filters": {},
+                "use_global_fallback": false,
+                "planner_confidence": 0.86,
+                "planner_source": "deterministic",
+                "global_fallback_used": false
+              }
+            },
+            {
+              "question": "What is the 30-day waiting period in this health policy?",
+              "expected_pages": [
+                "Page 71",
+                "Page 72"
+              ],
+              "found_pages": [
+                "Page 122",
+                "Page 122"
+              ],
+              "strategy_notes": [
+                "Planner intent: lookup.",
+                "Planner evidence spread: atomic.",
+                "Planner selected chunk_first with none constraints.",
+                "Planner source: deterministic at confidence 0.86.",
+                "Preferred content types: definition, general.",
+                "Chunk-first retrieval path used for exact grounding."
+              ],
+              "retrieval_plan": {
+                "intent_type": "lookup",
+                "evidence_spread": "atomic",
+                "constraint_mode": "none",
+                "preferred_route": "chunk_first",
+                "target_region_ids": [
+                  "Ultimate Care -CHIHLIP25044V012425",
+                  "Ultimate Care -CHIHLIP25044V012425|Ultimate Care -CHIHLIP25044V012425 Ver: Jan/25/AS"
+                ],
+                "target_region_kinds": [
+                  "definitions",
+                  "general"
+                ],
+                "hard_filters": {},
+                "use_global_fallback": false,
+                "planner_confidence": 0.86,
+                "planner_source": "deterministic",
+                "global_fallback_used": false
+              }
+            },
+            {
+              "question": "What happens if an installment premium is not received within the grace period?",
+              "expected_pages": [
+                "Page 85"
+              ],
+              "found_pages": [],
+              "strategy_notes": [
+                "Planner intent: lookup.",
+                "Planner evidence spread: atomic.",
+                "Planner selected chunk_first with none constraints.",
+                "Planner source: deterministic at confidence 0.86.",
+                "Preferred content types: general, definition.",
+                "Chunk-first retrieval path used for exact grounding."
+              ],
+              "retrieval_plan": {
+                "intent_type": "lookup",
+                "evidence_spread": "atomic",
+                "constraint_mode": "none",
+                "preferred_route": "chunk_first",
+                "target_region_ids": [
+                  "Ultimate Care -CHIHLIP25044V012425",
+                  "Ultimate Care -CHIHLIP25044V012425|Ultimate Care -CHIHLIP25044V012425 Ver: Jan/25/AS"
+                ],
+                "target_region_kinds": [
+                  "general",
+                  "rules",
+                  "definitions"
+                ],
+                "hard_filters": {},
+                "use_global_fallback": false,
+                "planner_confidence": 0.86,
+                "planner_source": "deterministic",
+                "global_fallback_used": false
+              }
+            }
+          ]
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "dataset_size": 12,
+          "repair_confidence": 0.92,
+          "repair_applied": false,
+          "top_k_page_hit_rate": 0.8333333333333334,
+          "mean_reciprocal_rank": 0.5972222222222222,
+          "section_hit_rate": 0.8333333333333334,
+          "region_hit_rate": 0.6666666666666666,
+          "plan_accuracy": 0.25,
+          "global_fallback_recovery_rate": 0.8181818181818182,
+          "multi_region_recall": 1.0,
+          "objective_score": 0.6944444444444445,
+          "misses": [
+            {
+              "question": "What seven urinary biomarker features were used for the biomarker model?",
+              "expected_pages": [
+                "Page 45",
+                "Page 61",
+                "Page 65"
+              ],
+              "found_pages": [
+                "Page 80",
+                "Page 30",
+                "Page 46",
+                "Page 64"
+              ],
+              "strategy_notes": [
+                "Planner intent: procedure.",
+                "Planner evidence spread: sectional.",
+                "Planner selected hybrid_both with soft_local constraints.",
+                "Planner source: deterministic at confidence 0.74.",
+                "Preferred content types: methodology, general, results.",
+                "Synopsis-first routing prioritized 11 sections before chunk retrieval."
+              ],
+              "retrieval_plan": {
+                "intent_type": "procedure",
+                "evidence_spread": "sectional",
+                "constraint_mode": "soft_local",
+                "preferred_route": "hybrid_both",
+                "target_region_ids": [
+                  "Biomarker Classification Model Results",
+                  "Datasets|REG1B, TFF1, and REG1A",
+                  "Dataset Bias Detection and Mitigation",
+                  "Dataset Bias Detection and Mitigation|CT results in Chapter 5",
+                  "Dataset Bias Detection and Mitigation|Biomarker Classification Model",
+                  "Dataset Bias Detection and Mitigation|Decision-Level Fusion",
+                  "Data Preparation and Preprocessing|Property Value",
+                  "Comparison with Existing Literature|Study Modality Method AUC Key Notes",
+                  "Dataset Bias Detection and Mitigation|Fusion Model Evaluation",
+                  "Data Preparation and Preprocessing|Biomarker Classification Model (MLP)"
+                ],
+                "target_region_kinds": [
+                  "procedure",
+                  "evidence",
+                  "general"
+                ],
+                "hard_filters": {},
+                "use_global_fallback": true,
+                "planner_confidence": 0.74,
+                "planner_source": "deterministic",
+                "global_fallback_used": true
+              }
+            },
+            {
+              "question": "What kinds of future work or next steps does the thesis suggest?",
+              "expected_pages": [
+                "Page 10"
+              ],
+              "found_pages": [
+                "Page 96",
+                "Page 9",
+                "Page 88",
+                "Page 98"
+              ],
+              "strategy_notes": [
+                "Planner intent: summary.",
+                "Planner evidence spread: global.",
+                "Planner selected synopsis_first with soft_multi_region constraints.",
+                "Planner source: deterministic at confidence 0.78.",
+                "Preferred content types: general, results.",
+                "Global-summary routing assembled 4 anchor sections."
+              ],
+              "retrieval_plan": {
+                "intent_type": "summary",
+                "evidence_spread": "global",
+                "constraint_mode": "soft_multi_region",
+                "preferred_route": "synopsis_first",
+                "target_region_ids": [
+                  "Recommendations for Future Work",
+                  "Recommendations for Future Work|Extending Clinical Scope",
+                  "Recommendations for Future Work|Enabling Genuine Multimodal Evaluation",
+                  "Limitations",
+                  "Summary|CHAPTER 6",
+                  "Chapter Summary|CHAPTER 2",
+                  "Chapter Summary",
+                  "Summary|Objective 3: Multimodal Fusion Investigation",
+                  "Summary|Objective 2: Unimodal Model Development and Evaluation",
+                  "Summary|CHAPTER 5"
+                ],
+                "target_region_kinds": [
+                  "overview",
+                  "discussion",
+                  "evidence"
+                ],
+                "hard_filters": {},
+                "use_global_fallback": true,
+                "planner_confidence": 0.78,
+                "planner_source": "deterministic",
+                "global_fallback_used": true
+              }
+            }
+          ]
+        }
+      },
+      "overall": {
+        "dataset_count": 4,
+        "top_k_page_hit_rate": 0.842948717948718,
+        "mean_reciprocal_rank": 0.6760683760683761,
+        "section_hit_rate": 0.842948717948718,
+        "region_hit_rate": 0.41666666666666663,
+        "plan_accuracy": 0.5778846153846154,
+        "global_fallback_recovery_rate": 0.7045454545454546,
+        "multi_region_recall": 0.8541666666666666,
+        "objective_score": 0.697809829059829
+      },
+      "weak_family": {
+        "dataset_count": 2,
+        "top_k_page_hit_rate": 1.0,
+        "mean_reciprocal_rank": 0.8291666666666666,
+        "section_hit_rate": 1.0,
+        "region_hit_rate": 0.5,
+        "plan_accuracy": 0.8,
+        "global_fallback_recovery_rate": 1.0,
+        "multi_region_recall": 0.7083333333333333,
+        "objective_score": 0.8458333333333332
+      },
+      "guardrails": {
+        "dataset_count": 2,
+        "top_k_page_hit_rate": 0.6858974358974359,
+        "mean_reciprocal_rank": 0.5229700854700854,
+        "section_hit_rate": 0.6858974358974359,
+        "region_hit_rate": 0.3333333333333333,
+        "plan_accuracy": 0.3557692307692308,
+        "global_fallback_recovery_rate": 0.4090909090909091,
+        "multi_region_recall": 1.0,
+        "objective_score": 0.5497863247863248
+      }
+    }
+  },
+  "delta_synopsis_semantics_vs_layer2_selective": {
+    "overall_objective": -0.03198717948717944,
+    "weak_family_objective": 0.02416666666666656,
+    "guardrails_objective": -0.08814102564102555
+  }
+}

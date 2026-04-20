@@ -37,6 +37,17 @@ SECTION_KIND_ALIASES: dict[str, list[str]] = {
     "limitations": ["limitations", "challenge", "constraints", "barriers"],
 }
 
+_LOW_VALUE_FRONT_MATTER_KINDS = {
+    "acknowledgements",
+    "certificate",
+    "contents",
+    "declaration",
+    "dedication",
+    "list_of_figures",
+    "list_of_tables",
+    "preface",
+}
+
 
 def _clean_line(line: str) -> str:
     return " ".join(line.strip().split())
@@ -181,6 +192,51 @@ def _section_aliases(title: str, section_kind: str, section_path: list[str]) -> 
     return seen[:10]
 
 
+def classify_front_matter(title: str, text: str, page_labels: list[str] | None = None) -> tuple[str, float, bool]:
+    lowered_title = _clean_line(title).lower()
+    lowered_text = text.lower()
+    combined = " ".join([lowered_title, lowered_text[:1600]])
+    page_numbers = [
+        int(match.group(1))
+        for label in (page_labels or [])
+        for match in [re.search(r"(\d+)", str(label))]
+        if match
+    ]
+    first_page = min(page_numbers) if page_numbers else None
+
+    if "table of contents" in combined or lowered_title in {"contents", "table of contents"}:
+        return "contents", 0.98, True
+    if "list of tables" in combined:
+        return "list_of_tables", 0.95, True
+    if "list of figures" in combined:
+        return "list_of_figures", 0.95, True
+    if "acknowledgement" in combined:
+        return "acknowledgements", 0.92, True
+    if "certificate" in combined or "certified that" in combined or "this is to certify" in combined:
+        return "certificate", 0.95, True
+    if "declaration" in combined:
+        return "declaration", 0.92, True
+    if "dedication" in combined:
+        return "dedication", 0.9, True
+    if "preface" in combined:
+        return "preface", 0.86, True
+    if lowered_title in {"references", "bibliography"}:
+        return "references", 0.78, True
+    if first_page is not None and first_page <= 2 and any(
+        phrase in lowered_text
+        for phrase in (
+            "project report",
+            "partial fulfillment",
+            "submitted to",
+            "submitted in partial",
+            "award of the degree",
+            "academy of higher education",
+        )
+    ):
+        return "title_page", 0.68, False
+    return "body", 0.0, False
+
+
 def document_overview_section(document: DocumentRecord, sections: list[SectionRecord]) -> SectionRecord | None:
     style = str(document.metadata.get("document_style", "generic_longform"))
     title_page = next((page for page in document.metadata.get("pages", []) if page.get("page_label") == "Page 1"), None)
@@ -239,6 +295,9 @@ def document_overview_section(document: DocumentRecord, sections: list[SectionRe
             "section_kind": "overview",
             "document_style": style,
             "section_aliases": _section_aliases("Document Overview", "overview", ["Document Overview"]),
+            "front_matter_kind": "body",
+            "front_matter_score": 0.0,
+            "low_value_section_flag": False,
         },
     )
 
@@ -287,6 +346,11 @@ def build_sections(document: DocumentRecord) -> list[SectionRecord]:
         text = "\n\n".join(payload["texts"]).strip()
         title = _best_title(payload["title"], text, payload["page_labels"][0] if payload["page_labels"] else "Document")
         summary = _section_summary(title, text)
+        front_matter_kind, front_matter_score, low_value_section_flag = classify_front_matter(
+            title,
+            text,
+            list(payload["page_labels"]),
+        )
         sections.append(
             SectionRecord(
                 section_id=section_id,
@@ -305,6 +369,9 @@ def build_sections(document: DocumentRecord) -> list[SectionRecord]:
                     "section_heading": title,
                     "section_kind": payload["section_kind"] or title.lower(),
                     "document_style": payload["document_style"],
+                    "front_matter_kind": front_matter_kind,
+                    "front_matter_score": front_matter_score,
+                    "low_value_section_flag": low_value_section_flag or front_matter_kind in _LOW_VALUE_FRONT_MATTER_KINDS,
                     "section_aliases": _section_aliases(
                         title,
                         payload["section_kind"] or title.lower(),

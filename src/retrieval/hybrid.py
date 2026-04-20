@@ -225,24 +225,66 @@ class HybridRetriever:
         clause_boost = 0.18 if any(term in chunk.metadata.get("clause_ids", []) for term in clause_terms) else 0.0
         scoped_boost = 0.14 if scoped_section_ids and chunk.metadata.get("section_id") in scoped_section_ids else 0.0
         region_boost = 0.08 if preferred_region_kinds and region_lookup and region_lookup.get(chunk.metadata.get("section_id", "")) in preferred_region_kinds else 0.0
+        chunk_role = str(chunk.metadata.get("chunk_role_prior", "")).lower()
+        body_evidence_score = float(chunk.metadata.get("body_evidence_score", 0.5) or 0.5)
+        low_value_prior = float(chunk.metadata.get("low_value_prior", 0.0) or 0.0)
+        heading_only = bool(chunk.metadata.get("heading_only_flag"))
+        front_matter_kind = str(chunk.metadata.get("front_matter_kind", "")).lower()
+        front_matter_score = float(chunk.metadata.get("front_matter_score", 0.0) or 0.0)
+        semantic_role = str(chunk.metadata.get("semantic_chunk_role", "")).lower()
+        semantic_confidence = float(chunk.metadata.get("semantic_chunk_confidence", 0.0) or 0.0)
+        semantic_body_evidence_score = float(chunk.metadata.get("semantic_body_evidence_score", body_evidence_score) or body_evidence_score)
+        evidence_adjustment = 0.06 * max(min(body_evidence_score, 1.0), 0.0)
+        if chunk_role == "navigation_like":
+            evidence_adjustment -= 0.18
+        elif chunk_role == "reference_like":
+            evidence_adjustment -= 0.14
+        elif chunk_role == "table_fragment":
+            evidence_adjustment -= 0.08 if query_type != "numeric_lookup" else 0.02
+        elif heading_only:
+            evidence_adjustment -= 0.10
+        if low_value_prior >= 0.7:
+            evidence_adjustment -= 0.06
+        if semantic_confidence > 0.0:
+            evidence_adjustment += 0.08 * semantic_confidence * (max(min(semantic_body_evidence_score, 1.0), 0.0) - 0.5)
+            if semantic_role == "body_evidence":
+                evidence_adjustment += 0.06 * semantic_confidence
+            elif semantic_role == "summary_evidence":
+                evidence_adjustment += (0.08 if query_type == "summary_lookup" else 0.04) * semantic_confidence
+            elif semantic_role == "heading_stub":
+                evidence_adjustment -= 0.08 * semantic_confidence
+            elif semantic_role == "navigation_noise":
+                evidence_adjustment -= 0.12 * semantic_confidence
+            elif semantic_role == "reference_noise":
+                evidence_adjustment -= 0.1 * semantic_confidence
+            elif semantic_role == "table_fragment":
+                evidence_adjustment -= (0.05 if query_type != "numeric_lookup" else 0.02) * semantic_confidence
         summary_adjustment = 0.0
         section_kind = str(chunk.metadata.get("section_kind", "")).lower()
         question_terms = self._significant_question_terms(question)
+        if front_matter_kind in {"acknowledgements", "certificate", "contents", "declaration", "dedication", "list_of_figures", "list_of_tables", "preface"}:
+            evidence_adjustment -= 0.18 * max(front_matter_score, 0.65)
+        elif front_matter_kind == "title_page":
+            evidence_adjustment -= 0.05 * max(front_matter_score, 0.5)
         if query_type == "summary_lookup":
             asks_early_summary = bool(question_terms & self.EARLY_SUMMARY_TERMS)
             asks_findings_summary = bool(question_terms & self.FINDINGS_SUMMARY_TERMS)
             asks_late_summary = bool(question_terms & self.LATE_SUMMARY_TERMS)
             if section_kind in self.LOW_VALUE_SUMMARY_SECTION_KINDS:
-                summary_adjustment -= 0.55
+                summary_adjustment -= 0.20
             if asks_early_summary and section_kind in {"overview", "abstract", "introduction", "background"}:
-                summary_adjustment += 0.22
+                summary_adjustment += 0.16
             if asks_findings_summary and section_kind in {"results", "discussion"}:
-                summary_adjustment += 0.18
+                summary_adjustment += 0.14
             if asks_late_summary and section_kind in {"discussion", "conclusion", "conclusions", "future work", "future directions", "limitations"}:
-                summary_adjustment += 0.18
+                summary_adjustment += 0.14
             lowered_text = chunk.text[:400].lower()
             if "author contributions" in lowered_text or "supplementary information" in lowered_text:
-                summary_adjustment -= 0.35
+                summary_adjustment -= 0.15
+            if heading_only:
+                summary_adjustment -= 0.06
+            if chunk_role == "navigation_like":
+                summary_adjustment -= 0.08
         metadata = dict(chunk.metadata)
         if region_lookup and chunk.metadata.get("section_id") in region_lookup:
             metadata["region_kind"] = region_lookup[chunk.metadata["section_id"]]
@@ -252,9 +294,42 @@ class HybridRetriever:
             metadata=metadata,
             dense_score=dense_scores.get(chunk.chunk_id, 0.0),
             lexical_score=lexical_scores.get(chunk.chunk_id, 0.0),
-            fused_score=fused_score + keyword_boost + heading_boost + path_boost + content_boost + clause_boost + scoped_boost + region_boost + summary_adjustment,
+            fused_score=(
+                fused_score
+                + keyword_boost
+                + heading_boost
+                + path_boost
+                + content_boost
+                + clause_boost
+                + scoped_boost
+                + region_boost
+                + evidence_adjustment
+                + summary_adjustment
+            ),
             citation_label=f"{chunk.metadata.get('source_file', 'Document')} - {chunk.metadata.get('page_label', 'Document')}",
         )
+
+    @staticmethod
+    def _promote_continuation_chunks(
+        fused_scores: defaultdict[str, float],
+        chunk_lookup: dict[str, ChunkRecord],
+    ) -> None:
+        ranked_chunk_ids = [chunk_id for chunk_id, _ in sorted(fused_scores.items(), key=lambda pair: pair[1], reverse=True)[:6]]
+        for chunk_id in ranked_chunk_ids:
+            chunk = chunk_lookup.get(chunk_id)
+            if chunk is None:
+                continue
+            if str(chunk.metadata.get("chunk_role_prior", "")).lower() != "heading_stub":
+                continue
+            continuation_id = str(chunk.metadata.get("continuation_chunk_id", "")).strip()
+            if not continuation_id or continuation_id in fused_scores or continuation_id not in chunk_lookup:
+                continue
+            continuation = chunk_lookup[continuation_id]
+            continuation_role = str(continuation.metadata.get("chunk_role_prior", "")).lower()
+            if continuation_role in {"navigation_like", "reference_like"}:
+                continue
+            continuation_score = max(fused_scores[chunk_id] * 0.96, fused_scores[chunk_id] - 0.005) + 0.03
+            fused_scores[continuation_id] = continuation_score
 
     @classmethod
     def _summary_focus(cls, question: str) -> str:
@@ -516,6 +591,7 @@ class HybridRetriever:
         for rank, item in enumerate(sorted(lexical_scores.items(), key=lambda pair: pair[1], reverse=True), start=1):
             fused_scores[item[0]] += 1.0 / (60 + rank)
         chunk_lookup = {chunk.chunk_id: chunk for chunk in chunks}
+        self._promote_continuation_chunks(fused_scores, chunk_lookup)
         return [
             self._score_chunk(
                 question,
@@ -682,12 +758,10 @@ class HybridRetriever:
 
     def retrieve(self, fingerprint: str, question: str) -> RetrievalResult:
         metadata_filters = self._extract_metadata_filters(question)
-        query_profile = self.query_analyzer.analyze(question)
         synopses = self.store.load_synopses(fingerprint)
         topology_edges = self.store.load_topology_edges(fingerprint)
-        plan = self.planner.plan(
+        query_profile, plan = self.planner.analyze_and_plan(
             question=question,
-            query_profile=query_profile,
             metadata_filters=metadata_filters,
             synopses=synopses,
         )

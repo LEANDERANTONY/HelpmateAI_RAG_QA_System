@@ -117,3 +117,34 @@ def test_build_sections_adds_document_overview_for_research_style_docs():
     assert sections[0].title == "Document Overview"
     assert sections[0].metadata["section_kind"] == "overview"
     assert "main focus" in " ".join(sections[0].metadata["section_aliases"]).lower()
+
+
+def test_build_sections_marks_acknowledgements_as_low_value_front_matter():
+    document = DocumentRecord(
+        document_id="doc101",
+        file_name="project.pdf",
+        file_type="pdf",
+        source_path="project.pdf",
+        fingerprint="xyz101",
+        char_count=300,
+        page_count=1,
+        metadata={
+            "pages": [
+                {
+                    "page_label": "Page 3",
+                    "text": "ACKNOWLEDGEMENTS\nWe thank our guide and faculty for their support during this project.",
+                    "section_heading": "ACKNOWLEDGEMENTS",
+                    "section_path": ["ACKNOWLEDGEMENTS"],
+                    "section_id": "ACKNOWLEDGEMENTS",
+                    "clause_ids": [],
+                    "content_type": "general",
+                }
+            ]
+        },
+    )
+
+    sections = build_sections(document)
+
+    assert sections[0].metadata["front_matter_kind"] == "acknowledgements"
+    assert sections[0].metadata["front_matter_score"] > 0.9
+    assert sections[0].metadata["low_value_section_flag"] is True

@@ -1,0 +1,781 @@
+{
+  "documents": [
+    {
+      "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\test\\AStudyoftheEmergingTrendsinIndianRealestate.pdf",
+      "questions_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\reports\\manual_questions_indian_realestate_20260420.json",
+      "question_generation_method": "manual document-specific questions authored from direct reading",
+      "question_count": 6,
+      "notes": "Manual question set authored from direct reading of the paper on Bangalore residential buyer preferences.",
+      "local_ragas": {
+        "faithfulness_mean": 0.8542929292929293,
+        "answer_relevancy_mean": 0.6910414493634979,
+        "context_precision_mean": 0.9861111110726852
+      },
+      "openai_ragas": {
+        "faithfulness_mean": 0.5,
+        "answer_relevancy_mean": 0.28154204943920924,
+        "context_precision_mean": 0.5138888888548611
+      },
+      "vectara_ragas": {
+        "faithfulness_mean": 0.25,
+        "answer_relevancy_mean": 0.24056117385932896,
+        "context_precision_mean": 0.7451388888303299
+      },
+      "local_results": [
+        {
+          "question": "What is the main goal of this study on Bangalore's residential real estate market, and which buyer-preference dimensions does it examine?",
+          "supported": true,
+          "route_used": [
+            "Planner intent: summary.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with none constraints.",
+            "Planner source: llm_structured at confidence 0.86.",
+            "Preferred content types: general, overview, discussion, evidence.",
+            "Synopsis-first routing prioritized 6 sections before chunk retrieval.",
+            "Top synopsis region: Abstract.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 2, Page 2."
+          ],
+          "query_used": "What is the main goal of this study on Bangalore's residential real estate market, and which buyer-preference dimensions does it examine?",
+          "citations": [
+            "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 2",
+            "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 2",
+            "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 6",
+            "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 6"
+          ],
+          "faithfulness": 0.9090909090909091,
+          "answer_relevancy": 0.8322354942834097,
+          "context_precision": 0.9166666666361111
+        },
+        {
+          "question": "What market conditions or structural problems in Bangalore's housing market does the paper describe as motivating the study?",
+          "supported": true,
+          "route_used": [
+            "Planner intent: lookup.",
+            "Planner evidence spread: sectional.",
+            "Planner selected hybrid_both with soft_multi_region constraints.",
+            "Planner source: llm_structured at confidence 0.86.",
+            "Preferred content types: general, discussion, evidence, overview.",
+            "Synopsis-first routing prioritized 6 sections before chunk retrieval.",
+            "Top synopsis region: Abstract.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 3, Page 3."
+          ],
+          "query_used": "What market conditions or structural problems in Bangalore's housing market does the paper describe as motivating the study?",
+          "citations": [
+            "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 3",
+            "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 3",
+            "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 2",
+            "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 6"
+          ],
+          "faithfulness": 0.8,
+          "answer_relevancy": 0.7502376257253048,
+          "context_precision": 0.99999999995
+        },
+        {
+          "question": "What does the paper report about preferred housing types and living environments, such as apartments versus villas or city location versus peaceful surroundings?",
+          "supported": true,
+          "route_used": [
+            "Planner intent: cross_cutting.",
+            "Planner evidence spread: distributed.",
+            "Planner selected hybrid_both with soft_multi_region constraints.",
+            "Planner source: llm_structured at confidence 0.78.",
+            "Preferred content types: general, discussion, evidence.",
+            "Synopsis-first routing prioritized 5 sections before chunk retrieval.",
+            "Top synopsis region: Abstract.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval."
+          ],
+          "query_used": "What does the paper report about preferred housing types and living environments, such as apartments versus villas or city location versus peaceful surroundings?",
+          "citations": [
+            "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 4",
+            "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 6",
+            "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 4",
+            "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 4"
+          ],
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.6250128930906038,
+          "context_precision": 0.99999999995
+        },
+        {
+          "question": "What bedroom counts, apartment-size ranges, and budget bands were most preferred by buyers in the study?",
+          "supported": true,
+          "route_used": [
+            "Planner intent: summary.",
+            "Planner evidence spread: distributed.",
+            "Planner selected hybrid_both with soft_multi_region constraints.",
+            "Planner source: llm_structured at confidence 0.74.",
+            "Preferred content types: results, discussion, general.",
+            "Synopsis-first routing prioritized 6 sections before chunk retrieval.",
+            "Top synopsis region: Discussion.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval."
+          ],
+          "query_used": "What bedroom counts, apartment-size ranges, and budget bands were most preferred by buyers in the study?",
+          "citations": [
+            "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 4",
+            "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 4",
+            "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 6",
+            "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 6"
+          ],
+          "faithfulness": 0.9166666666666666,
+          "answer_relevancy": 0.7095795402477426,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What does the paper say about newer buyer preferences for features such as UPVC windows, smart homes, and green buildings?",
+          "supported": true,
+          "route_used": [
+            "Planner intent: summary.",
+            "Planner evidence spread: distributed.",
+            "Planner selected hybrid_both with soft_multi_region constraints.",
+            "Planner source: llm_structured at confidence 0.76.",
+            "Preferred content types: general, discussion, evidence, results.",
+            "Synopsis-first routing prioritized 5 sections before chunk retrieval.",
+            "Top synopsis region: Abstract.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval."
+          ],
+          "query_used": "What does the paper say about newer buyer preferences for features such as UPVC windows, smart homes, and green buildings?",
+          "citations": [
+            "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 6",
+            "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 5",
+            "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 5",
+            "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 5"
+          ],
+          "faithfulness": 0.5,
+          "answer_relevancy": 0.7289354823616304,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What recommendations does the discussion section give to residential property developers in Bangalore based on the study findings?",
+          "supported": true,
+          "route_used": [
+            "Planner intent: summary.",
+            "Planner evidence spread: sectional.",
+            "Planner selected chunk_first with hard_region constraints.",
+            "Planner source: llm_structured at confidence 0.92.",
+            "Preferred content types: discussion, evidence, general.",
+            "Chunk-first retrieval path used for exact grounding.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 6, Page 2."
+          ],
+          "query_used": "What recommendations does the discussion section give to residential property developers in Bangalore based on the study findings?",
+          "citations": [
+            "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 6",
+            "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 2",
+            "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 3",
+            "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 2"
+          ],
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.5002476604722961,
+          "context_precision": 0.99999999995
+        }
+      ],
+      "openai_results": [
+        {
+          "question": "What is the main goal of this study on Bangalore's residential real estate market, and which buyer-preference dimensions does it examine?",
+          "supported": false,
+          "answer_preview": "Insufficient evidence.",
+          "citations": [],
+          "ragas": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.0
+          }
+        },
+        {
+          "question": "What market conditions or structural problems in Bangalore's housing market does the paper describe as motivating the study?",
+          "supported": false,
+          "answer_preview": "Insufficient evidence.",
+          "citations": [
+            "OpenAI Result 1",
+            "OpenAI Result 2",
+            "OpenAI Result 3",
+            "OpenAI Result 4",
+            "OpenAI Result 5"
+          ],
+          "ragas": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.9999999999
+          }
+        },
+        {
+          "question": "What does the paper report about preferred housing types and living environments, such as apartments versus villas or city location versus peaceful surroundings?",
+          "supported": true,
+          "answer_preview": "Buyers of apartments tended to want to be within the city region, while buyers of villas preferred a more peaceful environment [Source 1].",
+          "citations": [
+            "OpenAI Result 1",
+            "OpenAI Result 2",
+            "OpenAI Result 3",
+            "OpenAI Result 4",
+            "OpenAI Result 5"
+          ],
+          "ragas": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.584920175475301,
+            "context_precision": 0.7499999999625
+          }
+        },
+        {
+          "question": "What bedroom counts, apartment-size ranges, and budget bands were most preferred by buyers in the study?",
+          "supported": false,
+          "answer_preview": "Not fully supported.",
+          "citations": [
+            "OpenAI Result 1",
+            "OpenAI Result 2",
+            "OpenAI Result 3",
+            "OpenAI Result 4",
+            "OpenAI Result 5"
+          ],
+          "ragas": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.0
+          }
+        },
+        {
+          "question": "What does the paper say about newer buyer preferences for features such as UPVC windows, smart homes, and green buildings?",
+          "supported": true,
+          "answer_preview": "Buyers showed strong preference for UPVC windows and smart homes, and there is interest in green buildings, though the paper notes many claimed green buildings may not fully meet green standards [Source 1] [Source 5].",
+          "citations": [
+            "OpenAI Result 1",
+            "OpenAI Result 2",
+            "OpenAI Result 3",
+            "OpenAI Result 4",
+            "OpenAI Result 5"
+          ],
+          "ragas": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.6282230339669274,
+            "context_precision": 0.3333333333
+          }
+        },
+        {
+          "question": "What recommendations does the discussion section give to residential property developers in Bangalore based on the study findings?",
+          "supported": true,
+          "answer_preview": "Focus on apartments, especially two- and three-bedroom units in the preferred size range; build a trustworthy brand; and plan land purchases to place projects near areas with better connectivity [Source 1] [Source 2].",
+          "citations": [
+            "OpenAI Result 1",
+            "OpenAI Result 2",
+            "OpenAI Result 3",
+            "OpenAI Result 4",
+            "OpenAI Result 5"
+          ],
+          "ragas": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.4761090871930273,
+            "context_precision": 0.9999999999666667
+          }
+        }
+      ],
+      "vectara_results": [
+        {
+          "question": "What is the main goal of this study on Bangalore's residential real estate market, and which buyer-preference dimensions does it examine?",
+          "supported": false,
+          "answer_preview": "The study\u2019s main goal is only partially supported.",
+          "citations": [
+            "Page 3",
+            "Page 2",
+            "Page 7",
+            "Page 1",
+            "Page 7"
+          ],
+          "ragas": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.4245186971029567,
+            "context_precision": 0.9999999999
+          }
+        },
+        {
+          "question": "What market conditions or structural problems in Bangalore's housing market does the paper describe as motivating the study?",
+          "supported": false,
+          "answer_preview": "Not specified.",
+          "citations": [
+            "Page 3",
+            "Page 3",
+            "Page 2",
+            "Page 2",
+            "Page 3"
+          ],
+          "ragas": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.9999999999
+          }
+        },
+        {
+          "question": "What does the paper report about preferred housing types and living environments, such as apartments versus villas or city location versus peaceful surroundings?",
+          "supported": true,
+          "answer_preview": "Buyers who prefer apartments mainly want to be within the city, while buyers who prefer villas want a more peaceful environment; apartments are also seen as more economical but less preferred by some because of limited space and privacy [Source 2][Source 3].",
+          "citations": [
+            "Page 4",
+            "Page 4",
+            "Page 4",
+            "Page 2",
+            "Page 6"
+          ],
+          "ragas": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.5976447421785916,
+            "context_precision": 0.5833333333041666
+          }
+        },
+        {
+          "question": "What bedroom counts, apartment-size ranges, and budget bands were most preferred by buyers in the study?",
+          "supported": false,
+          "answer_preview": "Only two-bedroom apartments (1000-1400 sq.ft.) are clearly supported.",
+          "citations": [
+            "Page 4",
+            "Page 4",
+            "Page 6",
+            "Page 4",
+            "Page 6"
+          ],
+          "ragas": {
+            "faithfulness": 0.5,
+            "answer_relevancy": 0.42120360387442535,
+            "context_precision": 0.9999999999
+          }
+        },
+        {
+          "question": "What does the paper say about newer buyer preferences for features such as UPVC windows, smart homes, and green buildings?",
+          "supported": false,
+          "answer_preview": "Not enough evidence.",
+          "citations": [
+            "Page 5",
+            "Page 5",
+            "Page 5",
+            "Page 6",
+            "Page 2"
+          ],
+          "ragas": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.8874999999778125
+          }
+        },
+        {
+          "question": "What recommendations does the discussion section give to residential property developers in Bangalore based on the study findings?",
+          "supported": false,
+          "answer_preview": "Unsupported by the retrieved evidence.",
+          "citations": [
+            "Page 6",
+            "Page 3",
+            "Page 1",
+            "Page 3",
+            "Page 2"
+          ],
+          "ragas": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.0
+          }
+        }
+      ]
+    },
+    {
+      "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\test\\buildings-13-02980.pdf",
+      "questions_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\reports\\manual_questions_prefabricated_kbe_20260420.json",
+      "question_generation_method": "manual document-specific questions authored from direct reading",
+      "question_count": 6,
+      "notes": "Manual question set authored from direct reading of the KBE modular-design paper.",
+      "local_ragas": {
+        "faithfulness_mean": 0.9761904761904762,
+        "answer_relevancy_mean": 0.6884546411423712,
+        "context_precision_mean": 0.9398148147890432
+      },
+      "openai_ragas": {
+        "faithfulness_mean": 0.6666666666666666,
+        "answer_relevancy_mean": 0.4253470577314738,
+        "context_precision_mean": 0.6520833333003646
+      },
+      "vectara_ragas": {
+        "faithfulness_mean": 0.7666666666666666,
+        "answer_relevancy_mean": 0.44000068304899553,
+        "context_precision_mean": 0.625925925888395
+      },
+      "local_results": [
+        {
+          "question": "What core design and standardization problems with prefabricated cantilevered components is this paper trying to solve?",
+          "supported": true,
+          "route_used": [
+            "Planner intent: summary.",
+            "Planner evidence spread: sectional.",
+            "Planner selected synopsis_first with soft_multi_region constraints.",
+            "Planner source: llm_structured at confidence 0.86.",
+            "Preferred content types: overview, discussion, general, evidence.",
+            "Synopsis-first routing prioritized 10 sections before chunk retrieval.",
+            "Top synopsis region: Classi\ufb01cation of Prefabricated Cantilevered Structural Components.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 4, Page 6."
+          ],
+          "query_used": "What core design and standardization problems with prefabricated cantilevered components is this paper trying to solve?",
+          "citations": [
+            "buildings-13-02980.pdf - Page 4",
+            "buildings-13-02980.pdf - Page 6",
+            "buildings-13-02980.pdf - Page 4",
+            "buildings-13-02980.pdf - Page 4"
+          ],
+          "faithfulness": 0.8571428571428571,
+          "answer_relevancy": 0.7587615396941844,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "How does the paper combine KBE, secondary split modularization, and Revit secondary development in its research methodology?",
+          "supported": true,
+          "route_used": [
+            "Planner intent: procedure.",
+            "Planner evidence spread: sectional.",
+            "Planner selected hybrid_both with soft_multi_region constraints.",
+            "Planner source: llm_structured at confidence 0.80.",
+            "Preferred content types: methodology, procedure, general, discussion, overview.",
+            "Synopsis-first routing prioritized 11 sections before chunk retrieval.",
+            "Top synopsis region: Revit secondary development.",
+            "Global fallback added extra evidence outside the prioritized regions.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 1, Page 5."
+          ],
+          "query_used": "How does the paper combine KBE, secondary split modularization, and Revit secondary development in its research methodology?",
+          "citations": [
+            "buildings-13-02980.pdf - Page 1",
+            "buildings-13-02980.pdf - Page 5",
+            "buildings-13-02980.pdf - Page 5",
+            "buildings-13-02980.pdf - Page 3"
+          ],
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.8355996645862148,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What kinds of cantilevered structural components are discussed, and what design challenges do traditional 3D modeling methods create for them?",
+          "supported": true,
+          "route_used": [
+            "Planner intent: cross_cutting.",
+            "Planner evidence spread: distributed.",
+            "Planner selected hybrid_both with soft_multi_region constraints.",
+            "Planner source: llm_structured at confidence 0.74.",
+            "Preferred content types: general, methodology, discussion, results.",
+            "Synopsis-first routing prioritized 10 sections before chunk retrieval.",
+            "Top synopsis region: Classi\ufb01cation of Prefabricated Cantilevered Structural Components.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval."
+          ],
+          "query_used": "What kinds of cantilevered structural components are discussed, and what design challenges do traditional 3D modeling methods create for them?",
+          "citations": [
+            "buildings-13-02980.pdf - Page 4",
+            "buildings-13-02980.pdf - Page 4",
+            "buildings-13-02980.pdf - Page 4",
+            "buildings-13-02980.pdf - Page 4"
+          ],
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.7127518818607946,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What functions or workflow advantages does the modular design tool provide during modeling, reinforcement modification, or component management?",
+          "supported": true,
+          "route_used": [
+            "Planner intent: cross_cutting.",
+            "Planner evidence spread: sectional.",
+            "Planner selected hybrid_both with soft_multi_region constraints.",
+            "Planner source: llm_structured at confidence 0.78.",
+            "Preferred content types: methodology, procedure, general, results.",
+            "Synopsis-first routing prioritized 10 sections before chunk retrieval.",
+            "Top synopsis region: Development Process for Design Tools.",
+            "Global fallback added extra evidence outside the prioritized regions.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval.",
+            "Evidence selector reviewed top 4 chunks and reordered evidence to start with Page 21, Page 19."
+          ],
+          "query_used": "What functions or workflow advantages does the modular design tool provide during modeling, reinforcement modification, or component management?",
+          "citations": [
+            "buildings-13-02980.pdf - Page 21",
+            "buildings-13-02980.pdf - Page 19",
+            "buildings-13-02980.pdf - Page 19",
+            "buildings-13-02980.pdf - Page 4"
+          ],
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.4938420907140653,
+          "context_precision": 0.999999999975
+        },
+        {
+          "question": "What quantitative results does the case comparison report for the modular design tool versus traditional modeling, including efficiency improvement and component coverage?",
+          "supported": true,
+          "route_used": [
+            "Planner intent: comparison.",
+            "Planner evidence spread: distributed.",
+            "Planner selected hybrid_both with soft_multi_region constraints.",
+            "Planner source: llm_structured at confidence 0.74.",
+            "Preferred content types: results, evidence, discussion, overview.",
+            "Synopsis-first routing prioritized 10 sections before chunk retrieval.",
+            "Top synopsis region: Results and Analysis.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval."
+          ],
+          "query_used": "What quantitative results does the case comparison report for the modular design tool versus traditional modeling, including efficiency improvement and component coverage?",
+          "citations": [
+            "buildings-13-02980.pdf - Page 18",
+            "buildings-13-02980.pdf - Page 19",
+            "buildings-13-02980.pdf - Page 1",
+            "buildings-13-02980.pdf - Page 19"
+          ],
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.6332099517518477,
+          "context_precision": 0.6388888888675925
+        },
+        {
+          "question": "What limitations of the current system and future research directions does the paper identify?",
+          "supported": true,
+          "route_used": [
+            "Planner intent: summary.",
+            "Planner evidence spread: distributed.",
+            "Planner selected hybrid_both with soft_multi_region constraints.",
+            "Planner source: llm_structured at confidence 0.86.",
+            "Preferred content types: discussion, general, overview.",
+            "Synopsis-first routing prioritized 10 sections before chunk retrieval.",
+            "Top synopsis region: Citation: Li, N.; Feng, Y.; Liu, J.;.",
+            "Hybrid retrieval merged direct chunk evidence with topology-guided synopsis retrieval."
+          ],
+          "query_used": "What limitations of the current system and future research directions does the paper identify?",
+          "citations": [
+            "buildings-13-02980.pdf - Page 20",
+            "buildings-13-02980.pdf - Page 20",
+            "buildings-13-02980.pdf - Page 20",
+            "buildings-13-02980.pdf - Page 21"
+          ],
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.6965627182471205,
+          "context_precision": 0.9999999999666667
+        }
+      ],
+      "openai_results": [
+        {
+          "question": "What core design and standardization problems with prefabricated cantilevered components is this paper trying to solve?",
+          "supported": false,
+          "answer_preview": "Unsupported by the retrieved evidence.",
+          "citations": [],
+          "ragas": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.0
+          }
+        },
+        {
+          "question": "How does the paper combine KBE, secondary split modularization, and Revit secondary development in its research methodology?",
+          "supported": true,
+          "answer_preview": "The paper uses KBE and secondary split modularization together with Revit secondary development to study prefabricated cantilevered structure components [Source 3].",
+          "citations": [
+            "OpenAI Result 1",
+            "OpenAI Result 2",
+            "OpenAI Result 3",
+            "OpenAI Result 4",
+            "OpenAI Result 5"
+          ],
+          "ragas": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.5033210017410011,
+            "context_precision": 0.3333333333
+          }
+        },
+        {
+          "question": "What kinds of cantilevered structural components are discussed, and what design challenges do traditional 3D modeling methods create for them?",
+          "supported": true,
+          "answer_preview": "Balcony boards, air-conditioning boards, and bay windows are discussed, with subclasses including beam/slab balcony boards, ordinary/line-style air-conditioning boards, and extruding/recessed bay windows [Source 5]. Traditional 3D modeling methods create problems such as no independent cantilever-co",
+          "citations": [
+            "OpenAI Result 1",
+            "OpenAI Result 2",
+            "OpenAI Result 3",
+            "OpenAI Result 4",
+            "OpenAI Result 5"
+          ],
+          "ragas": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.6806373274258561,
+            "context_precision": 0.8041666666465626
+          }
+        },
+        {
+          "question": "What functions or workflow advantages does the modular design tool provide during modeling, reinforcement modification, or component management?",
+          "supported": true,
+          "answer_preview": "It supports verifying and modifying modules, regenerating individual modules to improve design-change efficiency, quickly updating reinforcement layouts/diameters/types without rebuilding the whole component, and automatically annotating component numbers and exporting rebar material information for",
+          "citations": [
+            "OpenAI Result 1",
+            "OpenAI Result 2",
+            "OpenAI Result 3",
+            "OpenAI Result 4",
+            "OpenAI Result 5"
+          ],
+          "ragas": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.6190325515794378,
+            "context_precision": 0.8874999999778125
+          }
+        },
+        {
+          "question": "What quantitative results does the case comparison report for the modular design tool versus traditional modeling, including efficiency improvement and component coverage?",
+          "supported": false,
+          "answer_preview": "Insufficient evidence.",
+          "citations": [
+            "OpenAI Result 1",
+            "OpenAI Result 2",
+            "OpenAI Result 3",
+            "OpenAI Result 4",
+            "OpenAI Result 5"
+          ],
+          "ragas": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.9999999999
+          }
+        },
+        {
+          "question": "What limitations of the current system and future research directions does the paper identify?",
+          "supported": true,
+          "answer_preview": "The paper says the current system still needs an expanded model base, and future work should continuously expand the modular libraries to improve component diversification and support more complex components [Source 4]. It also identifies current limitations in handling complex component information",
+          "citations": [
+            "OpenAI Result 1",
+            "OpenAI Result 2",
+            "OpenAI Result 3",
+            "OpenAI Result 4",
+            "OpenAI Result 5"
+          ],
+          "ragas": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7490914656425476,
+            "context_precision": 0.8874999999778125
+          }
+        }
+      ],
+      "vectara_results": [
+        {
+          "question": "What core design and standardization problems with prefabricated cantilevered components is this paper trying to solve?",
+          "supported": true,
+          "answer_preview": "Low reusability of design knowledge, limited standardization, and design disconnection; also lower overall design level and safety concerns in prefabricated cantilevered components [Source 1] [Source 2].",
+          "citations": [
+            "Page 1",
+            "Page 6",
+            "Page 3",
+            "Page 1",
+            "Page 4"
+          ],
+          "ragas": {
+            "faithfulness": 0.6,
+            "answer_relevancy": 0.7242086427716021,
+            "context_precision": 0.99999999995
+          }
+        },
+        {
+          "question": "How does the paper combine KBE, secondary split modularization, and Revit secondary development in its research methodology?",
+          "supported": true,
+          "answer_preview": "The paper combines KBE theory, secondary split modularization, and Revit secondary development to establish a modular design system [Source 1].",
+          "citations": [
+            "Page 1",
+            "Page 1",
+            "Page 6",
+            "Page 6",
+            "Page 6"
+          ],
+          "ragas": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.6140441899133079,
+            "context_precision": 0.99999999995
+          }
+        },
+        {
+          "question": "What kinds of cantilevered structural components are discussed, and what design challenges do traditional 3D modeling methods create for them?",
+          "supported": false,
+          "answer_preview": "Insufficient evidence.",
+          "citations": [
+            "Page 3",
+            "Page 3",
+            "Page 3",
+            "Page 3",
+            "Page 4"
+          ],
+          "ragas": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.0
+          }
+        },
+        {
+          "question": "What functions or workflow advantages does the modular design tool provide during modeling, reinforcement modification, or component management?",
+          "supported": true,
+          "answer_preview": "It automatically retrieves component-related data, performs structural verification on generated components, and supports quick reinforcement updates without regenerating the whole component or module [Source 1][Source 3]. It also includes modular design, checks/calculations, and component managemen",
+          "citations": [
+            "Page 18",
+            "Page 19",
+            "Page 18",
+            "Page 1",
+            "Page 9"
+          ],
+          "ragas": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.5076614050113718,
+            "context_precision": 0.7555555555303703
+          }
+        },
+        {
+          "question": "What quantitative results does the case comparison report for the modular design tool versus traditional modeling, including efficiency improvement and component coverage?",
+          "supported": false,
+          "answer_preview": "Insufficient evidence.",
+          "citations": [
+            "Page 18",
+            "Page 18",
+            "Page 1",
+            "Page 18",
+            "Page 16"
+          ],
+          "ragas": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.9999999999
+          }
+        },
+        {
+          "question": "What limitations of the current system and future research directions does the paper identify?",
+          "supported": true,
+          "answer_preview": "The paper says its current limitation is that the research object is limited to reinforced concrete structural members, and the model base in the current research system still needs to be expanded. For future work, it suggests introducing relevant algorithms during the tool development phase and sup",
+          "citations": [
+            "Page 19",
+            "Page 19",
+            "Page 19",
+            "Page 20",
+            "Page 3"
+          ],
+          "ragas": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7940898605976914,
+            "context_precision": 0.0
+          }
+        }
+      ]
+    }
+  ],
+  "overall_summary": {
+    "local": {
+      "faithfulness_mean": 0.9152417027417028,
+      "answer_relevancy_mean": 0.6897480452529345,
+      "context_precision_mean": 0.9629629629308643
+    },
+    "openai": {
+      "faithfulness_mean": 0.5833333333333333,
+      "answer_relevancy_mean": 0.35344455358534155,
+      "context_precision_mean": 0.5829861110776129
+    },
+    "vectara": {
+      "faithfulness_mean": 0.5083333333333333,
+      "answer_relevancy_mean": 0.34028092845416225,
+      "context_precision_mean": 0.6855324073593625
+    },
+    "margin_vs_openai": {
+      "faithfulness": 0.33190836940836954,
+      "answer_relevancy": 0.336303491667593,
+      "context_precision": 0.37997685185325136
+    },
+    "margin_vs_vectara": {
+      "faithfulness": 0.4069083694083695,
+      "answer_relevancy": 0.3494671167987723,
+      "context_precision": 0.27743055557150176
+    }
+  },
+  "question_generation_method": "manual document-specific questions authored from direct reading",
+  "notes": [
+    "Two newly added unseen PDFs from static/sample_files/test were evaluated.",
+    "The same manually authored question sets were used for ours, OpenAI File Search, and Vectara.",
+    "Local evaluation used isolated local indexes per document to avoid contamination from prior runs."
+  ]
+}

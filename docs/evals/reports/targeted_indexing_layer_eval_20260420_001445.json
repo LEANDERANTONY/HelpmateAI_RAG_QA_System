@@ -1,0 +1,593 @@
+{
+  "type": "targeted_indexing_layer_eval",
+  "description": "Deterministic indexing-layer v11 check with planner LLM disabled and retrieval-only metrics/traces.",
+  "settings": {
+    "state_store_backend": "local",
+    "index_schema_version": "v11",
+    "retrieval_version": "v11",
+    "planner_llm_enabled": false,
+    "router_llm_enabled": false,
+    "reranker_enabled": true,
+    "chunk_size": 1200,
+    "chunk_overlap": 240
+  },
+  "retrieval_eval": {
+    "reportgeneration": {
+      "baseline": {
+        "hit": 0.9,
+        "mrr": 0.85
+      },
+      "current": {
+        "top_k_page_hit_rate": 0.9,
+        "mean_reciprocal_rank": 0.8,
+        "section_hit_rate": 0.9,
+        "region_hit_rate": 0.6,
+        "plan_accuracy": 0.8,
+        "global_fallback_recovery_rate": 1.0,
+        "multi_region_recall": 0.75
+      }
+    },
+    "reportgeneration2": {
+      "baseline": {
+        "hit": 1.0,
+        "mrr": 0.8333
+      },
+      "current": {
+        "top_k_page_hit_rate": 0.9,
+        "mean_reciprocal_rank": 0.7166666666666666,
+        "section_hit_rate": 0.9,
+        "region_hit_rate": 0.6,
+        "plan_accuracy": 0.7,
+        "global_fallback_recovery_rate": 1.0,
+        "multi_region_recall": 0.5
+      }
+    },
+    "health_guardrail": {
+      "baseline": {
+        "hit": 0.8462,
+        "mrr": 0.7051
+      },
+      "current": {
+        "top_k_page_hit_rate": 0.8461538461538461,
+        "mean_reciprocal_rank": 0.7051282051282051,
+        "section_hit_rate": 0.8461538461538461,
+        "region_hit_rate": 0.0,
+        "plan_accuracy": 0.7692307692307693,
+        "global_fallback_recovery_rate": 0.0,
+        "multi_region_recall": 1.0
+      }
+    },
+    "thesis_guardrail": {
+      "baseline": {
+        "hit": 0.9167,
+        "mrr": 0.5764
+      },
+      "current": {
+        "top_k_page_hit_rate": 0.9166666666666666,
+        "mean_reciprocal_rank": 0.5763888888888888,
+        "section_hit_rate": 0.9166666666666666,
+        "region_hit_rate": 0.75,
+        "plan_accuracy": 0.25,
+        "global_fallback_recovery_rate": 0.9090909090909091,
+        "multi_region_recall": 1.0
+      }
+    }
+  },
+  "graduate_traces": {
+    "What is the main objective of this graduate project on a single pass double flow solar air heater?": {
+      "route_used": "chunk_first",
+      "strategy_notes": [
+        "Planner intent: lookup.",
+        "Planner evidence spread: atomic.",
+        "Planner selected chunk_first with none constraints.",
+        "Planner source: deterministic at confidence 0.86.",
+        "Preferred content types: definition, general.",
+        "Chunk-first retrieval path used for exact grounding."
+      ],
+      "retrieval_plan": {
+        "intent_type": "lookup",
+        "evidence_spread": "atomic",
+        "constraint_mode": "none",
+        "preferred_route": "chunk_first",
+        "target_region_ids": [
+          "77857474a092b079-document-overview",
+          "Abstract",
+          "EXPERIMENTAL STUDY OF SINGLE PASS DOUBLE FLOW",
+          "TEMPERATURE SENSORS",
+          "BLOWERS",
+          "Conclusions",
+          "EXPERIMENTAL STUDY OF SINGLE PASS DOUBLE FLOW|Manipal",
+          "SOLAR SIMULATOR",
+          "DIGITAL MANOMETER",
+          "DIGITAL MANOMETER|IA"
+        ],
+        "target_region_kinds": [
+          "definitions",
+          "general"
+        ],
+        "hard_filters": {},
+        "use_global_fallback": false,
+        "planner_confidence": 0.86,
+        "planner_source": "deterministic",
+        "global_fallback_used": false
+      },
+      "top_candidates": [
+        {
+          "chunk_id": "77857474a092b079-chunk-0265",
+          "page_label": "Page 41",
+          "section_heading": "Conclusions",
+          "section_kind": "conclusions",
+          "chunk_role_prior": "body",
+          "heading_only_flag": false,
+          "body_evidence_score": 0.88,
+          "fused_score": 0.49261844262295085,
+          "text_preview": "7.1 CONCLUSIONS\nThe experimental study of a rectangular cross section solar air heater is carried out under\nsimulated solar operating conditions and the following conclusions are drawn from the study,\n\uf0b7 The solar air hea"
+        },
+        {
+          "chunk_id": "77857474a092b079-chunk-0013",
+          "page_label": "Page 2",
+          "section_heading": "Manipal",
+          "section_kind": "general",
+          "chunk_role_prior": "body",
+          "heading_only_flag": false,
+          "body_evidence_score": 0.88,
+          "fused_score": 0.48969203980099507,
+          "text_preview": "DOUBLE FLOW SOLAR AIR HEATER FOR PERFORMANCE IMPROVEMENT\nUSING PERFORATIONS is a record of the bonafide work done by B MOHAMMED ZAHIR\n(150909292) , LEANDER ANTONY A (15090330)  , MOHANRAJ K (150909433) submitted\nin parti"
+        },
+        {
+          "chunk_id": "77857474a092b079-chunk-0017",
+          "page_label": "Page 4",
+          "section_heading": "Abstract",
+          "section_kind": "abstract",
+          "chunk_role_prior": "body",
+          "heading_only_flag": false,
+          "body_evidence_score": 0.88,
+          "fused_score": 0.3225927536231884,
+          "text_preview": "ABSTRACT\nThis study evaluates the performance of a double flow flat plate solar air heater and compares the\nexpected improvement in performance when the absorber plate is perforated. The perforations are\ndone for two dif"
+        },
+        {
+          "chunk_id": "77857474a092b079-chunk-0000",
+          "page_label": "Page 1",
+          "section_heading": "EXPERIMENTAL STUDY OF SINGLE PASS DOUBLE FLOW",
+          "section_kind": "general",
+          "chunk_role_prior": "heading_stub",
+          "heading_only_flag": true,
+          "body_evidence_score": 0.12,
+          "fused_score": 0.037460109289617516,
+          "text_preview": "EXPERIMENTAL STUDY OF SINGLE PASS DOUBLE FLOW"
+        }
+      ]
+    },
+    "How does the project describe its methodology or experimental setup?": {
+      "route_used": "synopsis_first",
+      "strategy_notes": [
+        "Planner intent: procedure.",
+        "Planner evidence spread: sectional.",
+        "Planner selected synopsis_first with soft_local constraints.",
+        "Planner source: deterministic at confidence 0.74.",
+        "Preferred content types: methodology, general, results.",
+        "Synopsis-first routing prioritized 11 sections before chunk retrieval.",
+        "Top synopsis region: ACKNOWLEDGEMENTS.",
+        "Global fallback added extra evidence outside the prioritized regions."
+      ],
+      "retrieval_plan": {
+        "intent_type": "procedure",
+        "evidence_spread": "sectional",
+        "constraint_mode": "soft_local",
+        "preferred_route": "synopsis_first",
+        "target_region_ids": [
+          "EXPERIMENTAL STUDY OF SINGLE PASS DOUBLE FLOW|ACKNOWLEDGEMENTS",
+          "EXPERIMENTAL STUDY OF SINGLE PASS DOUBLE FLOW",
+          "EXPERIMENTAL STUDY OF SINGLE PASS DOUBLE FLOW|Manipal",
+          "EXPERIMENTAL RESULTS",
+          "EXPERIMENTAL RESULTS|Reynolds number (Re)",
+          "EXPERIMENTAL RESULTS|TABLE 6.6",
+          "EXPERIMENTAL RESULTS|TABLE 6.7",
+          "EXPERIMENTAL RESULTS|TABLE 6.8",
+          "EXPERIMENTAL RESULTS|Reynolds Number (Re)",
+          "EXPERIMENTAL RESULTS|TABLE 6.9"
+        ],
+        "target_region_kinds": [
+          "procedure",
+          "evidence",
+          "general"
+        ],
+        "hard_filters": {},
+        "use_global_fallback": true,
+        "planner_confidence": 0.74,
+        "planner_source": "deterministic",
+        "global_fallback_used": true
+      },
+      "top_candidates": [
+        {
+          "chunk_id": "77857474a092b079-chunk-0021",
+          "page_label": "Page 5",
+          "section_heading": "CONTENTS",
+          "section_kind": "general",
+          "chunk_role_prior": "heading_stub",
+          "heading_only_flag": true,
+          "body_evidence_score": 0.12,
+          "fused_score": -0.16281311475409835,
+          "text_preview": "3.2  METHODOLOGY       7\nChapter 4  EXPERIMENTAL TEST RIG     8"
+        },
+        {
+          "chunk_id": "77857474a092b079-chunk-0092",
+          "page_label": "Page 15",
+          "section_heading": "Methodology",
+          "section_kind": "general",
+          "chunk_role_prior": "heading_stub",
+          "heading_only_flag": true,
+          "body_evidence_score": 0.12,
+          "fused_score": -0.30359795186891964,
+          "text_preview": "3. OBJECTIVES AND METHODOLOGY:"
+        },
+        {
+          "chunk_id": "77857474a092b079-chunk-0012",
+          "page_label": "Page 2",
+          "section_heading": "Manipal",
+          "section_kind": "general",
+          "chunk_role_prior": "heading_stub",
+          "heading_only_flag": true,
+          "body_evidence_score": 0.12,
+          "fused_score": 0.0699913978494624,
+          "text_preview": "CERTIFICATE\nThis is to certify that the project titled EXPERIMENTAL STUDY OF SINGLE PASS"
+        },
+        {
+          "chunk_id": "77857474a092b079-chunk-0157",
+          "page_label": "Page 30",
+          "section_heading": "EXPERIMENTAL RESULTS",
+          "section_kind": "results",
+          "chunk_role_prior": "heading_stub",
+          "heading_only_flag": true,
+          "body_evidence_score": 0.12,
+          "fused_score": 0.07052021857923502,
+          "text_preview": "6.2 EXPERIMENTAL RESULTS"
+        }
+      ]
+    },
+    "What components or instruments are used in the test rig, such as the solar air heater, simulator, sensors, or flow meter?": {
+      "route_used": "chunk_first",
+      "strategy_notes": [
+        "Planner intent: lookup.",
+        "Planner evidence spread: atomic.",
+        "Planner selected chunk_first with none constraints.",
+        "Planner source: deterministic at confidence 0.86.",
+        "Preferred content types: general, definition.",
+        "Chunk-first retrieval path used for exact grounding."
+      ],
+      "retrieval_plan": {
+        "intent_type": "lookup",
+        "evidence_spread": "atomic",
+        "constraint_mode": "none",
+        "preferred_route": "chunk_first",
+        "target_region_ids": [
+          "SOLAR AIR HEATER",
+          "TEMPERATURE SENSORS",
+          "BLOWERS",
+          "SOLAR SIMULATOR",
+          "DIGITAL MANOMETER",
+          "Vortex Flow Meter",
+          "DIGITAL MANOMETER|IA",
+          "77857474a092b079-document-overview",
+          "EXPERIMENTAL STUDY OF SINGLE PASS DOUBLE FLOW",
+          "EXPERIMENTAL STUDY OF SINGLE PASS DOUBLE FLOW|Manipal"
+        ],
+        "target_region_kinds": [
+          "general",
+          "rules",
+          "definitions"
+        ],
+        "hard_filters": {},
+        "use_global_fallback": false,
+        "planner_confidence": 0.86,
+        "planner_source": "deterministic",
+        "global_fallback_used": false
+      },
+      "top_candidates": [
+        {
+          "chunk_id": "77857474a092b079-chunk-0114",
+          "page_label": "Page 24",
+          "section_heading": "DIGITAL MANOMETER",
+          "section_kind": "general",
+          "chunk_role_prior": "body",
+          "heading_only_flag": false,
+          "body_evidence_score": 0.88,
+          "fused_score": 0.4923780580075663,
+          "text_preview": "5. EXPERIMENTATION:\nThe experiment is conducted  under a solar simulator, the recorded ambient air temperature was\n35\u2103 for all three observations. The dimmerstats  are tuned to obtain a radiation heat flux of 820\nW/m2 fr"
+        },
+        {
+          "chunk_id": "77857474a092b079-chunk-0097",
+          "page_label": "Page 17",
+          "section_heading": "SOLAR AIR HEATER",
+          "section_kind": "general",
+          "chunk_role_prior": "body",
+          "heading_only_flag": false,
+          "body_evidence_score": 0.88,
+          "fused_score": 0.32869979182930004,
+          "text_preview": "9\nFigure 4.2: An overview of the Test Rig"
+        },
+        {
+          "chunk_id": "77857474a092b079-chunk-0103",
+          "page_label": "Page 19",
+          "section_heading": "SOLAR SIMULATOR",
+          "section_kind": "general",
+          "chunk_role_prior": "body",
+          "heading_only_flag": false,
+          "body_evidence_score": 0.88,
+          "fused_score": 0.46431794871794874,
+          "text_preview": "4.3 PYRANOMETER:\nThe radiation from the solar simulator is read using a pyr anometer as shown in figure 3.5 . The\npyranometer comes with a resolution of 1 W/m 2 and an accuracy of \u00b11.5%. The radiant flux is\nmeasured at s"
+        },
+        {
+          "chunk_id": "77857474a092b079-chunk-0107",
+          "page_label": "Page 21",
+          "section_heading": "Vortex Flow Meter",
+          "section_kind": "general",
+          "chunk_role_prior": "body",
+          "heading_only_flag": false,
+          "body_evidence_score": 0.88,
+          "fused_score": 0.5054313492063492,
+          "text_preview": "4.5 Vortex Flow Meter:\nThe air flow rate is measured using a calibrated vortex flow meter as shown in figure 4.7, this\nvortex flow meter is connected in between the blowers and the solar air heater. It is rated to operat"
+        }
+      ]
+    },
+    "What results or performance trends are reported in the experimental analysis?": {
+      "route_used": "chunk_first",
+      "strategy_notes": [
+        "Planner intent: lookup.",
+        "Planner evidence spread: atomic.",
+        "Planner selected chunk_first with none constraints.",
+        "Planner source: deterministic at confidence 0.86.",
+        "Preferred content types: general, definition.",
+        "Chunk-first retrieval path used for exact grounding."
+      ],
+      "retrieval_plan": {
+        "intent_type": "lookup",
+        "evidence_spread": "atomic",
+        "constraint_mode": "none",
+        "preferred_route": "chunk_first",
+        "target_region_ids": [
+          "SOLAR AIR HEATER",
+          "SOLAR SIMULATOR",
+          "TEMPERATURE SENSORS",
+          "BLOWERS",
+          "DIGITAL MANOMETER",
+          "DIGITAL MANOMETER|IA",
+          "77857474a092b079-document-overview",
+          "EXPERIMENTAL STUDY OF SINGLE PASS DOUBLE FLOW",
+          "EXPERIMENTAL STUDY OF SINGLE PASS DOUBLE FLOW|Manipal",
+          "EXPERIMENTAL RESULTS"
+        ],
+        "target_region_kinds": [
+          "general",
+          "rules",
+          "definitions"
+        ],
+        "hard_filters": {},
+        "use_global_fallback": false,
+        "planner_confidence": 0.86,
+        "planner_source": "deterministic",
+        "global_fallback_used": false
+      },
+      "top_candidates": [
+        {
+          "chunk_id": "77857474a092b079-chunk-0157",
+          "page_label": "Page 30",
+          "section_heading": "EXPERIMENTAL RESULTS",
+          "section_kind": "results",
+          "chunk_role_prior": "heading_stub",
+          "heading_only_flag": true,
+          "body_evidence_score": 0.12,
+          "fused_score": -0.10424168618266977,
+          "text_preview": "6.2 EXPERIMENTAL RESULTS"
+        },
+        {
+          "chunk_id": "77857474a092b079-chunk-0000",
+          "page_label": "Page 1",
+          "section_heading": "EXPERIMENTAL STUDY OF SINGLE PASS DOUBLE FLOW",
+          "section_kind": "general",
+          "chunk_role_prior": "heading_stub",
+          "heading_only_flag": true,
+          "body_evidence_score": 0.12,
+          "fused_score": -0.03544126984126983,
+          "text_preview": "EXPERIMENTAL STUDY OF SINGLE PASS DOUBLE FLOW"
+        },
+        {
+          "chunk_id": "77857474a092b079-chunk-0114",
+          "page_label": "Page 24",
+          "section_heading": "DIGITAL MANOMETER",
+          "section_kind": "general",
+          "chunk_role_prior": "body",
+          "heading_only_flag": false,
+          "body_evidence_score": 0.88,
+          "fused_score": 0.40172903225806456,
+          "text_preview": "5. EXPERIMENTATION:\nThe experiment is conducted  under a solar simulator, the recorded ambient air temperature was\n35\u2103 for all three observations. The dimmerstats  are tuned to obtain a radiation heat flux of 820\nW/m2 fr"
+        },
+        {
+          "chunk_id": "77857474a092b079-chunk-0012",
+          "page_label": "Page 2",
+          "section_heading": "Manipal",
+          "section_kind": "general",
+          "chunk_role_prior": "heading_stub",
+          "heading_only_flag": true,
+          "body_evidence_score": 0.12,
+          "fused_score": -0.04149285714285711,
+          "text_preview": "CERTIFICATE\nThis is to certify that the project titled EXPERIMENTAL STUDY OF SINGLE PASS"
+        }
+      ]
+    },
+    "How does the project compare the base model with the perforated or modified configurations?": {
+      "route_used": "synopsis_first",
+      "strategy_notes": [
+        "Planner intent: comparison.",
+        "Planner evidence spread: distributed.",
+        "Planner selected synopsis_first with soft_multi_region constraints.",
+        "Planner source: deterministic at confidence 0.66.",
+        "Preferred content types: methodology, general, results.",
+        "Synopsis-first routing prioritized 11 sections before chunk retrieval.",
+        "Top synopsis region: TABLE 6.11.",
+        "Global fallback added extra evidence outside the prioritized regions."
+      ],
+      "retrieval_plan": {
+        "intent_type": "comparison",
+        "evidence_spread": "distributed",
+        "constraint_mode": "soft_multi_region",
+        "preferred_route": "synopsis_first",
+        "target_region_ids": [
+          "OBJECTIVES",
+          "DIGITAL MANOMETER|TABLE 6.2",
+          "DIGITAL MANOMETER|TABLE 6.3",
+          "EXPERIMENTAL RESULTS",
+          "EXPERIMENTAL RESULTS|TABLE 6.5",
+          "EXPERIMENTAL RESULTS|TABLE 6.6",
+          "EXPERIMENTAL RESULTS|TABLE 6.7",
+          "EXPERIMENTAL RESULTS|TABLE 6.8",
+          "EXPERIMENTAL RESULTS|TABLE 6.9",
+          "EXPERIMENTAL RESULTS|TABLE 6.11"
+        ],
+        "target_region_kinds": [
+          "evidence",
+          "discussion",
+          "overview"
+        ],
+        "hard_filters": {},
+        "use_global_fallback": true,
+        "planner_confidence": 0.66,
+        "planner_source": "deterministic",
+        "global_fallback_used": true
+      },
+      "top_candidates": [
+        {
+          "chunk_id": "77857474a092b079-chunk-0155",
+          "page_label": "Page 29",
+          "section_heading": "TABLE 6.3",
+          "section_kind": "general",
+          "chunk_role_prior": "body",
+          "heading_only_flag": false,
+          "body_evidence_score": 0.88,
+          "fused_score": 0.5138587064676617,
+          "text_preview": "1.4\n1.6Uncertainity in thermohydraulic efficiency (%)\nReynolds Number (Re)\nBase configuration\nPerforated configuration (d=5mm)\nPerforated configuration (d=8mm)"
+        },
+        {
+          "chunk_id": "77857474a092b079-chunk-0142",
+          "page_label": "Page 28",
+          "section_heading": "TABLE 6.2",
+          "section_kind": "general",
+          "chunk_role_prior": "body",
+          "heading_only_flag": false,
+          "body_evidence_score": 0.88,
+          "fused_score": 0.5150623655913978,
+          "text_preview": "1.4\n1.6Uncertainity in thermal efficiency (%)\nReynolds Number (Re)\nBase configuration\nPerforated configuration (d=5mm)\nPerforated configuration (d=8mm)"
+        },
+        {
+          "chunk_id": "77857474a092b079-chunk-0250",
+          "page_label": "Page 40",
+          "section_heading": "TABLE 6.11",
+          "section_kind": "general",
+          "chunk_role_prior": "body",
+          "heading_only_flag": false,
+          "body_evidence_score": 0.88,
+          "fused_score": 0.5623571644042232,
+          "text_preview": "TABLE 6.11\nCalculated Thermohydraulic efficiency for all configurations.\nReynolds number \u03b7hyd (Base model) \u03b7hyd (Perforated\nd=5mm)\n\u03b7hyd (Perforated\nd=8mm)"
+        },
+        {
+          "chunk_id": "77857474a092b079-chunk-0144",
+          "page_label": "Page 29",
+          "section_heading": "TABLE 6.3",
+          "section_kind": "general",
+          "chunk_role_prior": "body",
+          "heading_only_flag": false,
+          "body_evidence_score": 0.88,
+          "fused_score": 0.5471920398009951,
+          "text_preview": "TABLE 6.3\nUncertainties in measurement of thermohydraulic efficiency for all configurations.\nReynolds number W\u03b7hyd (Base\nmodel)\nW\u03b7hyd (Perforated\nd=5mm)\nW\u03b7hyd (Perforated\nd=8mm)"
+        }
+      ]
+    },
+    "What uncertainties, limitations, or measurement considerations are discussed in the report?": {
+      "route_used": "synopsis_first",
+      "strategy_notes": [
+        "Planner intent: numeric.",
+        "Planner evidence spread: sectional.",
+        "Planner selected synopsis_first with soft_local constraints.",
+        "Planner source: deterministic at confidence 0.74.",
+        "Preferred content types: results, general.",
+        "Synopsis-first routing prioritized 12 sections before chunk retrieval.",
+        "Top synopsis region: Conclusions.",
+        "Global fallback added extra evidence outside the prioritized regions."
+      ],
+      "retrieval_plan": {
+        "intent_type": "numeric",
+        "evidence_spread": "sectional",
+        "constraint_mode": "soft_local",
+        "preferred_route": "synopsis_first",
+        "target_region_ids": [
+          "DIGITAL MANOMETER|Re = (\u03c1vinletDh)/\u03bc",
+          "Conclusions",
+          "DIGITAL MANOMETER|TABLE 6.2",
+          "DIGITAL MANOMETER|TABLE 6.3",
+          "EXPERIMENTAL STUDY OF SINGLE PASS DOUBLE FLOW",
+          "EXPERIMENTAL STUDY OF SINGLE PASS DOUBLE FLOW|Manipal",
+          "EXPERIMENTAL STUDY OF SINGLE PASS DOUBLE FLOW|ACKNOWLEDGEMENTS",
+          "SOLAR SIMULATOR",
+          "TEMPERATURE SENSORS",
+          "Vortex Flow Meter"
+        ],
+        "target_region_kinds": [
+          "evidence",
+          "discussion",
+          "general"
+        ],
+        "hard_filters": {},
+        "use_global_fallback": true,
+        "planner_confidence": 0.74,
+        "planner_source": "deterministic",
+        "global_fallback_used": true
+      },
+      "top_candidates": [
+        {
+          "chunk_id": "77857474a092b079-chunk-0131",
+          "page_label": "Page 28",
+          "section_heading": "TABLE 6.2",
+          "section_kind": "general",
+          "chunk_role_prior": "body",
+          "heading_only_flag": false,
+          "body_evidence_score": 0.88,
+          "fused_score": 0.5248505854800937,
+          "text_preview": "TABLE 6.2\nUncertainties in measurement of Thermal efficiency for all configurations.\nReynolds number W\u03b7th (Base model) W\u03b7th  (Perforated\nd=5mm)\nW\u03b7th  (Perforated\nd=8mm)"
+        },
+        {
+          "chunk_id": "77857474a092b079-chunk-0144",
+          "page_label": "Page 29",
+          "section_heading": "TABLE 6.3",
+          "section_kind": "general",
+          "chunk_role_prior": "body",
+          "heading_only_flag": false,
+          "body_evidence_score": 0.88,
+          "fused_score": 0.5245861751152074,
+          "text_preview": "TABLE 6.3\nUncertainties in measurement of thermohydraulic efficiency for all configurations.\nReynolds number W\u03b7hyd (Base\nmodel)\nW\u03b7hyd (Perforated\nd=5mm)\nW\u03b7hyd (Perforated\nd=8mm)"
+        },
+        {
+          "chunk_id": "77857474a092b079-chunk-0063",
+          "page_label": "Page 8",
+          "section_heading": "LIST OF TABLES",
+          "section_kind": "general",
+          "chunk_role_prior": "heading_stub",
+          "heading_only_flag": true,
+          "body_evidence_score": 0.18,
+          "fused_score": -0.18470497007546188,
+          "text_preview": "6.2 Uncertainty in the measurement of Thermal efficiency for all\nconfigurations\n20"
+        },
+        {
+          "chunk_id": "77857474a092b079-chunk-0118",
+          "page_label": "Page 25",
+          "section_heading": ". RESULT ANALYSIS",
+          "section_kind": "general",
+          "chunk_role_prior": "body",
+          "heading_only_flag": false,
+          "body_evidence_score": 0.88,
+          "fused_score": 0.5399707904998228,
+          "text_preview": "6.1 UNCERTAINTY ANALYSIS:\nThe uncertainty in thermal efficiency and thermohydraulic effciency has been found out for the\nvarious configurations of the absorber plate for all the six flow rate conditions.\nThe uncertainty "
+        }
+      ]
+    }
+  }
+}

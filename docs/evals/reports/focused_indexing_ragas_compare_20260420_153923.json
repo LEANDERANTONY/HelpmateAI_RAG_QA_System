@@ -1,0 +1,109 @@
+{
+  "available": true,
+  "dataset_names": [
+    "reportgeneration_retrieval_eval_dataset.json",
+    "reportgeneration2_retrieval_eval_dataset.json",
+    "health_retrieval_eval_dataset.json",
+    "manual_questions_graduate_project_20260419.json"
+  ],
+  "variant_order": [
+    "layer2_selective",
+    "layer3_gated_synopsis"
+  ],
+  "answer_model": "gpt-5.4-mini",
+  "embedding_model": "text-embedding-3-small",
+  "variants": {
+    "layer2_selective": {
+      "settings": {
+        "synopsis_semantics_enabled": false,
+        "synopsis_semantics_gate_mode": "targeted",
+        "reranker_enabled": true,
+        "evidence_selector_enabled": true
+      },
+      "dataset_size": 39,
+      "supported_rate": 0.9487179487179487,
+      "faithfulness_mean": 0.8803418803418803,
+      "answer_relevancy_mean": 0.5590546937257336,
+      "context_precision_mean": 0.8903133902773386,
+      "per_dataset": {
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 0.95,
+          "answer_relevancy_mean": 0.5016716874068792,
+          "context_precision_mean": 0.9555555555262036
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 0.8333333333333334,
+          "answer_relevancy_mean": 0.5279827358409448,
+          "context_precision_mean": 0.8888888888505092
+        },
+        "health_retrieval_eval_dataset.json": {
+          "dataset_size": 13,
+          "supported_rate": 0.8461538461538461,
+          "faithfulness_mean": 0.8076923076923077,
+          "answer_relevancy_mean": 0.6279658588487829,
+          "context_precision_mean": 0.8547008546689459
+        },
+        "manual_questions_graduate_project_20260419.json": {
+          "dataset_size": 6,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 1.0,
+          "answer_relevancy_mean": 0.5571721096318653,
+          "context_precision_mean": 0.8611111110587963
+        }
+      }
+    },
+    "layer3_gated_synopsis": {
+      "settings": {
+        "synopsis_semantics_enabled": true,
+        "synopsis_semantics_gate_mode": "targeted",
+        "reranker_enabled": true,
+        "evidence_selector_enabled": true
+      },
+      "dataset_size": 39,
+      "supported_rate": 0.9230769230769231,
+      "faithfulness_mean": 0.9258241758241759,
+      "answer_relevancy_mean": 0.5771535772549895,
+      "context_precision_mean": 0.8646723646397317,
+      "per_dataset": {
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 0.95,
+          "answer_relevancy_mean": 0.6475033036193764,
+          "context_precision_mean": 0.911111111082824
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "dataset_size": 10,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 0.925,
+          "answer_relevancy_mean": 0.5721300510488584,
+          "context_precision_mean": 0.9388888888530093
+        },
+        "health_retrieval_eval_dataset.json": {
+          "dataset_size": 13,
+          "supported_rate": 0.7692307692307693,
+          "faithfulness_mean": 0.9120879120879121,
+          "answer_relevancy_mean": 0.528319570044781,
+          "context_precision_mean": 0.7927350427058404
+        },
+        "manual_questions_graduate_project_20260419.json": {
+          "dataset_size": 6,
+          "supported_rate": 1.0,
+          "faithfulness_mean": 0.9166666666666666,
+          "answer_relevancy_mean": 0.5740835926133488,
+          "context_precision_mean": 0.8194444444025463
+        }
+      }
+    }
+  },
+  "delta_layer3_vs_layer2": {
+    "supported_rate": -0.02564102564102555,
+    "faithfulness_mean": 0.04548229548229554,
+    "answer_relevancy_mean": 0.018098883529255927,
+    "context_precision_mean": -0.02564102563760684
+  }
+}

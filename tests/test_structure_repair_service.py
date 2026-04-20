@@ -71,7 +71,7 @@ def test_structure_repair_assess_flags_low_confidence_research_doc():
 
 
 def test_structure_repair_rebuilds_sections_from_page_assignments():
-    settings = Settings(openai_api_key="test-key")
+    settings = Settings(openai_api_key="test-key", structure_repair_require_header_dominated=False)
     service = StructureRepairService(settings)
     service.client = object()
 
@@ -130,7 +130,7 @@ def test_structure_repair_rebuilds_sections_from_page_assignments():
 
 
 def test_structure_repair_replaces_noisy_overview_titles_with_canonical_heading():
-    settings = Settings(openai_api_key="test-key")
+    settings = Settings(openai_api_key="test-key", structure_repair_require_header_dominated=False)
     service = StructureRepairService(settings)
     service.client = object()
 
@@ -296,3 +296,118 @@ def test_structure_repair_assess_penalty_overrides_can_disable_specific_signal()
 
     assert baseline.confidence < no_noise_penalty.confidence
     assert any("publisher/header noise" in reason.lower() for reason in baseline.reasons)
+    assert "noisy_titles" in baseline.reason_codes
+
+
+def test_structure_repair_assess_flags_running_header_dominated_sections():
+    settings = Settings(openai_api_key=None)
+    service = StructureRepairService(settings)
+    document = DocumentRecord(
+        document_id="doc6",
+        file_name="radalign.pdf",
+        file_type="pdf",
+        source_path="radalign.pdf",
+        fingerprint="pqr",
+        char_count=4000,
+        page_count=15,
+        metadata={"document_style": "research_paper"},
+    )
+    sections = [
+        SectionRecord(
+            section_id="s1",
+            document_id="doc6",
+            title="RadAlign: Advancing Radiology Report Generation 3",
+            summary="Header-like page title.",
+            text="Background and introduction content.",
+            page_labels=["Page 3"],
+            section_path=["RadAlign: Advancing Radiology Report"],
+            clause_ids=[],
+            metadata={"section_kind": "general", "section_aliases": ["RadAlign"]},
+        ),
+        SectionRecord(
+            section_id="s2",
+            document_id="doc6",
+            title="4 Difei Gu, Yunhe Gao, Yang Zhou, Mu Zhou, and Dimitris Metaxas",
+            summary="Author-line running header.",
+            text="Methods content.",
+            page_labels=["Page 4"],
+            section_path=["RadAlign: Advancing Radiology Report"],
+            clause_ids=[],
+            metadata={"section_kind": "general", "section_aliases": ["RadAlign"]},
+        ),
+        SectionRecord(
+            section_id="s3",
+            document_id="doc6",
+            title="Experimental Setup",
+            summary="Real section title.",
+            text="Experimental setup text.",
+            page_labels=["Page 7"],
+            section_path=["Experimental Setup"],
+            clause_ids=[],
+            metadata={"section_kind": "general", "section_aliases": ["Experimental Setup"]},
+        ),
+        SectionRecord(
+            section_id="s4",
+            document_id="doc6",
+            title="RadAlign: Advancing Radiology Report Generation 9",
+            summary="Header-like page title.",
+            text="Results discussion text.",
+            page_labels=["Page 9"],
+            section_path=["RadAlign: Advancing Radiology Report"],
+            clause_ids=[],
+            metadata={"section_kind": "general", "section_aliases": ["RadAlign"]},
+        ),
+    ]
+
+    decision = service.assess(document, sections)
+
+    assert decision.confidence < settings.structure_repair_confidence_threshold
+    assert decision.should_repair is True
+    assert any("running headers" in reason.lower() for reason in decision.reasons)
+    assert "header_dominated_titles" in decision.reason_codes
+
+
+def test_structure_repair_header_dominated_gate_skips_non_header_cases():
+    settings = Settings(openai_api_key="test-key", structure_repair_require_header_dominated=True)
+    service = StructureRepairService(settings)
+    service.client = object()
+
+    document = DocumentRecord(
+        document_id="doc7",
+        file_name="paper.pdf",
+        file_type="pdf",
+        source_path="paper.pdf",
+        fingerprint="stu",
+        char_count=3000,
+        page_count=6,
+        metadata={
+            "document_style": "research_paper",
+            "pages": [
+                {"page_label": "Page 1", "text": "ABSTRACT\nThis paper studies report generation.", "section_heading": "Article"},
+                {"page_label": "Page 2", "text": "Introduction\nWe motivate the study.", "section_heading": "Article"},
+                {"page_label": "Page 3", "text": "Methods\nWe describe the method.", "section_heading": "Article"},
+                {"page_label": "Page 4", "text": "Methods\nWe describe the method details.", "section_heading": "Article"},
+                {"page_label": "Page 5", "text": "Results\nThe system improves performance.", "section_heading": "Article"},
+                {"page_label": "Page 6", "text": "Discussion\nWe discuss limitations.", "section_heading": "Article"},
+            ],
+        },
+    )
+    coarse_sections = [
+        SectionRecord(
+            section_id="coarse",
+            document_id="doc7",
+            title="Comprehensive Study Overview",
+            summary="Flattened article summary.",
+            text=" ".join(str(page["text"]) for page in document.metadata["pages"]),
+            page_labels=[f"Page {i}" for i in range(1, 7)],
+            section_path=["Comprehensive Study Overview"],
+            clause_ids=[],
+            metadata={"section_kind": "general", "section_aliases": ["Comprehensive Study Overview"]},
+        )
+    ]
+
+    repaired_sections, decision = service.repair_if_needed(document, coarse_sections)
+
+    assert decision.should_repair is True
+    assert "header_dominated_titles" not in decision.reason_codes
+    assert repaired_sections == coarse_sections

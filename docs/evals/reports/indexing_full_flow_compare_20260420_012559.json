@@ -1,0 +1,329 @@
+{
+  "variant_order": [
+    "layer1_only",
+    "layer2_ungated"
+  ],
+  "variants": {
+    "layer1_only": {
+      "settings": {
+        "structure_repair_enabled": false,
+        "structure_repair_require_header_dominated": true,
+        "planner_llm_enabled": false,
+        "router_llm_enabled": false,
+        "reranker_enabled": true,
+        "evidence_selector_enabled": true,
+        "evidence_selector_prune": false,
+        "index_schema_version": "v12-layer1_only-header_gate",
+        "retrieval_version": "v12-layer1_only-header_gate",
+        "generation_version": "v5-layer1_only"
+      },
+      "documents": {
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration.pdf",
+          "document_id": "b950f9666b1999a4",
+          "fingerprint": "b950f9666b1999a4f3cbf1f557a55034bfca8af1a887027269117ce2e5449680",
+          "base_section_count": 4,
+          "final_section_count": 4,
+          "confidence": 0.42000000000000004,
+          "should_repair": true,
+          "repair_applied": false,
+          "reasons": [
+            "Long document collapsed into too few sections.",
+            "Repeated publisher/header noise appears in section titles."
+          ]
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration2.pdf",
+          "document_id": "c28685174b6bce75",
+          "fingerprint": "c28685174b6bce75cdc76b5fc3ed77364c925d76e5d64b86430deaac24fc94ca",
+          "base_section_count": 16,
+          "final_section_count": 16,
+          "confidence": 0.56,
+          "should_repair": true,
+          "repair_applied": false,
+          "reasons": [
+            "Section titles look like running headers instead of semantic headings.",
+            "Research-style document has weak canonical heading coverage."
+          ]
+        },
+        "health_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+          "document_id": "1a994e256c109513",
+          "fingerprint": "1a994e256c109513b5c495454dd0f43430a6e03b53c7187d2871a77971c07532",
+          "base_section_count": 3,
+          "final_section_count": 3,
+          "confidence": 0.64,
+          "should_repair": false,
+          "repair_applied": false,
+          "reasons": [
+            "Long document collapsed into too few sections."
+          ]
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+          "document_id": "c459aa7631f3848f",
+          "fingerprint": "c459aa7631f3848f0a70bf23a5a191b3586e540e2e57d7be4750dbdd140e1691",
+          "base_section_count": 101,
+          "final_section_count": 101,
+          "confidence": 0.92,
+          "should_repair": false,
+          "repair_applied": false,
+          "reasons": [
+            "Deterministic structure extraction looked healthy."
+          ]
+        }
+      },
+      "per_dataset": {
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 10,
+            "supported_rate": 1.0,
+            "citation_page_hit_rate": 1.0,
+            "evidence_fragment_recall_mean": 0.7066666666666668
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 10,
+            "supported_rate": 1.0,
+            "citation_page_hit_rate": 0.9,
+            "evidence_fragment_recall_mean": 0.6916666666666667
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        },
+        "health_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 13,
+            "supported_rate": 0.7692307692307693,
+            "citation_page_hit_rate": 0.7692307692307693,
+            "evidence_fragment_recall_mean": 0.6666666666666666
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 12,
+            "supported_rate": 0.9166666666666666,
+            "citation_page_hit_rate": 0.8333333333333334,
+            "evidence_fragment_recall_mean": 0.6716269841269842
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 0.8,
+            "false_support_rate": 0.2
+          }
+        }
+      },
+      "positive_overall": {
+        "dataset_size": 45,
+        "supported_rate": 0.9111111111111111,
+        "citation_page_hit_rate": 0.8666666666666667,
+        "evidence_fragment_recall_mean": 0.6824338624338626
+      },
+      "negative_overall": {
+        "dataset_size": 20,
+        "abstention_rate": 0.95,
+        "false_support_rate": 0.05
+      },
+      "positive_weak_family": {
+        "dataset_count": 2,
+        "supported_rate": 1.0,
+        "citation_page_hit_rate": 0.95,
+        "evidence_fragment_recall_mean": 0.6991666666666667
+      },
+      "positive_guardrails": {
+        "dataset_count": 2,
+        "supported_rate": 0.842948717948718,
+        "citation_page_hit_rate": 0.8012820512820513,
+        "evidence_fragment_recall_mean": 0.6691468253968254
+      },
+      "negative_weak_family": {
+        "dataset_count": 2,
+        "abstention_rate": 1.0,
+        "false_support_rate": 0.0
+      },
+      "negative_guardrails": {
+        "dataset_count": 2,
+        "abstention_rate": 0.9,
+        "false_support_rate": 0.1
+      }
+    },
+    "layer2_ungated": {
+      "settings": {
+        "structure_repair_enabled": true,
+        "structure_repair_require_header_dominated": false,
+        "planner_llm_enabled": false,
+        "router_llm_enabled": false,
+        "reranker_enabled": true,
+        "evidence_selector_enabled": true,
+        "evidence_selector_prune": false,
+        "index_schema_version": "v12-layer2_ungated-ungated",
+        "retrieval_version": "v12-layer2_ungated-ungated",
+        "generation_version": "v5-layer2_ungated"
+      },
+      "documents": {
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration.pdf",
+          "document_id": "b950f9666b1999a4",
+          "fingerprint": "b950f9666b1999a4f3cbf1f557a55034bfca8af1a887027269117ce2e5449680",
+          "base_section_count": 4,
+          "final_section_count": 15,
+          "confidence": 0.42000000000000004,
+          "should_repair": true,
+          "repair_applied": true,
+          "reasons": [
+            "Long document collapsed into too few sections.",
+            "Repeated publisher/header noise appears in section titles."
+          ]
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration2.pdf",
+          "document_id": "c28685174b6bce75",
+          "fingerprint": "c28685174b6bce75cdc76b5fc3ed77364c925d76e5d64b86430deaac24fc94ca",
+          "base_section_count": 16,
+          "final_section_count": 15,
+          "confidence": 0.56,
+          "should_repair": true,
+          "repair_applied": true,
+          "reasons": [
+            "Section titles look like running headers instead of semantic headings.",
+            "Research-style document has weak canonical heading coverage."
+          ]
+        },
+        "health_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+          "document_id": "1a994e256c109513",
+          "fingerprint": "1a994e256c109513b5c495454dd0f43430a6e03b53c7187d2871a77971c07532",
+          "base_section_count": 3,
+          "final_section_count": 3,
+          "confidence": 0.64,
+          "should_repair": false,
+          "repair_applied": false,
+          "reasons": [
+            "Long document collapsed into too few sections."
+          ]
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "document_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+          "document_id": "c459aa7631f3848f",
+          "fingerprint": "c459aa7631f3848f0a70bf23a5a191b3586e540e2e57d7be4750dbdd140e1691",
+          "base_section_count": 101,
+          "final_section_count": 101,
+          "confidence": 0.92,
+          "should_repair": false,
+          "repair_applied": false,
+          "reasons": [
+            "Deterministic structure extraction looked healthy."
+          ]
+        }
+      },
+      "per_dataset": {
+        "reportgeneration_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 10,
+            "supported_rate": 1.0,
+            "citation_page_hit_rate": 0.9,
+            "evidence_fragment_recall_mean": 0.7716666666666667
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        },
+        "reportgeneration2_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 10,
+            "supported_rate": 1.0,
+            "citation_page_hit_rate": 1.0,
+            "evidence_fragment_recall_mean": 0.6166666666666667
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        },
+        "health_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 13,
+            "supported_rate": 0.7692307692307693,
+            "citation_page_hit_rate": 0.7692307692307693,
+            "evidence_fragment_recall_mean": 0.6666666666666666
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        },
+        "thesis_retrieval_eval_dataset.json": {
+          "positive": {
+            "dataset_size": 12,
+            "supported_rate": 0.9166666666666666,
+            "citation_page_hit_rate": 0.8333333333333334,
+            "evidence_fragment_recall_mean": 0.6716269841269842
+          },
+          "negative": {
+            "dataset_size": 5,
+            "abstention_rate": 1.0,
+            "false_support_rate": 0.0
+          }
+        }
+      },
+      "positive_overall": {
+        "dataset_size": 45,
+        "supported_rate": 0.9111111111111111,
+        "citation_page_hit_rate": 0.8666666666666667,
+        "evidence_fragment_recall_mean": 0.6802116402116403
+      },
+      "negative_overall": {
+        "dataset_size": 20,
+        "abstention_rate": 1.0,
+        "false_support_rate": 0.0
+      },
+      "positive_weak_family": {
+        "dataset_count": 2,
+        "supported_rate": 1.0,
+        "citation_page_hit_rate": 0.95,
+        "evidence_fragment_recall_mean": 0.6941666666666667
+      },
+      "positive_guardrails": {
+        "dataset_count": 2,
+        "supported_rate": 0.842948717948718,
+        "citation_page_hit_rate": 0.8012820512820513,
+        "evidence_fragment_recall_mean": 0.6691468253968254
+      },
+      "negative_weak_family": {
+        "dataset_count": 2,
+        "abstention_rate": 1.0,
+        "false_support_rate": 0.0
+      },
+      "negative_guardrails": {
+        "dataset_count": 2,
+        "abstention_rate": 1.0,
+        "false_support_rate": 0.0
+      }
+    }
+  },
+  "delta_layer2_ungated_vs_layer1": {
+    "positive_overall_supported_rate": 0.0,
+    "positive_overall_citation_rate": 0.0,
+    "positive_overall_fragment_recall": -0.0022222222222223476,
+    "negative_overall_abstention_rate": 0.050000000000000044,
+    "negative_overall_false_support_rate": -0.05
+  }
+}
