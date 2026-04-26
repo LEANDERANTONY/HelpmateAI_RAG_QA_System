@@ -271,7 +271,10 @@ def _save_touched_document(document: DocumentRecord, user: AuthenticatedUser) ->
 
 
 def _sample_dir() -> Path:
-    return _settings().data_dir.parent / "static" / "sample_files"
+    # Use the app root (two levels up from this file: backend/main.py → root)
+    # so this resolves correctly regardless of HELPMATE_DATA_DIR on the VPS.
+    app_root = Path(__file__).resolve().parent.parent
+    return app_root / "static" / "sample_files"
 
 
 def _build_sample_payload(path: Path) -> SampleDocumentResponse:

@@ -46,8 +46,8 @@ def _document(
     )
 
 
-def _index(tmp_path: Path, *, document_id: str, fingerprint: str) -> IndexRecord:
-    index_dir = tmp_path / "data" / "indexes" / "v10" / fingerprint
+def _index(settings: Settings, *, document_id: str, fingerprint: str) -> IndexRecord:
+    index_dir = settings.indexes_dir / settings.index_schema_version / fingerprint
     index_dir.mkdir(parents=True, exist_ok=True)
     (index_dir / "index_meta.json").write_text("{}", encoding="utf-8")
     return IndexRecord(
@@ -84,8 +84,8 @@ def test_sweeper_deletes_expired_workspaces_and_orphans(tmp_path: Path):
         file_name="active.pdf",
         expires_at=now + timedelta(hours=8),
     )
-    expired_index = _index(tmp_path, document_id="doc-expired", fingerprint="fingerprint-expired")
-    active_index = _index(tmp_path, document_id="doc-active", fingerprint="fingerprint-active")
+    expired_index = _index(settings, document_id="doc-expired", fingerprint="fingerprint-expired")
+    active_index = _index(settings, document_id="doc-active", fingerprint="fingerprint-active")
 
     store.save_document(expired_document)
     store.save_document(active_document)
