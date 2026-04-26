@@ -14,6 +14,7 @@ Current ADRs:
 - `ADR-008-benchmark-driven-stack-defaults-and-experimental-selector.md`
 - `ADR-009-benchmark-driven-chunking-default-1200-240.md`
 - `ADR-010-reorder-only-evidence-selector-promoted-to-default.md`
+- `ADR-011-partial-grounded-answers-and-support-guardrail-eval.md`
 
 Usage notes:
 
@@ -40,3 +41,7 @@ Current state note:
   - selector trigger policy now defaults to spread-only activation
   - structure-repair threshold remains `0.62`
   - topology edge sets remained benchmark-invariant on the current corpus
+- the newest support-guardrail closure is:
+  - weak/unsupported retrieval thresholds remain unchanged after sweep testing
+  - generation now permits grounded partial answers with missing coverage explained in `reason`
+  - `support_guardrail_eval` tracks calibration negatives and held-out manual questions together

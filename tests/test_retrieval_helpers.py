@@ -19,6 +19,15 @@ def test_extract_metadata_filters_detects_clause_reference():
     assert filters["clause_terms"] == ["4.1"]
 
 
+def test_extract_metadata_filters_extracts_named_section_from_in_the_phrase():
+    retriever = HybridRetriever(store=None, settings=Settings())  # type: ignore[arg-type]
+    filters = retriever._extract_metadata_filters(
+        "ok tell me in the literature review what was the section summary?"
+    )
+
+    assert filters["section_terms"] == ["literature review"]
+
+
 def test_assess_evidence_status_marks_unsupported_for_very_low_signal():
     retriever = HybridRetriever(store=None, settings=Settings())  # type: ignore[arg-type]
     candidates = [
@@ -203,6 +212,36 @@ def test_chunk_candidates_promote_continuation_of_heading_stub():
 
     assert "c2" in by_id
     assert by_id["c2"].fused_score > by_id["c3"].fused_score
+
+
+def test_finalize_candidates_prefers_body_continuation_over_heading_stub():
+    retriever = HybridRetriever(store=None, settings=Settings(reranker_enabled=False, final_top_k=2))  # type: ignore[arg-type]
+    heading = RetrievalCandidate(
+        chunk_id="heading",
+        text="LITERATURE REVIEW",
+        metadata={
+            "heading_only_flag": True,
+            "chunk_role_prior": "heading_stub",
+            "continuation_chunk_id": "body",
+        },
+        fused_score=0.9,
+    )
+    body = RetrievalCandidate(
+        chunk_id="body",
+        text="The literature review surveys pancreatic cancer diagnosis, medical imaging AI, biomarkers, multimodal fusion, and dataset bias.",
+        metadata={"chunk_role_prior": "body", "heading_only_flag": False},
+        fused_score=0.4,
+    )
+    other = RetrievalCandidate(
+        chunk_id="other",
+        text="The final chapter summarizes key findings and future work.",
+        metadata={"chunk_role_prior": "body", "heading_only_flag": False},
+        fused_score=0.7,
+    )
+
+    final = retriever._finalize_candidates("What does the literature review cover?", [heading, other, body])
+
+    assert [candidate.chunk_id for candidate in final] == ["body", "other"]
 
 
 def test_score_chunk_penalizes_front_matter_for_results_queries():

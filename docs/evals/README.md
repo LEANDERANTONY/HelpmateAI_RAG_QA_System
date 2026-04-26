@@ -146,6 +146,41 @@ Why:
 - spread-only gives the best current production tradeoff between answer quality and activation frequency
 - always-on remains a useful reference mode, but not the default shipping policy
 
+## Support Guardrail Eval
+
+The weak/unsupported retrieval thresholds are now checked separately from final answer support.
+
+Run the support guardrail eval with:
+
+```powershell
+uv run python -m src.evals.support_guardrail_eval
+```
+
+The eval covers:
+
+- labeled calibration positives and negatives from `docs/evals`
+- held-out manual questions over `static/sample_files/test`
+- retrieval status distribution
+- final answer supported/abstained behavior
+
+Current report:
+
+- `docs/evals/reports/support_guardrail_eval_20260427_032609.json`
+
+Current result:
+
+- calibration positive supported rate: `0.9079`
+- calibration negative abstention rate: `1.0000`
+- calibration false support rate: `0.0000`
+- held-out answer supported rate: `1.0000`
+- held-out unsupported retrieval rate: `0.0000`
+
+Decision from this run:
+
+- keep weak/unsupported thresholds unchanged
+- use answer-layer support verification as the final safety layer
+- allow partial but grounded answers when retrieved evidence answers only part of a broad question
+
 ## Baseline Policy
 
 Going forward, Vectara should be treated as the primary external managed-retrieval benchmark.

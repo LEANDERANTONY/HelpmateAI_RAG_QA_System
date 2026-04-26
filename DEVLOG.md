@@ -8,6 +8,30 @@ Historical note:
 - later entries add quality-control, benchmarking, and document-intelligence work on top of that baseline
 - the project is still evolving, so later entries refine earlier architectural assumptions without erasing them
 
+## Day 25: Support Guardrails Stopped Treating Partial Evidence As Failure
+
+- Investigated broad thesis questions that returned unsupported answers despite useful evidence being present.
+- Added generalized section-name parsing for natural phrasing like "in the literature review what was..." without hard-coding thesis-specific section names.
+- Changed final retrieval selection so heading-only chunks defer to their body continuation when available.
+- Swept weak/unsupported evidence thresholds and found threshold-only tuning was not a defensible fix.
+- Added `src.evals.support_guardrail_eval` to evaluate:
+  - labeled calibration positives and negatives
+  - held-out manual questions in `static/sample_files/test`
+  - retrieval status versus final answer support
+- Updated the generation prompt to allow grounded partial answers while still abstaining when no substantive answer is supported.
+
+Challenges:
+
+- retrieval scores alone could not separate negatives from positives because broad off-topic questions still retrieved high-scoring domain-adjacent chunks
+- the first instinct, lowering or raising weak/unsupported thresholds, would have overfit the wrong layer
+- broad user questions often ask for more than the top evidence window can fully cover, so "all-or-nothing" support was too brittle
+
+Improvements:
+
+- held-out manual test-folder questions reached `1.0000` answer-supported rate after the prompt contract change
+- calibration negatives stayed at `1.0000` abstention with `0.0000` false support
+- the repo now has an ADR and repeatable eval report for why thresholds were left unchanged
+
 ## Day 24: Final Vendor Rerun On The Stabilized Stack
 
 - Reran the external `ragas` benchmark suite against both:

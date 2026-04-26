@@ -56,3 +56,19 @@ def test_grounded_prompt_adds_summary_specific_guidance_for_global_questions():
 
     assert "broad high-level summary question" in prompt
     assert "what the document is about" in prompt.lower()
+
+
+def test_grounded_prompt_allows_partial_supported_answers():
+    prompt = build_grounded_prompt(
+        "Compare the reported GAN, diffusion, and LLM findings.",
+        [
+            RetrievalCandidate(
+                chunk_id="c1",
+                text="The paper reports that GANs can generate realistic construction design images.",
+                metadata={"page_label": "Page 3"},
+            )
+        ],
+    )
+
+    assert "answer the supported part directly" in prompt
+    assert "Set supported to false only when the supplied evidence cannot answer the question at all" in prompt

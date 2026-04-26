@@ -54,6 +54,7 @@ class HybridRetriever:
     OVERVIEW_SECTION_KINDS = {"overview", "abstract", "introduction", "background"}
     FINDINGS_SECTION_KINDS = {"results", "discussion", "evidence"}
     LATE_SECTION_KINDS = {"discussion", "conclusion", "conclusions", "future work", "future directions", "limitations"}
+    GENERIC_SECTION_TERMS = {"chapter", "chapter summary", "section", "section summary", "summary"}
 
     def __init__(self, store: ChromaIndexStore, settings: Settings):
         self.store = store
@@ -132,15 +133,38 @@ class HybridRetriever:
         return "strong", best_score, max_lexical, content_overlap
 
     @staticmethod
-    def _extract_metadata_filters(question: str) -> dict[str, list[str]]:
+    def _clean_section_term(term: str) -> str:
+        compact = re.sub(r"\s+", " ", term.strip(" .,:;?!\"'")).strip()
+        if not compact:
+            return ""
+        compact = re.split(
+            r"\b(?:what|which|how|why|when|where|tell|summarize|explain|describe)\b",
+            compact,
+            maxsplit=1,
+            flags=re.IGNORECASE,
+        )[0].strip(" .,:;?!\"'")
+        return compact
+
+    @classmethod
+    def _extract_metadata_filters(cls, question: str) -> dict[str, list[str]]:
         lowered = question.lower()
         page_numbers = re.findall(r"\bpage(?:s)?\s+(\d+)\b", lowered)
-        section_terms = re.findall(r'"([^"]+)"', question)
+        section_terms = [cls._clean_section_term(term) for term in re.findall(r'"([^"]+)"', question)]
         section_terms.extend(
-            term.strip()
+            cls._clean_section_term(term)
             for term in re.findall(r"(?:section|chapter)\s+([A-Za-z][A-Za-z0-9 ._-]*)", question, flags=re.IGNORECASE)
-            if term.strip()
         )
+        section_terms.extend(
+            cls._clean_section_term(term)
+            for term in re.findall(
+                r"\bin the\s+([A-Za-z][A-Za-z0-9 ._-]*?)\s+(?:what|which|how|why|when|where|tell|summarize|explain|describe|is|are|was|were|does|do|did)\b",
+                question,
+                flags=re.IGNORECASE,
+            )
+        )
+        section_terms = [term for term in section_terms if term]
+        if any(term.lower() not in cls.GENERIC_SECTION_TERMS for term in section_terms):
+            section_terms = [term for term in section_terms if term.lower() not in cls.GENERIC_SECTION_TERMS]
         clause_terms = re.findall(r"(?:clause|section)\s+(\d+(?:\.\d+)+)", question, flags=re.IGNORECASE)
         return {
             "page_labels": [f"Page {page}" for page in page_numbers],
@@ -345,11 +369,43 @@ class HybridRetriever:
             return "overview"
         return "balanced"
 
+    @staticmethod
+    def _is_heading_stub(candidate: RetrievalCandidate) -> bool:
+        return bool(candidate.metadata.get("heading_only_flag")) or str(candidate.metadata.get("chunk_role_prior", "")).lower() == "heading_stub"
+
+    @classmethod
+    def _prefer_body_evidence(cls, candidates: list[RetrievalCandidate]) -> list[RetrievalCandidate]:
+        by_id = {candidate.chunk_id: candidate for candidate in candidates}
+        selected: list[RetrievalCandidate] = []
+        selected_ids: set[str] = set()
+        deferred_heading_stubs: list[RetrievalCandidate] = []
+
+        def add(candidate: RetrievalCandidate) -> None:
+            if candidate.chunk_id in selected_ids:
+                return
+            selected_ids.add(candidate.chunk_id)
+            selected.append(candidate)
+
+        for candidate in candidates:
+            if cls._is_heading_stub(candidate):
+                continuation_id = str(candidate.metadata.get("continuation_chunk_id", "")).strip()
+                continuation = by_id.get(continuation_id)
+                if continuation is not None and not cls._is_heading_stub(continuation):
+                    add(continuation)
+                    continue
+                deferred_heading_stubs.append(candidate)
+                continue
+            add(candidate)
+
+        for candidate in deferred_heading_stubs:
+            add(candidate)
+        return selected
+
     def _finalize_candidates(self, question: str, candidates: list[RetrievalCandidate]) -> list[RetrievalCandidate]:
         ranked = sorted(candidates, key=lambda candidate: candidate.fused_score, reverse=True)
         if self.reranker is not None and ranked:
-            return self.reranker.rerank(question, ranked, top_k=self.settings.final_top_k)
-        return ranked[: self.settings.final_top_k]
+            ranked = self.reranker.rerank(question, ranked, top_k=len(ranked))
+        return self._prefer_body_evidence(ranked)[: self.settings.final_top_k]
 
     def _seed_selected_section_chunks(
         self,
