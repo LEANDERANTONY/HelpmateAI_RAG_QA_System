@@ -75,25 +75,60 @@ class EvidenceSelector:
     def _should_select(self, retrieval_result: RetrievalResult) -> bool:
         return bool(self._selection_decision(retrieval_result)["should_select"])
 
-    def _selection_prompt(self, question: str, candidates: list[RetrievalCandidate]) -> str:
+    @staticmethod
+    def _selector_context(retrieval_result: RetrievalResult) -> dict[str, object]:
+        plan = retrieval_result.retrieval_plan or {}
+        return {
+            "route_used": retrieval_result.route_used,
+            "evidence_status": retrieval_result.evidence_status,
+            "evidence_spread": plan.get("evidence_spread", ""),
+            "constraint_mode": plan.get("constraint_mode", ""),
+            "scope_strictness": plan.get("scope_strictness", "none"),
+            "scope_query": plan.get("scope_query", ""),
+            "allowed_section_ids": plan.get("allowed_section_ids", []),
+            "target_region_ids": plan.get("target_region_ids", []),
+            "answer_focus": plan.get("answer_focus", []),
+            "planner_source": plan.get("planner_source", ""),
+            "orchestrator_reason": plan.get("orchestrator_reason", ""),
+            "global_fallback_used": plan.get("global_fallback_used", False),
+        }
+
+    def _selection_prompt(
+        self,
+        question: str,
+        candidates: list[RetrievalCandidate],
+        retrieval_result: RetrievalResult,
+    ) -> str:
+        selector_context = self._selector_context(retrieval_result)
         lines = [
             "Pick the best evidence chunks for answering the question.",
             "Bias toward higher-ranked candidates unless a lower-ranked one is clearly more direct and specific.",
             "Only score the supplied candidates. Do not invent evidence.",
+            "Use the orchestration context to judge whether evidence should be local, broad, summary-focused, findings-focused, or limitations-focused.",
+            "If scope_strictness is hard, prefer evidence inside the allowed scope that best matches answer_focus.",
+            "If scope_strictness is none, do not over-focus on one local chapter unless the question asks for one.",
             "Return compact JSON with keys candidate_scores and selected_ids.",
             "",
             f"Question: {question}",
+            f"Orchestration context: {json.dumps(selector_context, ensure_ascii=True)}",
             "",
         ]
         for index, candidate in enumerate(candidates, start=1):
             score = self._candidate_score(candidate)
+            scope_labels = candidate.metadata.get("document_scope_labels", [])
+            if not isinstance(scope_labels, list):
+                scope_labels = [str(scope_labels)] if scope_labels else []
             lines.extend(
                 [
                     f"Candidate {candidate.chunk_id}",
                     f"- rank: {index}",
                     f"- retrieval_score: {score:.4f}",
                     f"- page: {candidate.metadata.get('page_label', 'Document')}",
+                    f"- section_id: {candidate.metadata.get('section_id', '')}",
                     f"- section: {candidate.metadata.get('section_heading', '')}",
+                    f"- chapter: {candidate.metadata.get('chapter_number', '')} {candidate.metadata.get('chapter_title', '')}".strip(),
+                    f"- section_role: {candidate.metadata.get('document_section_role', '')}",
+                    f"- scope_labels: {', '.join(str(label) for label in scope_labels[:6])}",
                     f"- text: {candidate.text[:700].replace(chr(10), ' ')}",
                     "",
                 ]
@@ -102,6 +137,57 @@ class EvidenceSelector:
             "candidate_scores must be an object mapping candidate ids to values between 0 and 1. selected_ids should contain the best one or two ids."
         )
         return "\n".join(lines)
+
+    @staticmethod
+    def _candidate_context_text(candidate: RetrievalCandidate) -> str:
+        scope_labels = candidate.metadata.get("document_scope_labels", [])
+        if isinstance(scope_labels, list):
+            scope_text = " ".join(str(label) for label in scope_labels)
+        else:
+            scope_text = str(scope_labels)
+        path = candidate.metadata.get("section_path", [])
+        if isinstance(path, list):
+            path_text = " ".join(str(item) for item in path)
+        else:
+            path_text = str(path)
+        return " ".join(
+            [
+                str(candidate.metadata.get("section_id", "")),
+                str(candidate.metadata.get("section_heading", "")),
+                str(candidate.metadata.get("section_kind", "")),
+                str(candidate.metadata.get("content_type", "")),
+                str(candidate.metadata.get("document_section_role", "")),
+                str(candidate.metadata.get("chapter_title", "")),
+                scope_text,
+                path_text,
+            ]
+        ).lower()
+
+    def _contextual_adjustment(self, candidate: RetrievalCandidate, retrieval_result: RetrievalResult) -> float:
+        plan = retrieval_result.retrieval_plan or {}
+        answer_focus = {str(item).lower() for item in plan.get("answer_focus", []) if str(item).strip()}
+        scope_strictness = str(plan.get("scope_strictness", "none")).lower()
+        context_text = self._candidate_context_text(candidate)
+        adjustment = 0.0
+
+        if scope_strictness == "hard":
+            allowed_section_ids = {str(item) for item in plan.get("allowed_section_ids", [])}
+            if allowed_section_ids and str(candidate.metadata.get("section_id", "")) in allowed_section_ids:
+                adjustment += 0.06
+            if answer_focus & {"summary", "conclusions"}:
+                if any(term in context_text for term in ("summary", "overview", "introduction", "conclusion")):
+                    adjustment += 0.14
+            if answer_focus & {"implementation", "methodology"}:
+                if any(term in context_text for term in answer_focus):
+                    adjustment += 0.05
+
+        if answer_focus & {"findings", "results"}:
+            if any(term in context_text for term in ("finding", "findings", "result", "results", "discussion", "evidence")):
+                adjustment += 0.08
+        if answer_focus & {"limitations", "challenges"}:
+            if any(term in context_text for term in ("challenge", "challenges", "limitation", "limitations", "constraint")):
+                adjustment += 0.10
+        return adjustment
 
     @staticmethod
     def _normalize(values: list[float]) -> list[float]:
@@ -119,7 +205,7 @@ class EvidenceSelector:
 
         original_candidates = retrieval_result.candidates
         candidates = original_candidates[: self.settings.evidence_selector_top_k]
-        prompt = self._selection_prompt(question, candidates)
+        prompt = self._selection_prompt(question, candidates, retrieval_result)
         try:
             response = self.client.chat.completions.create(
                 model=self.settings.evidence_selector_model,
@@ -154,6 +240,7 @@ class EvidenceSelector:
                 final_score += 0.12
             if is_global_summary and section_kind in self.LOW_VALUE_SECTION_KINDS:
                 final_score -= 0.28
+            final_score += self._contextual_adjustment(candidate, retrieval_result)
             ranked.append((final_score, candidate))
 
         ranked.sort(key=lambda item: item[0], reverse=True)

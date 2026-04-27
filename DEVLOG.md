@@ -8,6 +8,35 @@ Historical note:
 - later entries add quality-control, benchmarking, and document-intelligence work on top of that baseline
 - the project is still evolving, so later entries refine earlier architectural assumptions without erasing them
 
+## Day 26: Smart Indexing, Orchestrated Scope, And Ephemeral Run Traces
+
+- Added generic section profiling at indexing time:
+  - document section role
+  - chapter number and chapter title
+  - page range
+  - reusable scope labels
+- Added an LLM retrieval orchestrator that reads a compact document map and resolves explicit local scope to validated section IDs.
+- Wired orchestration context into the reorder-only evidence selector so selection sees the same route, scope, and answer-focus metadata as retrieval.
+- Added hard-scope enforcement after reranking so scoped questions cannot drift into globally attractive but irrelevant chapters.
+- Added ephemeral run traces for uncached QA runs, stored locally or in Supabase with the same workspace retention window.
+- Reviewed the older `hybrid-indexing-docs-refresh` branch and carried forward the durable part:
+  - policy-aware canonical headings and aliases
+  - policy-aware structure-repair triggers
+  - policy-aware synopsis semantic gating instead of blanket-skipping policy documents
+
+Challenges:
+
+- deterministic scope extraction was becoming too brittle for differently phrased questions
+- the earlier hybrid-indexing branch contained useful ideas mixed with stale rollbacks, so it could not be merged wholesale
+- workflow memory needed to help debugging without violating the one-day workspace retention model or storing full document text
+
+Improvements:
+
+- scoped retrieval eval improved from `0.75` page hit and `0.00` scope compliance without orchestration to `1.00` page hit and `1.00` scope compliance with orchestration
+- full-stack snapshot on the branch recorded retrieval objective `0.6274`, answer supported rate `0.8158`, RAGAS faithfulness `0.8173`, and context precision `0.6560`
+- run-trace eval confirmed traces are saved, preview-limited, expire with the workspace, and do not copy the full answer body or full document text
+- the skipped hybrid-indexing branch is now represented by targeted code and tests rather than being lost
+
 ## Day 25: Support Guardrails Stopped Treating Partial Evidence As Failure
 
 - Investigated broad thesis questions that returned unsupported answers despite useful evidence being present.

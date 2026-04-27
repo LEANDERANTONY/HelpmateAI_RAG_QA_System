@@ -175,3 +175,29 @@ def test_topology_service_respects_low_value_section_flags_from_indexing():
     synopses, _ = service.build(sections)
 
     assert synopses[0].metadata["topology_low_value"] is True
+
+
+def test_topology_service_classifies_policy_claims_as_procedure():
+    service = DocumentTopologyService()
+    sections = [
+        SectionRecord(
+            section_id="claims",
+            document_id="doc1",
+            title="Claim Procedure",
+            summary="Cashless and reimbursement claim steps.",
+            text="The claim procedure explains cashless authorization and reimbursement documents.",
+            page_labels=["Page 12"],
+            section_path=["Claim Procedure"],
+            clause_ids=[],
+            metadata={
+                "document_style": "policy_document",
+                "section_kind": "claims",
+                "source_file": "policy.pdf",
+                "section_aliases": ["claims", "cashless", "reimbursement"],
+            },
+        )
+    ]
+
+    synopses, _ = service.build(sections)
+
+    assert synopses[0].region_kind == "procedure"

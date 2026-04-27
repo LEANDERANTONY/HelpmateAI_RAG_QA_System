@@ -695,6 +695,27 @@ class HybridRetriever:
             deduped.append(candidate)
         return deduped
 
+    @staticmethod
+    def _scope_compliant_candidates(
+        candidates: list[RetrievalCandidate],
+        plan: RetrievalPlan,
+        notes: list[str],
+    ) -> list[RetrievalCandidate]:
+        if getattr(plan, "scope_strictness", "none") != "hard":
+            return candidates
+        allowed_section_ids = set(getattr(plan, "allowed_section_ids", []) or plan.target_region_ids)
+        if not allowed_section_ids:
+            return candidates
+        filtered = [
+            candidate
+            for candidate in candidates
+            if str(candidate.metadata.get("section_id", "")).strip() in allowed_section_ids
+        ]
+        removed_count = len(candidates) - len(filtered)
+        if removed_count:
+            notes.append(f"Scope compliance removed {removed_count} candidates outside the orchestrated hard scope.")
+        return filtered
+
     def _expand_section_scope(self, selected: list[str], plan: RetrievalPlan, edges: list[TopologyEdge]) -> list[str]:
         if plan.constraint_mode == "hard_region":
             return list(dict.fromkeys(selected))
@@ -790,7 +811,8 @@ class HybridRetriever:
         *,
         global_fallback_used: bool = False,
     ) -> RetrievalResult:
-        final_candidates = self._finalize_candidates(question, self._dedupe(candidates))
+        scoped_candidates = self._scope_compliant_candidates(candidates, plan, notes)
+        final_candidates = self._finalize_candidates(question, self._dedupe(scoped_candidates))
         evidence_status, best_score, max_lexical, content_overlap = self._assess_evidence_status(question, final_candidates, query_type=query_type)
         retrieval_plan = plan.to_dict()
         retrieval_plan["global_fallback_used"] = global_fallback_used
@@ -829,6 +851,14 @@ class HybridRetriever:
         ]
         if query_profile.preferred_content_types:
             notes.append(f"Preferred content types: {', '.join(query_profile.preferred_content_types)}.")
+        if plan.scope_strictness != "none":
+            notes.append(
+                f"Orchestrated scope: {plan.scope_strictness} over {len(plan.allowed_section_ids or plan.target_region_ids)} sections."
+            )
+        if plan.answer_focus:
+            notes.append(f"Answer focus: {', '.join(plan.answer_focus)}.")
+        if plan.orchestrator_reason:
+            notes.append(f"Orchestrator reason: {plan.orchestrator_reason}.")
 
         if plan.preferred_route == "chunk_first":
             candidates = self._chunk_candidates(

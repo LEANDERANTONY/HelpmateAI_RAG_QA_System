@@ -71,12 +71,16 @@ _REGION_KEYWORDS: dict[str, set[str]] = {
     "definitions": {"definition", "definitions", "glossary", "meaning", "terminology", "terms"},
     "procedure": {
         "approach",
+        "cashless",
+        "claim",
+        "claims",
         "implementation",
         "method",
         "methodology",
         "methods",
         "process",
         "procedure",
+        "reimbursement",
         "workflow",
     },
     "evidence": {
@@ -111,15 +115,28 @@ _REGION_KEYWORDS: dict[str, set[str]] = {
         "clause",
         "condition",
         "conditions",
+        "co-payment",
         "coverage",
+        "covered",
+        "deductible",
+        "disease",
+        "eligibility",
         "exclusion",
         "exclusions",
+        "hospitalisation",
+        "hospitalization",
         "obligation",
         "obligations",
         "policy",
+        "pre-existing",
+        "renewal",
         "rights",
         "rule",
         "rules",
+        "sub-limit",
+        "sum insured",
+        "waiting period",
+        "waiting periods",
     },
     "appendix": {"appendix", "appendices", "reference", "references", "supplementary"},
     "general": set(),
@@ -227,6 +244,11 @@ class DocumentTopologyService:
                 " ".join(section.metadata.get("section_aliases", []))
                 if isinstance(section.metadata.get("section_aliases", []), list)
                 else str(section.metadata.get("section_aliases", "")),
+                " ".join(section.metadata.get("document_scope_labels", []))
+                if isinstance(section.metadata.get("document_scope_labels", []), list)
+                else str(section.metadata.get("document_scope_labels", "")),
+                str(section.metadata.get("document_section_role", "")),
+                str(section.metadata.get("chapter_title", "")),
             ]
         )
         counts = Counter(cls._tokenize(text))
@@ -240,6 +262,8 @@ class DocumentTopologyService:
                 " ".join(section.section_path).lower(),
                 str(section.metadata.get("section_kind", "")).lower(),
                 str(section.metadata.get("content_type", "")).lower(),
+                str(section.metadata.get("document_section_role", "")).lower(),
+                str(section.metadata.get("chapter_title", "")).lower(),
             ]
         )
         numeric_density = sum(char.isdigit() for char in section.text[:1500]) / max(min(len(section.text), 1500), 1)

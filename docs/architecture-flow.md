@@ -19,17 +19,19 @@ flowchart TD
     D -->|No| F["Keep deterministic structure"]
     E --> G["Build chunks + sections"]
     F --> G
-    G --> H["Build section synopses + topology edges"]
-    H --> I["Persist local indexes\nchunks + sections + synopses"]
+    G --> H["Enrich section profiles\nroles + chapters + scope labels"]
+    H --> I["Build section synopses + topology edges"]
+    I --> IA["Persist local indexes\nchunks + sections + synopses"]
 
     J["User asks a question"] --> K["Query analysis"]
-    K --> L["Deterministic RetrievalPlan"]
-    L --> M{"Planner confidence low?"}
-    M -->|Yes| N["Bounded LLM route refinement"]
-    M -->|No| O["Use deterministic plan"]
-    N --> O
+    K --> L["Retrieval orchestrator\ncompact document map + validated scope"]
+    L --> M["Deterministic RetrievalPlan"]
+    M --> N{"Planner confidence low?"}
+    N -->|Yes| O["Bounded LLM route refinement"]
+    N -->|No| P0["Use structured plan"]
+    O --> P0
 
-    O --> P{"Preferred route"}
+    P0 --> P{"Preferred route"}
     P -->|chunk_first| Q["Direct chunk retrieval"]
     P -->|synopsis_first| R["Synopsis retrieval -> section selection -> chunk retrieval"]
     P -->|global_summary_first| S["Overview/findings/conclusion anchors -> representative chunks -> global fallback"]
@@ -44,9 +46,10 @@ flowchart TD
 
     V --> W["Evidence grading\nstrong / weak / unsupported"]
     W -->|unsupported| X["Retrieval guardrail\nreject unsupported question"]
-    W -->|strong or weak| Y["Reorder-only evidence selector\n(spread-triggered, top-k only)"]
+    W -->|strong or weak| Y["Reorder-only evidence selector\n(spread-triggered, top-k only,\nwith orchestration context)"]
     Y --> Z["Grounded answer generation\n(raw chunk evidence only)"]
-    Z --> AA["Answer + citations + evidence + notes"]
+    Z --> AA["Ephemeral run trace\nroute + plan + candidates + support"]
+    AA --> AB["Answer + citations + evidence + notes"]
 ```
 
 ## What Each Stage Does
@@ -56,15 +59,19 @@ flowchart TD
 - extracts text from PDF or DOCX
 - builds sections and chunk records
 - repairs only low-confidence section maps during indexing
+- enriches sections with roles, chapter/page ranges, and reusable scope labels
 - generates section synopses and lightweight topology edges
 - persists everything locally for reuse
 
 This is where the system gets smarter about document structure without paying query-time latency on every question.
 
+Policy documents stay eligible for semantic indexing. The system recognizes policy-native headings and aliases such as coverage, benefits, exclusions, claims, waiting periods, eligibility, renewal, and definitions, but still gates extra model work on structure/synopsis quality.
+
 ### 2. Query analysis and planning
 
 - classifies the question by intent and evidence spread
-- builds a deterministic `RetrievalPlan`
+- lets a bounded orchestrator interpret explicit local scope against the indexed document map
+- builds a structured `RetrievalPlan`
 - uses a tiny LLM only when plan confidence is low
 
 Important plan dimensions:
@@ -86,6 +93,15 @@ Important plan dimensions:
   - `soft_local`
   - `soft_multi_region`
   - `hard_region`
+
+Important orchestration dimensions:
+
+- `allowed_section_ids`
+- `scope_strictness`
+- `scope_query`
+- `answer_focus`
+
+The orchestrator can suggest scope, but deterministic validation decides whether that scope is enforceable.
 
 ### 3. Retrieval routes
 
@@ -167,6 +183,7 @@ If evidence is plausible, the system can run a small selector over top retrieved
 It:
 
 - only sees the top candidates
+- receives the validated retrieval/orchestration context
 - uses rank as a prior
 - can promote a lower-ranked chunk if it is clearly more direct
 - keeps the remaining retrieved chunks instead of pruning them away
@@ -185,6 +202,16 @@ The final answer stage:
 
 The answer stage does not treat synopses as final evidence. Synopses help retrieval, not grounding.
 
+### 7. Run tracing
+
+For uncached QA runs, the backend writes a compact trace containing:
+
+- route and plan context
+- candidate IDs, scores, pages, sections, and short previews
+- support status and citations
+
+Traces expire with the workspace and do not store full document text or full answer bodies.
+
 ## Mental Model
 
 HelpmateAI is no longer:
@@ -195,6 +222,7 @@ It is now:
 
 - document-aware retrieval planning
 - topology-guided evidence assembly
+- validated orchestration for explicit local scope
 - bounded evidence correction
 - chunk-grounded answer generation
 
@@ -204,7 +232,9 @@ It is now:
 - strong policy-document behavior
 - recovered thesis performance
 - improved paper/report handling through topology and structure repair
+- better local chapter/section handling through smart section profiles and orchestration
 - reorder-only evidence selection is now benchmark-validated in the default stack
+- workflow decisions are traceable under the same retention policy as documents
 - explicit unsupported-question guardrails
 - benchmarked against internal and external baselines
 
@@ -214,5 +244,6 @@ The hardest remaining cases are still:
 
 - the broadest paper-summary prompts on some journal-style PDFs
 - the remaining unrepaired `reportgeneration2` structure-noise case
+- proving orchestrator behavior on a broader held-out scoped-query set
 
 That is much narrower than before, which is a good sign. The architecture is now stable enough that further work can be more targeted rather than another big rewrite.

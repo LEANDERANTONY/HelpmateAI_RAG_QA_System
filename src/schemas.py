@@ -83,10 +83,15 @@ class RetrievalPlan:
     preferred_route: str
     target_region_ids: list[str] = field(default_factory=list)
     target_region_kinds: list[str] = field(default_factory=list)
+    allowed_section_ids: list[str] = field(default_factory=list)
+    scope_strictness: str = "none"
+    scope_query: str = ""
+    answer_focus: list[str] = field(default_factory=list)
     hard_filters: dict[str, Any] = field(default_factory=dict)
     use_global_fallback: bool = True
     planner_confidence: float = 0.0
     planner_source: str = "deterministic"
+    orchestrator_reason: str = ""
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)
@@ -167,6 +172,22 @@ class RetrievalResult:
 
 
 @dataclass
+class RunTraceRecord:
+    trace_id: str
+    document_id: str
+    fingerprint: str
+    question: str
+    created_at: str
+    expires_at: str
+    retrieval_version: str
+    generation_version: str
+    payload: dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
+        return asdict(self)
+
+
+@dataclass
 class CacheStatus:
     index_reused: bool = False
     answer_cache_hit: bool = False
@@ -189,6 +210,7 @@ class AnswerResult:
     retrieval_notes: list[str] = field(default_factory=list)
     query_used: str = ""
     query_variants: list[str] = field(default_factory=list)
+    run_trace_id: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -204,4 +226,5 @@ class AnswerResult:
             "retrieval_notes": list(self.retrieval_notes),
             "query_used": self.query_used,
             "query_variants": list(self.query_variants),
+            "run_trace_id": self.run_trace_id,
         }

@@ -370,6 +370,79 @@ Improvement:
 - the project can now say, with a fresher evidence trail, that it leads both tested external baselines on the four main document families
 - the repo now has a much cleaner architecture record than it did during the earlier streamlit-first phase
 
+## 22. Smart Section Profiles And Orchestrated Scope
+
+Change:
+
+- enriched indexed sections with generic document-profile metadata:
+  - section role
+  - chapter number and title
+  - page ranges
+  - reusable scope labels
+- added an LLM retrieval orchestrator ahead of the structured planner
+- validated orchestrator output before enforcement:
+  - section IDs must exist
+  - low-confidence hard scopes are ignored
+  - broad questions are not collapsed into one region
+  - hard scope filters final evidence after reranking
+- passed orchestration context into the reorder-only selector so it can use the same scope and answer-focus cues
+
+Challenge:
+
+- local chapter questions like "summary/conclusions from the implementation chapter" were drifting into globally strong methodology or conclusion sections
+- deterministic scope parsing risked becoming another brittle, document-shaped heuristic layer
+- the selector had enough evidence to reorder but not enough retrieval-plan context to understand why a local scope mattered
+
+Improvement:
+
+- intelligence moved to a bounded interpretation step while enforcement stayed deterministic
+- scoped retrieval eval showed full page-hit and scope-compliance recovery on the new branch
+- broad questions are still allowed to remain broad because the orchestrator is validated rather than blindly trusted
+
+## 23. Ephemeral Workflow Run Traces
+
+Change:
+
+- added compact run traces for uncached QA workflows
+- traces record retrieval plans, route decisions, candidate IDs, scores, page/section metadata, short previews, support status, citations, and expiry
+- traces are stored locally or in Supabase and expire with the same workspace lifecycle as uploaded documents
+
+Challenge:
+
+- the workflow now has several model-assisted decisions, but the product had no durable explanation of what happened inside one answer run
+- generic long-term memory would be the wrong first tool for grounded document QA
+- any memory-like layer had to obey the one-day retention rule and avoid copying full document text or full answer bodies
+
+Improvement:
+
+- failed-answer debugging and future feedback evals now have a first-class, temporary run record
+- trace storage remains bounded, private to the workspace lifecycle, and cleanup-aware
+
+## 24. Hybrid Indexing Candidate Was Integrated Selectively
+
+Change:
+
+- reviewed the older `hybrid-indexing-docs-refresh` branch instead of dropping it
+- carried forward its defensible architecture lessons:
+  - policy documents should not be blanket-skipped by semantic synopsis refinement
+  - policy headings need policy-native aliases such as coverage, benefits, exclusions, claims, waiting periods, eligibility, renewal, and definitions
+  - coarse policy structures should be eligible for indexing-time repair
+- rejected stale parts of that branch:
+  - support-guardrail rollback
+  - older retrieval/generation version numbers
+  - old prompt behavior that predated grounded partial answers
+  - broad workflow churn that is already superseded on `main`
+
+Challenge:
+
+- the branch was ahead of `main`, but not all of that ahead state was still correct
+- merging it wholesale would have undone newer guardrail and deployment work
+
+Improvement:
+
+- the useful policy-indexing ideas now live in this branch with focused tests
+- ADR and devlog history preserve the reason for the decision instead of hiding it inside an abandoned branch
+
 ## Current Position
 
 The architecture is now in a different phase than the one this document began with.
@@ -380,6 +453,8 @@ The main transitions are complete:
 - the retrieval stack defaults are benchmark-backed rather than mostly intuition-backed
 - the selector story is resolved in favor of reorder-only selection
 - the external OpenAI and Vectara comparisons have been rerun on the stabilized stack
+- smart section profiles and orchestrated scope are now under branch validation for local chapter/section questions
+- ephemeral run traces are now the preferred workflow-memory layer, not a long-term user-memory system
 
 So the next justified work is no longer "make the stack real." It is:
 

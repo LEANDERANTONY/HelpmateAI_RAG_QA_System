@@ -148,3 +148,36 @@ def test_build_sections_marks_acknowledgements_as_low_value_front_matter():
     assert sections[0].metadata["front_matter_kind"] == "acknowledgements"
     assert sections[0].metadata["front_matter_score"] > 0.9
     assert sections[0].metadata["low_value_section_flag"] is True
+
+
+def test_build_sections_recognizes_policy_canonical_headings_and_aliases():
+    document = DocumentRecord(
+        document_id="doc-policy",
+        file_name="policy.pdf",
+        file_type="pdf",
+        source_path="policy.pdf",
+        fingerprint="policy",
+        char_count=500,
+        page_count=1,
+        metadata={
+            "document_style": "policy_document",
+            "pages": [
+                {
+                    "page_label": "Page 7",
+                    "text": "WAITING PERIODS\nCoverage for specified conditions begins after the applicable waiting period.",
+                    "section_heading": "Policy",
+                    "section_path": ["Policy"],
+                    "section_id": "Policy",
+                    "clause_ids": [],
+                    "content_type": "general",
+                    "section_kind": "waiting periods",
+                    "document_style": "policy_document",
+                }
+            ],
+        },
+    )
+
+    sections = build_sections(document)
+
+    assert sections[0].title == "Waiting Periods"
+    assert "initial waiting period" in sections[0].metadata["section_aliases"]

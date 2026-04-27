@@ -7,7 +7,7 @@
 -- - explicit user_id / last_activity_at / expires_at columns on helpmate_documents
 -- - database-side expiry cleanup through pg_cron
 -- - RLS policies so future direct client reads stay user-scoped
--- - cascading delete from documents -> indexes -> artifacts
+-- - cascading delete from documents -> indexes -> artifacts -> run traces
 
 create extension if not exists pg_cron with schema extensions;
 
@@ -50,6 +50,22 @@ on public.helpmate_documents (user_id);
 create index if not exists helpmate_documents_expires_at_idx
 on public.helpmate_documents (expires_at);
 
+create table if not exists public.helpmate_run_traces (
+    trace_id text primary key,
+    document_id text not null,
+    fingerprint text not null,
+    question text not null,
+    payload jsonb not null,
+    created_at timestamptz not null default timezone('utc', now()),
+    expires_at timestamptz not null
+);
+
+create index if not exists helpmate_run_traces_document_id_idx
+on public.helpmate_run_traces (document_id);
+
+create index if not exists helpmate_run_traces_expires_at_idx
+on public.helpmate_run_traces (expires_at);
+
 do $$
 begin
     if not exists (
@@ -82,9 +98,26 @@ begin
 end;
 $$;
 
+do $$
+begin
+    if not exists (
+        select 1
+        from pg_constraint
+        where conname = 'helpmate_run_traces_document_id_fkey'
+    ) then
+        alter table public.helpmate_run_traces
+            add constraint helpmate_run_traces_document_id_fkey
+            foreign key (document_id)
+            references public.helpmate_documents (document_id)
+            on delete cascade;
+    end if;
+end;
+$$;
+
 alter table public.helpmate_documents enable row level security;
 alter table public.helpmate_indexes enable row level security;
 alter table public.helpmate_index_artifacts enable row level security;
+alter table public.helpmate_run_traces enable row level security;
 
 drop policy if exists "users can read own helpmate documents" on public.helpmate_documents;
 create policy "users can read own helpmate documents"
@@ -195,6 +228,44 @@ with check (
     )
 );
 
+drop policy if exists "users can read own helpmate run traces" on public.helpmate_run_traces;
+create policy "users can read own helpmate run traces"
+on public.helpmate_run_traces
+for select
+to authenticated
+using (
+    exists (
+        select 1
+        from public.helpmate_documents d
+        where d.document_id = helpmate_run_traces.document_id
+          and d.user_id = auth.uid()
+          and d.expires_at is not null
+          and d.expires_at > timezone('utc', now())
+    )
+);
+
+drop policy if exists "users can write own helpmate run traces" on public.helpmate_run_traces;
+create policy "users can write own helpmate run traces"
+on public.helpmate_run_traces
+for all
+to authenticated
+using (
+    exists (
+        select 1
+        from public.helpmate_documents d
+        where d.document_id = helpmate_run_traces.document_id
+          and d.user_id = auth.uid()
+    )
+)
+with check (
+    exists (
+        select 1
+        from public.helpmate_documents d
+        where d.document_id = helpmate_run_traces.document_id
+          and d.user_id = auth.uid()
+    )
+);
+
 create or replace function public.cleanup_expired_helpmate_workspaces()
 returns integer
 language plpgsql
@@ -204,6 +275,10 @@ as $$
 declare
     deleted_count integer := 0;
 begin
+    delete from public.helpmate_run_traces
+    where expires_at is not null
+      and expires_at <= timezone('utc', now());
+
     delete from public.helpmate_documents
     where expires_at is not null
       and expires_at <= timezone('utc', now());

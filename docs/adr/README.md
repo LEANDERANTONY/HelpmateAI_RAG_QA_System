@@ -15,6 +15,8 @@ Current ADRs:
 - `ADR-009-benchmark-driven-chunking-default-1200-240.md`
 - `ADR-010-reorder-only-evidence-selector-promoted-to-default.md`
 - `ADR-011-partial-grounded-answers-and-support-guardrail-eval.md`
+- `ADR-012-smart-section-profiles-and-orchestrated-scope.md`
+- `ADR-013-ephemeral-workflow-run-traces.md`
 
 Usage notes:
 
@@ -45,3 +47,12 @@ Current state note:
   - weak/unsupported retrieval thresholds remain unchanged after sweep testing
   - generation now permits grounded partial answers with missing coverage explained in `reason`
   - `support_guardrail_eval` tracks calibration negatives and held-out manual questions together
+- the newest experimental retrieval architecture change is:
+  - indexing now records generic section profile metadata for chapter, role, page range, and scope labels
+  - the older hybrid-indexing candidate was integrated selectively by keeping policy-aware semantic indexing and rejecting stale rollbacks
+  - a retrieval orchestrator can resolve explicit local scope to validated section IDs
+  - hard orchestrated scope disables global fallback and filters final evidence to the allowed sections
+- the newest workflow observability change is:
+  - each uncached QA run now writes an ephemeral run trace
+  - traces store decision metadata, candidate IDs/scores/previews, and support/citation outcomes
+  - traces follow the same workspace retention window locally and in Supabase

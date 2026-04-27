@@ -1,6 +1,8 @@
 from __future__ import annotations
 
 import shutil
+import uuid
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
 from src.cache import AnswerCache
@@ -10,9 +12,11 @@ from src.generation import AnswerGenerator, EvidenceSelector
 from src.ingest import ingest_document
 from src.retrieval import ChromaIndexStore, HybridRetriever
 from src.sections import build_sections
+from src.sections.profiles import enrich_section_profiles
 from src.sections.repair import StructureRepairService
-from src.schemas import AnswerResult, CacheStatus, DocumentRecord, IndexRecord, RetrievalResult
+from src.schemas import AnswerResult, CacheStatus, DocumentRecord, IndexRecord, RetrievalCandidate, RetrievalResult, RunTraceRecord
 from src.topology import DocumentTopologyService, SynopsisSemanticsService
+from src.traces import build_run_trace_store
 
 
 class HelpmatePipeline:
@@ -27,6 +31,7 @@ class HelpmatePipeline:
         self.synopsis_semantics_service = SynopsisSemanticsService(self.settings)
         self.structure_repair_service = StructureRepairService(self.settings)
         self.chunk_semantics_service = ChunkSemanticsService(self.settings)
+        self.run_trace_store = build_run_trace_store(self.settings)
 
     def _persist_upload(self, source_path: str | Path) -> Path:
         source = Path(source_path)
@@ -49,6 +54,14 @@ class HelpmatePipeline:
                 "section_path": list(section.section_path),
                 "section_kind": section.metadata.get("section_kind", section.title.lower()),
                 "content_type": section.metadata.get("content_type", "general"),
+                "document_section_role": section.metadata.get("document_section_role", "general"),
+                "document_scope_labels": list(section.metadata.get("document_scope_labels", []))
+                if isinstance(section.metadata.get("document_scope_labels", []), list)
+                else section.metadata.get("document_scope_labels", []),
+                "chapter_number": section.metadata.get("chapter_number", ""),
+                "chapter_title": section.metadata.get("chapter_title", ""),
+                "page_range_start": section.metadata.get("page_range_start"),
+                "page_range_end": section.metadata.get("page_range_end"),
                 "section_aliases": list(section.metadata.get("section_aliases", []))
                 if isinstance(section.metadata.get("section_aliases", []), list)
                 else section.metadata.get("section_aliases", []),
@@ -66,6 +79,7 @@ class HelpmatePipeline:
     def build_or_load_index(self, document: DocumentRecord) -> IndexRecord:
         sections = build_sections(document)
         sections, repair_decision = self.structure_repair_service.repair_if_needed(document, sections)
+        sections = enrich_section_profiles(sections)
         chunks = chunk_document(document, self.settings.chunk_size, self.settings.chunk_overlap)
         self._apply_section_metadata_to_chunks(chunks, sections)
         chunks = self.chunk_semantics_service.annotate_chunks(document, chunks)
@@ -111,6 +125,14 @@ class HelpmatePipeline:
         retrieval_result = self.evidence_selector.select(question, retrieval_result)
         answer = self.generate_answer(document.document_id, question, retrieval_result)
         answer.cache_status = CacheStatus(index_reused=index_record.reused, answer_cache_hit=False)
+        trace = self._build_run_trace(
+            document=document,
+            question=question,
+            retrieval_result=retrieval_result,
+            answer=answer,
+        )
+        self.run_trace_store.save_trace(trace)
+        answer.run_trace_id = trace.trace_id
         self.answer_cache.set(
             cache_key,
             answer,
@@ -126,9 +148,88 @@ class HelpmatePipeline:
                 collection_name=index_record.collection_name,
             )
         self.answer_cache.delete_for_fingerprint(document.fingerprint)
+        self.run_trace_store.delete_for_document(document.document_id)
         source_path = Path(document.source_path)
         try:
             if source_path.exists() and source_path.is_file():
                 source_path.unlink()
         except Exception:
             pass
+
+    def _trace_expires_at(self, document: DocumentRecord, created_at: datetime) -> str:
+        metadata = document.metadata or {}
+        expires_at = metadata.get("_workspace_expires_at")
+        if expires_at:
+            return str(expires_at)
+        return (created_at + timedelta(hours=self.settings.workspace_retention_hours)).isoformat()
+
+    @staticmethod
+    def _candidate_trace(candidate: RetrievalCandidate, rank: int) -> dict:
+        metadata = candidate.metadata or {}
+        return {
+            "rank": rank,
+            "chunk_id": candidate.chunk_id,
+            "page_label": metadata.get("page_label", "Document"),
+            "section_id": metadata.get("section_id", ""),
+            "section_heading": metadata.get("section_heading", ""),
+            "chapter_number": metadata.get("chapter_number", ""),
+            "chapter_title": metadata.get("chapter_title", ""),
+            "section_role": metadata.get("document_section_role", ""),
+            "dense_score": candidate.dense_score,
+            "lexical_score": candidate.lexical_score,
+            "fused_score": candidate.fused_score,
+            "rerank_score": candidate.rerank_score,
+            "preview": candidate.text[:240].replace("\n", " ").strip(),
+        }
+
+    def _build_run_trace(
+        self,
+        *,
+        document: DocumentRecord,
+        question: str,
+        retrieval_result: RetrievalResult,
+        answer: AnswerResult,
+    ) -> RunTraceRecord:
+        created_at = datetime.now(timezone.utc)
+        trace_id = f"trace-{uuid.uuid4().hex}"
+        payload = {
+            "question": question,
+            "document": {
+                "document_id": document.document_id,
+                "file_name": document.file_name,
+                "fingerprint": document.fingerprint,
+            },
+            "retrieval": {
+                "route_used": retrieval_result.route_used,
+                "evidence_status": retrieval_result.evidence_status,
+                "weak_evidence": retrieval_result.weak_evidence,
+                "best_score": retrieval_result.best_score,
+                "max_lexical_score": retrieval_result.max_lexical_score,
+                "content_overlap_score": retrieval_result.content_overlap_score,
+                "retrieval_plan": retrieval_result.retrieval_plan,
+                "metadata_filters": retrieval_result.metadata_filters,
+                "strategy_notes": retrieval_result.strategy_notes,
+                "candidates": [
+                    self._candidate_trace(candidate, rank)
+                    for rank, candidate in enumerate(retrieval_result.candidates[: self.settings.evidence_selector_top_k], start=1)
+                ],
+            },
+            "answer": {
+                "supported": answer.supported,
+                "model_name": answer.model_name,
+                "citations": list(answer.citations),
+                "citation_details": list(answer.citation_details),
+                "note": answer.note,
+            },
+        }
+        return RunTraceRecord(
+            trace_id=trace_id,
+            document_id=document.document_id,
+            fingerprint=document.fingerprint,
+            question=question,
+            created_at=created_at.isoformat(),
+            expires_at=self._trace_expires_at(document, created_at),
+            retrieval_version=self.settings.retrieval_version,
+            generation_version=self.settings.generation_version,
+            payload=payload,
+        )

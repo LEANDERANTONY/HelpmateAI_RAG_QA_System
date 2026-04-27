@@ -218,12 +218,61 @@ def test_structure_repair_assess_respects_threshold_override():
         for index in range(1, 5)
     ]
 
-    conservative = service.assess(document, sections, threshold=0.62)
-    looser = service.assess(document, sections, threshold=0.70)
+    decision = service.assess(document, sections, threshold=0.62)
 
-    assert conservative.confidence == 0.64
-    assert conservative.should_repair is False
-    assert looser.should_repair is True
+    assert decision.confidence == 0.46
+    assert decision.should_repair is True
+    assert "policy_too_few_sections" in decision.reason_codes
+
+
+def test_structure_repair_header_dominated_gate_allows_coarse_policy_documents():
+    settings = Settings(openai_api_key="test-key", structure_repair_require_header_dominated=True)
+    service = StructureRepairService(settings)
+    service.client = object()
+    document = DocumentRecord(
+        document_id="doc-policy",
+        file_name="policy.pdf",
+        file_type="pdf",
+        source_path="policy.pdf",
+        fingerprint="policy",
+        char_count=9000,
+        page_count=30,
+        metadata={
+            "document_style": "policy_document",
+            "pages": [
+                {"page_label": "Page 1", "text": "Preamble\nPolicy opening terms.", "section_heading": "Policy"},
+                {"page_label": "Page 2", "text": "Definitions\nDefined terms.", "section_heading": "Policy"},
+                {"page_label": "Page 3", "text": "Claims\nCashless and reimbursement process.", "section_heading": "Policy"},
+            ],
+        },
+    )
+    coarse_sections = [
+        SectionRecord(
+            section_id="coarse",
+            document_id="doc-policy",
+            title="Policy",
+            summary="Flattened policy summary.",
+            text=" ".join(str(page["text"]) for page in document.metadata["pages"]),
+            page_labels=["Page 1", "Page 2", "Page 3"],
+            section_path=["Policy"],
+            clause_ids=[],
+            metadata={"section_kind": "general", "section_aliases": ["Policy"]},
+        )
+    ]
+
+    def fake_assignments(_document, _pages):
+        return [
+            {"page_label": "Page 1", "title": "Preamble", "section_kind": "overview"},
+            {"page_label": "Page 2", "title": "Definitions", "section_kind": "definitions"},
+            {"page_label": "Page 3", "title": "Claims", "section_kind": "claims"},
+        ]
+
+    service._llm_assignments = fake_assignments  # type: ignore[method-assign]
+
+    repaired_sections, decision = service.repair_if_needed(document, coarse_sections)
+
+    assert "policy_too_few_sections" in decision.reason_codes
+    assert [section.metadata["section_kind"] for section in repaired_sections] == ["overview", "definitions", "claims"]
 
 
 def test_structure_repair_assess_penalty_overrides_can_disable_specific_signal():
