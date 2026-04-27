@@ -8,6 +8,26 @@ from src.schemas import DocumentRecord, SectionRecord, SectionSynopsisRecord
 
 
 _TARGET_REGION_KINDS = {"overview", "procedure", "evidence", "discussion"}
+_POLICY_TARGET_REGION_KINDS = {"overview", "definitions", "rules", "procedure"}
+_POLICY_SECTION_TERMS = {
+    "benefit",
+    "benefits",
+    "claim",
+    "claims",
+    "coverage",
+    "definition",
+    "definitions",
+    "eligibility",
+    "exclusion",
+    "exclusions",
+    "hospitalization",
+    "hospitalisation",
+    "preamble",
+    "renewal",
+    "sum insured",
+    "waiting period",
+    "waiting periods",
+}
 
 
 class SynopsisSemanticsService:
@@ -26,7 +46,25 @@ class SynopsisSemanticsService:
     def _clamp(value: float, lower: float = 0.0, upper: float = 1.0) -> float:
         return max(lower, min(upper, value))
 
-    def _should_run_for_document(self, document: DocumentRecord, sections: list[SectionRecord]) -> bool:
+    @staticmethod
+    def _policy_signal(section: SectionRecord, synopsis: SectionSynopsisRecord | None = None) -> bool:
+        signal_text = " ".join(
+            [
+                section.title.lower(),
+                " ".join(section.section_path).lower(),
+                str(section.metadata.get("section_kind", "")).lower(),
+                str(section.metadata.get("content_type", "")).lower(),
+                str(synopsis.region_kind).lower() if synopsis is not None else "",
+            ]
+        )
+        return any(term in signal_text for term in _POLICY_SECTION_TERMS)
+
+    def _should_run_for_document(
+        self,
+        document: DocumentRecord,
+        sections: list[SectionRecord],
+        synopses: list[SectionSynopsisRecord],
+    ) -> bool:
         gate_mode = self.settings.synopsis_semantics_gate_mode
         if gate_mode in {"off", "disabled"}:
             return False
@@ -34,8 +72,6 @@ class SynopsisSemanticsService:
             return True
 
         document_style = str(document.metadata.get("document_style", "generic_longform")).lower()
-        if document_style == "policy_document":
-            return False
 
         structure_confidences = [
             float(section.metadata.get("structure_confidence", 1.0) or 1.0)
@@ -64,6 +100,17 @@ class SynopsisSemanticsService:
             return True
         if document_style == "research_paper" and noisy_structure:
             return True
+        if document_style == "policy_document":
+            if structure_confidence <= self.settings.structure_repair_confidence_threshold:
+                return True
+            synopses_by_id = {synopsis.section_id: synopsis for synopsis in synopses}
+            return any(
+                self._policy_signal(section, synopses_by_id.get(section.section_id))
+                and len(section.text) >= 600
+                and self._quality_score(section, synopses_by_id[section.section_id]) < 0.72
+                for section in sections
+                if section.section_id in synopses_by_id
+            )
         return False
 
     def _quality_score(self, section: SectionRecord, synopsis: SectionSynopsisRecord) -> float:
@@ -71,6 +118,7 @@ class SynopsisSemanticsService:
         title = section.title.strip().lower()
         summary = section.summary.strip().lower()
         text = section.text.strip()
+        document_style = str(section.metadata.get("document_style", "")).lower()
         quality = 0.0
         if len(synopsis_text) >= 160:
             quality += 0.4
@@ -82,12 +130,19 @@ class SynopsisSemanticsService:
             quality += 0.1
         if len(text) >= 600:
             quality += 0.15
+        if document_style == "policy_document" and self._policy_signal(section, synopsis):
+            lowered_synopsis = synopsis_text.lower()
+            if any(term in lowered_synopsis for term in _POLICY_SECTION_TERMS):
+                quality += 0.1
         return self._clamp(quality)
 
-    def _review_priority(self, section: SectionRecord, synopsis: SectionSynopsisRecord) -> float:
+    def _review_priority(self, document_style: str, section: SectionRecord, synopsis: SectionSynopsisRecord) -> float:
         if synopsis.metadata.get("topology_low_value"):
             return 0.0
-        if synopsis.region_kind not in _TARGET_REGION_KINDS:
+        if document_style == "policy_document":
+            if synopsis.region_kind not in _POLICY_TARGET_REGION_KINDS and not self._policy_signal(section, synopsis):
+                return 0.0
+        elif synopsis.region_kind not in _TARGET_REGION_KINDS:
             return 0.0
         quality = self._quality_score(section, synopsis)
         priority = 1.0 - quality
@@ -95,16 +150,20 @@ class SynopsisSemanticsService:
             priority += 0.25
         if len(section.text) >= 1200:
             priority += 0.15
+        if document_style == "policy_document" and self._policy_signal(section, synopsis):
+            priority += 0.15
         return priority
 
     def _candidate_section_ids(
         self,
+        document: DocumentRecord,
         sections_by_id: dict[str, SectionRecord],
         synopses: list[SectionSynopsisRecord],
     ) -> list[str]:
+        document_style = str(document.metadata.get("document_style", "generic_longform")).lower()
         ranked = sorted(
             (
-                (synopsis.section_id, self._review_priority(sections_by_id[synopsis.section_id], synopsis))
+                (synopsis.section_id, self._review_priority(document_style, sections_by_id[synopsis.section_id], synopsis))
                 for synopsis in synopses
                 if synopsis.section_id in sections_by_id
             ),
@@ -146,6 +205,8 @@ class SynopsisSemanticsService:
             "- Avoid repeating the title mechanically\n"
             "- Prefer concrete findings, methods, scope, or rules depending on the section\n"
             "- Do not invent facts outside the excerpt\n"
+            "- For policy documents, surface what is covered, excluded, defined, required, time-limited, or procedurally required when present\n"
+            "- For policy documents, mention waiting periods, claim steps, eligibility, renewal, or benefit conditions when supported by the excerpt\n"
             f"Document: {document.file_name}\n"
             f"Document style: {document.metadata.get('document_style', 'generic_longform')}\n"
             f"Sections: {json.dumps(payload, ensure_ascii=True)}"
@@ -199,11 +260,11 @@ class SynopsisSemanticsService:
     ) -> list[SectionSynopsisRecord]:
         if not self.settings.synopsis_semantics_enabled or self.client is None:
             return synopses
-        if not self._should_run_for_document(document, sections):
+        if not self._should_run_for_document(document, sections, synopses):
             return synopses
 
         sections_by_id = {section.section_id: section for section in sections}
-        selected_ids = self._candidate_section_ids(sections_by_id, synopses)
+        selected_ids = self._candidate_section_ids(document, sections_by_id, synopses)
         if not selected_ids:
             return synopses
 

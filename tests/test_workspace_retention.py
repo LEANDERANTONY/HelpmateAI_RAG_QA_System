@@ -1,4 +1,5 @@
 from pathlib import Path
+from datetime import datetime, timezone
 
 from backend.auth import AuthenticatedUser
 from backend.main import (
@@ -12,6 +13,8 @@ from backend.main import (
 from backend.store import LocalApiRecordStore, SupabaseApiRecordStore
 from src.config import Settings
 from src.schemas import DocumentRecord, IndexRecord
+from src.schemas import RunTraceRecord
+from src.traces import LocalRunTraceStore, SupabaseRunTraceStore
 
 
 def _document_record() -> DocumentRecord:
@@ -97,6 +100,20 @@ class _FakeQuery:
         )
         return self
 
+    def delete(self):
+        self.client.deletes.append({"table": self.table_name, "filters": []})
+        return self
+
+    def eq(self, key, value):
+        if self.client.deletes:
+            self.client.deletes[-1]["filters"].append(("eq", key, value))
+        return self
+
+    def lte(self, key, value):
+        if self.client.deletes:
+            self.client.deletes[-1]["filters"].append(("lte", key, value))
+        return self
+
     def execute(self):
         return {"data": []}
 
@@ -104,6 +121,7 @@ class _FakeQuery:
 class _FakeSupabaseClient:
     def __init__(self):
         self.upserts = []
+        self.deletes = []
 
     def table(self, table_name: str):
         return _FakeQuery(table_name, self)
@@ -135,3 +153,82 @@ def test_supabase_document_rows_persist_owner_and_expiry(monkeypatch, tmp_path):
     assert payload["user_id"] == document.metadata[WORKSPACE_OWNER_KEY]
     assert payload["last_activity_at"] == document.metadata[WORKSPACE_LAST_ACTIVITY_KEY]
     assert payload["expires_at"] == document.metadata[WORKSPACE_EXPIRES_AT_KEY]
+
+
+def test_local_run_trace_store_expires_records(tmp_path):
+    settings = Settings(
+        data_dir=tmp_path / "data",
+        uploads_dir=tmp_path / "data" / "uploads",
+        indexes_dir=tmp_path / "data" / "indexes",
+        cache_dir=tmp_path / "data" / "cache",
+    )
+    store = LocalRunTraceStore(settings)
+    now = "2026-04-17T12:00:00+00:00"
+    store.save_trace(
+        RunTraceRecord(
+            trace_id="trace-1",
+            document_id="doc-1",
+            fingerprint="fingerprint-1",
+            question="What happened?",
+            created_at=now,
+            expires_at="2026-04-17T11:00:00+00:00",
+            retrieval_version="v1",
+            generation_version="v1",
+            payload={"retrieval": {"candidates": []}},
+        )
+    )
+    store.save_trace(
+        RunTraceRecord(
+            trace_id="trace-2",
+            document_id="doc-1",
+            fingerprint="fingerprint-1",
+            question="What is active?",
+            created_at=now,
+            expires_at="2026-04-18T12:00:00+00:00",
+            retrieval_version="v1",
+            generation_version="v1",
+            payload={},
+        )
+    )
+
+    deleted = store.delete_expired(datetime(2026, 4, 17, 12, 0, tzinfo=timezone.utc))
+
+    assert deleted == 1
+    assert [trace.trace_id for trace in store.list_traces("doc-1")] == ["trace-2"]
+
+
+def test_supabase_run_trace_store_persists_expiry_and_can_delete(monkeypatch, tmp_path):
+    fake_client = _FakeSupabaseClient()
+    monkeypatch.setattr("src.traces.store.create_supabase_client", lambda url, key: fake_client)
+
+    settings = Settings(
+        data_dir=tmp_path / "data",
+        uploads_dir=tmp_path / "data" / "uploads",
+        indexes_dir=tmp_path / "data" / "indexes",
+        cache_dir=tmp_path / "data" / "cache",
+        supabase_url="https://example.supabase.co",
+        supabase_key="service-role-key",
+        supabase_run_traces_table="run_traces",
+    )
+    store = SupabaseRunTraceStore(settings)
+    trace = RunTraceRecord(
+        trace_id="trace-1",
+        document_id="doc-1",
+        fingerprint="fingerprint-1",
+        question="What happened?",
+        created_at="2026-04-17T12:00:00+00:00",
+        expires_at="2026-04-18T12:00:00+00:00",
+        retrieval_version="v1",
+        generation_version="v1",
+        payload={"answer": {"supported": True}},
+    )
+
+    store.save_trace(trace)
+    store.delete_for_document("doc-1")
+
+    payload = fake_client.upserts[0]["payload"]
+    assert fake_client.upserts[0]["table"] == "run_traces"
+    assert payload["trace_id"] == "trace-1"
+    assert payload["expires_at"] == "2026-04-18T12:00:00+00:00"
+    assert payload["payload"]["payload"]["answer"]["supported"] is True
+    assert fake_client.deletes[0]["filters"] == [("eq", "document_id", "doc-1")]

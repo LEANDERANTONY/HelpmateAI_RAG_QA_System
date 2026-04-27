@@ -8,11 +8,18 @@ from src.schemas import DocumentRecord, SectionRecord
 
 CANONICAL_HEADINGS = (
     "abstract",
+    "benefits",
     "introduction",
     "background",
+    "coverage",
+    "definitions",
+    "eligibility",
+    "exclusions",
     "methodology",
     "methods",
     "materials and methods",
+    "preamble",
+    "renewal",
     "results",
     "discussion",
     "conclusion",
@@ -20,6 +27,15 @@ CANONICAL_HEADINGS = (
     "future work",
     "future directions",
     "limitations",
+    "waiting period",
+    "waiting periods",
+    "claims",
+    "claim procedure",
+    "claim procedures",
+    "general conditions",
+    "specific conditions",
+    "schedule of benefits",
+    "terms and conditions",
     "references",
 )
 
@@ -35,6 +51,14 @@ SECTION_KIND_ALIASES: dict[str, list[str]] = {
     "future work": ["future work", "future directions", "next steps", "follow-up", "recommendations", "further research"],
     "future directions": ["future directions", "future work", "next steps", "follow-up", "recommendations"],
     "limitations": ["limitations", "challenge", "constraints", "barriers"],
+    "coverage": ["coverage", "covered", "scope of cover", "covered expenses", "hospitalization cover"],
+    "benefits": ["benefits", "benefit schedule", "covered benefits", "plan benefits", "sum insured"],
+    "exclusions": ["exclusions", "not covered", "exclusion list", "non-payable items", "limitations of cover"],
+    "claims": ["claims", "claim process", "claim procedure", "cashless", "reimbursement", "documents required"],
+    "waiting periods": ["waiting period", "waiting periods", "named ailment waiting period", "initial waiting period"],
+    "eligibility": ["eligibility", "who can be insured", "insured persons", "entry age", "dependent coverage"],
+    "renewal": ["renewal", "continuity", "portability", "cancellation", "termination"],
+    "definitions": ["definitions", "defined terms", "meaning", "interpretation", "glossary"],
 }
 
 _LOW_VALUE_FRONT_MATTER_KINDS = {

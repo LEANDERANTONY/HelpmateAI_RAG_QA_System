@@ -83,6 +83,56 @@ Important note:
   - Vectara by `+0.1997` faithfulness, `+0.1350` answer relevancy, and `+0.1523` context precision
   - OpenAI File Search by `+0.4532` faithfulness, `+0.4021` answer relevancy, and `+0.3697` context precision
 
+## Lean Smart-Indexing Upgrade Check
+
+After adding smart section profiles, orchestrated scope, selector context, and ephemeral run traces, a smaller targeted `ragas` suite was run on 2026-04-27. This suite is not a replacement for the full four-document benchmark above. It is a cost-bounded regression check focused on the new failure modes:
+
+- thesis local chapter scope
+- thesis broad synthesis
+- policy claims/reimbursement
+- held-out life-policy limits
+- report-generation main contribution
+- pancreas review broad synthesis
+
+### Current Branch Versus `main`
+
+The apples-to-apples regression comparison used five shared questions from the lean suite, comparing this branch against `main` before the smart index/orchestrator layer.
+
+| System | Supported rate | Faithfulness | Answer relevancy | Context precision |
+| --- | ---: | ---: | ---: | ---: |
+| `main` before smart indexing/orchestration | `1.0000` | `0.8750` | `0.4964` | `0.7000` |
+| Current smart-indexing branch | `1.0000` | `0.8860` | `0.5930` | `0.8000` |
+| Delta | `+0.0000` | `+0.0110` | `+0.0966` | `+0.1000` |
+
+The clearest qualitative improvement was the implementation-chapter question:
+
+- `main` retrieved pages `90`, `23`, `72`, and `72`, drifting into final conclusion/methodology/results material
+- the current branch retrieved pages `52`, `52`, `56`, and `52`, all inside the implementation chapter
+
+### Current Branch Versus Vendors
+
+The same six-question lean suite was also run against OpenAI File Search and Vectara retrieval, using the shared Helpmate answer generator and the same `ragas` metrics.
+
+| System | Supported rate | Faithfulness | Answer relevancy | Context precision |
+| --- | ---: | ---: | ---: | ---: |
+| Helpmate smart-indexing branch | `1.0000` | `0.9050` | `0.6034` | `0.7500` |
+| OpenAI File Search + shared answer model | `0.6667` | `0.9667` | `0.2676` | `0.6028` |
+| Vectara + shared answer model | `0.6667` | `0.7639` | `0.3690` | `0.5556` |
+
+Interpretation:
+
+- OpenAI File Search scored high on faithfulness partly because it abstained or gave limited answers on weak retrieval contexts.
+- Vectara answered the local thesis scope question better than OpenAI, but still mixed broader thesis pages into the evidence.
+- Helpmate had the best answer relevancy, context precision, and supported rate on this targeted suite.
+
+Reports:
+
+- `docs/evals/reports/lean_ragas_upgrade_20260427_185007.json`
+- `docs/evals/reports/lean_ragas_main_baseline_20260427_185723.json`
+- `docs/evals/reports/lean_ragas_upgrade_regression_compare_20260427_1859.json`
+- `docs/evals/reports/lean_vendor_ragas_upgrade_comparison_20260427_191421.json`
+- `docs/evals/reports/lean_ragas_ours_vs_vendor_comparison_20260427_1915.json`
+
 ## Structure-Aware Retrieval Snapshot
 
 Latest local topology-aware metrics:

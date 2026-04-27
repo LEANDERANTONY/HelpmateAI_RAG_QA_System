@@ -2,6 +2,7 @@ from src.config import Settings
 from src.retrieval.hybrid import HybridRetriever
 from src.schemas import ChunkRecord
 from src.schemas import RetrievalCandidate
+from src.schemas import RetrievalPlan
 
 
 def test_extract_metadata_filters_detects_page_reference():
@@ -125,6 +126,28 @@ def test_content_overlap_handles_simple_singular_plural_variants():
     overlap = retriever._content_overlap_ratio("What is the main contribution of this paper?", candidates)
 
     assert overlap > 0.0
+
+
+def test_scope_compliance_removes_candidates_outside_hard_orchestrated_scope():
+    notes: list[str] = []
+    candidates = [
+        RetrievalCandidate(chunk_id="c1", text="Implementation evidence", metadata={"section_id": "chapter-4"}),
+        RetrievalCandidate(chunk_id="c2", text="Conclusion evidence", metadata={"section_id": "chapter-6"}),
+    ]
+    plan = RetrievalPlan(
+        intent_type="summary",
+        evidence_spread="sectional",
+        constraint_mode="hard_region",
+        preferred_route="chunk_first",
+        target_region_ids=["chapter-4"],
+        allowed_section_ids=["chapter-4"],
+        scope_strictness="hard",
+    )
+
+    filtered = HybridRetriever._scope_compliant_candidates(candidates, plan, notes)
+
+    assert [candidate.chunk_id for candidate in filtered] == ["c1"]
+    assert any("outside the orchestrated hard scope" in note for note in notes)
 
 
 def test_chunk_candidates_promote_continuation_of_heading_stub():

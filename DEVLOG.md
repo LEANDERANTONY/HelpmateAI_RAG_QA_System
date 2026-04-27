@@ -8,6 +8,38 @@ Historical note:
 - later entries add quality-control, benchmarking, and document-intelligence work on top of that baseline
 - the project is still evolving, so later entries refine earlier architectural assumptions without erasing them
 
+## Day 26: Smart Indexing, Orchestrated Scope, And Ephemeral Run Traces
+
+- Added generic section profiling at indexing time:
+  - document section role
+  - chapter number and chapter title
+  - page range
+  - reusable scope labels
+- Added an LLM retrieval orchestrator that reads a compact document map and resolves explicit local scope to validated section IDs.
+- Wired orchestration context into the reorder-only evidence selector so selection sees the same route, scope, and answer-focus metadata as retrieval.
+- Added hard-scope enforcement after reranking so scoped questions cannot drift into globally attractive but irrelevant chapters.
+- Added ephemeral run traces for uncached QA runs, stored locally or in Supabase with the same workspace retention window.
+- Reviewed the older `hybrid-indexing-docs-refresh` branch and carried forward the durable part:
+  - policy-aware canonical headings and aliases
+  - policy-aware structure-repair triggers
+  - policy-aware synopsis semantic gating instead of blanket-skipping policy documents
+
+Challenges:
+
+- deterministic scope extraction was becoming too brittle for differently phrased questions
+- the earlier hybrid-indexing branch contained useful ideas mixed with stale rollbacks, so it could not be merged wholesale
+- workflow memory needed to help debugging without violating the one-day workspace retention model or storing full document text
+
+Improvements:
+
+- scoped retrieval eval improved from `0.00` full scope compliance without orchestration to `1.00` with orchestration, with `1.00` chapter-scope hit after low-value front matter was filtered out of hard scope
+- full-stack snapshot on the branch recorded retrieval objective `0.6274`, answer supported rate `0.8158`, RAGAS faithfulness `0.8173`, and context precision `0.6560`
+- lean upgrade RAGAS on six targeted cases recorded `1.0000` supported rate, `0.9050` faithfulness, `0.6034` answer relevancy, and `0.7500` context precision
+- lean regression against `main` on five shared cases stayed at `1.0000` supported rate and improved faithfulness by `+0.0110`, answer relevancy by `+0.0966`, and context precision by `+0.1000`
+- lean vendor comparison on the same six cases showed Helpmate at `6/6` supported answers versus `4/6` for OpenAI File Search and `4/6` for Vectara, with Helpmate leading answer relevancy and context precision
+- run-trace eval confirmed traces are saved, preview-limited, expire with the workspace, and do not copy the full answer body or full document text
+- the skipped hybrid-indexing branch is now represented by targeted code and tests rather than being lost
+
 ## Day 25: Support Guardrails Stopped Treating Partial Evidence As Failure
 
 - Investigated broad thesis questions that returned unsupported answers despite useful evidence being present.

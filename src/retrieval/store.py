@@ -228,6 +228,8 @@ class ChromaIndexStore:
     def _section_search_document(section: SectionRecord) -> str:
         aliases = section.metadata.get("section_aliases", [])
         alias_text = " | ".join(aliases) if isinstance(aliases, list) else str(aliases)
+        scope_labels = section.metadata.get("document_scope_labels", [])
+        scope_text = " | ".join(scope_labels) if isinstance(scope_labels, list) else str(scope_labels)
         path_text = " > ".join(section.section_path)
         lead_excerpt = section.text[:700].strip()
         tail_excerpt = section.text[-350:].strip() if len(section.text) > 700 else ""
@@ -235,6 +237,9 @@ class ChromaIndexStore:
             section.title,
             path_text,
             alias_text,
+            scope_text,
+            str(section.metadata.get("document_section_role", "")),
+            str(section.metadata.get("chapter_title", "")),
             section.summary,
             lead_excerpt,
             tail_excerpt,
@@ -247,11 +252,16 @@ class ChromaIndexStore:
         path_text = " > ".join(section_path) if isinstance(section_path, list) else str(section_path)
         aliases = synopsis.metadata.get("section_aliases", [])
         alias_text = " | ".join(aliases[:6]) if isinstance(aliases, list) else str(aliases)
+        scope_labels = synopsis.metadata.get("document_scope_labels", [])
+        scope_text = " | ".join(scope_labels[:8]) if isinstance(scope_labels, list) else str(scope_labels)
         parts = [
             synopsis.title,
             path_text,
             synopsis.region_kind,
             alias_text,
+            scope_text,
+            str(synopsis.metadata.get("document_section_role", "")),
+            str(synopsis.metadata.get("chapter_title", "")),
             ", ".join(synopsis.key_terms[:8]),
             synopsis.synopsis,
             " | ".join(synopsis.page_labels),

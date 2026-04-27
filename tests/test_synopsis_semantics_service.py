@@ -141,8 +141,69 @@ def test_synopsis_semantics_gate_skips_healthy_policy_documents():
             metadata={"structure_confidence": 0.9, "structure_repair_reasons": ["Deterministic structure extraction looked healthy."]},
         )
     ]
+    synopses = [
+        SectionSynopsisRecord(
+            section_id="rules",
+            document_id="doc2",
+            title="Coverage",
+            synopsis="Coverage terms explain policy rules, benefits, and conditions for insured persons.",
+            region_kind="rules",
+            page_labels=["Page 10"],
+            key_terms=["coverage", "benefits", "conditions", "insured"],
+            metadata={"section_path": ["Coverage"], "topology_low_value": False},
+        )
+    ]
 
-    assert service._should_run_for_document(document, sections) is False
+    assert service._should_run_for_document(document, sections, synopses) is False
+
+
+def test_synopsis_semantics_gate_allows_weak_policy_synopses():
+    service = SynopsisSemanticsService(
+        Settings(
+            synopsis_semantics_enabled=True,
+            synopsis_semantics_gate_mode="targeted",
+            openai_api_key="test-key",
+        )
+    )
+    document = DocumentRecord(
+        document_id="doc-policy",
+        file_name="policy.pdf",
+        file_type="pdf",
+        source_path="policy.pdf",
+        fingerprint="policy",
+        char_count=5000,
+        page_count=20,
+        metadata={"document_style": "policy_document"},
+        extracted_text="",
+    )
+    section = SectionRecord(
+        section_id="waiting",
+        document_id="doc-policy",
+        title="Waiting Periods",
+        summary="Waiting periods and exclusions.",
+        text="Waiting periods apply before coverage begins. " * 40,
+        page_labels=["Page 12"],
+        section_path=["Waiting Periods"],
+        clause_ids=[],
+        metadata={
+            "document_style": "policy_document",
+            "section_kind": "waiting periods",
+            "structure_confidence": 0.9,
+            "structure_repair_reasons": ["Deterministic structure extraction looked healthy."],
+        },
+    )
+    synopsis = SectionSynopsisRecord(
+        section_id="waiting",
+        document_id="doc-policy",
+        title="Waiting Periods",
+        synopsis="Waiting Periods",
+        region_kind="rules",
+        page_labels=["Page 12"],
+        key_terms=["waiting"],
+        metadata={"section_path": ["Waiting Periods"], "topology_low_value": False},
+    )
+
+    assert service._should_run_for_document(document, [section], [synopsis]) is True
 
 
 def test_synopsis_semantics_gate_allows_noisy_repaired_research_documents():
@@ -185,4 +246,17 @@ def test_synopsis_semantics_gate_allows_noisy_repaired_research_documents():
         )
     ]
 
-    assert service._should_run_for_document(document, sections) is True
+    synopses = [
+        SectionSynopsisRecord(
+            section_id="results",
+            document_id="doc3",
+            title="Results",
+            synopsis="Results",
+            region_kind="evidence",
+            page_labels=["Page 8"],
+            key_terms=["results"],
+            metadata={"section_path": ["Results"], "topology_low_value": False},
+        )
+    ]
+
+    assert service._should_run_for_document(document, sections, synopses) is True

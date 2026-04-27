@@ -24,15 +24,17 @@ Recommended deployment shape:
 1. ingest uploaded PDF or DOCX content
 2. infer lightweight document structure and document style
 3. repair low-confidence section maps at indexing time when journal-style layout noise is detected
-4. create metadata-rich chunks, sections, and deterministic section synopses
-5. build or reuse persisted chunk, section, and synopsis indexes plus lightweight topology artifacts
-6. analyze the question and produce a deterministic retrieval plan
-7. retrieve evidence through chunk-first, synopsis-first, dedicated global-summary retrieval, legacy section-first fallback, or hybrid retrieval
-8. grade evidence as `strong`, `weak`, or `unsupported`
-9. adapt retrieval through structural guidance and global fallback instead of query rewriting
-10. optionally run a reorder-only post-rerank evidence selector over the top candidates when the spread-trigger policy fires
-11. generate a grounded answer with explicit support status
-12. cache safe answer results for repeated questions
+4. enrich sections with generic document profiles such as chapter, role, page range, and scope labels
+5. create metadata-rich chunks, sections, and deterministic section synopses
+6. build or reuse persisted chunk, section, and synopsis indexes plus lightweight topology artifacts
+7. analyze the question and produce a retrieval plan, with bounded LLM orchestration for explicit local scope
+8. retrieve evidence through chunk-first, synopsis-first, dedicated global-summary retrieval, legacy section-first fallback, or hybrid retrieval
+9. grade evidence as `strong`, `weak`, or `unsupported`
+10. adapt retrieval through structural guidance and global fallback instead of query rewriting
+11. optionally run a reorder-only post-rerank evidence selector over the top candidates when the spread-trigger policy fires
+12. generate a grounded answer with explicit support status
+13. write an ephemeral workflow trace for uncached QA runs
+14. cache safe answer results for repeated questions
 
 ## Ingestion And Structure Layer
 
@@ -85,8 +87,15 @@ On top of this, HelpmateAI builds `SectionRecord` objects carrying:
 - clause ids
 - section kind
 - section aliases for summary-style retrieval
+- document profile metadata:
+  - document section role
+  - chapter number and title where inferable
+  - page range
+  - scope labels
 
 This layer is especially important for theses and research papers, where broad questions often need section-level navigation before exact chunk retrieval.
+
+Policy documents remain part of the semantic indexing path. The current indexing layer recognizes policy-native section concepts such as coverage, benefits, exclusions, claims, waiting periods, eligibility, renewal, definitions, and schedule-of-benefits sections. The important architecture point is that policy documents are not blanket-skipped by semantic refinement; they are reviewed only when structure quality or synopsis quality is weak enough to justify the extra indexing-time model call.
 
 The current retrieval upgrade adds a lightweight topology layer on top of these sections:
 
@@ -128,7 +137,19 @@ HelpmateAI now uses a planned hybrid retrieval design:
 - soft multi-region structural guidance with global fallback
 - hard structural constraints only for explicit page, clause, or named-section references
 
-The planner reasons about generic question shape rather than domain-specific taxonomies. It predicts:
+The planner reasons about generic question shape rather than domain-specific taxonomies. A bounded retrieval orchestrator can run before the deterministic planner when the question appears to require document-map interpretation, such as a local chapter or section scope. It receives a compact section map, returns strict JSON, and can only enforce section IDs that already exist in the index.
+
+Validated orchestration can add:
+
+- `allowed_section_ids`
+- `scope_strictness`
+- `scope_query`
+- `answer_focus`
+- `orchestrator_reason`
+
+Hard local scope disables global fallback and filters final evidence after reranking. Broad questions still remain broad unless the orchestrator gives a valid, high-confidence local boundary.
+
+The structured plan predicts:
 
 - `intent_type`
   - `lookup`
@@ -200,6 +221,7 @@ This layer is intentionally narrower than a planner or rewriter:
 - it does not change the query
 - it does not retrieve new chunks
 - it only reorders the final evidence list from the existing retrieval result
+- it receives orchestration context so it can respect a validated local scope while staying separate from retrieval planning
 
 ## Weak-Evidence And Guardrail Flow
 
@@ -241,6 +263,13 @@ Answer cache:
 - keyed by fingerprint, normalized question, retrieval version, generation version, and model
 - reuses only safe matching answers
 
+Workflow traces:
+
+- written for uncached QA runs
+- store route, plan, scores, candidate IDs, page/section metadata, previews, support status, and citations
+- do not copy full document text or the full answer body
+- expire with the same workspace retention window locally and in Supabase
+
 ## Evaluation And Benchmarking
 
 Evaluation is now a first-class part of the architecture.
@@ -271,6 +300,8 @@ This lets the team compare:
 - retrieval quality versus answer quality
 - structural changes versus baseline behavior
 - topology-aware retrieval behavior across policy, thesis, and research-paper documents
+- scoped retrieval behavior for local chapter/section questions
+- trace-retention and trace-safety behavior for workflow observability
 
 Current benchmark read:
 
@@ -279,6 +310,8 @@ Current benchmark read:
 - `pancreas7` remains improved under the topology-aware stack
 - `pancreas8` remains strong overall, though broad paper-summary retrieval is still the hardest remaining benchmark case
 - the new report-generation eval sets show strong retrieval quality overall, but broad paper-summary questions are still more fragile than concrete questions
+- the smart-indexing/orchestrator branch passed a lean six-case upgrade check with `1.0000` supported rate, `0.9050` faithfulness, `0.6034` answer relevancy, and `0.7500` context precision
+- on five shared lean regression cases, the branch improved answer relevancy by `+0.0966` and context precision by `+0.1000` versus `main` while keeping supported rate unchanged
 - OpenAI is still the weakest external retrieval baseline on the current document families
 
 ## UI And Product Surface
@@ -307,6 +340,8 @@ The active app now carries:
 - chunk-first and synopsis-first retrieval paths are both live
 - structure is now an active retrieval control signal rather than passive metadata
 - reorder-only evidence selection is now benchmark-validated and active in the default stack
+- orchestration-aware scope enforcement has targeted branch validation for local section/chapter questions and lean vendor comparison against OpenAI File Search and Vectara
+- ephemeral run traces make workflow decisions inspectable without becoming long-term memory
 - live deployment now reflects the benchmarked architecture instead of a separate demo shell
 - evaluation policy is now simpler and more credible:
   - Vectara as main external retrieval baseline
@@ -321,6 +356,7 @@ The active app now carries:
 - `reportgeneration2` remains a structure-repair heuristic-gap case
 - region-hit metrics are newer than page-hit metrics, so they still need interpretation before they become optimization targets
 - answer-quality eval coverage is still deeper on the main four document families than on the newer report-generation sets
+- orchestration needs broader held-out coverage before it should be treated as a settled default
 
 ## Likely Next Product Step
 
@@ -330,6 +366,8 @@ Backend-quality track:
 
 - add answer-quality eval coverage for the newer report-generation papers
 - add gold-answer coverage for a selected subset of benchmark questions
+- expand scoped retrieval eval beyond the thesis-local cases
+- add trace-driven failed-answer review tooling
 - extend external vendor comparison only after a materially new retrieval or answer-layer change
 - close the remaining structure-repair gap on `reportgeneration2`
 

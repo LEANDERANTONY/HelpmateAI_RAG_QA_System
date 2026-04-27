@@ -1,0 +1,629 @@
+{
+  "settings": {
+    "planner_llm_enabled": true,
+    "planner_model": "gpt-5.4-nano",
+    "router_llm_enabled": false,
+    "reranker_enabled": true,
+    "evidence_selector_enabled": true,
+    "evidence_selector_prune": false
+  },
+  "retrieval": {
+    "overall": {
+      "dataset_size": 76,
+      "page_hit_rate": 0.6710526315789473,
+      "mean_reciprocal_rank": 0.5997807017543859,
+      "mean_fragment_recall": 0.5870300751879699,
+      "objective_score": 0.627390350877193,
+      "llm_structured_rate": 0.23684210526315788,
+      "planner_source_counts": {
+        "llm_orchestrator": 57,
+        "llm_structured": 18,
+        "deterministic": 1
+      }
+    },
+    "per_dataset": {
+      "retrieval_eval_dataset.json": {
+        "dataset_size": 12,
+        "page_hit_rate": 0.8333333333333334,
+        "mean_reciprocal_rank": 0.7916666666666666,
+        "mean_fragment_recall": 0.7777777777777778,
+        "objective_score": 0.8055555555555555,
+        "llm_structured_rate": 0.16666666666666666,
+        "planner_source_counts": {
+          "llm_orchestrator": 10,
+          "llm_structured": 2
+        }
+      },
+      "health_retrieval_eval_dataset.json": {
+        "dataset_size": 13,
+        "page_hit_rate": 0.46153846153846156,
+        "mean_reciprocal_rank": 0.46153846153846156,
+        "mean_fragment_recall": 0.4358974358974359,
+        "objective_score": 0.45256410256410257,
+        "llm_structured_rate": 0.15384615384615385,
+        "planner_source_counts": {
+          "llm_orchestrator": 11,
+          "llm_structured": 2
+        }
+      },
+      "thesis_retrieval_eval_dataset.json": {
+        "dataset_size": 12,
+        "page_hit_rate": 0.5,
+        "mean_reciprocal_rank": 0.4166666666666667,
+        "mean_fragment_recall": 0.5178571428571429,
+        "objective_score": 0.48958333333333337,
+        "llm_structured_rate": 0.08333333333333333,
+        "planner_source_counts": {
+          "llm_orchestrator": 11,
+          "llm_structured": 1
+        }
+      },
+      "pancreas7_retrieval_eval_dataset.json": {
+        "dataset_size": 9,
+        "page_hit_rate": 0.5555555555555556,
+        "mean_reciprocal_rank": 0.4166666666666667,
+        "mean_fragment_recall": 0.6296296296296295,
+        "objective_score": 0.5537037037037037,
+        "llm_structured_rate": 0.2222222222222222,
+        "planner_source_counts": {
+          "llm_orchestrator": 7,
+          "llm_structured": 2
+        }
+      },
+      "pancreas8_retrieval_eval_dataset.json": {
+        "dataset_size": 10,
+        "page_hit_rate": 1.0,
+        "mean_reciprocal_rank": 0.8333333333333333,
+        "mean_fragment_recall": 0.8333333333333333,
+        "objective_score": 0.9083333333333333,
+        "llm_structured_rate": 0.3,
+        "planner_source_counts": {
+          "llm_orchestrator": 7,
+          "llm_structured": 3
+        }
+      },
+      "reportgeneration_retrieval_eval_dataset.json": {
+        "dataset_size": 10,
+        "page_hit_rate": 0.8,
+        "mean_reciprocal_rank": 0.7,
+        "mean_fragment_recall": 0.5733333333333334,
+        "objective_score": 0.7006666666666667,
+        "llm_structured_rate": 0.6,
+        "planner_source_counts": {
+          "llm_structured": 6,
+          "llm_orchestrator": 4
+        }
+      },
+      "reportgeneration2_retrieval_eval_dataset.json": {
+        "dataset_size": 10,
+        "page_hit_rate": 0.6,
+        "mean_reciprocal_rank": 0.6,
+        "mean_fragment_recall": 0.36666666666666664,
+        "objective_score": 0.5183333333333333,
+        "llm_structured_rate": 0.2,
+        "planner_source_counts": {
+          "deterministic": 1,
+          "llm_orchestrator": 7,
+          "llm_structured": 2
+        }
+      }
+    }
+  },
+  "answer": {
+    "positive_overall": {
+      "dataset_size": 76,
+      "supported_rate": 0.8157894736842105,
+      "citation_page_hit_rate": 0.6578947368421053,
+      "evidence_fragment_recall_mean": 0.5749686716791981,
+      "llm_structured_rate": 0.18421052631578946,
+      "planner_source_counts": {
+        "llm_orchestrator": 62,
+        "llm_structured": 14
+      }
+    },
+    "negative_overall": {
+      "dataset_size": 35,
+      "abstention_rate": 0.9714285714285714,
+      "false_support_rate": 0.02857142857142857,
+      "llm_structured_rate": 0.6857142857142857,
+      "planner_source_counts": {
+        "llm_orchestrator": 11,
+        "llm_structured": 24
+      }
+    },
+    "per_dataset": {
+      "retrieval_eval_dataset.json": {
+        "positive": {
+          "dataset_size": 12,
+          "supported_rate": 0.6666666666666666,
+          "citation_page_hit_rate": 0.6666666666666666,
+          "evidence_fragment_recall_mean": 0.5833333333333334,
+          "llm_structured_rate": 0.0,
+          "planner_source_counts": {
+            "llm_orchestrator": 12
+          }
+        },
+        "negative": {
+          "dataset_size": 5,
+          "abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "llm_structured_rate": 0.4,
+          "planner_source_counts": {
+            "llm_orchestrator": 3,
+            "llm_structured": 2
+          }
+        }
+      },
+      "health_retrieval_eval_dataset.json": {
+        "positive": {
+          "dataset_size": 13,
+          "supported_rate": 0.5384615384615384,
+          "citation_page_hit_rate": 0.5384615384615384,
+          "evidence_fragment_recall_mean": 0.5128205128205129,
+          "llm_structured_rate": 0.15384615384615385,
+          "planner_source_counts": {
+            "llm_structured": 2,
+            "llm_orchestrator": 11
+          }
+        },
+        "negative": {
+          "dataset_size": 5,
+          "abstention_rate": 0.8,
+          "false_support_rate": 0.2,
+          "llm_structured_rate": 0.8,
+          "planner_source_counts": {
+            "llm_orchestrator": 1,
+            "llm_structured": 4
+          }
+        }
+      },
+      "thesis_retrieval_eval_dataset.json": {
+        "positive": {
+          "dataset_size": 12,
+          "supported_rate": 0.75,
+          "citation_page_hit_rate": 0.4166666666666667,
+          "evidence_fragment_recall_mean": 0.4692460317460318,
+          "llm_structured_rate": 0.25,
+          "planner_source_counts": {
+            "llm_structured": 3,
+            "llm_orchestrator": 9
+          }
+        },
+        "negative": {
+          "dataset_size": 5,
+          "abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "llm_structured_rate": 1.0,
+          "planner_source_counts": {
+            "llm_structured": 5
+          }
+        }
+      },
+      "pancreas7_retrieval_eval_dataset.json": {
+        "positive": {
+          "dataset_size": 9,
+          "supported_rate": 0.8888888888888888,
+          "citation_page_hit_rate": 0.5555555555555556,
+          "evidence_fragment_recall_mean": 0.5185185185185186,
+          "llm_structured_rate": 0.0,
+          "planner_source_counts": {
+            "llm_orchestrator": 9
+          }
+        },
+        "negative": {
+          "dataset_size": 5,
+          "abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "llm_structured_rate": 0.6,
+          "planner_source_counts": {
+            "llm_structured": 3,
+            "llm_orchestrator": 2
+          }
+        }
+      },
+      "pancreas8_retrieval_eval_dataset.json": {
+        "positive": {
+          "dataset_size": 10,
+          "supported_rate": 1.0,
+          "citation_page_hit_rate": 0.9,
+          "evidence_fragment_recall_mean": 0.8083333333333332,
+          "llm_structured_rate": 0.5,
+          "planner_source_counts": {
+            "llm_orchestrator": 5,
+            "llm_structured": 5
+          }
+        },
+        "negative": {
+          "dataset_size": 5,
+          "abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "llm_structured_rate": 0.8,
+          "planner_source_counts": {
+            "llm_orchestrator": 1,
+            "llm_structured": 4
+          }
+        }
+      },
+      "reportgeneration_retrieval_eval_dataset.json": {
+        "positive": {
+          "dataset_size": 10,
+          "supported_rate": 1.0,
+          "citation_page_hit_rate": 0.8,
+          "evidence_fragment_recall_mean": 0.6066666666666667,
+          "llm_structured_rate": 0.3,
+          "planner_source_counts": {
+            "llm_structured": 3,
+            "llm_orchestrator": 7
+          }
+        },
+        "negative": {
+          "dataset_size": 5,
+          "abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "llm_structured_rate": 0.4,
+          "planner_source_counts": {
+            "llm_orchestrator": 3,
+            "llm_structured": 2
+          }
+        }
+      },
+      "reportgeneration2_retrieval_eval_dataset.json": {
+        "positive": {
+          "dataset_size": 10,
+          "supported_rate": 1.0,
+          "citation_page_hit_rate": 0.8,
+          "evidence_fragment_recall_mean": 0.5583333333333333,
+          "llm_structured_rate": 0.1,
+          "planner_source_counts": {
+            "llm_orchestrator": 9,
+            "llm_structured": 1
+          }
+        },
+        "negative": {
+          "dataset_size": 5,
+          "abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "llm_structured_rate": 0.8,
+          "planner_source_counts": {
+            "llm_structured": 4,
+            "llm_orchestrator": 1
+          }
+        }
+      }
+    }
+  },
+  "ragas": {
+    "available": true,
+    "dataset_names": [
+      "health_retrieval_eval_dataset.json",
+      "thesis_retrieval_eval_dataset.json",
+      "pancreas7_retrieval_eval_dataset.json"
+    ],
+    "datasets": {
+      "health_retrieval_eval_dataset.json": {
+        "dataset_size": 13,
+        "available": true,
+        "supported_rate": 0.46153846153846156,
+        "faithfulness_mean": 0.6837606837606838,
+        "answer_relevancy_mean": 0.39916796501278984,
+        "context_precision_mean": 0.40811965810274214,
+        "llm_structured_rate": 0.3076923076923077,
+        "planner_source_counts": {
+          "llm_orchestrator": 9,
+          "llm_structured": 4
+        },
+        "results": [
+          {
+            "question": "What is the cashless facility under this policy?",
+            "supported": false,
+            "planner_source": "llm_orchestrator",
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.0
+          },
+          {
+            "question": "How is the grace period defined and how long is it for monthly versus other premium payment modes?",
+            "supported": true,
+            "planner_source": "llm_orchestrator",
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9208586065910119,
+            "context_precision": 0.99999999995
+          },
+          {
+            "question": "What counts as maternity expenses in this policy?",
+            "supported": false,
+            "planner_source": "llm_orchestrator",
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.0
+          },
+          {
+            "question": "How does the policy define a network provider?",
+            "supported": true,
+            "planner_source": "llm_orchestrator",
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7702957378441174,
+            "context_precision": 0.9999999999666667
+          },
+          {
+            "question": "How does the policy define a pre-existing disease?",
+            "supported": true,
+            "planner_source": "llm_structured",
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8837967086450527,
+            "context_precision": 0.7499999999625
+          },
+          {
+            "question": "What does renewal mean in this policy wording?",
+            "supported": true,
+            "planner_source": "llm_structured",
+            "faithfulness": 0.8888888888888888,
+            "answer_relevancy": 0.7648001674826812,
+            "context_precision": 0.8333333332916666
+          },
+          {
+            "question": "How many days of pre-hospitalization and post-hospitalization expenses are covered?",
+            "supported": false,
+            "planner_source": "llm_structured",
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.0
+          },
+          {
+            "question": "What waiting period applies to pre-existing diseases?",
+            "supported": false,
+            "planner_source": "llm_orchestrator",
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.0
+          },
+          {
+            "question": "What is the named ailment waiting period and where is the disease list described?",
+            "supported": false,
+            "planner_source": "llm_orchestrator",
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.0
+          },
+          {
+            "question": "What is the 30-day waiting period in this health policy?",
+            "supported": false,
+            "planner_source": "llm_orchestrator",
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.0
+          },
+          {
+            "question": "What happens if an installment premium is not received within the grace period?",
+            "supported": true,
+            "planner_source": "llm_structured",
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9886083052382656,
+            "context_precision": 0.8055555555287036
+          },
+          {
+            "question": "How can an insured person avail cashless treatment at a network provider?",
+            "supported": true,
+            "planner_source": "llm_orchestrator",
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8608240193651389,
+            "context_precision": 0.9166666666361111
+          },
+          {
+            "question": "How is co-payment applied during claim assessment?",
+            "supported": false,
+            "planner_source": "llm_orchestrator",
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.0
+          }
+        ]
+      },
+      "thesis_retrieval_eval_dataset.json": {
+        "dataset_size": 12,
+        "available": true,
+        "supported_rate": 0.75,
+        "faithfulness_mean": 0.9083333333333333,
+        "answer_relevancy_mean": 0.6709319500015448,
+        "context_precision_mean": 0.7638888888539351,
+        "llm_structured_rate": 0.3333333333333333,
+        "planner_source_counts": {
+          "llm_structured": 4,
+          "llm_orchestrator": 8
+        },
+        "results": [
+          {
+            "question": "What is the main aim of this thesis?",
+            "supported": true,
+            "planner_source": "llm_structured",
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9435800932694568,
+            "context_precision": 0.9166666666361111
+          },
+          {
+            "question": "What were the three main research objectives of the study?",
+            "supported": true,
+            "planner_source": "llm_structured",
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8992689346997401,
+            "context_precision": 0.99999999995
+          },
+          {
+            "question": "How many CT patients were used in the processed cohort and how were they split?",
+            "supported": true,
+            "planner_source": "llm_structured",
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8279497187647588,
+            "context_precision": 0.99999999995
+          },
+          {
+            "question": "What was the baseline bias AUC and what did extreme standardization reduce it to?",
+            "supported": true,
+            "planner_source": "llm_orchestrator",
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.996985715080557,
+            "context_precision": 0.9999999999666667
+          },
+          {
+            "question": "What CT model architecture was used in the thesis?",
+            "supported": true,
+            "planner_source": "llm_structured",
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8864751114109811,
+            "context_precision": 0.9166666666361111
+          },
+          {
+            "question": "What seven urinary biomarker features were used for the biomarker model?",
+            "supported": false,
+            "planner_source": "llm_orchestrator",
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.3333333333
+          },
+          {
+            "question": "How many biomarker samples were used and what was the train validation test split?",
+            "supported": true,
+            "planner_source": "llm_orchestrator",
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8590761848646465,
+            "context_precision": 0.9999999999
+          },
+          {
+            "question": "What AUC did the biomarker MLP achieve and how did it compare with the original study?",
+            "supported": true,
+            "planner_source": "llm_orchestrator",
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9020241866135615,
+            "context_precision": 0.9999999999666667
+          },
+          {
+            "question": "What did the thesis conclude about multimodal fusion under synthetic pairing?",
+            "supported": false,
+            "planner_source": "llm_orchestrator",
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.0
+          },
+          {
+            "question": "What happened in the label-mismatch control when the CT weight was 0.3 versus 0.7?",
+            "supported": false,
+            "planner_source": "llm_orchestrator",
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.0
+          },
+          {
+            "question": "How was multimodal fusion implemented in the thesis?",
+            "supported": true,
+            "planner_source": "llm_orchestrator",
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8874002958371817,
+            "context_precision": 0.999999999975
+          },
+          {
+            "question": "What kinds of future work or next steps does the thesis suggest?",
+            "supported": true,
+            "planner_source": "llm_orchestrator",
+            "faithfulness": 0.9,
+            "answer_relevancy": 0.8484231594776546,
+            "context_precision": 0.9999999999666667
+          }
+        ]
+      },
+      "pancreas7_retrieval_eval_dataset.json": {
+        "dataset_size": 9,
+        "available": true,
+        "supported_rate": 0.8888888888888888,
+        "faithfulness_mean": 0.8888888888888888,
+        "answer_relevancy_mean": 0.7873595220768465,
+        "context_precision_mean": 0.8703703703379629,
+        "llm_structured_rate": 0.2222222222222222,
+        "planner_source_counts": {
+          "llm_orchestrator": 7,
+          "llm_structured": 2
+        },
+        "results": [
+          {
+            "question": "What was the goal of the pancreas7 study?",
+            "supported": false,
+            "planner_source": "llm_orchestrator",
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.0
+          },
+          {
+            "question": "What CNN architecture did the paper use?",
+            "supported": true,
+            "planner_source": "llm_orchestrator",
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7954985980758335,
+            "context_precision": 0.99999999995
+          },
+          {
+            "question": "What CT phases were included in the datasets?",
+            "supported": true,
+            "planner_source": "llm_orchestrator",
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9386782993233892,
+            "context_precision": 0.9999999999666667
+          },
+          {
+            "question": "How many patients and images were included in total?",
+            "supported": true,
+            "planner_source": "llm_orchestrator",
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9339886624747029,
+            "context_precision": 0.9999999999666667
+          },
+          {
+            "question": "How many pancreatic cancer patients and control patients were used in the binary classification experiments?",
+            "supported": true,
+            "planner_source": "llm_structured",
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8173289957021592,
+            "context_precision": 0.999999999975
+          },
+          {
+            "question": "What binary classification accuracy did the CNN achieve across the three CT phases?",
+            "supported": true,
+            "planner_source": "llm_orchestrator",
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7449869053721881,
+            "context_precision": 0.8333333332916666
+          },
+          {
+            "question": "How did the CNN compare with gastroenterologists and trainees on plain scan accuracy?",
+            "supported": true,
+            "planner_source": "llm_orchestrator",
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9163998851536664,
+            "context_precision": 0.9999999999666667
+          },
+          {
+            "question": "Which phase had the highest sensitivity for head and neck pancreatic malignancies in the ternary classifier?",
+            "supported": true,
+            "planner_source": "llm_orchestrator",
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9999996177862385,
+            "context_precision": 0.99999999995
+          },
+          {
+            "question": "Why did the authors say plain phase could be sufficient for the binary classifier?",
+            "supported": true,
+            "planner_source": "llm_structured",
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9393547348034398,
+            "context_precision": 0.999999999975
+          }
+        ]
+      }
+    },
+    "overall": {
+      "supported_rate": 0.6764705882352942,
+      "faithfulness_mean": 0.8173202614379085,
+      "answer_relevancy_mean": 0.5978412542316596,
+      "context_precision_mean": 0.656045751606604,
+      "llm_structured_rate": 0.29411764705882354
+    }
+  }
+}

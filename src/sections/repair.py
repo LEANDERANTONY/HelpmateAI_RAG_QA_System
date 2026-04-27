@@ -20,11 +20,21 @@ from src.sections.service import (
 _SECTION_KIND_MAP = {
     "abstract": "abstract",
     "background": "background",
+    "benefit": "benefits",
+    "benefits": "benefits",
+    "claim": "claims",
+    "claim procedure": "claims",
+    "claim procedures": "claims",
+    "claims": "claims",
     "conclusion": "conclusion",
     "conclusions": "conclusion",
+    "coverage": "coverage",
     "definition": "definitions",
     "definitions": "definitions",
     "discussion": "discussion",
+    "eligibility": "eligibility",
+    "exclusion": "exclusions",
+    "exclusions": "exclusions",
     "future work": "future work",
     "future directions": "future work",
     "general": "general",
@@ -35,10 +45,15 @@ _SECTION_KIND_MAP = {
     "methodology": "methodology",
     "methods": "methodology",
     "overview": "overview",
+    "preamble": "overview",
     "references": "references",
     "related work": "background",
+    "renewal": "renewal",
     "result": "results",
     "results": "results",
+    "schedule of benefits": "benefits",
+    "waiting period": "waiting periods",
+    "waiting periods": "waiting periods",
 }
 
 _NOISY_TITLE_PATTERNS = (
@@ -56,6 +71,7 @@ _DEFAULT_CONFIDENCE_PENALTIES = {
     "duplicate_titles": 0.14,
     "header_dominated_titles": 0.18,
     "noisy_titles": 0.22,
+    "policy_too_few_sections": 0.18,
     "weak_canonical_headings": 0.18,
 }
 
@@ -133,6 +149,7 @@ class StructureRepairService:
         penalties = {**_DEFAULT_CONFIDENCE_PENALTIES, **(penalty_overrides or {})}
         page_count = document.page_count or len(document.metadata.get("pages", []))
         section_count = len(sections)
+        document_style = str(document.metadata.get("document_style", "generic_longform")).lower()
 
         unique_titles = {section.title.strip().lower() for section in sections if section.title.strip()}
         duplicate_ratio = 1 - (len(unique_titles) / max(section_count, 1))
@@ -155,12 +172,16 @@ class StructureRepairService:
             confidence -= penalties["coarse_for_length"]
             reasons.append("Document structure is too coarse for its length.")
             reason_codes.append("coarse_for_length")
+        if document_style == "policy_document" and page_count >= 20 and section_count <= 4:
+            confidence -= penalties["policy_too_few_sections"]
+            reasons.append("Policy document collapsed into too few semantic sections.")
+            reason_codes.append("policy_too_few_sections")
         if duplicate_ratio >= 0.3:
             confidence -= penalties["duplicate_titles"]
             reasons.append("Section titles are heavily duplicated.")
             reason_codes.append("duplicate_titles")
         if (
-            document.metadata.get("document_style") in {"research_paper", "thesis_document"}
+            document_style in {"research_paper", "thesis_document"}
             and header_like_ratio >= 0.25
             and repeated_header_ratio >= 0.15
         ):
@@ -171,7 +192,7 @@ class StructureRepairService:
             confidence -= penalties["noisy_titles"]
             reasons.append("Repeated publisher/header noise appears in section titles.")
             reason_codes.append("noisy_titles")
-        if document.metadata.get("document_style") in {"research_paper", "thesis_document"} and canonical_count <= 2:
+        if document_style in {"research_paper", "thesis_document"} and canonical_count <= 2:
             confidence -= penalties["weak_canonical_headings"]
             reasons.append("Research-style document has weak canonical heading coverage.")
             reason_codes.append("weak_canonical_headings")
@@ -191,7 +212,7 @@ class StructureRepairService:
     def _should_apply_llm_repair(self, decision: StructureRepairDecision) -> bool:
         if not self.settings.structure_repair_require_header_dominated:
             return True
-        return "header_dominated_titles" in decision.reason_codes
+        return any(code in decision.reason_codes for code in {"header_dominated_titles", "policy_too_few_sections"})
 
     @staticmethod
     def _page_brief(page: dict[str, object]) -> dict[str, str]:
@@ -219,19 +240,51 @@ class StructureRepairService:
         if self.client is None:
             return []
         page_payload = [self._page_brief(page) for page in pages]
+        document_style = str(document.metadata.get("document_style", "generic_longform"))
+        valid_kinds = [
+            "overview",
+            "abstract",
+            "introduction",
+            "background",
+            "methodology",
+            "results",
+            "discussion",
+            "conclusion",
+            "future work",
+            "limitations",
+            "definitions",
+            "references",
+            "general",
+            "coverage",
+            "benefits",
+            "exclusions",
+            "claims",
+            "waiting periods",
+            "eligibility",
+            "renewal",
+        ]
+        extra_rules = ""
+        if document_style == "policy_document":
+            extra_rules = (
+                "- for policy documents, prefer semantic headings such as Preamble, Definitions, Coverage, Benefits, "
+                "Exclusions, Waiting Periods, Claims, Eligibility, Renewal, General Conditions, or Schedule of Benefits when clearly present\n"
+                "- distinguish claim-process sections from benefits or exclusion sections\n"
+                "- preserve contiguous clause-heavy policy pages as separate semantic sections rather than merging the whole policy into one block\n"
+            )
         prompt = (
             "Repair the section structure of a long-form document.\n"
             "You are given page-level heading candidates and excerpts. Infer clean contiguous sections.\n"
             "Return JSON with a top-level key 'pages' containing one item per page.\n"
             "Each item must include: page_label, title, section_kind.\n"
-            "Valid section_kind values: overview, abstract, introduction, background, methodology, results, discussion, conclusion, future work, limitations, definitions, references, general.\n"
+            f"Valid section_kind values: {', '.join(valid_kinds)}.\n"
             "Rules:\n"
             "- remove repeated publisher/header noise\n"
             "- prefer canonical research-paper section roles when clearly present\n"
             "- keep page assignments contiguous where possible\n"
             "- do not invent missing pages\n"
+            f"{extra_rules}"
             f"Document: {document.file_name}\n"
-            f"Document style: {document.metadata.get('document_style', 'generic_longform')}\n"
+            f"Document style: {document_style}\n"
             f"Pages: {json.dumps(page_payload, ensure_ascii=True)}"
         )
         try:

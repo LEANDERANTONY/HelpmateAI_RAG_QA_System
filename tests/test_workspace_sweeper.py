@@ -9,6 +9,8 @@ from backend.store import LocalApiRecordStore
 from src.cache.answer_cache import AnswerCache
 from src.config import Settings
 from src.schemas import AnswerResult, CacheStatus, DocumentRecord, IndexRecord
+from src.schemas import RunTraceRecord
+from src.traces import LocalRunTraceStore
 
 
 def _settings(tmp_path: Path) -> Settings:
@@ -115,6 +117,33 @@ def test_sweeper_deletes_expired_workspaces_and_orphans(tmp_path: Path):
     cache.set(orphan_cache_key, answer, fingerprint="fingerprint-orphan", document_id="doc-orphan")
     legacy_cache_path = settings.cache_dir / "legacy-cache.json"
     legacy_cache_path.write_text("{}", encoding="utf-8")
+    trace_store = LocalRunTraceStore(settings)
+    trace_store.save_trace(
+        RunTraceRecord(
+            trace_id="trace-active",
+            document_id="doc-active",
+            fingerprint="fingerprint-active",
+            question="What is active?",
+            created_at=now.isoformat(),
+            expires_at=(now + timedelta(hours=8)).isoformat(),
+            retrieval_version="v1",
+            generation_version="v1",
+            payload={},
+        )
+    )
+    trace_store.save_trace(
+        RunTraceRecord(
+            trace_id="trace-orphan-expired",
+            document_id="doc-orphan",
+            fingerprint="fingerprint-orphan",
+            question="What is orphaned?",
+            created_at=(now - timedelta(hours=2)).isoformat(),
+            expires_at=(now - timedelta(hours=1)).isoformat(),
+            retrieval_version="v1",
+            generation_version="v1",
+            payload={},
+        )
+    )
 
     summary = sweep_local_workspace_storage(settings)
 
@@ -122,6 +151,7 @@ def test_sweeper_deletes_expired_workspaces_and_orphans(tmp_path: Path):
     assert summary.orphan_uploads_deleted == 1
     assert summary.orphan_index_dirs_deleted == 1
     assert summary.orphan_cache_files_deleted == 2
+    assert summary.expired_run_traces_deleted == 1
 
     assert store.get_document("doc-expired") is None
     assert store.get_index("doc-expired") is None
@@ -139,3 +169,6 @@ def test_sweeper_deletes_expired_workspaces_and_orphans(tmp_path: Path):
     assert not (settings.cache_dir / f"{orphan_cache_key}.json").exists()
     assert not legacy_cache_path.exists()
     assert (settings.cache_dir / f"{active_cache_key}.json").exists()
+    assert trace_store.list_traces("doc-expired") == []
+    assert trace_store.list_traces("doc-orphan") == []
+    assert len(trace_store.list_traces("doc-active")) == 1

@@ -13,6 +13,7 @@ from backend.store import (
 from src.config import Settings, get_settings
 from src.pipeline import HelpmatePipeline
 from src.schemas import DocumentRecord
+from src.traces import build_run_trace_store
 
 
 @dataclass
@@ -21,6 +22,7 @@ class SweepSummary:
     orphan_uploads_deleted: int = 0
     orphan_index_dirs_deleted: int = 0
     orphan_cache_files_deleted: int = 0
+    expired_run_traces_deleted: int = 0
 
     def to_dict(self) -> dict[str, int]:
         return asdict(self)
@@ -46,6 +48,7 @@ def _safe_resolve(path: str | Path) -> Path:
 def sweep_local_workspace_storage(settings: Settings | None = None) -> SweepSummary:
     settings = settings or get_settings()
     store = build_api_record_store(settings)
+    trace_store = build_run_trace_store(settings)
     pipeline = HelpmatePipeline(settings)
     now = datetime.now(timezone.utc)
     summary = SweepSummary()
@@ -116,6 +119,7 @@ def sweep_local_workspace_storage(settings: Settings | None = None) -> SweepSumm
             cache_path.unlink(missing_ok=True)
             summary.orphan_cache_files_deleted += 1
 
+    summary.expired_run_traces_deleted += trace_store.delete_expired(now)
     return summary
 
 
