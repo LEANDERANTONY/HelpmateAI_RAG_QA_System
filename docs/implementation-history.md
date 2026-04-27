@@ -397,6 +397,8 @@ Improvement:
 
 - intelligence moved to a bounded interpretation step while enforcement stayed deterministic
 - scoped retrieval eval showed full chapter-scope hit and scope-compliance recovery on the new branch after table-of-contents/front-matter chunks were filtered out of hard scope
+- targeted lean `ragas` regression against `main` improved answer relevancy by `+0.0966` and context precision by `+0.1000` on five shared upgrade cases while keeping supported rate at `1.0000`
+- same-suite vendor comparison showed the branch at `6/6` supported answers versus `4/6` for OpenAI File Search and `4/6` for Vectara
 - broad questions are still allowed to remain broad because the orchestrator is validated rather than blindly trusted
 
 ## 23. Ephemeral Workflow Run Traces
@@ -453,7 +455,7 @@ The main transitions are complete:
 - the retrieval stack defaults are benchmark-backed rather than mostly intuition-backed
 - the selector story is resolved in favor of reorder-only selection
 - the external OpenAI and Vectara comparisons have been rerun on the stabilized stack
-- smart section profiles and orchestrated scope are now under branch validation for local chapter/section questions
+- smart section profiles and orchestrated scope now have branch validation for local chapter/section questions, lean RAGAS regression against `main`, and lean vendor comparison
 - ephemeral run traces are now the preferred workflow-memory layer, not a long-term user-memory system
 
 So the next justified work is no longer "make the stack real." It is:

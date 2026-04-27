@@ -74,4 +74,11 @@ The full-stack snapshot also completed on 2026-04-27:
 - RAGAS faithfulness mean `0.8173`
 - RAGAS context precision mean `0.6560`
 
+The targeted lean `ragas` upgrade suite then checked the newest behavior against `main` and external retrieval baselines:
+
+- current branch on six targeted cases: supported rate `1.0000`, faithfulness `0.9050`, answer relevancy `0.6034`, context precision `0.7500`
+- five-case regression versus `main`: faithfulness `+0.0110`, answer relevancy `+0.0966`, context precision `+0.1000`, with supported rate unchanged at `1.0000`
+- same six-case vendor comparison: Helpmate `6/6` supported answers versus `4/6` for OpenAI File Search and `4/6` for Vectara
+- on the implementation-chapter thesis case, the branch stayed inside Chapter 4 pages while `main` drifted into conclusion, methodology, and results pages
+
 Full test suite result on this branch after the front-matter scope fix: `116 passed`.

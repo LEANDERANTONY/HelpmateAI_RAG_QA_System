@@ -34,6 +34,9 @@ Improvements:
 
 - scoped retrieval eval improved from `0.00` full scope compliance without orchestration to `1.00` with orchestration, with `1.00` chapter-scope hit after low-value front matter was filtered out of hard scope
 - full-stack snapshot on the branch recorded retrieval objective `0.6274`, answer supported rate `0.8158`, RAGAS faithfulness `0.8173`, and context precision `0.6560`
+- lean upgrade RAGAS on six targeted cases recorded `1.0000` supported rate, `0.9050` faithfulness, `0.6034` answer relevancy, and `0.7500` context precision
+- lean regression against `main` on five shared cases stayed at `1.0000` supported rate and improved faithfulness by `+0.0110`, answer relevancy by `+0.0966`, and context precision by `+0.1000`
+- lean vendor comparison on the same six cases showed Helpmate at `6/6` supported answers versus `4/6` for OpenAI File Search and `4/6` for Vectara, with Helpmate leading answer relevancy and context precision
 - run-trace eval confirmed traces are saved, preview-limited, expire with the workspace, and do not copy the full answer body or full document text
 - the skipped hybrid-indexing branch is now represented by targeted code and tests rather than being lost
 

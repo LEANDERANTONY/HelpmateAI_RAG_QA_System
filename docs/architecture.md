@@ -310,6 +310,8 @@ Current benchmark read:
 - `pancreas7` remains improved under the topology-aware stack
 - `pancreas8` remains strong overall, though broad paper-summary retrieval is still the hardest remaining benchmark case
 - the new report-generation eval sets show strong retrieval quality overall, but broad paper-summary questions are still more fragile than concrete questions
+- the smart-indexing/orchestrator branch passed a lean six-case upgrade check with `1.0000` supported rate, `0.9050` faithfulness, `0.6034` answer relevancy, and `0.7500` context precision
+- on five shared lean regression cases, the branch improved answer relevancy by `+0.0966` and context precision by `+0.1000` versus `main` while keeping supported rate unchanged
 - OpenAI is still the weakest external retrieval baseline on the current document families
 
 ## UI And Product Surface
@@ -338,7 +340,7 @@ The active app now carries:
 - chunk-first and synopsis-first retrieval paths are both live
 - structure is now an active retrieval control signal rather than passive metadata
 - reorder-only evidence selection is now benchmark-validated and active in the default stack
-- orchestration-aware scope enforcement is under branch validation for local section/chapter questions
+- orchestration-aware scope enforcement has targeted branch validation for local section/chapter questions and lean vendor comparison against OpenAI File Search and Vectara
 - ephemeral run traces make workflow decisions inspectable without becoming long-term memory
 - live deployment now reflects the benchmarked architecture instead of a separate demo shell
 - evaluation policy is now simpler and more credible:

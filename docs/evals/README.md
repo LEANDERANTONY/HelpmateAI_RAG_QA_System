@@ -82,6 +82,56 @@ The current local retrieval stack also emits planner/topology metrics:
 
 These are diagnostic metrics for the local architecture, not vendor-comparison metrics.
 
+## Lean Smart-Indexing Upgrade Check
+
+The 2026-04-27 smart-indexing/orchestrator branch added a smaller targeted `ragas` suite to test the newest failure modes without rerunning the full vendor benchmark every time.
+
+Coverage:
+
+- thesis local chapter scope
+- thesis broad synthesis
+- policy claims/reimbursement
+- held-out life-policy limits
+- report-generation main contribution
+- pancreas review broad synthesis
+
+Current branch result on the six-case suite:
+
+| Supported rate | Faithfulness | Answer relevancy | Context precision |
+| ---: | ---: | ---: | ---: |
+| `1.0000` | `0.9050` | `0.6034` | `0.7500` |
+
+Regression against `main` used the five shared cases available to both branches:
+
+| System | Supported rate | Faithfulness | Answer relevancy | Context precision |
+| --- | ---: | ---: | ---: | ---: |
+| `main` before smart indexing/orchestration | `1.0000` | `0.8750` | `0.4964` | `0.7000` |
+| Smart-indexing branch | `1.0000` | `0.8860` | `0.5930` | `0.8000` |
+| Delta | `+0.0000` | `+0.0110` | `+0.0966` | `+0.1000` |
+
+Lean vendor comparison on the same six cases:
+
+| System | Supported rate | Faithfulness | Answer relevancy | Context precision |
+| --- | ---: | ---: | ---: | ---: |
+| Helpmate smart-indexing branch | `1.0000` | `0.9050` | `0.6034` | `0.7500` |
+| OpenAI File Search + shared answer model | `0.6667` | `0.9667` | `0.2676` | `0.6028` |
+| Vectara + shared answer model | `0.6667` | `0.7639` | `0.3690` | `0.5556` |
+
+Interpretation:
+
+- this lean suite is a targeted upgrade/regression check, not a replacement for the stabilized four-document benchmark snapshot
+- the implementation-chapter thesis question improved from drifting into conclusion/methodology/results pages on `main` to staying inside the implementation chapter on the smart-indexing branch
+- OpenAI's high faithfulness in this lean run is partly from abstaining or giving limited answers on weak retrieval contexts
+- Helpmate led the lean suite on supported rate, answer relevancy, and context precision
+
+Reports:
+
+- `docs/evals/reports/lean_ragas_upgrade_20260427_185007.json`
+- `docs/evals/reports/lean_ragas_main_baseline_20260427_185723.json`
+- `docs/evals/reports/lean_ragas_upgrade_regression_compare_20260427_1859.json`
+- `docs/evals/reports/lean_vendor_ragas_upgrade_comparison_20260427_191421.json`
+- `docs/evals/reports/lean_ragas_ours_vs_vendor_comparison_20260427_1915.json`
+
 ## New Report-Generation Eval Sets
 
 Two additional journal-paper eval sets are now included:

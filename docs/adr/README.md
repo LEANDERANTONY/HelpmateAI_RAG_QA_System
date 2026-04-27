@@ -52,6 +52,8 @@ Current state note:
   - the older hybrid-indexing candidate was integrated selectively by keeping policy-aware semantic indexing and rejecting stale rollbacks
   - a retrieval orchestrator can resolve explicit local scope to validated section IDs
   - hard orchestrated scope disables global fallback and filters final evidence to the allowed sections
+  - lean RAGAS regression against `main` improved answer relevancy and context precision on the targeted upgrade suite without reducing supported rate
+  - lean vendor comparison showed stronger supported rate, answer relevancy, and context precision than OpenAI File Search or Vectara on the same targeted suite
 - the newest workflow observability change is:
   - each uncached QA run now writes an ephemeral run trace
   - traces store decision metadata, candidate IDs/scores/previews, and support/citation outcomes
