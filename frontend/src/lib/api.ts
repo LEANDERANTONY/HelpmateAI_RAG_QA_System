@@ -9,10 +9,18 @@ import type {
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
-const API_BASE_URL =
-  process.env.NEXT_PUBLIC_API_BASE_URL ?? "/api";
+const PRODUCTION_API_BASE_URL = "https://api.helpmateai.xyz";
+
+function resolveApiBaseUrl(value: string | undefined) {
+  if (value && value !== "/api") {
+    return value;
+  }
+  return process.env.NODE_ENV === "production" ? PRODUCTION_API_BASE_URL : "/api";
+}
+
+const API_BASE_URL = resolveApiBaseUrl(process.env.NEXT_PUBLIC_API_BASE_URL);
 const UPLOAD_API_BASE_URL =
-  process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL ?? API_BASE_URL;
+  resolveApiBaseUrl(process.env.NEXT_PUBLIC_UPLOAD_API_BASE_URL) ?? API_BASE_URL;
 
 async function request<T>(path: string, init?: RequestInit): Promise<T> {
   return requestAgainst<T>(API_BASE_URL, path, init);

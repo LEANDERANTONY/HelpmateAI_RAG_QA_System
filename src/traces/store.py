@@ -1,12 +1,16 @@
 from __future__ import annotations
 
 import json
+import logging
 from datetime import datetime, timezone
 from pathlib import Path
 
 from src.cloud import create_supabase_client, extract_supabase_rows
 from src.config import Settings
 from src.schemas import RunTraceRecord
+
+
+logger = logging.getLogger(__name__)
 
 
 def _parse_timestamp(value: str | None) -> datetime | None:
@@ -75,23 +79,36 @@ class SupabaseRunTraceStore:
             "expires_at": trace.expires_at,
             "payload": trace.to_dict(),
         }
-        self.client.table(self.table_name).upsert(payload, on_conflict="trace_id").execute()
+        try:
+            self.client.table(self.table_name).upsert(payload, on_conflict="trace_id").execute()
+        except Exception as exc:
+            logger.warning("Skipping Supabase run-trace save: %s", exc)
 
     def list_traces(self, document_id: str | None = None) -> list[RunTraceRecord]:
-        query = self.client.table(self.table_name).select("payload")
-        if document_id is not None:
-            query = query.eq("document_id", document_id)
-        response = query.execute()
-        rows = extract_supabase_rows(response)
-        return [RunTraceRecord(**(row.get("payload") or {})) for row in rows if row.get("payload")]
+        try:
+            query = self.client.table(self.table_name).select("payload")
+            if document_id is not None:
+                query = query.eq("document_id", document_id)
+            response = query.execute()
+            rows = extract_supabase_rows(response)
+            return [RunTraceRecord(**(row.get("payload") or {})) for row in rows if row.get("payload")]
+        except Exception as exc:
+            logger.warning("Skipping Supabase run-trace list: %s", exc)
+            return []
 
     def delete_for_document(self, document_id: str) -> int:
-        self.client.table(self.table_name).delete().eq("document_id", document_id).execute()
+        try:
+            self.client.table(self.table_name).delete().eq("document_id", document_id).execute()
+        except Exception as exc:
+            logger.warning("Skipping Supabase run-trace delete for document %s: %s", document_id, exc)
         return 0
 
     def delete_expired(self, now: datetime | None = None) -> int:
         now = now or datetime.now(timezone.utc)
-        self.client.table(self.table_name).delete().lte("expires_at", now.isoformat()).execute()
+        try:
+            self.client.table(self.table_name).delete().lte("expires_at", now.isoformat()).execute()
+        except Exception as exc:
+            logger.warning("Skipping Supabase expired run-trace cleanup: %s", exc)
         return 0
 
 
