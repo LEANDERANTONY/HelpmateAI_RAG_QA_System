@@ -1,0 +1,309 @@
+{
+  "created_at": "2026-04-27T19:14:54.194564",
+  "suite": "lean_ragas_ours_vs_vendor_comparison",
+  "ours_report": "docs\\evals\\reports\\lean_ragas_upgrade_20260427_185007.json",
+  "vendor_report": "docs\\evals\\reports\\lean_vendor_ragas_upgrade_comparison_20260427_191421.json",
+  "summary": {
+    "ours": {
+      "dataset_size": 6,
+      "supported_rate": 1.0,
+      "faithfulness_mean": 0.9049953314659197,
+      "answer_relevancy_mean": 0.6034045045229828,
+      "context_precision_mean": 0.7499999999541667
+    },
+    "openai_file_search": {
+      "dataset_size": 6,
+      "supported_rate": 0.6666666666666666,
+      "faithfulness_mean": 0.9666666666666667,
+      "answer_relevancy_mean": 0.2676122710004593,
+      "context_precision_mean": 0.6027777777393055,
+      "error_count": 0
+    },
+    "vectara": {
+      "dataset_size": 6,
+      "supported_rate": 0.6666666666666666,
+      "faithfulness_mean": 0.7638888888888888,
+      "answer_relevancy_mean": 0.36901805742681626,
+      "context_precision_mean": 0.5555555555277778,
+      "error_count": 0
+    }
+  },
+  "rows": [
+    {
+      "case_id": "thesis_local_implementation",
+      "family": "thesis_local_scope",
+      "question": "What were the summary/conclusions from the implementation chapter?",
+      "ours": {
+        "supported": true,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.4344423600787974,
+        "context_precision": 0.99999999995,
+        "route_used": "chunk_first",
+        "planner_source": "llm_orchestrator",
+        "constraint_mode": "hard_region",
+        "scope_strictness": "hard",
+        "evidence_pages": [
+          "Page 52",
+          "Page 52",
+          "Page 56",
+          "Page 52"
+        ]
+      },
+      "openai_file_search": {
+        "supported": false,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.36666666664833336,
+        "citations": [
+          "OpenAI Result 1",
+          "OpenAI Result 2",
+          "OpenAI Result 3",
+          "OpenAI Result 4",
+          "OpenAI Result 5"
+        ]
+      },
+      "vectara": {
+        "supported": true,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.48874057556049966,
+        "context_precision": 0.7499999999625,
+        "citations": [
+          "Page 71",
+          "Page 22",
+          "Page 95",
+          "Page 23",
+          "Page 90"
+        ]
+      }
+    },
+    {
+      "case_id": "thesis_broad_findings",
+      "family": "thesis_broad_synthesis",
+      "question": "What are the strongest findings or conclusions from this thesis?",
+      "ours": {
+        "supported": true,
+        "faithfulness": 0.8333333333333334,
+        "answer_relevancy": 0.46676630339128405,
+        "context_precision": 0.49999999995,
+        "route_used": "synopsis_first",
+        "planner_source": "llm_structured",
+        "constraint_mode": "soft_multi_region",
+        "scope_strictness": "none",
+        "evidence_pages": [
+          "Page 22",
+          "Page 90",
+          "Page 72",
+          "Page 96"
+        ]
+      },
+      "openai_file_search": {
+        "supported": true,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.5006726922601511,
+        "context_precision": 0.7499999999625,
+        "citations": [
+          "OpenAI Result 1",
+          "OpenAI Result 2",
+          "OpenAI Result 3",
+          "OpenAI Result 4",
+          "OpenAI Result 5"
+        ]
+      },
+      "vectara": {
+        "supported": true,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6198097202421132,
+        "context_precision": 0.99999999995,
+        "citations": [
+          "Page 92",
+          "Page 90",
+          "Page 96",
+          "Page 1",
+          "Page 95"
+        ]
+      }
+    },
+    {
+      "case_id": "health_policy_claims",
+      "family": "policy_claims",
+      "question": "What is the claim or reimbursement process described in this policy?",
+      "ours": {
+        "supported": true,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7046460347457223,
+        "context_precision": 0.99999999995,
+        "route_used": "hybrid_both",
+        "planner_source": "llm_structured",
+        "constraint_mode": "soft_multi_region",
+        "scope_strictness": "none",
+        "evidence_pages": [
+          "Page 92",
+          "Page 92",
+          "Page 12",
+          "Page 88"
+        ]
+      },
+      "openai_file_search": {
+        "supported": true,
+        "faithfulness": 0.8,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.499999999975,
+        "citations": [
+          "OpenAI Result 1",
+          "OpenAI Result 2",
+          "OpenAI Result 3",
+          "OpenAI Result 4",
+          "OpenAI Result 5"
+        ]
+      },
+      "vectara": {
+        "supported": true,
+        "faithfulness": 0.8333333333333334,
+        "answer_relevancy": 0.5428610251926235,
+        "context_precision": 0.99999999995,
+        "citations": [
+          "Page 92",
+          "Page 93",
+          "Page 88",
+          "Page 9",
+          "Page 81"
+        ]
+      }
+    },
+    {
+      "case_id": "heldout_life_policy_limits",
+      "family": "policy_heldout",
+      "question": "What are the important exclusions or waiting-period-like limits in this policy?",
+      "ours": {
+        "supported": true,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6553324355511734,
+        "context_precision": 0.49999999995,
+        "route_used": "hybrid_both",
+        "planner_source": "llm_structured",
+        "constraint_mode": "soft_multi_region",
+        "scope_strictness": "none",
+        "evidence_pages": [
+          "Page 43",
+          "Page 33",
+          "Page 62",
+          "Page 29"
+        ]
+      },
+      "openai_file_search": {
+        "supported": true,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.602629507992174,
+        "context_precision": 0.9999999999,
+        "citations": [
+          "OpenAI Result 1",
+          "OpenAI Result 2",
+          "OpenAI Result 3",
+          "OpenAI Result 4",
+          "OpenAI Result 5"
+        ]
+      },
+      "vectara": {
+        "supported": true,
+        "faithfulness": 0.75,
+        "answer_relevancy": 0.5626970235656612,
+        "context_precision": 0.0,
+        "citations": [
+          "Page 33",
+          "Page 33",
+          "Page 40",
+          "Page 20",
+          "Page 33"
+        ]
+      }
+    },
+    {
+      "case_id": "reportgeneration_main_contribution",
+      "family": "research_report",
+      "question": "What is the main contribution of this paper?",
+      "ours": {
+        "supported": true,
+        "faithfulness": 0.7142857142857143,
+        "answer_relevancy": 0.8676036092925082,
+        "context_precision": 0.49999999995,
+        "route_used": "global_summary_first",
+        "planner_source": "llm_structured",
+        "constraint_mode": "soft_multi_region",
+        "scope_strictness": "none",
+        "evidence_pages": [
+          "Page 14",
+          "Page 14",
+          "Page 14",
+          "Page 14"
+        ]
+      },
+      "openai_file_search": {
+        "supported": false,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.0,
+        "citations": []
+      },
+      "vectara": {
+        "supported": false,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.0,
+        "citations": [
+          "Page 8",
+          "Page 8",
+          "Page 8",
+          "Page 8",
+          "Page 8"
+        ]
+      }
+    },
+    {
+      "case_id": "pancreas8_broad_synthesis",
+      "family": "research_review",
+      "question": "What is this paper about and what are its key findings?",
+      "ours": {
+        "supported": true,
+        "faithfulness": 0.8823529411764706,
+        "answer_relevancy": 0.49163628407841137,
+        "context_precision": 0.999999999975,
+        "route_used": "global_summary_first",
+        "planner_source": "llm_structured",
+        "constraint_mode": "soft_multi_region",
+        "scope_strictness": "none",
+        "evidence_pages": [
+          "Page 4",
+          "Page 4",
+          "Page 9",
+          "Page 6"
+        ]
+      },
+      "openai_file_search": {
+        "supported": true,
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.5023714257504309,
+        "context_precision": 0.99999999995,
+        "citations": [
+          "OpenAI Result 1",
+          "OpenAI Result 2",
+          "OpenAI Result 3",
+          "OpenAI Result 4",
+          "OpenAI Result 5"
+        ]
+      },
+      "vectara": {
+        "supported": false,
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.5833333333041666,
+        "citations": [
+          "Page 9",
+          "Page 7",
+          "Page 4",
+          "Page 7",
+          "Page 1"
+        ]
+      }
+    }
+  ]
+}

@@ -1,0 +1,335 @@
+{
+  "created_at": "2026-04-27T19:08:04.093602",
+  "suite": "lean_vendor_ragas_upgrade_comparison",
+  "case_count": 6,
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "providers": {
+    "openai_file_search": {
+      "available": true,
+      "dataset_size": 6,
+      "supported_rate": 0.6666666666666666,
+      "faithfulness_mean": 0.9666666666666667,
+      "answer_relevancy_mean": 0.2676122710004593,
+      "context_precision_mean": 0.6027777777393055,
+      "error_count": 0,
+      "results": [
+        {
+          "case_id": "thesis_local_implementation",
+          "family": "thesis_local_scope",
+          "path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+          "question": "What were the summary/conclusions from the implementation chapter?",
+          "supported": false,
+          "citation_count": 5,
+          "citations": [
+            "OpenAI Result 1",
+            "OpenAI Result 2",
+            "OpenAI Result 3",
+            "OpenAI Result 4",
+            "OpenAI Result 5"
+          ],
+          "retrieved_context_count": 5,
+          "answer_preview": "The implementation chapter summary is not fully available in the provided evidence.",
+          "note": "The evidence includes fragments about implementation details and limitations, but not a complete summary/conclusions section from the implementation chapter. I can only see partial points such as alignment with objectives [Source 1], kernel restart resilience [Source 2], statistical robustness and implementation details [Source 3], the synthetic pairing challenge [Source 4], and dataset notes [Source 5].",
+          "retrieval_preview": [
+            "3.11 Alignment with Research Objectives\r\nThe methodology described in this chapter directly addresses the three research objectives \r\nestablished in,\r\nObjective 1 (Bias-Aware Data Foundation) is addressed through systema",
+            "56\r\nKernel Restart Resilience: Given the long-running nature of the experiments, the notebook was \r\ndesigned to be resilient to kernel restarts. A pre-fusion loader cell (Cell 4.0 in the notebook) \r\nimplemented robust ch",
+            "3.8.4 Statistical Robustness\r\nStatistical robustness was assessed primarily through repeated multi-seed analyses (including \r\nfusion sanity checks across seeds 0-4 and label-mismatch controls). Bootstrap confidence \r\nint"
+          ],
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.0,
+          "context_precision": 0.36666666664833336
+        },
+        {
+          "case_id": "thesis_broad_findings",
+          "family": "thesis_broad_synthesis",
+          "path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+          "question": "What are the strongest findings or conclusions from this thesis?",
+          "supported": true,
+          "citation_count": 5,
+          "citations": [
+            "OpenAI Result 1",
+            "OpenAI Result 2",
+            "OpenAI Result 3",
+            "OpenAI Result 4",
+            "OpenAI Result 5"
+          ],
+          "retrieved_context_count": 5,
+          "answer_preview": "The strongest findings are that the CT-based model dominated performance and likely ignored the urinary biomarker features, and that the fusion approach did not truly integrate modalities because decision-level fusion was CT-weight dependent while feature-level fusion collapsed to CT-only behavior [Source 1][Source 4]. The dissertation also concludes that the work provides a bias-aware pipeline for detecting and mitigating scanner-specific intensity bias in cross-institutional CT studies [Source",
+          "note": "The evidence clearly supports these conclusions, especially the dominance of CT embeddings over biomarkers and the bias-aware contribution. However, the provided excerpts do not include a full thesis conclusion section, so this is limited to the strongest findings visible in the supplied sources.",
+          "retrieval_preview": [
+            "The high sensitivity (0.925) \r\nis particularly relevant for screening applications.\r\nFourth, the fusion experiments demonstrated a methodologically sound framework for \r\ncombining imaging and biomarker modalities, but th",
+            "The biomarker dataset originally included a third class (benign \r\nconditions), which was collapsed into the non-cancer category for this study. Extending the \r\nframework to multi-class classification would increase clini",
+            "A BIAS-AWARE MULTI-MODAL DEEP LEARNING FRAMEWORK FOR PANCREATIC CANCER \r\nDETECTION USING CT IMAGING AND URINARY BIOMARKERS\r\nLEANDER ANTONY A\r\nFinal Thesis Report\r\nFebruary 2026i\r\nDEDICATION\r\nThis dissertation is dedicate"
+          ],
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.5006726922601511,
+          "context_precision": 0.7499999999625
+        },
+        {
+          "case_id": "health_policy_claims",
+          "family": "policy_claims",
+          "path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+          "question": "What is the claim or reimbursement process described in this policy?",
+          "supported": true,
+          "citation_count": 5,
+          "citations": [
+            "OpenAI Result 1",
+            "OpenAI Result 2",
+            "OpenAI Result 3",
+            "OpenAI Result 4",
+            "OpenAI Result 5"
+          ],
+          "retrieved_context_count": 5,
+          "answer_preview": "The policy describes both Cashless Facility and Reimbursement Facility claim settlement. For cashless claims, payment is made directly to the Network Provider and is considered complete and final [Source 2]. For reimbursement claims, the evidence shows only that intimation of a claim must be provided under the Reimbursement Facility, but the full step-by-step process is not included in the supplied text [Source 2].\n\nReferences:\n- [1] OpenAI Result 1\n- [2] OpenAI Result 2\n- [3] OpenAI Result 3\n- ",
+          "note": "The provided evidence supports that there are two claim settlement paths and identifies the cashless payment method, but the reimbursement procedure is only partially visible and the detailed process is cut off.",
+          "retrieval_preview": [
+            "6.1.7. Payment Terms\r\n(a) This Policy covers only medical treatment taken entirely within India. \r\nAll payments under this Policy shall be made in Indian Rupees and \r\nwithin India. \r\n(b) The Company shall have no liabili",
+            "91\r\nUltimate Care -CHIHLIP25044V012425\r\n(viii) Claim Settlement: For Claim settlement under Cashless \r\nFacility, the payment shall be made to the Network Provider \r\nwhose discharge would be complete and final. \r\n(b) Re-i",
+            "c) In the event that the cost of Hospitalization exceeds the \r\nauthorized limit, the Network Provider shall request the \r\nCompany / Assistance Service Provider for an \r\nenhancement of Authorization Limit stating details "
+          ],
+          "faithfulness": 0.8,
+          "answer_relevancy": 0.0,
+          "context_precision": 0.499999999975
+        },
+        {
+          "case_id": "heldout_life_policy_limits",
+          "family": "policy_heldout",
+          "path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\test\\Principal-Sample-Life-Insurance-Policy.pdf",
+          "question": "What are the important exclusions or waiting-period-like limits in this policy?",
+          "supported": true,
+          "citation_count": 5,
+          "citations": [
+            "OpenAI Result 1",
+            "OpenAI Result 2",
+            "OpenAI Result 3",
+            "OpenAI Result 4",
+            "OpenAI Result 5"
+          ],
+          "retrieved_context_count": 5,
+          "answer_preview": "The evidence shows several limits/exclusions: the policy can end or be amended to exclude a member\u2019s insurance class after the member has been continuously insured for at least five years [Source 1]; Coverage During Disability ends when total disability ends or if required proof is not sent [Source 3]; and there is a \u201cPeriod of Limited Activity\u201d requirement that will not be waived for certain dependent spouses [Source 5].\n\nReferences:\n- [1] OpenAI Result 1\n- [2] OpenAI Result 2\n- [3] OpenAI Resu",
+          "note": "The provided evidence supports some important exclusion- or waiting-period-like limits, but it does not provide the full policy text or a complete list of all exclusions/waiting periods. The answer is limited to what is explicitly shown in the sources.",
+          "retrieval_preview": [
+            "or\r\n(2) after the Member has been continuously insured under this Group Policy for at least \r\nfive years, his or her total Member Life Insurance terminates because this Group \r\nPolicy terminates or is amended to exclude ",
+            "(1) above, the maximum amount will be the \r\nMember Life Insurance benefit in force on the date of termination or the portion of \r\nMember Life Insurance that has terminated, less any individual policy amount \r\npurchased e",
+            "f. Termination (Premium Waiver) This policy has been updated effective January 1, 2014\r\nPART IV - BENEFITS\r\nGC 6013 Section A - Member Life Insurance, Page 6\r\nCoverage During Disability will cease on the earliest of:\r\n(1"
+          ],
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.602629507992174,
+          "context_precision": 0.9999999999
+        },
+        {
+          "case_id": "reportgeneration_main_contribution",
+          "family": "research_report",
+          "path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration.pdf",
+          "question": "What is the main contribution of this paper?",
+          "supported": false,
+          "citation_count": 0,
+          "citations": [],
+          "retrieved_context_count": 0,
+          "answer_preview": "The evidence provided does not include the paper content.",
+          "note": "No evidence was supplied, so the paper\u2019s main contribution cannot be determined.",
+          "retrieval_preview": [],
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.0,
+          "context_precision": 0.0
+        },
+        {
+          "case_id": "pancreas8_broad_synthesis",
+          "family": "research_review",
+          "path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\pancreas8.pdf",
+          "question": "What is this paper about and what are its key findings?",
+          "supported": true,
+          "citation_count": 5,
+          "citations": [
+            "OpenAI Result 1",
+            "OpenAI Result 2",
+            "OpenAI Result 3",
+            "OpenAI Result 4",
+            "OpenAI Result 5"
+          ],
+          "retrieved_context_count": 5,
+          "answer_preview": "The paper is about precision oncology/precision medicine using multimodal data integration to identify optimal cancer treatment paths rather than only describing cancer incidence or tumour growth [Source 1]. It also discusses multimodal fusion methods for combining multi-omics data, including graph convolutional network approaches for patient classification and biomarker identification [Source 2], and notes that multimodal fusion is challenging because it often involves very wide feature matrice",
+          "note": "The evidence supports the general topic and some key points, but it does not provide a complete abstract or a full list of the paper\u2019s findings. From the available text, the main takeaway is that precision oncology requires integrating complex multimodal data across space and time to support treatment decisions [Source 1], and that multimodal fusion methods\u2014such as graph convolutional networks\u2014can be used for patient classification and biomarker identification [Source 2], while facing dimensionality and sample-size challenges [Source 3].",
+          "retrieval_preview": [
+            "To advance precision oncology, healthcare AI should not only inform about cancer incidence \r\nand tumour growth, but must identify the optimal treatment path, accounting for treatment\uffferelated side effects, socioeconomic f",
+            "MOGONET integrates multi-omics data using graph convolutional networks \r\nallowing patient classification and biomarker identification. Nat Commun 12, 3445 (2021). \r\n[PubMed: 34103512] \r\n89. Gevaert O, Villalobos V, Sikic",
+            "Multimodal fusion often suffers from dealing with wide feature \r\nmatrices originating from very few samples with many features across modalities. Often \r\nadvanced feature extraction methods such as kernel-based methods, "
+          ],
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.5023714257504309,
+          "context_precision": 0.99999999995
+        }
+      ]
+    },
+    "vectara": {
+      "available": true,
+      "dataset_size": 6,
+      "supported_rate": 0.6666666666666666,
+      "faithfulness_mean": 0.7638888888888888,
+      "answer_relevancy_mean": 0.36901805742681626,
+      "context_precision_mean": 0.5555555555277778,
+      "error_count": 0,
+      "results": [
+        {
+          "case_id": "thesis_local_implementation",
+          "family": "thesis_local_scope",
+          "path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+          "question": "What were the summary/conclusions from the implementation chapter?",
+          "supported": true,
+          "citation_count": 5,
+          "citations": [
+            "Page 71",
+            "Page 22",
+            "Page 95",
+            "Page 23",
+            "Page 90"
+          ],
+          "retrieved_context_count": 5,
+          "answer_preview": "The implementation chapter\u2019s summary is that it presented the detailed implementation of the multimodal deep learning framework for pancreatic cancer detection [Source 1]. More specifically, it covered the full experimental pipeline, including environment configuration, preprocessing execution, model training workflow, and experiment orchestration [Source 4].\n\nReferences:\n- [1] Page 71\n- [2] Page 22\n- [3] Page 95\n- [4] Page 23\n- [5] Page 90",
+          "note": "The evidence supports the chapter 4 summary only. It does not provide any conclusions from that chapter beyond the implementation description itself. The broader conclusions are described for the final chapter, not the implementation chapter [Source 5].",
+          "retrieval_preview": [
+            "4.7     Summary\n\nThis chapter has presented the detailed implementation of the multimodal deep learning\nframework for pancreatic cancer detection.",
+            "The remainder of this dissertation is organized into five chapters covering literature context,\nmethodology, implementation and final conclusions.",
+            "The limitations discussed in Chapter 5 are summarized here, with a focus on what they mean\nfor the conclusions drawn above."
+          ],
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.48874057556049966,
+          "context_precision": 0.7499999999625
+        },
+        {
+          "case_id": "thesis_broad_findings",
+          "family": "thesis_broad_synthesis",
+          "path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+          "question": "What are the strongest findings or conclusions from this thesis?",
+          "supported": true,
+          "citation_count": 5,
+          "citations": [
+            "Page 92",
+            "Page 90",
+            "Page 96",
+            "Page 1",
+            "Page 95"
+          ],
+          "retrieved_context_count": 5,
+          "answer_preview": "The evidence identifies one result as the clearest and most clinically interpretable finding in the dissertation [Source 1]. It also says the final chapter pulls together the main findings, evaluates whether the three research objectives were met, answers the five research questions, and discusses the work\u2019s contributions and shortcomings [Source 2].\n\nReferences:\n- [1] Page 92\n- [2] Page 90\n- [3] Page 96\n- [4] Page 1\n- [5] Page 95",
+          "note": "The supplied evidence does not spell out the substantive findings or conclusions themselves, only that there is a particularly clear/clinically interpretable result and that the final chapter summarizes the main findings and evaluates them. Because the actual findings are not provided, I can only report this limited conclusion [Source 1][Source 2].",
+          "retrieval_preview": [
+            "This is the cleanest and most clinically interpretable\nresult in the dissertation.",
+            "This final chapter pulls together the main findings, assesses how well the three research\nobjectives were met, answers the five research questions from Chapter 1, and looks at what the\nwork contributes and where it falls",
+            "The findings and limitations point to several concrete directions for future work, starting with\nthe most pressing and moving toward longer-term goals."
+          ],
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.6198097202421132,
+          "context_precision": 0.99999999995
+        },
+        {
+          "case_id": "health_policy_claims",
+          "family": "policy_claims",
+          "path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+          "question": "What is the claim or reimbursement process described in this policy?",
+          "supported": true,
+          "citation_count": 5,
+          "citations": [
+            "Page 92",
+            "Page 93",
+            "Page 88",
+            "Page 9",
+            "Page 81"
+          ],
+          "retrieved_context_count": 5,
+          "answer_preview": "The policy describes a claim process that requires notifying/intimating the insurer or TPA through recognized modes of communication [Source 4]. For claims under the reimbursement facility, the insured must provide claim intimation and then submit the required information and documents as specified in the policy [Source 1]. The policy also states that upon illness or injury, certain claim-intimation steps must be undertaken as a condition precedent to the company\u2019s liability [Source 2].\n\nReferen",
+          "note": "The evidence supports the basic claim/reimbursement process and the need for intimation plus supporting documents. It does not provide the full step-by-step procedure or all document requirements because the relevant text is truncated in the supplied excerpts [Source 1][Source 2].",
+          "retrieval_preview": [
+            "(b)     Re-imbursement Facility\n                    (i)      It is agreed and understood that in all cases where intimation of\n              a Claim has been provided under Reimbursement Facility\n            and/or the C",
+            "Claims Intimation\n                  Upon the occurrence of any Illness or Injury that may result in a Claim under\n            this Policy, then as a Condition Precedent to the Company\u2019s liability under\n                  ",
+            "Limitation of liability\n        Any Claim under this Policy for which the notification or intimation of\n           Claim is received 12 calendar months after the event or occurrence giving\n            rise to the Claim s"
+          ],
+          "faithfulness": 0.8333333333333334,
+          "answer_relevancy": 0.5428610251926235,
+          "context_precision": 0.99999999995
+        },
+        {
+          "case_id": "heldout_life_policy_limits",
+          "family": "policy_heldout",
+          "path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\test\\Principal-Sample-Life-Insurance-Policy.pdf",
+          "question": "What are the important exclusions or waiting-period-like limits in this policy?",
+          "supported": true,
+          "citation_count": 5,
+          "citations": [
+            "Page 33",
+            "Page 33",
+            "Page 40",
+            "Page 20",
+            "Page 33"
+          ],
+          "retrieved_context_count": 5,
+          "answer_preview": "The evidence shows two important limits: (1) when this Group Policy replaces a Prior Policy and the Period of Limited Activity requirement is waived, benefits are limited to the lesser of the Group Policy Scheduled Benefit or what the Prior Policy would have paid [Source 1]; and (2) the Period of Limited Activity requirement is not waivable for Dependent spouses who, when the Prior Policy ended, had the option to convert coverage to an individual policy [Source 5]. The evidence also notes that o",
+          "note": "The supplied evidence does not list a full set of exclusions or all waiting-period-like limits, but it does support these specific limits and exclusions. It does not provide additional policy exclusions beyond the cited waiver/benefit limitation and continuous-coverage rule.",
+          "retrieval_preview": [
+            "NOTE:  When insurance under this Group Policy replaces coverage under a Prior Policy\nand the Period of Limited Activity requirement is waived, any benefits payable will be the\nlesser of the Scheduled Benefit of this Grou",
+            "When insurance under this Group Policy replaces coverage under a Prior Policy, the Period\nof Limited Activity requirement may be waived for those Dependent spouses' who:",
+            "Only the period of time during which a Member is actually insured will be included in\ndetermining the length of his or her continuous coverage under this Group Policy."
+          ],
+          "faithfulness": 0.75,
+          "answer_relevancy": 0.5626970235656612,
+          "context_precision": 0.0
+        },
+        {
+          "case_id": "reportgeneration_main_contribution",
+          "family": "research_report",
+          "path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration.pdf",
+          "question": "What is the main contribution of this paper?",
+          "supported": false,
+          "citation_count": 5,
+          "citations": [
+            "Page 8",
+            "Page 8",
+            "Page 8",
+            "Page 8",
+            "Page 8"
+          ],
+          "retrieved_context_count": 5,
+          "answer_preview": "The evidence does not state the paper\u2019s main contribution.",
+          "note": "The provided sources only include peer review, author contributions, and a link to extended data; they do not describe the paper\u2019s main finding, method, or contribution [Source 1][Source 2][Source 3][Source 4][Source 5].",
+          "retrieval_preview": [
+            "Peer review information Nature Medicine thanks Jarrel Seah and\nFredrik Strand for their contribution to the peer review of this work.",
+            "R.T., D.G.T.B., I.K. and A.K. wrote the\npaper.",
+            "I.K., D.G.T.B. and\nR.T. contributed to the evaluation of the work and performed analysis."
+          ],
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.0,
+          "context_precision": 0.0
+        },
+        {
+          "case_id": "pancreas8_broad_synthesis",
+          "family": "research_review",
+          "path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\pancreas8.pdf",
+          "question": "What is this paper about and what are its key findings?",
+          "supported": false,
+          "citation_count": 5,
+          "citations": [
+            "Page 9",
+            "Page 7",
+            "Page 4",
+            "Page 7",
+            "Page 1"
+          ],
+          "retrieved_context_count": 5,
+          "answer_preview": "The evidence does not provide enough information to identify the paper\u2019s overall topic or its key findings.",
+          "note": "The supplied evidence only includes a partial title about real-world evidence in cardiovascular medicine [Source 1] and unrelated snippets about digital pathology, radiogenomics, and evidence fusion across modalities [Sources 3-5]. It does not summarize the paper\u2019s main content or findings.",
+          "retrieval_preview": [
+            "Hernandez-Boussard T, Monda KL, Crespo BC & Riskin D. Real world evidence in cardiovascular\n       medicine: ensuring data validity in electronic health record-based studies.",
+            "While often still problem-specific and experimental, the field is gaining knowledge\nto evaluate and define what methods excel given specific conditions and data modalities.",
+            "Digital pathology with\nWSIs provides data about the cellular and morphological architecture in a visual way\nfor pathologists to interpret and can provide key information about the TME\u2019s spatial\nheterogeneity using image "
+          ],
+          "faithfulness": 0.0,
+          "answer_relevancy": 0.0,
+          "context_precision": 0.5833333333041666
+        }
+      ]
+    }
+  }
+}
