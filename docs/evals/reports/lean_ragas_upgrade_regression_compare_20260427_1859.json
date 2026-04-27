@@ -1,0 +1,263 @@
+{
+  "created_at": "2026-04-27T18:57:55.512792",
+  "suite": "lean_ragas_upgrade_regression_compare",
+  "baseline_report": "docs\\evals\\reports\\lean_ragas_main_baseline_20260427_185723.json",
+  "current_report": "docs\\evals\\reports\\lean_ragas_upgrade_20260427_185007.json",
+  "summary": {
+    "shared_case_count": 5,
+    "baseline": {
+      "supported_rate": 1.0,
+      "faithfulness_mean": 0.875,
+      "answer_relevancy_mean": 0.4964475854522726,
+      "context_precision_mean": 0.699999999955
+    },
+    "current": {
+      "supported_rate": 1.0,
+      "faithfulness_mean": 0.8859943977591036,
+      "answer_relevancy_mean": 0.5930189183173447,
+      "context_precision_mean": 0.799999999955
+    },
+    "delta": {
+      "supported_rate": 0.0,
+      "faithfulness_mean": 0.010994397759103602,
+      "answer_relevancy_mean": 0.09657133286507208,
+      "context_precision_mean": 0.10000000000000009
+    },
+    "thresholds": {
+      "supported_rate_delta_min": -0.001,
+      "faithfulness_delta_min": -0.05,
+      "answer_relevancy_delta_min": -0.03,
+      "context_precision_delta_min": -0.1,
+      "current_faithfulness_min": 0.75,
+      "current_answer_relevancy_min": 0.45,
+      "current_context_precision_min": 0.55
+    },
+    "gates": {
+      "supported_not_regressed": true,
+      "faithfulness_not_regressed": true,
+      "answer_relevancy_not_regressed": true,
+      "context_precision_not_regressed": true,
+      "current_faithfulness_floor": true,
+      "current_answer_relevancy_floor": true,
+      "current_context_precision_floor": true
+    },
+    "passed": true
+  },
+  "rows": [
+    {
+      "case_id": "thesis_local_implementation",
+      "family": "thesis_local_scope",
+      "question": "What were the summary/conclusions from the implementation chapter?",
+      "baseline": {
+        "supported": true,
+        "route_used": "synopsis_first",
+        "evidence_status": "strong",
+        "planner_source": "llm_structured",
+        "constraint_mode": "soft_multi_region",
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.49999999995,
+        "evidence_pages": [
+          "Page 90",
+          "Page 23",
+          "Page 72",
+          "Page 72"
+        ]
+      },
+      "current": {
+        "supported": true,
+        "route_used": "chunk_first",
+        "evidence_status": "strong",
+        "planner_source": "llm_orchestrator",
+        "constraint_mode": "hard_region",
+        "scope_strictness": "hard",
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.4344423600787974,
+        "context_precision": 0.99999999995,
+        "evidence_pages": [
+          "Page 52",
+          "Page 52",
+          "Page 56",
+          "Page 52"
+        ]
+      },
+      "delta": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.4344423600787974,
+        "context_precision": 0.5
+      }
+    },
+    {
+      "case_id": "thesis_broad_findings",
+      "family": "thesis_broad_synthesis",
+      "question": "What are the strongest findings or conclusions from this thesis?",
+      "baseline": {
+        "supported": true,
+        "route_used": "synopsis_first",
+        "evidence_status": "strong",
+        "planner_source": "llm_structured",
+        "constraint_mode": "soft_multi_region",
+        "faithfulness": 0.875,
+        "answer_relevancy": 0.528837092642461,
+        "context_precision": 0.49999999995,
+        "evidence_pages": [
+          "Page 22",
+          "Page 90",
+          "Page 72",
+          "Page 96"
+        ]
+      },
+      "current": {
+        "supported": true,
+        "route_used": "synopsis_first",
+        "evidence_status": "strong",
+        "planner_source": "llm_structured",
+        "constraint_mode": "soft_multi_region",
+        "scope_strictness": "none",
+        "faithfulness": 0.8333333333333334,
+        "answer_relevancy": 0.46676630339128405,
+        "context_precision": 0.49999999995,
+        "evidence_pages": [
+          "Page 22",
+          "Page 90",
+          "Page 72",
+          "Page 96"
+        ]
+      },
+      "delta": {
+        "faithfulness": -0.04166666666666663,
+        "answer_relevancy": -0.06207078925117698,
+        "context_precision": 0.0
+      }
+    },
+    {
+      "case_id": "health_policy_claims",
+      "family": "policy_claims",
+      "question": "What is the claim or reimbursement process described in this policy?",
+      "baseline": {
+        "supported": true,
+        "route_used": "hybrid_both",
+        "evidence_status": "strong",
+        "planner_source": "llm_structured",
+        "constraint_mode": "soft_multi_region",
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6514695982506823,
+        "context_precision": 0.99999999995,
+        "evidence_pages": [
+          "Page 92",
+          "Page 92",
+          "Page 12",
+          "Page 88"
+        ]
+      },
+      "current": {
+        "supported": true,
+        "route_used": "hybrid_both",
+        "evidence_status": "strong",
+        "planner_source": "llm_structured",
+        "constraint_mode": "soft_multi_region",
+        "scope_strictness": "none",
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7046460347457223,
+        "context_precision": 0.99999999995,
+        "evidence_pages": [
+          "Page 92",
+          "Page 92",
+          "Page 12",
+          "Page 88"
+        ]
+      },
+      "delta": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.05317643649504,
+        "context_precision": 0.0
+      }
+    },
+    {
+      "case_id": "reportgeneration_main_contribution",
+      "family": "research_report",
+      "question": "What is the main contribution of this paper?",
+      "baseline": {
+        "supported": true,
+        "route_used": "global_summary_first",
+        "evidence_status": "strong",
+        "planner_source": "llm_structured",
+        "constraint_mode": "soft_multi_region",
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.8645155607574022,
+        "context_precision": 0.49999999995,
+        "evidence_pages": [
+          "Page 14",
+          "Page 14",
+          "Page 14",
+          "Page 14"
+        ]
+      },
+      "current": {
+        "supported": true,
+        "route_used": "global_summary_first",
+        "evidence_status": "strong",
+        "planner_source": "llm_structured",
+        "constraint_mode": "soft_multi_region",
+        "scope_strictness": "none",
+        "faithfulness": 0.7142857142857143,
+        "answer_relevancy": 0.8676036092925082,
+        "context_precision": 0.49999999995,
+        "evidence_pages": [
+          "Page 14",
+          "Page 14",
+          "Page 14",
+          "Page 14"
+        ]
+      },
+      "delta": {
+        "faithfulness": 0.2142857142857143,
+        "answer_relevancy": 0.003088048535106025,
+        "context_precision": 0.0
+      }
+    },
+    {
+      "case_id": "pancreas8_broad_synthesis",
+      "family": "research_review",
+      "question": "What is this paper about and what are its key findings?",
+      "baseline": {
+        "supported": true,
+        "route_used": "global_summary_first",
+        "evidence_status": "strong",
+        "planner_source": "llm_structured",
+        "constraint_mode": "soft_multi_region",
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.4374156756108174,
+        "context_precision": 0.999999999975,
+        "evidence_pages": [
+          "Page 4",
+          "Page 4",
+          "Page 9",
+          "Page 6"
+        ]
+      },
+      "current": {
+        "supported": true,
+        "route_used": "global_summary_first",
+        "evidence_status": "strong",
+        "planner_source": "llm_structured",
+        "constraint_mode": "soft_multi_region",
+        "scope_strictness": "none",
+        "faithfulness": 0.8823529411764706,
+        "answer_relevancy": 0.49163628407841137,
+        "context_precision": 0.999999999975,
+        "evidence_pages": [
+          "Page 4",
+          "Page 4",
+          "Page 9",
+          "Page 6"
+        ]
+      },
+      "delta": {
+        "faithfulness": -0.11764705882352944,
+        "answer_relevancy": 0.05422060846759397,
+        "context_precision": 0.0
+      }
+    }
+  ]
+}

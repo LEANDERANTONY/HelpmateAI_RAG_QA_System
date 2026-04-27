@@ -1,0 +1,274 @@
+{
+  "created_at": "2026-04-27T18:50:07.405011",
+  "suite": "lean_ragas_upgrade_validation",
+  "selection_rationale": "Six high-signal cases covering latest smart indexing/orchestration changes without running the full benchmark corpus.",
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v16-lean-ragas-upgrade",
+    "generation_version": "v6-lean-ragas-upgrade",
+    "reranker_enabled": true,
+    "evidence_selector_enabled": true,
+    "retrieval_orchestrator_enabled": true
+  },
+  "summary": {
+    "case_count": 6,
+    "supported_rate": 1.0,
+    "faithfulness_mean": 0.9049953314659197,
+    "answer_relevancy_mean": 0.6034045045229828,
+    "context_precision_mean": 0.7499999999541667,
+    "families": [
+      "policy_claims",
+      "policy_heldout",
+      "research_report",
+      "research_review",
+      "thesis_broad_synthesis",
+      "thesis_local_scope"
+    ],
+    "per_family": {
+      "policy_claims": {
+        "case_count": 1,
+        "supported_rate": 1.0,
+        "faithfulness_mean": 1.0,
+        "answer_relevancy_mean": 0.7046460347457223,
+        "context_precision_mean": 0.99999999995
+      },
+      "policy_heldout": {
+        "case_count": 1,
+        "supported_rate": 1.0,
+        "faithfulness_mean": 1.0,
+        "answer_relevancy_mean": 0.6553324355511734,
+        "context_precision_mean": 0.49999999995
+      },
+      "research_report": {
+        "case_count": 1,
+        "supported_rate": 1.0,
+        "faithfulness_mean": 0.7142857142857143,
+        "answer_relevancy_mean": 0.8676036092925082,
+        "context_precision_mean": 0.49999999995
+      },
+      "research_review": {
+        "case_count": 1,
+        "supported_rate": 1.0,
+        "faithfulness_mean": 0.8823529411764706,
+        "answer_relevancy_mean": 0.49163628407841137,
+        "context_precision_mean": 0.999999999975
+      },
+      "thesis_broad_synthesis": {
+        "case_count": 1,
+        "supported_rate": 1.0,
+        "faithfulness_mean": 0.8333333333333334,
+        "answer_relevancy_mean": 0.46676630339128405,
+        "context_precision_mean": 0.49999999995
+      },
+      "thesis_local_scope": {
+        "case_count": 1,
+        "supported_rate": 1.0,
+        "faithfulness_mean": 1.0,
+        "answer_relevancy_mean": 0.4344423600787974,
+        "context_precision_mean": 0.99999999995
+      }
+    },
+    "thresholds": {
+      "supported_rate_min": 1.0,
+      "faithfulness_mean_min": 0.75,
+      "answer_relevancy_mean_min": 0.45,
+      "context_precision_mean_min": 0.55
+    },
+    "gates": {
+      "supported_rate": true,
+      "faithfulness_mean": true,
+      "answer_relevancy_mean": true,
+      "context_precision_mean": true
+    },
+    "passed": true
+  },
+  "cases": [
+    {
+      "case_id": "thesis_local_implementation",
+      "family": "thesis_local_scope",
+      "path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+      "question": "What were the summary/conclusions from the implementation chapter?",
+      "why": "Directly tests orchestrated hard scope and front-matter suppression.",
+      "supported": true,
+      "route_used": "chunk_first",
+      "evidence_status": "strong",
+      "planner_source": "llm_orchestrator",
+      "constraint_mode": "hard_region",
+      "scope_strictness": "hard",
+      "selector_triggered": true,
+      "citations": [
+        "Final_Thesis_Leander_Antony_A.pdf - Page 52",
+        "Final_Thesis_Leander_Antony_A.pdf - Page 52",
+        "Final_Thesis_Leander_Antony_A.pdf - Page 56",
+        "Final_Thesis_Leander_Antony_A.pdf - Page 52"
+      ],
+      "evidence_pages": [
+        "Page 52",
+        "Page 52",
+        "Page 56",
+        "Page 52"
+      ],
+      "answer_preview": "The implementation chapter concludes that the pipeline was developed iteratively rather than in a straight line: preprocessing changed as cross-dataset bias emerged, ResNet18 was replaced by ResNet50, and unsupervised clustering was added based on intermediate findings [Source 1]. It also emphasizes reproducibility and rigor through a single Jupyter notebook, systematic seed control, patient-level splitting, and bias assessment at every stage [Source 2]. The bias mitigation work was considered s",
+      "note": "The evidence provides chapter-level takeaways from the implementation section, but not a formal end-of-chapter conclusion paragraph. The answer is therefore limited to the summary/conclusions supported by the introduction and bias-mitigation discussion in the supplied pages [Source 1][Source 2][Source 3].",
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.4344423600787974,
+      "context_precision": 0.99999999995
+    },
+    {
+      "case_id": "thesis_broad_findings",
+      "family": "thesis_broad_synthesis",
+      "path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+      "question": "What are the strongest findings or conclusions from this thesis?",
+      "why": "Ensures broad thesis prompts do not collapse into one local scope.",
+      "supported": true,
+      "route_used": "synopsis_first",
+      "evidence_status": "strong",
+      "planner_source": "llm_structured",
+      "constraint_mode": "soft_multi_region",
+      "scope_strictness": "none",
+      "selector_triggered": false,
+      "citations": [
+        "Final_Thesis_Leander_Antony_A.pdf - Page 22",
+        "Final_Thesis_Leander_Antony_A.pdf - Page 90",
+        "Final_Thesis_Leander_Antony_A.pdf - Page 72",
+        "Final_Thesis_Leander_Antony_A.pdf - Page 96"
+      ],
+      "evidence_pages": [
+        "Page 22",
+        "Page 90",
+        "Page 72",
+        "Page 96"
+      ],
+      "answer_preview": "The strongest supported findings are that the thesis developed a bias-aware multimodal deep learning framework for pancreatic cancer detection, and that the results were mixed: the biomarker model produced a clinically meaningful result that held up well against the original published findings, while the CT model achieved near-perfect metrics but under conditions that were limited by bias and unmatched patient cohorts [Source 2].\n\nReferences:\n- [1] Final_Thesis_Leander_Antony_A.pdf - Page 22\n- [",
+      "note": "The evidence provides the main synthesized conclusion from the final chapter, but it does not include the full detailed results or the complete set of conclusions. Source 2 supports the overall takeaway and the specific biomarker/CT findings; the remainder is missing from the provided excerpts.",
+      "faithfulness": 0.8333333333333334,
+      "answer_relevancy": 0.46676630339128405,
+      "context_precision": 0.49999999995
+    },
+    {
+      "case_id": "health_policy_claims",
+      "family": "policy_claims",
+      "path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\HealthInsurance_Policy.pdf",
+      "question": "What is the claim or reimbursement process described in this policy?",
+      "why": "Tests policy-aware indexing and procedural retrieval on the main policy sample.",
+      "supported": true,
+      "route_used": "hybrid_both",
+      "evidence_status": "strong",
+      "planner_source": "llm_structured",
+      "constraint_mode": "soft_multi_region",
+      "scope_strictness": "none",
+      "selector_triggered": true,
+      "citations": [
+        "HealthInsurance_Policy.pdf - Page 92",
+        "HealthInsurance_Policy.pdf - Page 92",
+        "HealthInsurance_Policy.pdf - Page 12",
+        "HealthInsurance_Policy.pdf - Page 88"
+      ],
+      "evidence_pages": [
+        "Page 92",
+        "Page 92",
+        "Page 12",
+        "Page 88"
+      ],
+      "answer_preview": "For reimbursement claims, the policy says the policyholder/insured person must submit all required information and documents at their own expense immediately, and in any event within 30 days of discharge from the hospital [Source 2]. The company will acknowledge the documents and may relax delayed submission deadlines on the merits of the case [Source 2]. If a reimbursement claim is received after pre-authorization for the same case, the company first checks with the network provider whether the",
+      "note": "The evidence describes the reimbursement claim submission and settlement steps, but it does not provide a full end-to-end claim procedure beyond filing timelines, document submission, acknowledgement, pre-authorization checking, and who is paid.",
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.7046460347457223,
+      "context_precision": 0.99999999995
+    },
+    {
+      "case_id": "heldout_life_policy_limits",
+      "family": "policy_heldout",
+      "path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\test\\Principal-Sample-Life-Insurance-Policy.pdf",
+      "question": "What are the important exclusions or waiting-period-like limits in this policy?",
+      "why": "Tests policy generalization on a held-out document family.",
+      "supported": true,
+      "route_used": "hybrid_both",
+      "evidence_status": "strong",
+      "planner_source": "llm_structured",
+      "constraint_mode": "soft_multi_region",
+      "scope_strictness": "none",
+      "selector_triggered": false,
+      "citations": [
+        "Principal-Sample-Life-Insurance-Policy.pdf - Page 43",
+        "Principal-Sample-Life-Insurance-Policy.pdf - Page 33",
+        "Principal-Sample-Life-Insurance-Policy.pdf - Page 62",
+        "Principal-Sample-Life-Insurance-Policy.pdf - Page 29"
+      ],
+      "evidence_pages": [
+        "Page 43",
+        "Page 33",
+        "Page 62",
+        "Page 29"
+      ],
+      "answer_preview": "The evidence shows several exclusions or limit-like conditions: insurance may be denied if a member cannot provide proof of good health or has been refused insurance under the policy before; if a member re-requests coverage more than 31 days after terminating it; and if, when a member first becomes eligible, fewer than five members are insured [Source 4]. It also shows a waiting/deferral-type limit for dependent benefit increases: if a dependent is confined in a hospital or skilled nursing facil",
+      "note": "The documents support these specific exclusions/limits, but they do not provide a complete list of all policy exclusions or waiting periods.",
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.6553324355511734,
+      "context_precision": 0.49999999995
+    },
+    {
+      "case_id": "reportgeneration_main_contribution",
+      "family": "research_report",
+      "path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\reportgeneration.pdf",
+      "question": "What is the main contribution of this paper?",
+      "why": "Tests broad paper-summary routing on report-generation style research content.",
+      "supported": true,
+      "route_used": "global_summary_first",
+      "evidence_status": "strong",
+      "planner_source": "llm_structured",
+      "constraint_mode": "soft_multi_region",
+      "scope_strictness": "none",
+      "selector_triggered": true,
+      "citations": [
+        "reportgeneration.pdf - Page 14",
+        "reportgeneration.pdf - Page 14",
+        "reportgeneration.pdf - Page 14",
+        "reportgeneration.pdf - Page 14"
+      ],
+      "evidence_pages": [
+        "Page 14",
+        "Page 14",
+        "Page 14",
+        "Page 14"
+      ],
+      "answer_preview": "The paper\u2019s main contribution appears to be a report generation model and evaluation pipeline, including the design, implementation, and human evaluation of a final report generation model [Source 2]. It also emphasizes building the associated human-evaluation labeling pipeline and analyzing the results [Source 1].\n\nReferences:\n- [1] reportgeneration.pdf - Page 14\n- [2] reportgeneration.pdf - Page 14\n- [3] reportgeneration.pdf - Page 14\n- [4] reportgeneration.pdf - Page 14",
+      "note": "The provided evidence does not include the paper title or abstract, so the broader task and headline contribution are only partly inferable. The strongest supported summary is that the work centers on developing and evaluating a final report generation model with a human evaluation framework [Source 2], plus the labeling/evaluation pipeline and analysis [Source 1].",
+      "faithfulness": 0.7142857142857143,
+      "answer_relevancy": 0.8676036092925082,
+      "context_precision": 0.49999999995
+    },
+    {
+      "case_id": "pancreas8_broad_synthesis",
+      "family": "research_review",
+      "path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\static\\sample_files\\pancreas8.pdf",
+      "question": "What is this paper about and what are its key findings?",
+      "why": "Tests broad synthesis on a review paper where context precision matters.",
+      "supported": true,
+      "route_used": "global_summary_first",
+      "evidence_status": "strong",
+      "planner_source": "llm_structured",
+      "constraint_mode": "soft_multi_region",
+      "scope_strictness": "none",
+      "selector_triggered": true,
+      "citations": [
+        "pancreas8.pdf - Page 4",
+        "pancreas8.pdf - Page 4",
+        "pancreas8.pdf - Page 9",
+        "pancreas8.pdf - Page 6"
+      ],
+      "evidence_pages": [
+        "Page 4",
+        "Page 4",
+        "Page 9",
+        "Page 6"
+      ],
+      "answer_preview": "The paper is about multimodal cancer data fusion for precision oncology, especially combining molecular data with imaging and other clinical data to better characterize tumors and support prediction and decision-making [Source 2] [Source 4]. Its key findings are that single data types are incomplete on their own because molecular data miss tissue architecture and spatial information, while imaging can provide complementary morphological and heterogeneity information [Source 1] [Source 2]. The pa",
+      "note": "The evidence supports a synthesis of the paper\u2019s main theme and findings, but it does not provide the full paper title, methods, or specific experimental results. The answer therefore focuses on the clearly supported high-level conclusions about multimodal fusion in precision oncology.",
+      "faithfulness": 0.8823529411764706,
+      "answer_relevancy": 0.49163628407841137,
+      "context_precision": 0.999999999975
+    }
+  ]
+}

@@ -1,0 +1,165 @@
+{
+  "created_at": "2026-04-27T18:57:23.764980",
+  "suite": "lean_ragas_main_baseline",
+  "base_ref": "main",
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v15-lean-ragas-main-baseline",
+    "generation_version": "v6-lean-ragas-main-baseline"
+  },
+  "summary": {
+    "case_count": 5,
+    "supported_rate": 1.0,
+    "faithfulness_mean": 0.875,
+    "answer_relevancy_mean": 0.4964475854522726,
+    "context_precision_mean": 0.699999999955
+  },
+  "cases": [
+    {
+      "case_id": "thesis_local_implementation",
+      "family": "thesis_local_scope",
+      "path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System_main_ragas_baseline\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+      "question": "What were the summary/conclusions from the implementation chapter?",
+      "supported": true,
+      "route_used": "synopsis_first",
+      "evidence_status": "strong",
+      "planner_source": "llm_structured",
+      "constraint_mode": "soft_multi_region",
+      "selector_triggered": true,
+      "citations": [
+        "Final_Thesis_Leander_Antony_A.pdf - Page 90",
+        "Final_Thesis_Leander_Antony_A.pdf - Page 23",
+        "Final_Thesis_Leander_Antony_A.pdf - Page 72",
+        "Final_Thesis_Leander_Antony_A.pdf - Page 72"
+      ],
+      "evidence_pages": [
+        "Page 90",
+        "Page 23",
+        "Page 72",
+        "Page 72"
+      ],
+      "answer_preview": "The evidence does not provide the actual summary/conclusions from the implementation chapter itself. It only says that Chapter 4 covered implementation details such as environment configuration, preprocessing execution, model training workflow, and experiment orchestration [Source 2]. The thesis conclusion chapter (Chapter 6) is described separately as summarizing key conclusions, practical and methodological contributions, limitations, and future directions [Source 2], but those conclusions are",
+      "note": "The supplied evidence identifies what Chapter 4 (implementation) covered, but does not include the implementation chapter\u2019s summary or conclusions. The only conclusion-related text is for Chapter 6, which is a different chapter [Source 2].",
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.0,
+      "context_precision": 0.49999999995
+    },
+    {
+      "case_id": "thesis_broad_findings",
+      "family": "thesis_broad_synthesis",
+      "path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System_main_ragas_baseline\\static\\sample_files\\Final_Thesis_Leander_Antony_A.pdf",
+      "question": "What are the strongest findings or conclusions from this thesis?",
+      "supported": true,
+      "route_used": "synopsis_first",
+      "evidence_status": "strong",
+      "planner_source": "llm_structured",
+      "constraint_mode": "soft_multi_region",
+      "selector_triggered": false,
+      "citations": [
+        "Final_Thesis_Leander_Antony_A.pdf - Page 22",
+        "Final_Thesis_Leander_Antony_A.pdf - Page 90",
+        "Final_Thesis_Leander_Antony_A.pdf - Page 72",
+        "Final_Thesis_Leander_Antony_A.pdf - Page 96"
+      ],
+      "evidence_pages": [
+        "Page 22",
+        "Page 90",
+        "Page 72",
+        "Page 96"
+      ],
+      "answer_preview": "The strongest documented findings are that the biomarker model produced a clinically meaningful result that held up well against the original published findings, while the CT model achieved near-perfect metrics but under conditions that are not fully shown in the provided evidence [Source 2]. The thesis also concludes that the overall results were mixed and that the work synthesized findings, assessed the research objectives, and identified both contributions and limitations [Source 2].\n\nReferen",
+      "note": "The evidence explicitly states the main findings were mixed, highlights a strong biomarker result, and notes near-perfect CT performance, but the provided excerpt cuts off before fully explaining the CT conditions and does not include the full final conclusions section. So the answer is limited to the supported conclusions visible in the evidence [Source 2].",
+      "faithfulness": 0.875,
+      "answer_relevancy": 0.528837092642461,
+      "context_precision": 0.49999999995
+    },
+    {
+      "case_id": "health_policy_claims",
+      "family": "policy_claims",
+      "path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System_main_ragas_baseline\\static\\sample_files\\HealthInsurance_Policy.pdf",
+      "question": "What is the claim or reimbursement process described in this policy?",
+      "supported": true,
+      "route_used": "hybrid_both",
+      "evidence_status": "strong",
+      "planner_source": "llm_structured",
+      "constraint_mode": "soft_multi_region",
+      "selector_triggered": true,
+      "citations": [
+        "HealthInsurance_Policy.pdf - Page 92",
+        "HealthInsurance_Policy.pdf - Page 92",
+        "HealthInsurance_Policy.pdf - Page 12",
+        "HealthInsurance_Policy.pdf - Page 88"
+      ],
+      "evidence_pages": [
+        "Page 92",
+        "Page 92",
+        "Page 12",
+        "Page 88"
+      ],
+      "answer_preview": "Under the reimbursement facility, the policyholder/insured person must submit all required claim information and documents at their own expense immediately and in any event within 30 days of discharge from the hospital [Source 1]. The company acknowledges receipt of the documents and may relax the time limit for delayed submission on the merits of the case [Source 1]. If a pre-authorization letter was previously issued for the same case, the company checks with the network provider whether it wa",
+      "note": "The evidence describes the reimbursement claim submission and settlement steps, but it does not provide a full standalone end-to-end claim procedure beyond these points. It does not detail the exact contents of Clauses 6.1.4 and 6.1.5 referenced for required documentation [Source 1].",
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.6514695982506823,
+      "context_precision": 0.99999999995
+    },
+    {
+      "case_id": "reportgeneration_main_contribution",
+      "family": "research_report",
+      "path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System_main_ragas_baseline\\static\\sample_files\\reportgeneration.pdf",
+      "question": "What is the main contribution of this paper?",
+      "supported": true,
+      "route_used": "global_summary_first",
+      "evidence_status": "strong",
+      "planner_source": "llm_structured",
+      "constraint_mode": "soft_multi_region",
+      "selector_triggered": true,
+      "citations": [
+        "reportgeneration.pdf - Page 14",
+        "reportgeneration.pdf - Page 14",
+        "reportgeneration.pdf - Page 14",
+        "reportgeneration.pdf - Page 14"
+      ],
+      "evidence_pages": [
+        "Page 14",
+        "Page 14",
+        "Page 14",
+        "Page 14"
+      ],
+      "answer_preview": "The paper\u2019s main contribution appears to be the development of a final report generation model, along with its method and evaluation setup, including a human evaluation rubric and labeling pipeline [Source 2]. In other words, it is about building and assessing a report generation system [Source 2].\n\nReferences:\n- [1] reportgeneration.pdf - Page 14\n- [2] reportgeneration.pdf - Page 14\n- [3] reportgeneration.pdf - Page 14\n- [4] reportgeneration.pdf - Page 14",
+      "note": "The evidence gives author-contribution details rather than a formal abstract, so it supports only a high-level summary: the project designed and implemented a report generation model and the associated evaluation infrastructure [Source 2]. It does not explicitly state the full technical novelty or the paper\u2019s headline claim, so the answer is limited to the supported overview.",
+      "faithfulness": 0.5,
+      "answer_relevancy": 0.8645155607574022,
+      "context_precision": 0.49999999995
+    },
+    {
+      "case_id": "pancreas8_broad_synthesis",
+      "family": "research_review",
+      "path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System_main_ragas_baseline\\static\\sample_files\\pancreas8.pdf",
+      "question": "What is this paper about and what are its key findings?",
+      "supported": true,
+      "route_used": "global_summary_first",
+      "evidence_status": "strong",
+      "planner_source": "llm_structured",
+      "constraint_mode": "soft_multi_region",
+      "selector_triggered": true,
+      "citations": [
+        "pancreas8.pdf - Page 4",
+        "pancreas8.pdf - Page 4",
+        "pancreas8.pdf - Page 9",
+        "pancreas8.pdf - Page 6"
+      ],
+      "evidence_pages": [
+        "Page 4",
+        "Page 4",
+        "Page 9",
+        "Page 6"
+      ],
+      "answer_preview": "The paper is about multimodal data fusion for precision oncology, especially using different cancer data types together to improve understanding of tumors and clinical prediction. It emphasizes that single molecular measurements miss tissue architecture and spatial information, while combining omics with imaging and other modalities can capture complementary signals across scales [Source 1][Source 2]. Key findings are that multimodal approaches are promising for patient stratification, risk/surv",
+      "note": "The evidence supports a broad summary of the paper\u2019s focus and major conclusions, but it does not provide a complete title, full scope, or detailed results for every specific application area. The summary above stays within what is explicitly supported by the sources.",
+      "faithfulness": 1.0,
+      "answer_relevancy": 0.4374156756108174,
+      "context_precision": 0.999999999975
+    }
+  ]
+}
