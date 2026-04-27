@@ -1,0 +1,487 @@
+{
+  "case_count": 4,
+  "variants": {
+    "orchestrator_off": {
+      "settings": {
+        "retrieval_orchestrator_enabled": false,
+        "planner_llm_enabled": true,
+        "reranker_enabled": false,
+        "evidence_selector_enabled": false
+      },
+      "summary": {
+        "dataset_size": 4,
+        "page_hit_rate": 1.0,
+        "chapter_scope_hit_rate": 1.0,
+        "scope_compliance_rate": 0.0,
+        "scope_precision_mean": 0.4375,
+        "hard_scope_rate": 0.5,
+        "global_fallback_rate": 0.0,
+        "planner_source_counts": {
+          "deterministic": 1,
+          "llm_structured": 3
+        }
+      },
+      "rows": [
+        {
+          "case_id": "thesis_implementation_summary",
+          "question": "What were the summary/conclusions from the implementation chapter?",
+          "route_used": "synopsis_first",
+          "evidence_status": "strong",
+          "planner_source": "deterministic",
+          "constraint_mode": "soft_local",
+          "scope_strictness": "none",
+          "target_region_ids": [
+            "Summary|CHAPTER 4",
+            "Summary|CHAPTER 6",
+            "Summary|CHAPTER 1",
+            "Chapter Summary|CHAPTER 2",
+            "Summary|CHAPTER 5",
+            "Abstract",
+            "Summary|LIST OF ABBREVIATIONS",
+            "Summary|SVM-RFE Support Vector Machine \u2013 Recursive Feature Elimination",
+            "Research Aim and Objectives",
+            "Scope of the Study"
+          ],
+          "global_fallback_used": false,
+          "selected_pages": [
+            "Page 52",
+            "Page 16",
+            "Page 72",
+            "Page 8"
+          ],
+          "page_hit": 1,
+          "chapter_scope_hit": 1,
+          "all_candidates_in_scope": 0,
+          "scope_precision": 0.5,
+          "candidate_chapters": [
+            {
+              "page": "Page 52",
+              "chapter_number": "4",
+              "chapter_title": "Implementation",
+              "section_id": "Summary|CHAPTER 4"
+            },
+            {
+              "page": "Page 16",
+              "chapter_number": "1",
+              "chapter_title": "Introduction",
+              "section_id": "Summary|CHAPTER 1"
+            },
+            {
+              "page": "Page 72",
+              "chapter_number": "5",
+              "chapter_title": "Results And Discussion",
+              "section_id": "Summary|CHAPTER 5"
+            },
+            {
+              "page": "Page 8",
+              "chapter_number": "4",
+              "chapter_title": "Implementation .............................................................................................................. 37",
+              "section_id": "Summary"
+            }
+          ]
+        },
+        {
+          "case_id": "thesis_literature_review_summary",
+          "question": "In the literature review, what was the section summary?",
+          "route_used": "chunk_first",
+          "evidence_status": "strong",
+          "planner_source": "llm_structured",
+          "constraint_mode": "hard_region",
+          "scope_strictness": "none",
+          "target_region_ids": [
+            "Chapter Summary|CHAPTER 2",
+            "Summary|CHAPTER 5",
+            "Multi-Modal and Hybrid Approaches",
+            "Abstract",
+            "Summary|CHAPTER 1",
+            "Summary|CHAPTER 4",
+            "Summary|Objective 2: Unimodal Model Development and Evaluation",
+            "Summary|CHAPTER 6",
+            "Summary|Library Version Role",
+            "Summary|LIST OF ABBREVIATIONS"
+          ],
+          "global_fallback_used": false,
+          "selected_pages": [
+            "Page 24",
+            "Page 72",
+            "Page 72",
+            "Page 112"
+          ],
+          "page_hit": 1,
+          "chapter_scope_hit": 1,
+          "all_candidates_in_scope": 0,
+          "scope_precision": 0.5,
+          "candidate_chapters": [
+            {
+              "page": "Page 24",
+              "chapter_number": "2",
+              "chapter_title": "Literature Review",
+              "section_id": "Chapter Summary|CHAPTER 2"
+            },
+            {
+              "page": "Page 72",
+              "chapter_number": "5",
+              "chapter_title": "Results And Discussion",
+              "section_id": "Summary|CHAPTER 5"
+            },
+            {
+              "page": "Page 72",
+              "chapter_number": "5",
+              "chapter_title": "Results And Discussion",
+              "section_id": "Summary|CHAPTER 5"
+            },
+            {
+              "page": "Page 112",
+              "chapter_number": "2",
+              "chapter_title": "Literature Review",
+              "section_id": "Multi-Modal and Hybrid Approaches"
+            }
+          ]
+        },
+        {
+          "case_id": "thesis_methodology_summary",
+          "question": "What was the section summary from the methodology chapter?",
+          "route_used": "chunk_first",
+          "evidence_status": "strong",
+          "planner_source": "llm_structured",
+          "constraint_mode": "hard_region",
+          "scope_strictness": "none",
+          "target_region_ids": [
+            "Summary|CHAPTER 1",
+            "Chapter Summary|CHAPTER 2",
+            "Summary|CHAPTER 4",
+            "Summary|CHAPTER 5",
+            "Summary|CHAPTER 6",
+            "Chapter Summary",
+            "Summary|CHAPTER 3",
+            "Dataset Bias Detection and Mitigation|Unsupervised Domain Analysis",
+            "Dataset Bias Detection and Mitigation|Decision-Level Fusion",
+            "Abstract"
+          ],
+          "global_fallback_used": false,
+          "selected_pages": [
+            "Page 39",
+            "Page 90",
+            "Page 52",
+            "Page 72"
+          ],
+          "page_hit": 1,
+          "chapter_scope_hit": 1,
+          "all_candidates_in_scope": 0,
+          "scope_precision": 0.25,
+          "candidate_chapters": [
+            {
+              "page": "Page 39",
+              "chapter_number": "3",
+              "chapter_title": "Methodology",
+              "section_id": "Summary|CHAPTER 3"
+            },
+            {
+              "page": "Page 90",
+              "chapter_number": "6",
+              "chapter_title": "Conclusion And Recommendations",
+              "section_id": "Summary|CHAPTER 6"
+            },
+            {
+              "page": "Page 52",
+              "chapter_number": "4",
+              "chapter_title": "Implementation",
+              "section_id": "Summary|CHAPTER 4"
+            },
+            {
+              "page": "Page 72",
+              "chapter_number": "5",
+              "chapter_title": "Results And Discussion",
+              "section_id": "Summary|CHAPTER 5"
+            }
+          ]
+        },
+        {
+          "case_id": "thesis_results_discussion_summary",
+          "question": "What were the summary/conclusions from the results and discussion chapter?",
+          "route_used": "synopsis_first",
+          "evidence_status": "strong",
+          "planner_source": "llm_structured",
+          "constraint_mode": "soft_multi_region",
+          "scope_strictness": "none",
+          "target_region_ids": [
+            "Summary|CHAPTER 5",
+            "Summary|CHAPTER 6",
+            "Summary|CHAPTER 1",
+            "Chapter Summary|CHAPTER 2",
+            "Summary|CHAPTER 4",
+            "Abstract",
+            "Summary|LIST OF ABBREVIATIONS",
+            "Summary|GANTT Generalized Activity Normalization Timetable",
+            "Summary|SVM-RFE Support Vector Machine \u2013 Recursive Feature Elimination",
+            "Research Aim and Objectives"
+          ],
+          "global_fallback_used": false,
+          "selected_pages": [
+            "Page 73",
+            "Page 90",
+            "Page 90",
+            "Page 72"
+          ],
+          "page_hit": 1,
+          "chapter_scope_hit": 1,
+          "all_candidates_in_scope": 0,
+          "scope_precision": 0.5,
+          "candidate_chapters": [
+            {
+              "page": "Page 73",
+              "chapter_number": "5",
+              "chapter_title": "Results And Discussion",
+              "section_id": "Summary|Iterative Mitigation Results"
+            },
+            {
+              "page": "Page 90",
+              "chapter_number": "6",
+              "chapter_title": "Conclusion And Recommendations",
+              "section_id": "Summary|CHAPTER 6"
+            },
+            {
+              "page": "Page 90",
+              "chapter_number": "6",
+              "chapter_title": "Conclusion And Recommendations",
+              "section_id": "Summary|CHAPTER 6"
+            },
+            {
+              "page": "Page 72",
+              "chapter_number": "5",
+              "chapter_title": "Results And Discussion",
+              "section_id": "Summary|CHAPTER 5"
+            }
+          ]
+        }
+      ]
+    },
+    "orchestrator_on": {
+      "settings": {
+        "retrieval_orchestrator_enabled": true,
+        "planner_llm_enabled": true,
+        "reranker_enabled": false,
+        "evidence_selector_enabled": false
+      },
+      "summary": {
+        "dataset_size": 4,
+        "page_hit_rate": 0.75,
+        "chapter_scope_hit_rate": 1.0,
+        "scope_compliance_rate": 1.0,
+        "scope_precision_mean": 1.0,
+        "hard_scope_rate": 1.0,
+        "global_fallback_rate": 0.0,
+        "planner_source_counts": {
+          "llm_orchestrator": 4
+        }
+      },
+      "rows": [
+        {
+          "case_id": "thesis_implementation_summary",
+          "question": "What were the summary/conclusions from the implementation chapter?",
+          "route_used": "chunk_first",
+          "evidence_status": "strong",
+          "planner_source": "llm_orchestrator",
+          "constraint_mode": "hard_region",
+          "scope_strictness": "hard",
+          "target_region_ids": [
+            "Summary|CHAPTER 4",
+            "Data Preparation and Preprocessing|Bias Mitigation: Iterative Development of Intensity Standardization",
+            "Data Preparation and Preprocessing|Unsupervised Domain Analysis"
+          ],
+          "global_fallback_used": false,
+          "selected_pages": [
+            "Page 52",
+            "Page 52",
+            "Page 52",
+            "Page 56"
+          ],
+          "page_hit": 1,
+          "chapter_scope_hit": 1,
+          "all_candidates_in_scope": 1,
+          "scope_precision": 1.0,
+          "candidate_chapters": [
+            {
+              "page": "Page 52",
+              "chapter_number": "4",
+              "chapter_title": "Implementation",
+              "section_id": "Summary|CHAPTER 4"
+            },
+            {
+              "page": "Page 52",
+              "chapter_number": "4",
+              "chapter_title": "Implementation",
+              "section_id": "Summary|CHAPTER 4"
+            },
+            {
+              "page": "Page 52",
+              "chapter_number": "4",
+              "chapter_title": "Implementation",
+              "section_id": "Summary|CHAPTER 4"
+            },
+            {
+              "page": "Page 56",
+              "chapter_number": "4",
+              "chapter_title": "Implementation",
+              "section_id": "Data Preparation and Preprocessing|Bias Mitigation: Iterative Development of Intensity Standardization"
+            }
+          ]
+        },
+        {
+          "case_id": "thesis_literature_review_summary",
+          "question": "In the literature review, what was the section summary?",
+          "route_used": "chunk_first",
+          "evidence_status": "strong",
+          "planner_source": "llm_orchestrator",
+          "constraint_mode": "hard_region",
+          "scope_strictness": "hard",
+          "target_region_ids": [
+            "Chapter Summary|CHAPTER 2",
+            "Medical Imaging for Pancreatic Cancer Detection|Deep Learning for Pancreatic Cancer Detection",
+            "Machine Learning for Biomarker Analysis|Fusion Strategies"
+          ],
+          "global_fallback_used": false,
+          "selected_pages": [
+            "Page 24",
+            "Page 32",
+            "Page 32"
+          ],
+          "page_hit": 1,
+          "chapter_scope_hit": 1,
+          "all_candidates_in_scope": 1,
+          "scope_precision": 1.0,
+          "candidate_chapters": [
+            {
+              "page": "Page 24",
+              "chapter_number": "2",
+              "chapter_title": "Literature Review",
+              "section_id": "Chapter Summary|CHAPTER 2"
+            },
+            {
+              "page": "Page 32",
+              "chapter_number": "2",
+              "chapter_title": "Literature Review",
+              "section_id": "Machine Learning for Biomarker Analysis|Fusion Strategies"
+            },
+            {
+              "page": "Page 32",
+              "chapter_number": "2",
+              "chapter_title": "Literature Review",
+              "section_id": "Machine Learning for Biomarker Analysis|Fusion Strategies"
+            }
+          ]
+        },
+        {
+          "case_id": "thesis_methodology_summary",
+          "question": "What was the section summary from the methodology chapter?",
+          "route_used": "chunk_first",
+          "evidence_status": "strong",
+          "planner_source": "llm_orchestrator",
+          "constraint_mode": "hard_region",
+          "scope_strictness": "hard",
+          "target_region_ids": [
+            "Summary|CHAPTER 3",
+            "Chapter Summary",
+            "Datasets|REG1B, TFF1, and REG1A"
+          ],
+          "global_fallback_used": false,
+          "selected_pages": [
+            "Page 39",
+            "Page 39",
+            "Page 41",
+            "Page 23"
+          ],
+          "page_hit": 1,
+          "chapter_scope_hit": 1,
+          "all_candidates_in_scope": 1,
+          "scope_precision": 1.0,
+          "candidate_chapters": [
+            {
+              "page": "Page 39",
+              "chapter_number": "3",
+              "chapter_title": "Methodology",
+              "section_id": "Summary|CHAPTER 3"
+            },
+            {
+              "page": "Page 39",
+              "chapter_number": "3",
+              "chapter_title": "Methodology",
+              "section_id": "Summary|CHAPTER 3"
+            },
+            {
+              "page": "Page 41",
+              "chapter_number": "3",
+              "chapter_title": "Methodology",
+              "section_id": "Datasets|REG1B, TFF1, and REG1A"
+            },
+            {
+              "page": "Page 23",
+              "chapter_number": "3",
+              "chapter_title": "Methodology",
+              "section_id": "Chapter Summary"
+            }
+          ]
+        },
+        {
+          "case_id": "thesis_results_discussion_summary",
+          "question": "What were the summary/conclusions from the results and discussion chapter?",
+          "route_used": "chunk_first",
+          "evidence_status": "strong",
+          "planner_source": "llm_orchestrator",
+          "constraint_mode": "hard_region",
+          "scope_strictness": "hard",
+          "target_region_ids": [
+            "Summary|CHAPTER 5",
+            "Summary|Iterative Mitigation Results",
+            "Dataset Bias Detection and Mitigation|CT results in Chapter 5"
+          ],
+          "global_fallback_used": false,
+          "selected_pages": [
+            "Page 73",
+            "Page 74",
+            "Page 45",
+            "Page 74"
+          ],
+          "page_hit": 0,
+          "chapter_scope_hit": 1,
+          "all_candidates_in_scope": 1,
+          "scope_precision": 1.0,
+          "candidate_chapters": [
+            {
+              "page": "Page 73",
+              "chapter_number": "5",
+              "chapter_title": "Results And Discussion",
+              "section_id": "Summary|Iterative Mitigation Results"
+            },
+            {
+              "page": "Page 74",
+              "chapter_number": "5",
+              "chapter_title": "Results And Discussion",
+              "section_id": "Summary|Iterative Mitigation Results"
+            },
+            {
+              "page": "Page 45",
+              "chapter_number": "5",
+              "chapter_title": "Results And Discussion",
+              "section_id": "Dataset Bias Detection and Mitigation|CT results in Chapter 5"
+            },
+            {
+              "page": "Page 74",
+              "chapter_number": "5",
+              "chapter_title": "Results And Discussion",
+              "section_id": "Summary|Iterative Mitigation Results"
+            }
+          ]
+        }
+      ]
+    }
+  },
+  "delta_orchestrator_on_vs_off": {
+    "page_hit_rate": -0.25,
+    "chapter_scope_hit_rate": 0.0,
+    "scope_compliance_rate": 1.0,
+    "scope_precision_mean": 0.5625,
+    "hard_scope_rate": 0.5,
+    "global_fallback_rate": 0.0
+  }
+}

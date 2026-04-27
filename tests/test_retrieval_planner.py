@@ -495,6 +495,62 @@ def test_likely_scope_items_prioritizes_profile_labels():
     assert items[0]["section_id"] == "chapter-4"
 
 
+def test_orchestrator_ignores_low_value_scope_sections():
+    planner = RetrievalPlanner(
+        Settings(
+            openai_api_key="test-key",
+            planner_llm_enabled=True,
+            router_llm_enabled=False,
+            retrieval_orchestrator_enabled=True,
+        )
+    )
+    planner.client = _FakeClient(
+        (
+            '{"intent_type":"summary","query_type":"summary_lookup","evidence_spread":"sectional",'
+            '"preferred_route":"chunk_first","scope_strictness":"hard",'
+            '"resolved_scope_ids":["toc-implementation","chapter-4"],'
+            '"scope_query":"implementation chapter","answer_focus":["summary","conclusions"],'
+            '"confidence":0.91}'
+        )
+    )
+
+    _, plan = planner.analyze_and_plan(
+        question="What were the summary/conclusions from the implementation chapter?",
+        metadata_filters={"page_labels": [], "section_terms": [], "clause_terms": []},
+        synopses=[
+            _synopsis(
+                "toc-implementation",
+                "Implementation .............................................................................................................. 37",
+                "overview",
+                {
+                    "chapter_number": "4",
+                    "chapter_title": "Implementation .............................................................................................................. 37",
+                    "section_path": ["Table of Contents", "Implementation"],
+                    "front_matter_kind": "contents",
+                    "front_matter_score": 0.98,
+                    "topology_low_value": True,
+                    "document_scope_labels": ["Implementation chapter"],
+                },
+            ),
+            _synopsis(
+                "chapter-4",
+                "Implementation",
+                "procedure",
+                {
+                    "chapter_number": "4",
+                    "chapter_title": "Implementation",
+                    "section_path": ["Chapter 4", "Implementation"],
+                    "document_scope_labels": ["Implementation chapter"],
+                },
+            ),
+        ],
+    )
+
+    assert plan.planner_source == "llm_orchestrator"
+    assert plan.target_region_ids == ["chapter-4"]
+    assert plan.allowed_section_ids == ["chapter-4"]
+
+
 def test_summary_focused_scope_prefers_chapter_overview_section():
     planner = RetrievalPlanner(Settings(router_llm_enabled=False))
     synopses = [

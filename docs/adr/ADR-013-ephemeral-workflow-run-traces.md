@@ -55,4 +55,4 @@ Unit coverage verifies:
 - full answer body is not copied
 - retrieval plan context is present
 
-Full test suite result on this branch after the hybrid-indexing carry-forward pass: `115 passed`.
+Full test suite result on this branch after the front-matter scope fix: `116 passed`.

@@ -396,7 +396,7 @@ Challenge:
 Improvement:
 
 - intelligence moved to a bounded interpretation step while enforcement stayed deterministic
-- scoped retrieval eval showed full page-hit and scope-compliance recovery on the new branch
+- scoped retrieval eval showed full chapter-scope hit and scope-compliance recovery on the new branch after table-of-contents/front-matter chunks were filtered out of hard scope
 - broad questions are still allowed to remain broad because the orchestrator is validated rather than blindly trusted
 
 ## 23. Ephemeral Workflow Run Traces

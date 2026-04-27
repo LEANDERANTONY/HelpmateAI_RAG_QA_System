@@ -1,0 +1,767 @@
+{
+  "settings": {
+    "retrieval_version": "v16-support-guardrail-eval",
+    "generation_version": "v6-support-guardrail-eval",
+    "answer_model": "gpt-5.4-mini",
+    "weak_evidence_score_threshold": 0.03,
+    "unsupported_evidence_score_threshold": 0.012,
+    "lexical_hit_threshold": 0.02,
+    "unsupported_lexical_hit_threshold": 0.005,
+    "unsupported_content_overlap_threshold": 0.05,
+    "evidence_selector_enabled": true,
+    "evidence_selector_gap_threshold": 0.08
+  },
+  "heldout": {
+    "overall": {
+      "dataset_size": 36,
+      "answer_supported_rate": 1.0,
+      "retrieval_supported_rate": 1.0,
+      "selector_trigger_rate": 0.5555555555555556,
+      "retrieval_status": {
+        "strong_rate": 0.9722222222222222,
+        "weak_rate": 0.027777777777777776,
+        "unsupported_rate": 0.0
+      }
+    },
+    "per_dataset": {
+      "manual_questions_genai_modular1_20260419.json": {
+        "summary": {
+          "dataset_size": 6,
+          "answer_supported_rate": 1.0,
+          "retrieval_supported_rate": 1.0,
+          "selector_trigger_rate": 0.3333333333333333,
+          "retrieval_status": {
+            "strong_rate": 1.0,
+            "weak_rate": 0.0,
+            "unsupported_rate": 0.0
+          }
+        },
+        "results": [
+          {
+            "question": "What is the main focus of this paper on generative AI in the construction industry?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": true,
+            "route_used": "global_summary_first",
+            "best_score": 0.206844957774466,
+            "max_lexical_score": 0.217472789526456,
+            "content_overlap_score": 0.6,
+            "citations": [
+              "GEnAI_modular1.pdf - Page 1",
+              "GEnAI_modular1.pdf - Page 3",
+              "GEnAI_modular1.pdf - Page 11",
+              "GEnAI_modular1.pdf - Page 3"
+            ],
+            "note": "The evidence supports a high-level summary of the paper\u2019s main focus. It does not provide a more specific single thesis beyond GenAI opportunities/challenges, applications, and a proposed implementation framework.",
+            "answer_preview": "The paper focuses on exploring the prospects, opportunities, and challenges of implementing Generative AI in the construction industry, and on proposing a conceptual implementation framework to guide early adoption [Source 1][Source 4]. It combines a literature review with analysis of construction p"
+          },
+          {
+            "question": "How does the paper describe major generative AI model families such as GANs, autoregressive models, diffusion models, and large language models?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": false,
+            "route_used": "hybrid_both",
+            "best_score": 0.5260367605953011,
+            "max_lexical_score": 0.21270131910308387,
+            "content_overlap_score": 0.5333333333333333,
+            "citations": [
+              "GEnAI_modular1.pdf - Page 4",
+              "GEnAI_modular1.pdf - Page 6",
+              "GEnAI_modular1.pdf - Page 26",
+              "GEnAI_modular1.pdf - Page 22"
+            ],
+            "note": "The evidence supports a partial answer: GANs and autoregressive models are directly described in the paper. However, the supplied excerpts do not contain substantive descriptions of diffusion models or large language models beyond citation entries, so those parts cannot be fully answered from the evidence.",
+            "answer_preview": "The paper says there are five major GenAI model types based on generative mechanism, and it explicitly describes GANs as often used for image generation because they can create realistic images, and autoregressive models as best at text generation similar to their training data because they generate"
+          },
+          {
+            "question": "What practical applications of generative AI in construction does the paper identify across design, forecasting, or operations?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": false,
+            "route_used": "hybrid_both",
+            "best_score": 0.5262447246742329,
+            "max_lexical_score": 0.13796753790379673,
+            "content_overlap_score": 0.7692307692307693,
+            "citations": [
+              "GEnAI_modular1.pdf - Page 12",
+              "GEnAI_modular1.pdf - Page 21",
+              "GEnAI_modular1.pdf - Page 12",
+              "GEnAI_modular1.pdf - Page 1"
+            ],
+            "note": "The evidence supports examples for design and forecasting clearly, and it also supports an operations-related application at a broader level. However, the sources do not provide a detailed, exhaustive list of specific operational use cases beyond general mentions of operation-phase applications and information management.",
+            "answer_preview": "The paper identifies practical GenAI applications in construction across design, forecasting, and operations. For design, GenAI can parse building codes to identify relevant requirements and produce project-specific summaries for architects, and it can help connect design specifications to cost and "
+          },
+          {
+            "question": "What perspectives or opinions from industry practitioners are summarized in the paper?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": true,
+            "route_used": "synopsis_first",
+            "best_score": 0.4290724748810154,
+            "max_lexical_score": 0.2224680857993549,
+            "content_overlap_score": 0.7777777777777778,
+            "citations": [
+              "GEnAI_modular1.pdf - Page 11",
+              "GEnAI_modular1.pdf - Page 10",
+              "GEnAI_modular1.pdf - Page 3",
+              "GEnAI_modular1.pdf - Page 1"
+            ],
+            "note": "The evidence supports a summary of the main perspectives and themes, but it does not provide a full list of every individual opinion from practitioners. It does show consensus on benefits and some divergence about scale, scope, and integration risks [Source 1][Source 2].",
+            "answer_preview": "The paper summarizes industry practitioners\u2019 views as generally positive about GenAI\u2019s promise for greater efficiency, innovation, and data-driven decision-making in construction, with opportunities around construction documents management, enterprise search, and broader data management/productivity"
+          },
+          {
+            "question": "What challenges or risks does the paper describe for adopting generative AI in construction?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": false,
+            "route_used": "hybrid_both",
+            "best_score": 0.27533968253968255,
+            "max_lexical_score": 0.11162697775357677,
+            "content_overlap_score": 0.6666666666666666,
+            "citations": [
+              "GEnAI_modular1.pdf - Page 19",
+              "GEnAI_modular1.pdf - Page 17",
+              "GEnAI_modular1.pdf - Page 18",
+              "GEnAI_modular1.pdf - Page 1"
+            ],
+            "note": "The evidence supports multiple specific challenges and risks, but it does not provide a full exhaustive list beyond these themes.",
+            "answer_preview": "The paper describes several challenges and risks for adopting generative AI in construction: technological issues like outdated training data, costly and complex model retraining, and the black-box/limited interpretability of models [Source 2]; regulatory and human-factor issues such as the need for"
+          },
+          {
+            "question": "What future research directions or recommendations does the paper propose?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": false,
+            "route_used": "hybrid_both",
+            "best_score": 0.5493368852459016,
+            "max_lexical_score": 0.40869817961114185,
+            "content_overlap_score": 0.7142857142857143,
+            "citations": [
+              "GEnAI_modular1.pdf - Page 20",
+              "GEnAI_modular1.pdf - Page 20",
+              "GEnAI_modular1.pdf - Page 1",
+              "GEnAI_modular1.pdf - Page 21"
+            ],
+            "note": "The evidence supports a general summary of the paper\u2019s recommendations and future research directions, and provides several concrete future research questions. However, the supplied excerpt does not include the full list of all recommendations or all future research questions, so the answer is limited to what is explicitly shown in the evidence.",
+            "answer_preview": "The paper proposes two kinds of directions: recommendations and future research directions. The recommendations are described as short-term and long-term adaptation strategies, and the future research directions are framed as major research questions for integrating GenAI in construction [Source 1]["
+          }
+        ]
+      },
+      "manual_questions_genai_modular2_20260419.json": {
+        "summary": {
+          "dataset_size": 6,
+          "answer_supported_rate": 1.0,
+          "retrieval_supported_rate": 1.0,
+          "selector_trigger_rate": 0.8333333333333334,
+          "retrieval_status": {
+            "strong_rate": 1.0,
+            "weak_rate": 0.0,
+            "unsupported_rate": 0.0
+          }
+        },
+        "results": [
+          {
+            "question": "What is the main goal of this paper on generative spatial AI for sustainable smart cities?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": true,
+            "route_used": "synopsis_first",
+            "best_score": 0.5200664584959668,
+            "max_lexical_score": 0.14869716456417414,
+            "content_overlap_score": 1.0,
+            "citations": [
+              "GENAI_modular2.pdf - Page 1",
+              "GENAI_modular2.pdf - Page 5",
+              "GENAI_modular2.pdf - Page 8",
+              "GENAI_modular2.pdf - Page 5"
+            ],
+            "note": "The title and abstract indicate the paper focuses on generative spatial artificial intelligence for sustainable smart cities and positions it as a \u201cpioneering large flow model for urban digital twin\u201d [Source 1]. The evidence also notes GenAI\u2019s role in enhancing data-driven urban planning and design through urban digital twins [Source 3].",
+            "answer_preview": "The paper\u2019s main goal is to explore and advance the use of generative spatial AI\u2014especially a pioneering large flow model\u2014for urban digital twins in order to improve sustainable smart city planning and design [Source 1].\n\nReferences:\n- [1] GENAI_modular2.pdf - Page 1\n- [2] GENAI_modular2.pdf - Page "
+          },
+          {
+            "question": "How does the paper describe the Generative Spatial AI framework or large flow model for urban digital twins?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": true,
+            "route_used": "hybrid_both",
+            "best_score": 0.5317980158730159,
+            "max_lexical_score": 0.177532861580963,
+            "content_overlap_score": 0.8333333333333334,
+            "citations": [
+              "GENAI_modular2.pdf - Page 1",
+              "GENAI_modular2.pdf - Page 1",
+              "GENAI_modular2.pdf - Page 28",
+              "GENAI_modular2.pdf - Page 4"
+            ],
+            "note": "The evidence directly states the LFM is a pioneering model grounded in a robust framework, designed with GenAI capabilities, and tailored for UDT integration to improve predictive analytics, adaptive learning, and data management. The supplied evidence does not provide more detailed technical architecture beyond that description.",
+            "answer_preview": "The paper describes it as a pioneering Large Flow Model (LFM) grounded in a robust foundational framework and designed with GenAI capabilities, specifically tailored for integration into Urban Digital Twin (UDT) systems to enhance predictive analytics, adaptive learning, and complex data management "
+          },
+          {
+            "question": "What role do data collection and aggregation play in the proposed smart-city modeling approach?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": true,
+            "route_used": "hybrid_both",
+            "best_score": 0.5835042930628335,
+            "max_lexical_score": 0.16398098217553073,
+            "content_overlap_score": 0.7,
+            "citations": [
+              "GENAI_modular2.pdf - Page 17",
+              "GENAI_modular2.pdf - Page 14",
+              "GENAI_modular2.pdf - Page 8",
+              "GENAI_modular2.pdf - Page 2"
+            ],
+            "note": "The evidence directly explains that collecting, aggregating, integrating, and standardizing diverse data sources is foundational to the LFM/UDT approach. It does not provide additional detail beyond their role as the basis and backbone for analysis, training, validation, and prediction.",
+            "answer_preview": "Data collection and aggregation are the first step in the proposed modeling approach, providing the diverse urban datasets that form the basis for all subsequent analysis and modeling in the LFM [Source 1]. They also support integration and harmonization of multimodal data so the model can process u"
+          },
+          {
+            "question": "How does the paper explain the Blue City large flow model and its pretraining or development process?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": true,
+            "route_used": "synopsis_first",
+            "best_score": 0.37688464031414853,
+            "max_lexical_score": 0.1370649712944391,
+            "content_overlap_score": 0.7272727272727273,
+            "citations": [
+              "GENAI_modular2.pdf - Page 16",
+              "GENAI_modular2.pdf - Page 14",
+              "GENAI_modular2.pdf - Page 15",
+              "GENAI_modular2.pdf - Page 3"
+            ],
+            "note": "The evidence directly supports both the development process and the pretraining steps. It does not provide more detailed technical specifics beyond the stated sequence and components.",
+            "answer_preview": "The paper describes the Blue City large flow model (LFM) as being developed in stages. It says the study focuses mainly on the design and ongoing development phases, with implementation and testing planned later [Source 4]. In the ongoing development phase, the model is transformed from a conceptual"
+          },
+          {
+            "question": "What validation, verification, or prototyping steps are described for the system?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": true,
+            "route_used": "synopsis_first",
+            "best_score": 0.49792062889672,
+            "max_lexical_score": 0.1801486563680211,
+            "content_overlap_score": 0.5714285714285714,
+            "citations": [
+              "GENAI_modular2.pdf - Page 15",
+              "GENAI_modular2.pdf - Page 14",
+              "GENAI_modular2.pdf - Page 13",
+              "GENAI_modular2.pdf - Page 14"
+            ],
+            "note": "The evidence supports a clear description of prototyping, validation, and verification steps. It does not provide more detail on specific test metrics or exact validation protocols beyond these high-level steps.",
+            "answer_preview": "The system is described as undergoing iterative prototyping with preliminary models and diagrams, simulated in controlled scenarios to test feasibility and functionality, including handling multimodal datasets and representing urban flows [Source 2][Source 4]. Validation and verification are then do"
+          },
+          {
+            "question": "What future research directions, constraints, or sustainability concerns does the paper discuss?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": false,
+            "route_used": "hybrid_both",
+            "best_score": 0.5588184426229508,
+            "max_lexical_score": 0.10604685813825127,
+            "content_overlap_score": 0.5454545454545454,
+            "citations": [
+              "GENAI_modular2.pdf - Page 25",
+              "GENAI_modular2.pdf - Page 22",
+              "GENAI_modular2.pdf - Page 25",
+              "GENAI_modular2.pdf - Page 5"
+            ],
+            "note": "The evidence supports these future research directions and sustainability concerns, but it does not provide the full continuation of the sentence on \u2018innovative approaches to model development\u2019 beyond what is shown, so that specific detail is missing [Source 1].",
+            "answer_preview": "The paper discusses several future directions and concerns: expand training beyond the current project\u2019s dataset; integrate the LFM with UDT frameworks; improve urban flow data quality, reliability, and availability through better collection methods, emerging technologies, and stakeholder collaborat"
+          }
+        ]
+      },
+      "manual_questions_graduate_project_20260419.json": {
+        "summary": {
+          "dataset_size": 6,
+          "answer_supported_rate": 1.0,
+          "retrieval_supported_rate": 1.0,
+          "selector_trigger_rate": 0.5,
+          "retrieval_status": {
+            "strong_rate": 1.0,
+            "weak_rate": 0.0,
+            "unsupported_rate": 0.0
+          }
+        },
+        "results": [
+          {
+            "question": "What is the main objective of this graduate project on a single pass double flow solar air heater?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": true,
+            "route_used": "synopsis_first",
+            "best_score": 0.4392980158730159,
+            "max_lexical_score": 0.24742451580070896,
+            "content_overlap_score": 0.6666666666666666,
+            "citations": [
+              "Graduate Project.pdf - Page 15",
+              "Graduate Project.pdf - Page 4",
+              "Graduate Project.pdf - Page 41",
+              "Graduate Project.pdf - Page 13"
+            ],
+            "note": "Source 1 states the project objectives directly. Source 2 and Source 3 support that the study focuses on performance improvement of a double-flow solar air heater with perforated absorber plates, but Source 1 gives the clearest main objective.",
+            "answer_preview": "The main objective was to construct and experimentally evaluate a solar air heater\u2014first with a rectangular smooth duct and then with a perforated absorber plate\u2014and compare their performance to assess any enhancement [Source 1].\n\nReferences:\n- [1] Graduate Project.pdf - Page 15\n- [2] Graduate Proje"
+          },
+          {
+            "question": "How does the project describe its methodology or experimental setup?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": false,
+            "route_used": "hybrid_both",
+            "best_score": 0.33795151515151517,
+            "max_lexical_score": 0.05664546948517829,
+            "content_overlap_score": 0.16666666666666666,
+            "citations": [
+              "Graduate Project.pdf - Page 15",
+              "Graduate Project.pdf - Page 5",
+              "Graduate Project.pdf - Page 15",
+              "Graduate Project.pdf - Page 2"
+            ],
+            "note": "The evidence directly describes the fabrication materials, the use of a solar simulator, temperature recording with a data logger, and the performance analysis metric. It does not provide more detailed experimental conditions beyond those points.",
+            "answer_preview": "The project\u2019s methodology was to fabricate solar air heaters in two duct configurations\u2014plane duct and perforated absorber duct\u2014using a plywood casing, aluminum material, and a glass cover. The experiments were then run for the three configurations using a solar simulator, with temperatures recorded"
+          },
+          {
+            "question": "What components or instruments are used in the test rig, such as the solar air heater, simulator, sensors, or flow meter?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": true,
+            "route_used": "hybrid_both",
+            "best_score": 0.4055868852459017,
+            "max_lexical_score": 0.4150805000087558,
+            "content_overlap_score": 0.7857142857142857,
+            "citations": [
+              "Graduate Project.pdf - Page 16",
+              "Graduate Project.pdf - Page 24",
+              "Graduate Project.pdf - Page 17",
+              "Graduate Project.pdf - Page 7"
+            ],
+            "note": "The evidence directly lists the main components of the experimental test rig in Source 1, and Source 2 adds some operating/control instruments used during experimentation. The question asks generally what components or instruments are used, so this is supported.",
+            "answer_preview": "The test rig includes a solar air heater, solar simulator, pyranometer, temperature sensors, vortex flow meter, blowers, a data logger and multiplexer, and a digital manometer [Source 1]. The experiment also describes dimmerstats, gate valve, and blower speed regulators as part of the setup/control "
+          },
+          {
+            "question": "What results or performance trends are reported in the experimental analysis?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": true,
+            "route_used": "synopsis_first",
+            "best_score": 0.5399896955503514,
+            "max_lexical_score": 0.1157576672703033,
+            "content_overlap_score": 0.6666666666666666,
+            "citations": [
+              "Graduate Project.pdf - Page 30",
+              "Graduate Project.pdf - Page 4",
+              "Graduate Project.pdf - Page 1",
+              "Graduate Project.pdf - Page 5"
+            ],
+            "note": "The evidence supports these reported trends and performance results, but it does not provide additional quantitative details beyond the cited maxima and comparative trends.",
+            "answer_preview": "The experimental analysis reports that the temperature rise coefficient decreases as Reynolds number increases, while perforated configurations perform better than the non-perforated one; configuration 3 (d=8 mm) has the highest temperature rise coefficient among the three [Source 1]. It also report"
+          },
+          {
+            "question": "How does the project compare the base model with the perforated or modified configurations?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": false,
+            "route_used": "hybrid_both",
+            "best_score": 0.4610587064676618,
+            "max_lexical_score": 0.17419794994110588,
+            "content_overlap_score": 0.5,
+            "citations": [
+              "Graduate Project.pdf - Page 29",
+              "Graduate Project.pdf - Page 28",
+              "Graduate Project.pdf - Page 40",
+              "Graduate Project.pdf - Page 31"
+            ],
+            "note": "The evidence shows side-by-side comparisons of the base configuration and two perforated configurations (d=5 mm and d=8 mm) across multiple plots/table entries. It does not provide the numerical results or a qualitative conclusion about which configuration performs best, only that these configurations are compared.",
+            "answer_preview": "The project compares the base model against perforated configurations by presenting the same performance metrics versus Reynolds number for each case: the base configuration and perforated configurations with d=5 mm and d=8 mm. This is shown for thermal efficiency, thermohydraulic efficiency, and te"
+          },
+          {
+            "question": "What uncertainties, limitations, or measurement considerations are discussed in the report?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": false,
+            "route_used": "hybrid_both",
+            "best_score": 0.4720505854800937,
+            "max_lexical_score": 0.12305205392747873,
+            "content_overlap_score": 0.4444444444444444,
+            "citations": [
+              "Graduate Project.pdf - Page 28",
+              "Graduate Project.pdf - Page 29",
+              "Graduate Project.pdf - Page 25",
+              "Graduate Project.pdf - Page 26"
+            ],
+            "note": "The evidence supports uncertainty/measurement considerations, but the actual numerical uncertainty values in Tables 6.2 and 6.3 are not shown in the provided excerpts, so only the types of uncertainties and the variables measured can be stated from the evidence.",
+            "answer_preview": "The report discusses uncertainty analysis for thermal efficiency and thermohydraulic efficiency across configurations and six flow-rate conditions [Source 3]. It lists uncertainties in the independent variables used in the calculations: volume flow rate Q (\u00b10.0001 m3/hr), temperature \u0394T (\u00b10.01 K), p"
+          }
+        ]
+      },
+      "manual_questions_indian_realestate_20260420.json": {
+        "summary": {
+          "dataset_size": 6,
+          "answer_supported_rate": 1.0,
+          "retrieval_supported_rate": 1.0,
+          "selector_trigger_rate": 0.6666666666666666,
+          "retrieval_status": {
+            "strong_rate": 1.0,
+            "weak_rate": 0.0,
+            "unsupported_rate": 0.0
+          }
+        },
+        "results": [
+          {
+            "question": "What is the main goal of this study on Bangalore's residential real estate market, and which buyer-preference dimensions does it examine?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": true,
+            "route_used": "hybrid_both",
+            "best_score": 0.38929801587301593,
+            "max_lexical_score": 0.18130534828984257,
+            "content_overlap_score": 0.6428571428571429,
+            "citations": [
+              "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 2",
+              "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 2",
+              "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 6",
+              "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 6"
+            ],
+            "note": "The evidence clearly states the study\u2019s purpose and lists several preference variables. The excerpt of variables appears truncated, so only the dimensions explicitly shown in the evidence are included.",
+            "answer_preview": "The main goal is to examine emerging preferences of residential buyers in Bangalore\u2019s housing market, so developers can understand desired housing structures and facilities and create the right product offer [Source 1]. The study examines buyer-preference dimensions including the primary purchase cr"
+          },
+          {
+            "question": "What market conditions or structural problems in Bangalore's housing market does the paper describe as motivating the study?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": true,
+            "route_used": "hybrid_both",
+            "best_score": 0.3666694638694639,
+            "max_lexical_score": 0.17000368039113178,
+            "content_overlap_score": 0.5833333333333334,
+            "citations": [
+              "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 3",
+              "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 3",
+              "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 2",
+              "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 6"
+            ],
+            "note": "The evidence supports several structural problems and market conditions, but it does not provide a single explicit, exhaustive list of all Bangalore-specific issues beyond those cited. It clearly mentions a tough market phase, affordability/finance constraints, infrastructure and regulatory hurdles, overpopulation in some areas, and changing/dynamic market conditions in Bangalore [Source 1][Source 2][Source 4].",
+            "answer_preview": "The paper motivates the study by describing Bangalore\u2019s residential market as facing a \u201ctough phase\u201d and \u201cabove mentioned problems,\u201d and it points to broader housing-market impediments such as overpopulation of certain areas, lack of affordable finance, and infrastructure and regulatory hurdles [Sou"
+          },
+          {
+            "question": "What does the paper report about preferred housing types and living environments, such as apartments versus villas or city location versus peaceful surroundings?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": false,
+            "route_used": "hybrid_both",
+            "best_score": 0.2836558082143487,
+            "max_lexical_score": 0.17234892220111644,
+            "content_overlap_score": 0.45,
+            "citations": [
+              "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 4",
+              "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 6",
+              "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 4",
+              "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 4"
+            ],
+            "note": "The evidence directly addresses apartments versus villas and city location versus peaceful surroundings [Source 1]. It does not provide a broader comparison beyond those points.",
+            "answer_preview": "The paper says buyers who chose apartments wanted to be within the city region, while those who chose villas wanted a more peaceful environment. It also notes that apartments are more economical, but some buyers avoid them because of limited space and privacy and prefer villas instead [Source 1].\n\nR"
+          },
+          {
+            "question": "What bedroom counts, apartment-size ranges, and budget bands were most preferred by buyers in the study?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": true,
+            "route_used": "synopsis_first",
+            "best_score": 0.3294330390920555,
+            "max_lexical_score": 0.2769926742493507,
+            "content_overlap_score": 0.625,
+            "citations": [
+              "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 4",
+              "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 4",
+              "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 3",
+              "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 2"
+            ],
+            "note": "The evidence directly reports bedroom preferences, apartment-size preferences, and budget bands. One nuance: Source 1 says 3-bedroom was the top housing preference, but the apartment-size discussion maps 1000\u20131400 sq.ft. to two-bedroom apartments and 1400\u20131800 sq.ft. to three-bedroom apartments; it does not provide a complete bedroom-by-size crosswalk for every bedroom count.",
+            "answer_preview": "Buyers most preferred 3-bedroom housing (55%), followed by 1-bedroom (26%), 4-bedroom (14%), 2-bedroom (not clearly stated in the excerpt\u2019s housing list beyond the apartment-size split), and 5-bedroom (2%) [Source 1]. For apartments, the most preferred size bands were 1200\u20131400 sq.ft. (32.7%) and 10"
+          },
+          {
+            "question": "What does the paper say about newer buyer preferences for features such as UPVC windows, smart homes, and green buildings?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": false,
+            "route_used": "hybrid_both",
+            "best_score": 0.5248184426229509,
+            "max_lexical_score": 0.28577858728136607,
+            "content_overlap_score": 0.8823529411764706,
+            "citations": [
+              "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 6",
+              "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 5",
+              "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 5",
+              "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 5"
+            ],
+            "note": "The evidence directly supports the buyer preferences for UPVC windows, smart homes, and green buildings, along with the implication that developers should respond by offering these features. It does not provide a deeper explanation of all market segments beyond noting the premium segment and the nascent stage of green buildings.",
+            "answer_preview": "The paper says buyers are increasingly preferring newer features and technologies: 76% preferred smart homes and 84% preferred green buildings, indicating fast adoption of modern technology and western preferences [Source 2][Source 4]. It also notes that UPVC windows are more preferred because they "
+          },
+          {
+            "question": "What recommendations does the discussion section give to residential property developers in Bangalore based on the study findings?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": true,
+            "route_used": "chunk_first",
+            "best_score": 0.3471253467843632,
+            "max_lexical_score": 0.1688743354406511,
+            "content_overlap_score": 0.8666666666666667,
+            "citations": [
+              "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 6",
+              "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 6",
+              "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 6",
+              "AStudyoftheEmergingTrendsinIndianRealestate.pdf - Page 6"
+            ],
+            "note": "The evidence directly states these recommendations in the discussion section. The supplied excerpt is cut off at the end, so any further recommendation text beyond brand-building, location planning, and amenities is not fully visible [Source 2].",
+            "answer_preview": "The discussion recommends that Bangalore residential developers focus on apartments, especially two- and three-bedroom units in the 1200\u20131800 sq.ft. range and consider more economy housing because current market prices do not match buyers\u2019 budgets [Source 1]. It also suggests that developers offer s"
+          }
+        ]
+      },
+      "manual_questions_prefabricated_kbe_20260420.json": {
+        "summary": {
+          "dataset_size": 6,
+          "answer_supported_rate": 1.0,
+          "retrieval_supported_rate": 1.0,
+          "selector_trigger_rate": 0.3333333333333333,
+          "retrieval_status": {
+            "strong_rate": 1.0,
+            "weak_rate": 0.0,
+            "unsupported_rate": 0.0
+          }
+        },
+        "results": [
+          {
+            "question": "What core design and standardization problems with prefabricated cantilevered components is this paper trying to solve?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": false,
+            "route_used": "chunk_first",
+            "best_score": 0.3199626733921816,
+            "max_lexical_score": 0.1376621294740524,
+            "content_overlap_score": 0.5833333333333334,
+            "citations": [
+              "buildings-13-02980.pdf - Page 6",
+              "buildings-13-02980.pdf - Page 4",
+              "buildings-13-02980.pdf - Page 4",
+              "buildings-13-02980.pdf - Page 4"
+            ],
+            "note": "The evidence supports the core problems as complex component information, inconsistent reinforcement/layout rules, lack of an independent design module in software, and insufficient standardization/safety after primary splitting [Source 1][Source 2]. The evidence does not provide a full detailed list beyond these points.",
+            "answer_preview": "The paper is trying to address the lack of standardization and design support for prefabricated cantilevered components. Specifically, it notes that conventional methods are inadequate because these components have complex, non-rectangular shapes, varied reinforcement settings and layout rules, and "
+          },
+          {
+            "question": "How does the paper combine KBE, secondary split modularization, and Revit secondary development in its research methodology?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": true,
+            "route_used": "hybrid_both",
+            "best_score": 0.5341934426229509,
+            "max_lexical_score": 0.22869132475603393,
+            "content_overlap_score": 0.75,
+            "citations": [
+              "buildings-13-02980.pdf - Page 5",
+              "buildings-13-02980.pdf - Page 1",
+              "buildings-13-02980.pdf - Page 5",
+              "buildings-13-02980.pdf - Page 3"
+            ],
+            "note": "The evidence directly states that the study is guided by KBE, that the modules undergo secondary split modularization, and that Revit secondary development is used to establish the modular design system. The evidence does not provide a more detailed step-by-step procedure beyond this combined methodological description.",
+            "answer_preview": "The paper\u2019s methodology is to use KBE as the guiding framework, apply secondary split modularization to the cantilever structural modules, and then implement the system through Revit secondary development with object-oriented knowledge representation to build a responsive modular design system [Sour"
+          },
+          {
+            "question": "What kinds of cantilevered structural components are discussed, and what design challenges do traditional 3D modeling methods create for them?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": false,
+            "route_used": "hybrid_both",
+            "best_score": 0.5659060813150365,
+            "max_lexical_score": 0.17712147217225968,
+            "content_overlap_score": 0.6875,
+            "citations": [
+              "buildings-13-02980.pdf - Page 4",
+              "buildings-13-02980.pdf - Page 4",
+              "buildings-13-02980.pdf - Page 4",
+              "buildings-13-02980.pdf - Page 4"
+            ],
+            "note": "The evidence supports the type of components and the design challenges, but the excerpt is truncated before listing all consequences of those challenges.",
+            "answer_preview": "The evidence discusses prefabricated cantilevered structural components [Source 1]. It says traditional 3D modeling in common software like Autodesk Revit 2016 uses sketch-based outlines or family-based modeling with extrusion, sweep, and cut, followed by rebar placement [Source 1]. These methods cr"
+          },
+          {
+            "question": "What functions or workflow advantages does the modular design tool provide during modeling, reinforcement modification, or component management?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": true,
+            "route_used": "synopsis_first",
+            "best_score": 0.520920218579235,
+            "max_lexical_score": 0.1495975002542409,
+            "content_overlap_score": 0.5625,
+            "citations": [
+              "buildings-13-02980.pdf - Page 20",
+              "buildings-13-02980.pdf - Page 21",
+              "buildings-13-02980.pdf - Page 19",
+              "buildings-13-02980.pdf - Page 20"
+            ],
+            "note": "The evidence directly supports advantages during modeling, reinforcement modification, and component management, but it does not provide a full feature list beyond these points.",
+            "answer_preview": "The modular design tool provides several workflow advantages: it verifies structural functionality and improves safety through digital calculations, allows targeted reinforcement changes without regenerating the whole component/module, automatically annotates component numbers and exports rebar mate"
+          },
+          {
+            "question": "What quantitative results does the case comparison report for the modular design tool versus traditional modeling, including efficiency improvement and component coverage?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": false,
+            "route_used": "hybrid_both",
+            "best_score": 0.5161775696070778,
+            "max_lexical_score": 0.2771991276483907,
+            "content_overlap_score": 0.5555555555555556,
+            "citations": [
+              "buildings-13-02980.pdf - Page 18",
+              "buildings-13-02980.pdf - Page 19",
+              "buildings-13-02980.pdf - Page 1",
+              "buildings-13-02980.pdf - Page 19"
+            ],
+            "note": "The evidence directly provides both requested quantitative results: efficiency improvement and component coverage versus traditional modeling. The remaining text is truncated after the 238-component limitation, but the key figures are present.",
+            "answer_preview": "The report says the modular design tool improves design efficiency by 72.92% compared with traditional modeling tools. It also covers 6158 prefabricated components, which is 96.1% of the project, while 238 components are not covered, or 3.9% [Source 2] [Source 4].\n\nReferences:\n- [1] buildings-13-029"
+          },
+          {
+            "question": "What limitations of the current system and future research directions does the paper identify?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": false,
+            "route_used": "hybrid_both",
+            "best_score": 0.5203224748810154,
+            "max_lexical_score": 0.17653664018687307,
+            "content_overlap_score": 0.5555555555555556,
+            "citations": [
+              "buildings-13-02980.pdf - Page 20",
+              "buildings-13-02980.pdf - Page 20",
+              "buildings-13-02980.pdf - Page 20",
+              "buildings-13-02980.pdf - Page 21"
+            ],
+            "note": "The evidence directly states the system\u2019s limitations and future work points. It does not provide more specific limitations beyond the ones cited, so the answer is limited to those supported items.",
+            "answer_preview": "The paper identifies several limitations of the current system: it focuses on reinforced concrete structural members and notes there are fewer studies on concrete\u2013steel structures; some components could not be modeled with the current modular design tool, showing the model base needs to be expanded;"
+          }
+        ]
+      },
+      "manual_questions_principal_sample_life_insurance_policy_20260419.json": {
+        "summary": {
+          "dataset_size": 6,
+          "answer_supported_rate": 1.0,
+          "retrieval_supported_rate": 1.0,
+          "selector_trigger_rate": 0.6666666666666666,
+          "retrieval_status": {
+            "strong_rate": 0.8333333333333334,
+            "weak_rate": 0.16666666666666666,
+            "unsupported_rate": 0.0
+          }
+        },
+        "results": [
+          {
+            "question": "What key definitions or core terms does the policy establish in Part I?",
+            "answer_supported": true,
+            "retrieval_status": "weak",
+            "selector_triggered": true,
+            "route_used": "section_first",
+            "best_score": 0.020029032258064544,
+            "max_lexical_score": 0.08954282181387635,
+            "content_overlap_score": 0.625,
+            "citations": [
+              "Principal-Sample-Life-Insurance-Policy.pdf - Page 13",
+              "Principal-Sample-Life-Insurance-Policy.pdf - Page 15",
+              "Principal-Sample-Life-Insurance-Policy.pdf - Page 6",
+              "Principal-Sample-Life-Insurance-Policy.pdf - Page 16"
+            ],
+            "note": "The evidence supports several Part I definitions, but it does not show the full complete list of all terms in Part I because the excerpt is truncated.",
+            "answer_preview": "Part I establishes definitions for core policy terms including Physician, Policy Anniversary, Policyholder, Prior Policy, Proof of Good Health, Qualifying Event, and related defined terms [Source 1]. It also defines a record as something on or transmitted by paper or electronic media consistent with"
+          },
+          {
+            "question": "What does Part II say about policy administration or the contract between the employer and Principal?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": true,
+            "route_used": "hybrid_both",
+            "best_score": 0.6025983890073442,
+            "max_lexical_score": 0.2210708373072868,
+            "content_overlap_score": 0.7142857142857143,
+            "citations": [
+              "Principal-Sample-Life-Insurance-Policy.pdf - Page 19",
+              "Principal-Sample-Life-Insurance-Policy.pdf - Page 16",
+              "Principal-Sample-Life-Insurance-Policy.pdf - Page 18",
+              "Principal-Sample-Life-Insurance-Policy.pdf - Page 17"
+            ],
+            "note": "The evidence directly addresses both the contract and policy administration provisions in Part II. It does not provide additional detail beyond those points, but it is sufficient to answer the question.",
+            "answer_preview": "Part II says the policy administration section is part of the contract, and that the Group Policy, current Certificate, attached Policyholder application, and any Member applications make up the entire contract. It also says The Principal is obligated only as provided in the Group Policy and is not "
+          },
+          {
+            "question": "What eligibility requirements or individual rights are described in Part III?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": true,
+            "route_used": "section_first",
+            "best_score": 0.4619218017057569,
+            "max_lexical_score": 0.26615862286492975,
+            "content_overlap_score": 1.0,
+            "citations": [
+              "Principal-Sample-Life-Insurance-Policy.pdf - Page 26",
+              "Principal-Sample-Life-Insurance-Policy.pdf - Page 44",
+              "Principal-Sample-Life-Insurance-Policy.pdf - Page 27",
+              "Principal-Sample-Life-Insurance-Policy.pdf - Page 45"
+            ],
+            "note": "The evidence supports the eligibility requirements in Part III and also shows one individual right related to individual purchase rights. The provided excerpts do not include the full Part III, so any other rights beyond those shown here are not covered [Source 1][Source 2].",
+            "answer_preview": "Part III describes eligibility requirements for several kinds of coverage: Member Life Insurance, Member Accidental Death and Dismemberment Insurance, and Dependent Life Insurance. A person is eligible for Member Life Insurance after 30 consecutive days of continuous Active Work with the Policyholde"
+          },
+          {
+            "question": "What member life insurance benefits are described in Part IV?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": true,
+            "route_used": "section_first",
+            "best_score": 0.2624703296703296,
+            "max_lexical_score": 0.39879731508497934,
+            "content_overlap_score": 1.0,
+            "citations": [
+              "Principal-Sample-Life-Insurance-Policy.pdf - Page 47",
+              "Principal-Sample-Life-Insurance-Policy.pdf - Page 49",
+              "Principal-Sample-Life-Insurance-Policy.pdf - Page 46",
+              "Principal-Sample-Life-Insurance-Policy.pdf - Page 43"
+            ],
+            "note": "The supplied pages show Part IV, Section A, Member Life Insurance, including the Schedule of Insurance, Coverage During Disability, and beneficiary/death benefit provisions. The evidence does not provide the complete full list of all member life insurance benefits in Part IV, only these described items.",
+            "answer_preview": "Part IV describes member life insurance benefits including: the scheduled benefit for an insured member based on class [Source 3]; member life insurance coverage during disability, allowing continued Member Life, Member Accidental Death and Dismemberment, and Dependent Life Insurance coverage if qua"
+          },
+          {
+            "question": "What does the policy say about when member insurance ends or what continuation or conversion rights a member may have?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": false,
+            "route_used": "hybrid_both",
+            "best_score": 0.406420218579235,
+            "max_lexical_score": 0.2970801464324216,
+            "content_overlap_score": 0.7,
+            "citations": [
+              "Principal-Sample-Life-Insurance-Policy.pdf - Page 38",
+              "Principal-Sample-Life-Insurance-Policy.pdf - Page 38",
+              "Principal-Sample-Life-Insurance-Policy.pdf - Page 35",
+              "Principal-Sample-Life-Insurance-Policy.pdf - Page 42"
+            ],
+            "note": "The evidence directly states termination triggers and continuation provisions, including an individual purchase right. It does not provide the full details of what the individual policy covers beyond the notice and 31-day application/payment window, so that part is only partially supported.",
+            "answer_preview": "Member insurance ends at the earliest of several events, including termination of the group policy, nonpayment of premium, the member\u2019s requested date, loss of member status or eligible class, retirement, or when the member ceases Active Work [Source 3]. The policy also says coverage may be continue"
+          },
+          {
+            "question": "What claim, notice, or proof requirements does the policy describe for receiving benefits?",
+            "answer_supported": true,
+            "retrieval_status": "strong",
+            "selector_triggered": false,
+            "route_used": "hybrid_both",
+            "best_score": 0.4265868852459017,
+            "max_lexical_score": 0.460312132646568,
+            "content_overlap_score": 0.7,
+            "citations": [
+              "Principal-Sample-Life-Insurance-Policy.pdf - Page 61",
+              "Principal-Sample-Life-Insurance-Policy.pdf - Page 61",
+              "Principal-Sample-Life-Insurance-Policy.pdf - Page 49",
+              "Principal-Sample-Life-Insurance-Policy.pdf - Page 62"
+            ],
+            "note": "The evidence directly states the notice and proof-of-loss deadlines and contents, plus the conditions for claim forms and additional proof/examinations [Source 1][Source 2][Source 4]. It does not give a complete exhaustive list of every possible claim condition beyond those items.",
+            "answer_preview": "The policy requires: written notice of claim to The Principal within 20 days after the date of loss; claim forms will be provided after notice is received; and written proof of loss within 90 days after the date of loss, including the date, nature, and extent of the loss [Source 1]. If claim forms a"
+          }
+        ]
+      }
+    }
+  }
+}

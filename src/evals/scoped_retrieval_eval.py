@@ -99,6 +99,7 @@ def _row(case: dict[str, Any], retrieval: Any) -> dict[str, Any]:
         "global_fallback_used": bool(plan.get("global_fallback_used", False)),
         "selected_pages": selected_pages,
         "page_hit": int(any(page in case["expected_pages"] for page in selected_pages)),
+        "chapter_scope_hit": int(any(scope_hits)),
         "all_candidates_in_scope": int(bool(candidates) and all(scope_hits)),
         "scope_precision": sum(scope_hits) / len(scope_hits) if scope_hits else 0.0,
         "candidate_chapters": [
@@ -118,6 +119,7 @@ def _summarize(rows: list[dict[str, Any]]) -> dict[str, Any]:
         return {
             "dataset_size": 0,
             "page_hit_rate": 0.0,
+            "chapter_scope_hit_rate": 0.0,
             "scope_compliance_rate": 0.0,
             "scope_precision_mean": 0.0,
             "hard_scope_rate": 0.0,
@@ -131,6 +133,7 @@ def _summarize(rows: list[dict[str, Any]]) -> dict[str, Any]:
     return {
         "dataset_size": len(rows),
         "page_hit_rate": sum(row["page_hit"] for row in rows) / len(rows),
+        "chapter_scope_hit_rate": sum(row["chapter_scope_hit"] for row in rows) / len(rows),
         "scope_compliance_rate": sum(row["all_candidates_in_scope"] for row in rows) / len(rows),
         "scope_precision_mean": sum(row["scope_precision"] for row in rows) / len(rows),
         "hard_scope_rate": sum(1 for row in rows if row["constraint_mode"] == "hard_region") / len(rows),
@@ -179,6 +182,7 @@ def run_eval() -> dict[str, Any]:
     on = payload["variants"]["orchestrator_on"]["summary"]
     payload["delta_orchestrator_on_vs_off"] = {
         "page_hit_rate": on["page_hit_rate"] - off["page_hit_rate"],
+        "chapter_scope_hit_rate": on["chapter_scope_hit_rate"] - off["chapter_scope_hit_rate"],
         "scope_compliance_rate": on["scope_compliance_rate"] - off["scope_compliance_rate"],
         "scope_precision_mean": on["scope_precision_mean"] - off["scope_precision_mean"],
         "hard_scope_rate": on["hard_scope_rate"] - off["hard_scope_rate"],

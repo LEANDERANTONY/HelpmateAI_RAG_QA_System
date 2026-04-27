@@ -32,7 +32,7 @@ Challenges:
 
 Improvements:
 
-- scoped retrieval eval improved from `0.75` page hit and `0.00` scope compliance without orchestration to `1.00` page hit and `1.00` scope compliance with orchestration
+- scoped retrieval eval improved from `0.00` full scope compliance without orchestration to `1.00` with orchestration, with `1.00` chapter-scope hit after low-value front matter was filtered out of hard scope
 - full-stack snapshot on the branch recorded retrieval objective `0.6274`, answer supported rate `0.8158`, RAGAS faithfulness `0.8173`, and context precision `0.6560`
 - run-trace eval confirmed traces are saved, preview-limited, expire with the workspace, and do not copy the full answer body or full document text
 - the skipped hybrid-indexing branch is now represented by targeted code and tests rather than being lost

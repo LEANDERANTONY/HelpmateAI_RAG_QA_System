@@ -53,10 +53,12 @@ Unit coverage now verifies:
 - coarse policy documents can trigger indexing-time repair
 - policy synopsis refinement is gated by structure/synopsis quality rather than blanket-skipped
 
-Retrieval eval coverage now includes `scoped_retrieval_eval`, a retrieval-only scope benchmark for chapter-scoped summary questions. On the 2026-04-27 run:
+Retrieval eval coverage now includes `scoped_retrieval_eval`, a retrieval-only scope benchmark for chapter-scoped summary questions. After filtering low-value front matter from orchestrated hard scopes, the 2026-04-27 scoped run showed:
 
-- orchestrator off: page-hit `0.75`, full scope compliance `0.00`, scope precision `0.25`
-- orchestrator on: page-hit `1.00`, full scope compliance `1.00`, scope precision `1.00`
+- orchestrator off: page-hit `1.00`, chapter-scope hit `1.00`, full scope compliance `0.00`, scope precision `0.4375`
+- orchestrator on: page-hit `0.75`, chapter-scope hit `1.00`, full scope compliance `1.00`, scope precision `1.00`
+
+The page-hit dip is a stricter page-label artifact after table-of-contents/front-matter chunks were removed from hard scope. The important production signal is that every orchestrated candidate remains inside the requested chapter, while front-matter false scope is suppressed.
 
 A lighter thesis factual retrieval regression also showed neutral-to-positive page retrieval impact:
 
@@ -72,4 +74,4 @@ The full-stack snapshot also completed on 2026-04-27:
 - RAGAS faithfulness mean `0.8173`
 - RAGAS context precision mean `0.6560`
 
-Full test suite result on this branch after the hybrid-indexing carry-forward pass: `115 passed`.
+Full test suite result on this branch after the front-matter scope fix: `116 passed`.

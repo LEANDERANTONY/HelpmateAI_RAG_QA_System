@@ -28,6 +28,16 @@ class RetrievalPlanner:
     VALID_CONSTRAINT_MODES = {"none", "soft_local", "soft_multi_region", "hard_region"}
     VALID_SCOPE_STRICTNESS = {"none", "soft", "hard"}
     VALID_REGION_KINDS = {"overview", "definitions", "procedure", "evidence", "discussion", "rules", "appendix", "general"}
+    LOW_VALUE_FRONT_MATTER_KINDS = {
+        "acknowledgements",
+        "certificate",
+        "contents",
+        "declaration",
+        "dedication",
+        "list_of_figures",
+        "list_of_tables",
+        "preface",
+    }
     VALID_CONTENT_TYPES = {
         "general",
         "definition",
@@ -241,6 +251,16 @@ class RetrievalPlanner:
         return "\n".join(prompt_lines)
 
     @staticmethod
+    def _is_low_value_synopsis(synopsis: SectionSynopsisRecord) -> bool:
+        metadata = synopsis.metadata or {}
+        front_matter_kind = str(metadata.get("front_matter_kind", "")).lower()
+        return bool(
+            metadata.get("topology_low_value")
+            or metadata.get("low_value_section_flag")
+            or front_matter_kind in RetrievalPlanner.LOW_VALUE_FRONT_MATTER_KINDS
+        )
+
+    @staticmethod
     def _document_map_item(synopsis: SectionSynopsisRecord) -> dict[str, Any]:
         metadata = synopsis.metadata or {}
         section_path = metadata.get("section_path", [])
@@ -275,6 +295,8 @@ class RetrievalPlanner:
             return []
         scored: list[tuple[float, SectionSynopsisRecord]] = []
         for synopsis in synopses:
+            if self._is_low_value_synopsis(synopsis):
+                continue
             item = self._document_map_item(synopsis)
             searchable = " ".join(
                 [
@@ -311,6 +333,7 @@ class RetrievalPlanner:
         document_map = [
             self._document_map_item(synopsis)
             for synopsis in synopses[: self.settings.retrieval_orchestrator_max_sections]
+            if not self._is_low_value_synopsis(synopsis)
         ]
         prompt = {
             "task": "Plan retrieval scope for a grounded long-document QA system. Do not answer the question.",
@@ -556,6 +579,8 @@ class RetrievalPlanner:
         chapter_number, chapter_title = next(iter(chapter_keys))
         scored: list[tuple[int, SectionSynopsisRecord]] = []
         for synopsis in synopses:
+            if self._is_low_value_synopsis(synopsis):
+                continue
             metadata = synopsis.metadata or {}
             candidate_chapter_number = str(metadata.get("chapter_number", "") or "")
             candidate_chapter_title = str(metadata.get("chapter_title", "") or "").lower()
@@ -706,6 +731,9 @@ class RetrievalPlanner:
         deterministic_plan: RetrievalPlan,
     ) -> tuple[QueryProfile, RetrievalPlan] | None:
         valid_scope_ids = self._valid_section_ids(payload.get("resolved_scope_ids"), synopses)
+        low_value_scope_ids = {synopsis.section_id for synopsis in synopses if self._is_low_value_synopsis(synopsis)}
+        if not metadata_filters.get("page_labels"):
+            valid_scope_ids = [section_id for section_id in valid_scope_ids if section_id not in low_value_scope_ids]
         confidence = self._coerce_float(payload.get("confidence"), 0.0)
         if confidence < self.settings.retrieval_orchestrator_min_confidence:
             return None

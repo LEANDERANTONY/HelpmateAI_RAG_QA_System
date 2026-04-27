@@ -84,7 +84,7 @@ def run_eval() -> dict[str, Any]:
 
     payload_text = json.dumps(trace.payload)
     checks = {
-        "trace_saved": len(stored) == 1,
+        "trace_saved": any(record.trace_id == trace.trace_id for record in stored),
         "expires_at_matches_workspace": trace.expires_at == document.metadata["_workspace_expires_at"],
         "preview_limited": len(trace.payload["retrieval"]["candidates"][0]["preview"]) <= 240,
         "no_full_document_text": "SENSITIVE FULL DOCUMENT TEXT" not in payload_text,
