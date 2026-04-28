@@ -37,6 +37,30 @@ This is important because a system can retrieve the right page while still give 
 
 As of the stabilized `2026-04-19` snapshot, the repo treats these tables as the current reference view of the benchmark stack.
 
+## Methodology And Caveats
+
+The current benchmark is useful, but it should be read precisely.
+
+- The main four-document suite contains documents and question families used during HelpmateAI development, so it is a tuned workload for HelpmateAI and a less tuned workload for external vendors.
+- Vendor answer-quality rows are generated with the shared Helpmate answer generator on top of vendor retrieval contexts. This makes retrieval context quality easier to compare, but it does not evaluate each vendor's full native answer product.
+- OpenAI File Search is queried with `rewrite_query=True` and `max_num_results=5`.
+- Vectara is queried with `limit=5`.
+- Vendor snippets are truncated to 400 characters before answer generation and `ragas` scoring.
+- HelpmateAI uses its own final evidence bundle, currently `final_top_k=4`, after planning, fusion, reranking, and optional reorder-only evidence selection.
+- `ragas` uses the configured OpenAI-backed evaluator and no-reference metrics because these datasets are retrieval-labeled rather than gold-answer datasets.
+- Faithfulness can be affected by abstention behavior. A system that refuses unsupported questions may score differently from a system that attempts every answer.
+
+Therefore, the benchmark supports a narrow claim: HelpmateAI outperforms the tested vendor retrieval configurations on this project workload. It is not yet a broad claim that HelpmateAI beats every tuned Vectara or OpenAI deployment on arbitrary documents.
+
+The next stronger protocol is:
+
+- use never-tuned documents and fresh questions
+- equalize context budgets across systems
+- report attempted-only faithfulness separately from all-query faithfulness
+- report abstention/support rates beside answer-quality metrics
+- break scores down by intent type
+- rerun with a second judge model family
+
 ### Retrieval-Level Comparison
 
 | Document | Ours hit/MRR | Vectara retrieval | OpenAI retrieval |

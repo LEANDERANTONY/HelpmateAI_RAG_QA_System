@@ -1,7 +1,12 @@
 from __future__ import annotations
 
+import logging
+
 from src.config import Settings
 from src.schemas import RetrievalCandidate
+
+
+logger = logging.getLogger(__name__)
 
 
 class Reranker:
@@ -23,6 +28,7 @@ class Reranker:
             for candidate, score in zip(candidates, scores):
                 candidate.rerank_score = float(score)
             candidates.sort(key=lambda candidate: candidate.rerank_score or 0.0, reverse=True)
-        except Exception:
+        except Exception as exc:
+            logger.warning("Reranker failed; falling back to fused-score ordering (%s)", exc.__class__.__name__)
             candidates.sort(key=lambda candidate: candidate.fused_score, reverse=True)
         return candidates[:top_k]

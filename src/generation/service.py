@@ -1,9 +1,13 @@
 from __future__ import annotations
 import json
+import logging
 
 from src.config import Settings
 from src.generation.prompts import build_grounded_prompt
 from src.schemas import AnswerResult, CacheStatus, RetrievalCandidate, RetrievalResult
+
+
+logger = logging.getLogger(__name__)
 
 
 class AnswerGenerator:
@@ -15,7 +19,8 @@ class AnswerGenerator:
                 from openai import OpenAI
 
                 self.client = OpenAI(api_key=settings.openai_api_key)
-            except Exception:
+            except Exception as exc:
+                logger.warning("Answer generator client setup failed (%s)", exc.__class__.__name__)
                 self.client = None
 
     @staticmethod
@@ -109,6 +114,7 @@ class AnswerGenerator:
             )
             content = response.choices[0].message.content or "{}"
         except Exception as exc:
+            logger.warning("Answer model call failed; returning local fallback (%s)", exc.__class__.__name__)
             answer = self._fallback_answer(question, evidence)
             answer.retrieval_notes = retrieval_result.strategy_notes
             answer.query_used = retrieval_result.query_used

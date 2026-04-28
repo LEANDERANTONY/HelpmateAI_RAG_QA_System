@@ -1,10 +1,14 @@
 from __future__ import annotations
 
 import json
+import logging
 from dataclasses import replace
 
 from src.config import Settings
 from src.schemas import RetrievalCandidate, RetrievalResult
+
+
+logger = logging.getLogger(__name__)
 
 
 class EvidenceSelector:
@@ -30,7 +34,8 @@ class EvidenceSelector:
                 from openai import OpenAI
 
                 self.client = OpenAI(api_key=settings.openai_api_key)
-            except Exception:
+            except Exception as exc:
+                logger.warning("Evidence selector client setup failed (%s)", exc.__class__.__name__)
                 self.client = None
 
     @staticmethod
@@ -216,7 +221,8 @@ class EvidenceSelector:
                 response_format={"type": "json_object"},
             )
             payload = json.loads(response.choices[0].message.content or "{}")
-        except Exception:
+        except Exception as exc:
+            logger.warning("Evidence selector call failed; keeping retrieval order (%s)", exc.__class__.__name__)
             return retrieval_result
 
         llm_scores_raw = payload.get("candidate_scores", {})

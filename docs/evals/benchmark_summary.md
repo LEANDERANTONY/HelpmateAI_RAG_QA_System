@@ -8,12 +8,34 @@ This file is the current high-level benchmark snapshot for HelpmateAI.
 - keep `Vectara` as the main external retrieval baseline
 - keep `OpenAI File Search` as a historical/reference retrieval baseline only
 - do not use Vectara factual-consistency as a decision-making metric in routine benchmarking
+- describe vendor comparisons as tested-configuration comparisons, not universal product superiority claims
 
 Reason:
 
 - `ragas` is more interpretable for the kinds of answer-quality tradeoffs we care about
 - Vectara factual-consistency produced unstable or formatting-sensitive readings for our answer style
 - Vectara retrieval is the strongest external retrieval baseline we have tested so far
+
+## Methodology Boundary
+
+The current benchmark answers this question:
+
+> On this project workload, does HelpmateAI's retrieval pipeline produce better answer-quality signals than the tested OpenAI File Search and Vectara retrieval contexts when scored with the same `ragas` stack?
+
+It does not yet answer:
+
+> Does HelpmateAI beat every tuned vendor deployment on arbitrary unseen documents?
+
+Important caveats:
+
+- The four main document families were used during HelpmateAI development and tuning.
+- Vendor retrieval contexts are passed through the shared Helpmate answer generator for answer-quality comparison.
+- OpenAI File Search uses `rewrite_query=True` with `max_num_results=5`.
+- Vectara uses `limit=5`.
+- Vendor snippets are truncated to 400 characters before shared answer generation and scoring.
+- HelpmateAI uses its own final selected evidence bundle, currently `final_top_k=4`.
+- The `ragas` bridge uses OpenAI-backed no-reference metrics, not human gold-answer grading.
+- Abstention and partial-answer behavior can affect faithfulness and should be reported beside supported/attempted rates.
 
 ## Retrieval Snapshot
 
