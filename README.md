@@ -5,18 +5,41 @@
 [![Live App](https://img.shields.io/badge/Live%20App-Vercel-2563eb?logo=vercel&logoColor=white)](https://helpmateai.xyz)
 
 HelpmateAI is a document-aware RAG system for long PDFs and DOCX files. It plans retrieval over document topology instead of treating every question as a flat dense top-k search.
-
 It is built for the questions where ordinary "chat with PDF" systems break: broad thesis conclusions, research-paper contributions, policy clauses, scattered evidence, weak retrieval, and citation-sensitive answers.
 
 ![HelpmateAI architecture](docs/images/helpmate-architecture.svg)
 
-The diagram leads with the index/query split. Color is reserved for the three parts that make HelpmateAI different from off-the-shelf RAG: amber for the document-topology layer, violet for plan-driven routing, and red for the abstention guardrail. The dashed amber handoff from topology to planning is the core design: query-time retrieval is guided by index-time document structure.
-
 - Live landing page: https://helpmateai.xyz
 - Workspace app: https://app.helpmateai.xyz
-- Architecture flow: [docs/architecture-flow.md](docs/architecture-flow.md)
-- Evaluation notes: [docs/evals/README.md](docs/evals/README.md)
-- Architecture decisions: [docs/adr/README.md](docs/adr/README.md)
+- Architecture flow: [docs/architecture-flow.md](docs/architecture-flow.md); Evaluation notes: [docs/evals/README.md](docs/evals/README.md); Architecture decisions: [docs/adr/README.md](docs/adr/README.md)
+
+## What Makes It Different
+
+Most RAG demos retrieve the top chunks and hope the answer model can stitch them together. HelpmateAI treats retrieval as a planned workflow over a structured document map.
+
+| Typical RAG failure | HelpmateAI behavior |
+| --- | --- |
+| "What are the conclusions?" returns a few random result paragraphs. | A dedicated `global_summary_first` route anchors overview, findings, discussion, and conclusion regions before assembling raw chunk evidence. |
+| The model answers even when retrieval is weak. | Evidence is graded as `strong`, `weak`, or `unsupported`; unsupported questions stop before answer generation. |
+| Section-scoped questions drift into the wrong chapter or policy region. | A bounded orchestrator can resolve explicit local scope to validated section IDs, with deterministic safety checks. |
+| The right chunk appears in top-k but not at rank 1. | A spread-triggered, reorder-only evidence selector can promote stronger evidence without pruning away support. |
+| Architecture changes are chosen by intuition. | The repo carries ADRs, ablations, and benchmark reports for retrieval, reranking, planning, abstention, and evidence selection. |
+
+## Product Preview
+
+### Landing experience
+
+![HelpmateAI landing page](docs/images/helpmate-landing.png)
+
+### Workspace flow
+
+| Workspace | Answer panel |
+| --- | --- |
+| ![HelpmateAI workspace](docs/images/helpmate-workspace.png) | ![HelpmateAI grounded answer panel](docs/images/helpmate-answer.png) |
+
+### Evidence visibility
+
+![HelpmateAI evidence panel](docs/images/helpmate-evidence.png)
 
 ## Latest Validation Snapshot
 
@@ -51,49 +74,6 @@ The latest held-out suite uses:
 
 Full protocol details live in [final_eval_protocol.md](docs/evals/final_eval_protocol.md), with the broader evaluation plan in [next_steps_and_final_eval_plan.md](docs/internal/next_steps_and_final_eval_plan.md).
 
-## What Makes It Different
-
-Most RAG demos retrieve the top chunks and hope the answer model can stitch them together. HelpmateAI treats retrieval as a planned workflow over a structured document map.
-
-| Typical RAG failure | HelpmateAI behavior |
-| --- | --- |
-| "What are the conclusions?" returns a few random result paragraphs. | A dedicated `global_summary_first` route anchors overview, findings, discussion, and conclusion regions before assembling raw chunk evidence. |
-| The model answers even when retrieval is weak. | Evidence is graded as `strong`, `weak`, or `unsupported`; unsupported questions stop before answer generation. |
-| Section-scoped questions drift into the wrong chapter or policy region. | A bounded orchestrator can resolve explicit local scope to validated section IDs, with deterministic safety checks. |
-| The right chunk appears in top-k but not at rank 1. | A spread-triggered, reorder-only evidence selector can promote stronger evidence without pruning away support. |
-| Architecture changes are chosen by intuition. | The repo carries ADRs, ablations, and benchmark reports for retrieval, reranking, planning, abstention, and evidence selection. |
-
-## Product Preview
-
-### Landing experience
-
-![HelpmateAI landing page](docs/images/helpmate-landing.png)
-
-### Workspace flow
-
-| Workspace | Answer panel |
-| --- | --- |
-| ![HelpmateAI workspace](docs/images/helpmate-workspace.png) | ![HelpmateAI grounded answer panel](docs/images/helpmate-answer.png) |
-
-### Evidence visibility
-
-![HelpmateAI evidence panel](docs/images/helpmate-evidence.png)
-
-## Receipts
-
-- 13 architecture decision records in [docs/adr/](docs/adr/)
-- 100+ saved evaluation reports in [docs/evals/reports/](docs/evals/reports/)
-- External baseline comparison scaffolding for Vectara and OpenAI File Search
-- Internal ablations for reranking, chunking, planning, topology, selector behavior, and support guardrails
-- Negative-question evaluation for honest abstention behavior
-
-Recent validation highlights:
-
-- Held-out product-fit run: `45/50` questions answerable, `5/50` intentionally unsupported.
-- HelpmateAI supported `91.11%` of answerable questions and abstained on `100%` of unsupported questions.
-- The latest final-eval run identified a RAGAS context-budget mismatch, so corrected native/equalized context reporting is now part of the eval harness.
-- Typed artifact indexing now keeps tables, footnotes, front matter, and bibliography entries searchable without letting them dominate ordinary prose retrieval.
-
 ## How It Is Built
 
 The retrieval core lives in `src/` and stays framework-agnostic. `backend/` exposes it through FastAPI upload, index, status, and ask endpoints. `frontend/` ships the Next.js workspace UI. `deploy/vps/` contains the Docker Compose and Caddy deployment path for the API, while the public app is split between landing, workspace, and backend surfaces.
@@ -102,25 +82,6 @@ Built with Next.js, FastAPI, Docling with `pypdf` fallback, ChromaDB, OpenAI, se
 
 PDF extraction defaults to `HELPMATE_PDF_EXTRACTOR=auto`, which tries Docling first for layout-aware Markdown and table preservation, then falls back to `pypdf` when a PDF cannot be converted. DOCX extraction defaults to `HELPMATE_DOCX_EXTRACTOR=auto`, which applies the same Docling-first policy with `python-docx` fallback.
 
-## Repository Map
-
-| Path | Purpose |
-| --- | --- |
-| `frontend/` | Next.js product UI |
-| `backend/` | FastAPI boundary over the retrieval core |
-| `src/` | Ingestion, chunking, retrieval, generation, cache, evals, and shared services |
-| `src/structure/` | Section extraction, repair signals, document profiles |
-| `src/query_analysis/` | Query intent and retrieval-plan signals |
-| `src/sections/` | Section records, synopses, and topology helpers |
-| `tests/` | Focused checks around core behavior |
-| `docs/architecture.md` | Detailed system architecture |
-| `docs/architecture-flow.md` | End-to-end flow diagram |
-| `docs/evals/` | Benchmark datasets, reports, and evaluation policy |
-| `docs/adr/` | Architecture decision records |
-| `deploy/vps/` | VPS deployment bundle |
-
 ## Current Limits
 
 HelpmateAI is strongest on grounded long-document QA, policy questions, thesis/report navigation, and citation-visible answers. The hardest remaining cases are the broadest academic synthesis prompts on noisy journal-style PDFs, plus broader held-out coverage for orchestrated local-scope behavior.
-
-Those limitations are tracked publicly because the project is benchmark-driven: the point is not to claim perfect RAG, but to make retrieval decisions measurable.
