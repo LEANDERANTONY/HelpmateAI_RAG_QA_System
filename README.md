@@ -10,8 +10,8 @@ It is built for the questions where ordinary "chat with PDF" systems break: broa
 ![HelpmateAI architecture](docs/images/helpmate-architecture.svg)
 
 - Live landing page: https://helpmateai.xyz
+
 - Workspace app: https://app.helpmateai.xyz
-- Architecture flow: [docs/architecture-flow.md](docs/architecture-flow.md); Evaluation notes: [docs/evals/README.md](docs/evals/README.md); Architecture decisions: [docs/adr/README.md](docs/adr/README.md)
 
 ## What Makes It Different
 
