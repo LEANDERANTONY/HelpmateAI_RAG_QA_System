@@ -42,11 +42,9 @@ The ingestion path captures more than raw text. PDF and DOCX extraction run thro
 
 - `HELPMATE_PDF_EXTRACTOR=pypdf` is the default for PDFs and uses the lightweight local text extractor
 - `HELPMATE_DOCX_EXTRACTOR=python-docx` is the default for DOCX files
-- `HELPMATE_PDF_EXTRACTOR=google` or `HELPMATE_DOCX_EXTRACTOR=google` uses Google Document AI Layout Parser
-- `HELPMATE_PDF_EXTRACTOR=azure` or `HELPMATE_DOCX_EXTRACTOR=azure` uses Azure Document Intelligence `prebuilt-layout` with Markdown output
 - `HELPMATE_PDF_EXTRACTOR=docling` or `HELPMATE_DOCX_EXTRACTOR=docling` uses the local Docling path explicitly
 
-`pypdf` and `python-docx` stay as the production defaults because they fail predictably and avoid layout-parser memory spikes on large reports. Google Document AI and Azure Document Intelligence are managed-parser candidates for layout-aware table and heading extraction. Docling remains available for local experiments but is not the default after large-PDF memory failures in local testing. The selected backend is recorded in document and page metadata so extraction behavior is visible in traces and eval reports.
+`pypdf` and `python-docx` stay as the production defaults because they are fast, local, and fail predictably on large reports. Managed cloud layout parsers were tested as candidates for table and heading extraction, but they added too much latency and operational complexity for the current product path. Docling remains available for local experiments but is not the default after large-PDF memory failures in local testing. The selected backend is recorded in document and page metadata so extraction behavior is visible in traces and eval reports.
 
 Docling OCR is disabled by default through `HELPMATE_DOCLING_OCR=false`. This keeps ingestion safe for large born-digital PDFs where OCR can add significant memory pressure. Set `HELPMATE_DOCLING_OCR=true` only when scanned-image PDFs are part of the target workload and the runtime has enough memory.
 

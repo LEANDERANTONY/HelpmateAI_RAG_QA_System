@@ -76,9 +76,9 @@ Full protocol details live in [final_eval_protocol.md](docs/evals/final_eval_pro
 
 The retrieval core lives in `src/` and stays framework-agnostic. `backend/` exposes it through FastAPI upload, index, status, and ask endpoints. `frontend/` ships the Next.js workspace UI. `deploy/vps/` contains the Docker Compose and Caddy deployment path for the API, while the public app is split between landing, workspace, and backend surfaces.
 
-Built with Next.js, FastAPI, `pypdf`, optional Google Document AI, optional Azure Document Intelligence, optional Docling, ChromaDB, OpenAI, sentence-transformers, scikit-learn, optional Supabase persistence, optional hosted Chroma-compatible storage, Docker, and `uv`.
+Built with Next.js, FastAPI, `pypdf`, `python-docx`, optional Docling, ChromaDB, OpenAI, sentence-transformers, scikit-learn, optional Supabase persistence, optional hosted Chroma-compatible storage, Docker, and `uv`.
 
-PDF extraction defaults to `HELPMATE_PDF_EXTRACTOR=pypdf` for reliability. DOCX extraction defaults to `HELPMATE_DOCX_EXTRACTOR=python-docx`. Set either extractor to `google` to test Google Document AI Layout Parser, `azure` to test Azure Document Intelligence layout parsing, or `docling` to use the local Docling path explicitly.
+PDF extraction defaults to `HELPMATE_PDF_EXTRACTOR=pypdf` for reliability. DOCX extraction defaults to `HELPMATE_DOCX_EXTRACTOR=python-docx`. Set either extractor to `docling` only for local layout-parser experiments; production stays on the predictable local extractors.
 
 Docling OCR is disabled by default (`HELPMATE_DOCLING_OCR=false`) to avoid unnecessary memory pressure on born-digital PDFs. It can be enabled for scanned PDFs when the runtime has enough memory.
 
