@@ -25,6 +25,7 @@ docs/quickstart.md
 .tmp/
 tmp/
 static/UI/
+static/sample_files/*.pdf
 static/sample_files/test/
 static/held_out/*.pdf
 static/financebench/*.pdf
