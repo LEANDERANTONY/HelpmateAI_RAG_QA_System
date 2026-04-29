@@ -9,9 +9,7 @@ It is built for the questions where ordinary "chat with PDF" systems break: broa
 
 ![HelpmateAI architecture](docs/images/helpmate-architecture.svg)
 
-- Live landing page: https://helpmateai.xyz
-
-- Workspace app: https://app.helpmateai.xyz
+Live landing page: https://helpmateai.xyz; Workspace app: https://app.helpmateai.xyz
 
 ## What Makes It Different
 
