@@ -80,7 +80,7 @@ Built with Next.js, FastAPI, `pypdf`, `python-docx`, optional Docling, ChromaDB,
 
 PDF extraction defaults to `HELPMATE_PDF_EXTRACTOR=pypdf` for reliability. DOCX extraction defaults to `HELPMATE_DOCX_EXTRACTOR=python-docx`. Set either extractor to `docling` only for local layout-parser experiments; production stays on the predictable local extractors.
 
-Docling OCR is disabled by default (`HELPMATE_DOCLING_OCR=false`) to avoid unnecessary memory pressure on born-digital PDFs. It can be enabled for scanned PDFs when the runtime has enough memory.
+Docling OCR is disabled by default (`HELPMATE_DOCLING_OCR=false`) to avoid unnecessary memory pressure on born-digital PDFs. It can be enabled for scanned PDFs when the runtime has enough memory. Docling runs with expanded Markdown tables and records OCR/table-mode metadata when explicitly enabled.
 
 ## Current Limits
 

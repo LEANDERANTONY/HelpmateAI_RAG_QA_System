@@ -54,9 +54,12 @@ def _docling_ocr_enabled() -> bool:
 
 
 def _docling_converter(path: Path):
-    from docling.document_converter import DocumentConverter, PdfFormatOption
-    from docling.datamodel.base_models import InputFormat
-    from docling.datamodel.pipeline_options import PdfPipelineOptions
+    try:
+        from docling.document_converter import DocumentConverter, PdfFormatOption
+        from docling.datamodel.base_models import InputFormat
+        from docling.datamodel.pipeline_options import PdfPipelineOptions
+    except ImportError as exc:
+        raise RuntimeError("Docling extraction requires the optional docling dependency to be installed.") from exc
 
     if path.suffix.lower() != ".pdf":
         return DocumentConverter()
@@ -65,10 +68,19 @@ def _docling_converter(path: Path):
     return DocumentConverter(format_options={InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)})
 
 
+def _docling_metadata() -> dict[str, str]:
+    return {
+        "extraction_backend": "docling",
+        "docling_ocr": "enabled" if _docling_ocr_enabled() else "disabled",
+        "docling_table_mode": "expanded_markdown",
+    }
+
+
 def _extract_docling(path: Path, *, fallback_page_label: str = "Document") -> tuple[str, list[dict[str, str]], int, dict[str, str]]:
     result = _docling_converter(path).convert(path.resolve())
     document = result.document
     page_count = _docling_page_count(document)
+    metadata = _docling_metadata()
     pages: list[dict[str, str]] = []
     if page_count > 0:
         for index in range(1, page_count + 1):
@@ -80,6 +92,8 @@ def _extract_docling(path: Path, *, fallback_page_label: str = "Document") -> tu
                         "text": text,
                         "section_heading": _page_heading(text),
                         "extraction_backend": "docling",
+                        "docling_ocr": metadata["docling_ocr"],
+                        "docling_table_mode": metadata["docling_table_mode"],
                     }
                 )
     if not pages:
@@ -91,11 +105,13 @@ def _extract_docling(path: Path, *, fallback_page_label: str = "Document") -> tu
                     "text": text,
                     "section_heading": _page_heading(text),
                     "extraction_backend": "docling",
+                    "docling_ocr": metadata["docling_ocr"],
+                    "docling_table_mode": metadata["docling_table_mode"],
                 }
             )
             page_count = 1
     full_text = "\n\n".join(page["text"] for page in pages)
-    return full_text, pages, page_count, {"extraction_backend": "docling"}
+    return full_text, pages, page_count, metadata
 
 
 def _extract_pdf_docling(path: Path) -> tuple[str, list[dict[str, str]], int, dict[str, str]]:
