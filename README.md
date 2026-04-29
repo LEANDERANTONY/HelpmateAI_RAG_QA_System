@@ -8,7 +8,7 @@ HelpmateAI is a document-aware RAG system for long PDFs and DOCX files. It plans
 
 It is built for the questions where ordinary "chat with PDF" systems break: broad thesis conclusions, research-paper contributions, policy clauses, scattered evidence, weak retrieval, and citation-sensitive answers.
 
-![HelpmateAI architecture](images/helpmate-architecture.svg)
+![HelpmateAI architecture](docs/images/helpmate-architecture.svg)
 
 The diagram leads with the index/query split. Color is reserved for the three parts that make HelpmateAI different from off-the-shelf RAG: amber for the document-topology layer, violet for plan-driven routing, and red for the abstention guardrail. The dashed amber handoff from topology to planning is the core design: query-time retrieval is guided by index-time document structure.
 
@@ -52,17 +52,17 @@ Most RAG demos retrieve the top chunks and hope the answer model can stitch them
 
 ### Landing experience
 
-![HelpmateAI landing page](images/helpmate-landing.png)
+![HelpmateAI landing page](docs/images/helpmate-landing.png)
 
 ### Workspace flow
 
 | Workspace | Answer panel |
 | --- | --- |
-| ![HelpmateAI workspace](images/helpmate-workspace.png) | ![HelpmateAI grounded answer panel](images/helpmate-answer.png) |
+| ![HelpmateAI workspace](docs/images/helpmate-workspace.png) | ![HelpmateAI grounded answer panel](docs/images/helpmate-answer.png) |
 
 ### Evidence visibility
 
-![HelpmateAI evidence panel](images/helpmate-evidence.png)
+![HelpmateAI evidence panel](docs/images/helpmate-evidence.png)
 
 ## Receipts
 

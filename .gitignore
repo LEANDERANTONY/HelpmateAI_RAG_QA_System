@@ -24,6 +24,7 @@ docs/frontend-reference.md
 docs/quickstart.md
 .tmp/
 tmp/
+static/
 static/UI/
 static/sample_files/*.pdf
 static/sample_files/test/
