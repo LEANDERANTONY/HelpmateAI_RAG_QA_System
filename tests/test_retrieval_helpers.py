@@ -3,6 +3,7 @@ from src.retrieval.hybrid import HybridRetriever
 from src.schemas import ChunkRecord
 from src.schemas import RetrievalCandidate
 from src.schemas import RetrievalPlan
+from src.schemas import RetrievalResult
 
 
 def test_extract_metadata_filters_detects_page_reference():
@@ -441,3 +442,152 @@ def test_score_chunk_uses_semantic_chunk_role_as_a_moderate_hint():
     )
 
     assert body_candidate.fused_score > noisy_candidate.fused_score
+
+
+def test_recovery_is_limited_to_atomic_detail_queries():
+    retriever = HybridRetriever(store=None, settings=Settings())  # type: ignore[arg-type]
+    result = RetrievalResult(question="What are the main findings?", candidates=[], retrieval_plan={})
+
+    assert retriever.should_recover_after_abstention("When is the next meeting scheduled?", result)
+    assert not retriever.should_recover_after_abstention("What are the main findings of this report?", result)
+
+
+def test_abstention_recovery_promotes_front_matter_evidence():
+    class FakeStore:
+        @staticmethod
+        def load_chunks(_fingerprint: str):
+            return [
+                ChunkRecord(
+                    chunk_id="body",
+                    document_id="doc1",
+                    text="The report discusses risk management practices for AI systems.",
+                    chunk_index=0,
+                    page_label="Page 12",
+                    metadata={
+                        "page_label": "Page 12",
+                        "section_id": "body",
+                        "section_heading": "Risk Management",
+                        "section_kind": "body",
+                        "content_type": "general",
+                        "body_evidence_score": 0.8,
+                    },
+                ),
+                ChunkRecord(
+                    chunk_id="front",
+                    document_id="doc1",
+                    text="Foreword signed by Francesco La Camera, Director-General of IRENA.",
+                    chunk_index=1,
+                    page_label="Page 5",
+                    metadata={
+                        "page_label": "Page 5",
+                        "section_id": "foreword",
+                        "section_heading": "Foreword",
+                        "section_kind": "front_matter",
+                        "content_type": "general",
+                        "artifact_entry": True,
+                        "artifact_type": "front_matter",
+                        "front_matter_kind": "preface",
+                        "front_matter_score": 0.9,
+                        "body_evidence_score": 0.75,
+                    },
+                ),
+            ]
+
+    retriever = HybridRetriever(store=FakeStore(), settings=Settings(reranker_enabled=False))  # type: ignore[arg-type]
+    initial = RetrievalResult(
+        question="Who is identified as the Director-General of IRENA in the foreword?",
+        candidates=[
+            RetrievalCandidate(
+                chunk_id="body",
+                text="The report discusses risk management practices for AI systems.",
+                metadata={"page_label": "Page 12"},
+                fused_score=0.02,
+                lexical_score=0.01,
+            )
+        ],
+        retrieval_plan={},
+        metadata_filters={"page_labels": [], "section_terms": [], "clause_terms": []},
+    )
+
+    recovered = retriever.recover_after_abstention("fingerprint", initial.question, initial)
+
+    assert recovered.retrieval_plan["abstention_recovery_applied"]
+    assert recovered.candidates[0].chunk_id == "front"
+    assert recovered.evidence_status in {"weak", "strong"}
+
+
+def test_abstention_recovery_adds_next_chunk_neighbor():
+    chunks = [
+        ChunkRecord(
+            chunk_id="seed",
+            document_id="doc1",
+            text="Two members dissented from the policy decision.",
+            chunk_index=0,
+            page_label="Page 13",
+            metadata={
+                "page_label": "Page 13",
+                "section_id": "actions",
+                "section_heading": "Committee Policy Actions",
+                "section_kind": "body",
+                "content_type": "general",
+                "body_evidence_score": 0.8,
+            },
+        ),
+        ChunkRecord(
+            chunk_id="neighbor",
+            document_id="doc1",
+            text="Stephen I. Miran and Christopher J. Waller dissented because they preferred to lower the target range by one quarter percentage point.",
+            chunk_index=1,
+            page_label="Page 14",
+            metadata={
+                "page_label": "Page 14",
+                "section_id": "actions",
+                "section_heading": "Committee Policy Actions",
+                "section_kind": "body",
+                "content_type": "general",
+                "body_evidence_score": 0.9,
+            },
+        ),
+    ]
+    retriever = HybridRetriever(store=None, settings=Settings(reranker_enabled=False))  # type: ignore[arg-type]
+    seed = RetrievalCandidate(
+        chunk_id="seed",
+        text=chunks[0].text,
+        metadata=chunks[0].metadata,
+        fused_score=0.08,
+        lexical_score=0.03,
+    )
+
+    neighbors = retriever._neighbor_recovery_candidates(
+        "Which members dissented from the policy decision, and what alternative did they prefer?",
+        chunks,
+        [seed],
+        preferred_content_types=["general"],
+        clause_terms=[],
+        query_type="general_lookup",
+    )
+
+    assert [candidate.chunk_id for candidate in neighbors] == ["neighbor"]
+    assert neighbors[0].metadata["abstention_recovery_reason"] == "neighbor_chunk"
+
+
+def test_required_fact_signal_uses_generic_answer_shapes_not_fixture_terms():
+    definition_score = HybridRetriever._required_fact_signal_score(
+        "How does this framework define an AI system?",
+        "The framework refers to an AI system as an engineered or machine-based system that can generate predictions.",
+        "definition_lookup",
+    )
+    date_score = HybridRetriever._required_fact_signal_score(
+        "When is the next meeting scheduled?",
+        "The next regular meeting is scheduled for Tuesday-Wednesday, March 17-18, 2026.",
+        "general_lookup",
+    )
+    person_score = HybridRetriever._required_fact_signal_score(
+        "Which members dissented from the policy decision?",
+        "Voting against this action: Jane A. Smith and Robert Jones.",
+        "general_lookup",
+    )
+
+    assert definition_score >= 0.30
+    assert date_score >= 0.30
+    assert person_score >= 0.18

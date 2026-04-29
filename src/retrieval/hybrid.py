@@ -55,6 +55,27 @@ class HybridRetriever:
     FINDINGS_SECTION_KINDS = {"results", "discussion", "evidence"}
     LATE_SECTION_KINDS = {"discussion", "conclusion", "conclusions", "future work", "future directions", "limitations"}
     GENERIC_SECTION_TERMS = {"chapter", "chapter summary", "section", "section summary", "summary"}
+    RECOVERY_QUERY_TYPES = {"general_lookup", "definition_lookup", "numeric_lookup", "process_lookup"}
+    RECOVERY_ARTIFACT_TERMS = {
+        "acknowledgement",
+        "acknowledgements",
+        "award",
+        "declaration",
+        "executive summary",
+        "footnote",
+        "foreword",
+        "funded",
+        "funding",
+        "grant",
+        "meeting",
+        "preface",
+        "signature",
+        "signed",
+        "supported by",
+        "title page",
+        "vote",
+        "voting",
+    }
 
     def __init__(self, store: ChromaIndexStore, settings: Settings):
         self.store = store
@@ -241,6 +262,7 @@ class HybridRetriever:
         region_lookup: dict[str, str] | None = None,
         preferred_region_kinds: set[str] | None = None,
         query_type: str = "general_lookup",
+        recovery_front_matter: bool = False,
     ) -> RetrievalCandidate:
         keyword_boost = 0.15 * self._keyword_overlap(question, chunk.text)
         heading_boost = 0.15 * self._keyword_overlap(question, str(chunk.metadata.get("section_heading", "")))
@@ -266,7 +288,7 @@ class HybridRetriever:
             if artifact_type == "table":
                 evidence_adjustment += 0.18 if artifact_targeted or query_type in {"numeric_lookup", "comparison_lookup"} else -0.16
             elif artifact_type in {"front_matter", "footnote"}:
-                evidence_adjustment += 0.16 if artifact_targeted else -0.14
+                evidence_adjustment += 0.20 if recovery_front_matter else (0.16 if artifact_targeted else -0.14)
             elif artifact_type == "bibliography":
                 evidence_adjustment += 0.14 if artifact_targeted else -0.28
         if chunk_role == "navigation_like":
@@ -297,9 +319,18 @@ class HybridRetriever:
         section_kind = str(chunk.metadata.get("section_kind", "")).lower()
         question_terms = self._significant_question_terms(question)
         if front_matter_kind in {"acknowledgements", "certificate", "contents", "declaration", "dedication", "list_of_figures", "list_of_tables", "preface"}:
-            evidence_adjustment -= 0.18 * max(front_matter_score, 0.65)
+            if recovery_front_matter:
+                if front_matter_kind in {"contents", "list_of_figures", "list_of_tables"}:
+                    evidence_adjustment -= 0.08 * max(front_matter_score, 0.65)
+                else:
+                    evidence_adjustment += 0.12 * max(front_matter_score, 0.65)
+            else:
+                evidence_adjustment -= 0.18 * max(front_matter_score, 0.65)
         elif front_matter_kind == "title_page":
-            evidence_adjustment -= 0.05 * max(front_matter_score, 0.5)
+            if recovery_front_matter:
+                evidence_adjustment += 0.08 * max(front_matter_score, 0.5)
+            else:
+                evidence_adjustment -= 0.05 * max(front_matter_score, 0.5)
         if query_type == "summary_lookup":
             asks_early_summary = bool(question_terms & self.EARLY_SUMMARY_TERMS)
             asks_findings_summary = bool(question_terms & self.FINDINGS_SUMMARY_TERMS)
@@ -416,6 +447,271 @@ class HybridRetriever:
         if self.reranker is not None and ranked:
             ranked = self.reranker.rerank(question, ranked, top_k=len(ranked))
         return self._prefer_body_evidence(ranked)[: self.settings.final_top_k]
+
+    def should_recover_after_abstention(self, question: str, retrieval_result: RetrievalResult) -> bool:
+        if retrieval_result.retrieval_plan.get("abstention_recovery_applied"):
+            return False
+        profile = self.query_analyzer.analyze(question)
+        if profile.query_type in {"summary_lookup", "comparison_lookup", "cross_cutting_lookup"}:
+            return False
+        return profile.query_type in self.RECOVERY_QUERY_TYPES or profile.evidence_spread == "atomic"
+
+    @classmethod
+    def _artifact_recovery_text(cls, chunk: ChunkRecord) -> str:
+        metadata = chunk.metadata or {}
+        parts = [
+            chunk.text[:1200],
+            str(metadata.get("section_heading", "")),
+            str(metadata.get("section_kind", "")),
+            str(metadata.get("front_matter_kind", "")),
+            str(metadata.get("artifact_type", "")),
+            " ".join(metadata.get("section_path", [])) if isinstance(metadata.get("section_path", []), list) else str(metadata.get("section_path", "")),
+        ]
+        return "\n".join(part for part in parts if part).lower()
+
+    @classmethod
+    def _looks_like_recovery_artifact(cls, chunk: ChunkRecord, preferred_content_types: list[str]) -> bool:
+        metadata = chunk.metadata or {}
+        artifact_type = str(metadata.get("artifact_type", "")).lower()
+        front_matter_kind = str(metadata.get("front_matter_kind", "")).lower()
+        if artifact_type in {"front_matter", "footnote", "table"} and artifact_type in set(preferred_content_types + ["front_matter", "footnote"]):
+            return True
+        if front_matter_kind and front_matter_kind != "body":
+            return True
+        recovery_text = cls._artifact_recovery_text(chunk)
+        return any(term in recovery_text for term in cls.RECOVERY_ARTIFACT_TERMS)
+
+    @classmethod
+    def _definition_target(cls, question: str) -> str:
+        lowered = question.lower()
+        patterns = (
+            r"\bdefine\s+(?:an?|the)?\s*([a-z][a-z0-9 -]{2,60})\??",
+            r"\bdefinition of\s+(?:an?|the)?\s*([a-z][a-z0-9 -]{2,60})\??",
+            r"\bhow does .{0,80} define\s+(?:an?|the)?\s*([a-z][a-z0-9 -]{2,60})\??",
+        )
+        for pattern in patterns:
+            match = re.search(pattern, lowered)
+            if match:
+                return match.group(1).strip(" ?.")
+        return ""
+
+    @classmethod
+    def _required_fact_signal_score(cls, question: str, text: str, query_type: str) -> float:
+        lowered_question = question.lower()
+        lowered_text = text.lower()
+        score = 0.0
+
+        terms = cls._significant_question_terms(question)
+        if terms:
+            text_terms = cls._normalize_term_set(set(re.findall(r"[A-Za-z0-9]+", lowered_text)))
+            score += 0.18 * (len(terms & text_terms) / max(len(terms), 1))
+
+        if query_type == "definition_lookup":
+            target = cls._definition_target(question)
+            has_definition_marker = bool(re.search(r"\b(refers to|defined as|means|is an?|are)\b", lowered_text))
+            if has_definition_marker:
+                score += 0.12
+            if target and target in lowered_text and has_definition_marker:
+                score += 0.28
+
+        if lowered_question.startswith("when ") or " scheduled " in lowered_question:
+            has_date = bool(
+                re.search(
+                    r"\b(?:jan|feb|mar|apr|may|jun|jul|aug|sep|sept|oct|nov|dec)[a-z]*\.?\s+\d{1,2}(?:[-–]\d{1,2})?,?\s+\d{4}\b",
+                    lowered_text,
+                )
+                or re.search(r"\b\d{1,2}[-/]\d{1,2}[-/]\d{2,4}\b", lowered_text)
+            )
+            if has_date:
+                score += 0.30
+
+        if lowered_question.startswith(("who ", "which ")) or re.search(r"\b(author|director|member|supervisor|agency|program)\b", lowered_question):
+            proper_names = re.findall(r"\b[A-Z][a-z]+(?:\s+[A-Z]\.)?(?:\s+[A-Z][a-z]+)+\b", text)
+            organization_markers = bool(re.search(r"\b(agency|foundation|center|centre|institute|department|program|programme|award|grant)\b", lowered_text))
+            acronym_markers = bool(re.search(r"\b[A-Z]{2,}(?:-[A-Z0-9]+)?\b", text))
+            if proper_names:
+                score += min(0.18, 0.06 * len(proper_names))
+            if organization_markers or acronym_markers:
+                score += 0.12
+            if re.search(r"\b(voting|voted|dissent|dissented|against this action)\b", lowered_text):
+                score += 0.10
+
+        if query_type == "numeric_lookup" or re.search(r"\b(how many|how much|rate|percent|amount|total|limit)\b", lowered_question):
+            if re.search(r"(?:[$€£]\s*)?\b\d+(?:[.,]\d+)?\s*(?:%|percent|billion|million|trillion|gw|°c|degrees?)?\b", lowered_text):
+                score += 0.22
+
+        return min(score, 0.55)
+
+    def _score_recovery_chunk(
+        self,
+        question: str,
+        chunk: ChunkRecord,
+        lexical_scores: dict[str, float],
+        *,
+        preferred_content_types: list[str],
+        clause_terms: list[str],
+        query_type: str,
+        base_score: float = 0.08,
+        recovery_reason: str,
+    ) -> RetrievalCandidate:
+        candidate = self._score_chunk(
+            question,
+            chunk,
+            {},
+            lexical_scores,
+            max(base_score, lexical_scores.get(chunk.chunk_id, 0.0)),
+            preferred_content_types,
+            clause_terms,
+            query_type=query_type,
+            recovery_front_matter=True,
+        )
+        metadata = dict(candidate.metadata)
+        metadata["abstention_recovery"] = True
+        metadata["abstention_recovery_reason"] = recovery_reason
+        candidate.metadata = metadata
+        candidate.fused_score += self._required_fact_signal_score(question, chunk.text, query_type)
+        return candidate
+
+    def _neighbor_recovery_candidates(
+        self,
+        question: str,
+        chunks: list[ChunkRecord],
+        seeds: list[RetrievalCandidate],
+        *,
+        preferred_content_types: list[str],
+        clause_terms: list[str],
+        query_type: str,
+        limit: int = 6,
+        forward_window: int = 8,
+        max_neighbors: int = 10,
+    ) -> list[RetrievalCandidate]:
+        if not seeds:
+            return []
+        by_id = {chunk.chunk_id: chunk for chunk in chunks}
+        ordered = sorted(chunks, key=lambda chunk: (chunk.document_id, chunk.chunk_index, chunk.chunk_id))
+        position = {chunk.chunk_id: index for index, chunk in enumerate(ordered)}
+        neighbors: list[RetrievalCandidate] = []
+        seen: set[str] = set()
+        for seed in seeds[:limit]:
+            index = position.get(seed.chunk_id)
+            if index is None or index + 1 >= len(ordered):
+                continue
+            source = by_id.get(seed.chunk_id)
+            if source is None:
+                continue
+            for neighbor in ordered[index + 1 : index + 1 + forward_window]:
+                if neighbor.document_id != source.document_id:
+                    continue
+                same_section = (
+                    str(source.metadata.get("section_id", "")).strip()
+                    and source.metadata.get("section_id") == neighbor.metadata.get("section_id")
+                )
+                same_page = source.metadata.get("page_label") == neighbor.metadata.get("page_label")
+                adjacent_chunk = abs(int(neighbor.chunk_index) - int(source.chunk_index)) <= forward_window
+                if not (same_section or same_page or adjacent_chunk):
+                    continue
+                if neighbor.chunk_id in seen:
+                    continue
+                seen.add(neighbor.chunk_id)
+                neighbors.append(
+                    self._score_recovery_chunk(
+                        question,
+                        neighbor,
+                        {},
+                        preferred_content_types=preferred_content_types,
+                        clause_terms=clause_terms,
+                        query_type=query_type,
+                        base_score=max(seed.fused_score * 0.90, seed.fused_score - 0.02),
+                        recovery_reason="neighbor_chunk",
+                    )
+                )
+                if len(neighbors) >= max_neighbors:
+                    return neighbors
+        return neighbors
+
+    def recover_after_abstention(self, fingerprint: str, question: str, initial_result: RetrievalResult) -> RetrievalResult:
+        if not self.should_recover_after_abstention(question, initial_result):
+            return initial_result
+        chunks = self.store.load_chunks(fingerprint)
+        if not chunks:
+            return initial_result
+
+        profile = self.query_analyzer.analyze(question)
+        metadata_filters = initial_result.metadata_filters or self._extract_metadata_filters(question)
+        preferred_content_types = list(dict.fromkeys(profile.preferred_content_types + ["front_matter", "footnote"]))
+        lexical_scores = self._rank_lexical(
+            question,
+            [(chunk.chunk_id, self._artifact_recovery_text(chunk)) for chunk in chunks],
+            top_k=max(self.settings.fused_top_k * 3, self.settings.final_top_k + 20),
+        )
+        artifact_chunks = [
+            chunk
+            for chunk in chunks
+            if chunk.chunk_id in lexical_scores or self._looks_like_recovery_artifact(chunk, preferred_content_types)
+        ]
+        artifact_candidates = [
+            self._score_recovery_chunk(
+                question,
+                chunk,
+                lexical_scores,
+                preferred_content_types=preferred_content_types,
+                clause_terms=profile.clause_terms,
+                query_type=profile.query_type,
+                base_score=0.10,
+                recovery_reason="metadata_or_unscoped_lexical",
+            )
+            for chunk in artifact_chunks
+            if chunk.chunk_id in lexical_scores or self._keyword_overlap(question, self._artifact_recovery_text(chunk)) > 0.0
+        ]
+        artifact_candidates = sorted(artifact_candidates, key=lambda candidate: candidate.fused_score, reverse=True)[
+            : max(self.settings.final_top_k + 12, 16)
+        ]
+        neighbor_candidates = self._neighbor_recovery_candidates(
+            question,
+            chunks,
+            initial_result.candidates[: self.settings.final_top_k] + artifact_candidates,
+            preferred_content_types=preferred_content_types,
+            clause_terms=profile.clause_terms,
+            query_type=profile.query_type,
+        )
+        combined = self._dedupe(initial_result.candidates + artifact_candidates + neighbor_candidates)
+        final_candidates = self._prefer_body_evidence(sorted(combined, key=lambda candidate: candidate.fused_score, reverse=True))[
+            : self.settings.final_top_k
+        ]
+        evidence_status, best_score, max_lexical, content_overlap = self._assess_evidence_status(
+            question,
+            final_candidates,
+            query_type=profile.query_type,
+        )
+        retrieval_plan = dict(initial_result.retrieval_plan)
+        retrieval_plan.update(
+            {
+                "abstention_recovery_applied": True,
+                "abstention_recovery_artifact_candidates": len(artifact_candidates),
+                "abstention_recovery_neighbor_candidates": len(neighbor_candidates),
+            }
+        )
+        notes = list(initial_result.strategy_notes)
+        notes.append(
+            "Abstention recovery expanded evidence with metadata/front-matter candidates and bounded next-chunk neighbors."
+        )
+        return RetrievalResult(
+            question=question,
+            candidates=final_candidates,
+            cache_hit=False,
+            retrieval_version=self.settings.retrieval_version,
+            route_used=f"{initial_result.route_used}+abstention_recovery",
+            query_used=initial_result.query_used or question,
+            query_variants=list(initial_result.query_variants or [question]),
+            metadata_filters=metadata_filters,
+            strategy_notes=notes,
+            weak_evidence=evidence_status == "weak",
+            evidence_status=evidence_status,
+            best_score=best_score,
+            max_lexical_score=max_lexical,
+            content_overlap_score=content_overlap,
+            retrieval_plan=retrieval_plan,
+        )
 
     def _seed_selected_section_chunks(
         self,

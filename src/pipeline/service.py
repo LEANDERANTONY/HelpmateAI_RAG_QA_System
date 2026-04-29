@@ -124,6 +124,15 @@ class HelpmatePipeline:
         retrieval_result = self.retrieve_evidence(document.document_id, document.fingerprint, question)
         retrieval_result = self.evidence_selector.select(question, retrieval_result)
         answer = self.generate_answer(document.document_id, question, retrieval_result)
+        if not answer.supported and self.retriever.should_recover_after_abstention(question, retrieval_result):
+            recovered_retrieval = self.retriever.recover_after_abstention(
+                fingerprint=document.fingerprint,
+                question=question,
+                initial_result=retrieval_result,
+            )
+            if recovered_retrieval.retrieval_plan.get("abstention_recovery_applied"):
+                retrieval_result = self.evidence_selector.select(question, recovered_retrieval)
+                answer = self.generate_answer(document.document_id, question, retrieval_result)
         answer.cache_status = CacheStatus(index_reused=index_record.reused, answer_cache_hit=False)
         trace = self._build_run_trace(
             document=document,
