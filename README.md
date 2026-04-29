@@ -48,7 +48,7 @@ The latest saved held-out product-fit run is [final_eval_suite_20260429_033628.j
 That run showed the current shape of the system clearly:
 
 | Metric | HelpmateAI |
-| --- | ---: |
+| --- | --- |
 | Questions | `50` |
 | Answerable questions | `45` |
 | Unsupported questions | `5` |
