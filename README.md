@@ -36,6 +36,21 @@ That run showed the current shape of the system clearly:
 
 The same run also exposed an evaluation-methodology issue: HelpmateAI had been generated from its full selected evidence, while RAGAS was judging against a clipped context payload. The eval harness now supports native-context and equalized-context modes so future reports can separate product behavior from controlled retrieval comparisons.
 
+## Evaluation Methodology
+
+Evaluation is treated as part of the architecture, not a one-off demo. The current final-eval harness uses fixed public documents, frozen question manifests, answerable and intentionally unsupported questions, per-intent reporting, and saved machine-readable reports under `docs/evals/reports/`.
+
+The latest held-out suite uses:
+
+- public source documents recorded in [final_eval_sources_20260428.md](docs/evals/final_eval_sources_20260428.md)
+- frozen draft questions in [final_eval_questions.draft.json](docs/evals/final_eval_questions.draft.json)
+- RAGAS scoring with a non-generator judge model where configured
+- explicit abstention metrics alongside answer-quality metrics
+- separate native-context and equalized-context modes for future product and controlled retrieval comparisons
+- documented vendor comparison settings when OpenAI File Search or Vectara baselines are run
+
+Full protocol details live in [final_eval_protocol.md](docs/evals/final_eval_protocol.md), with the broader evaluation plan in [next_steps_and_final_eval_plan.md](docs/internal/next_steps_and_final_eval_plan.md).
+
 ## What Makes It Different
 
 Most RAG demos retrieve the top chunks and hope the answer model can stitch them together. HelpmateAI treats retrieval as a planned workflow over a structured document map.
