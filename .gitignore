@@ -8,6 +8,7 @@ pytest-cache-files-*/
 htmlcov/
 data/
 .env
+secrets/
 /HealthInsurance_Policy.pdf
 /Final_Thesis_Leander_Antony_A.pdf
 static/Final_Thesis_Leander_Antony_A.pdf

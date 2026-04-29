@@ -115,6 +115,29 @@ def test_pdf_azure_mode_uses_azure_document_intelligence(monkeypatch: pytest.Mon
     assert metadata["extraction_backend"] == "azure_document_intelligence"
 
 
+def test_pdf_google_mode_uses_google_document_ai(monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
+    pdf_path = tmp_path / "sample.pdf"
+    pdf_path.write_bytes(b"%PDF fake")
+
+    def fake_google(path: Path):
+        return (
+            "# Title\n\n| A | B |\n|---|---|\n| 1 | 2 |",
+            [{"page_label": "Page 1", "text": "# Title", "section_heading": "Title", "extraction_backend": "google_document_ai"}],
+            1,
+            {"extraction_backend": "google_document_ai"},
+        )
+
+    monkeypatch.setenv("HELPMATE_PDF_EXTRACTOR", "google")
+    monkeypatch.setattr(service, "_extract_google_document_ai", fake_google)
+
+    full_text, pages, page_count, metadata = service._extract_pdf(pdf_path)
+
+    assert page_count == 1
+    assert "| 1 | 2 |" in full_text
+    assert pages[0]["extraction_backend"] == "google_document_ai"
+    assert metadata["extraction_backend"] == "google_document_ai"
+
+
 def test_docx_default_uses_python_docx(monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
     docx_path = tmp_path / "sample.docx"
     docx_path.write_bytes(b"fake docx")
@@ -230,3 +253,26 @@ def test_docx_azure_mode_uses_azure_document_intelligence(monkeypatch: pytest.Mo
     assert "| A | 1 |" in full_text
     assert pages[0]["extraction_backend"] == "azure_document_intelligence"
     assert metadata["extraction_backend"] == "azure_document_intelligence"
+
+
+def test_docx_google_mode_uses_google_document_ai(monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
+    docx_path = tmp_path / "sample.docx"
+    docx_path.write_bytes(b"fake docx")
+
+    def fake_google(path: Path):
+        return (
+            "# Title\n\n| Metric | Value |\n|---|---|\n| A | 1 |",
+            [{"page_label": "Document", "text": "# Title", "section_heading": "Title", "extraction_backend": "google_document_ai"}],
+            1,
+            {"extraction_backend": "google_document_ai"},
+        )
+
+    monkeypatch.setenv("HELPMATE_DOCX_EXTRACTOR", "google")
+    monkeypatch.setattr(service, "_extract_google_document_ai", fake_google)
+
+    full_text, pages, page_count, metadata = service._extract_docx(docx_path)
+
+    assert page_count == 1
+    assert "| A | 1 |" in full_text
+    assert pages[0]["extraction_backend"] == "google_document_ai"
+    assert metadata["extraction_backend"] == "google_document_ai"

@@ -117,6 +117,27 @@ def _azure_document_intelligence_config() -> tuple[str, str]:
     return endpoint, key
 
 
+def _google_document_ai_config() -> tuple[str, str, str]:
+    project_id = os.getenv("HELPMATE_GOOGLE_DOCUMENT_AI_PROJECT_ID") or os.getenv("GOOGLE_CLOUD_PROJECT")
+    location = os.getenv("HELPMATE_GOOGLE_DOCUMENT_AI_LOCATION", "us")
+    processor_id = os.getenv("HELPMATE_GOOGLE_DOCUMENT_AI_PROCESSOR_ID")
+    if not project_id or not processor_id:
+        raise RuntimeError(
+            "Google Document AI requires HELPMATE_GOOGLE_DOCUMENT_AI_PROJECT_ID "
+            "and HELPMATE_GOOGLE_DOCUMENT_AI_PROCESSOR_ID. Authentication uses GOOGLE_APPLICATION_CREDENTIALS."
+        )
+    return project_id, location, processor_id
+
+
+def _mime_type_for_path(path: Path) -> str:
+    suffix = path.suffix.lower()
+    if suffix == ".pdf":
+        return "application/pdf"
+    if suffix == ".docx":
+        return "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    return "application/octet-stream"
+
+
 def _page_spans_text(content: str, page) -> str:
     spans = getattr(page, "spans", None) or []
     parts = []
@@ -169,14 +190,90 @@ def _extract_azure_document_intelligence(path: Path) -> tuple[str, list[dict[str
     return full_text, pages, len(result_pages) or len(pages), {"extraction_backend": "azure_document_intelligence"}
 
 
+def _google_text_anchor_text(content: str, text_anchor) -> str:
+    segments = getattr(text_anchor, "text_segments", None) or []
+    parts = []
+    for segment in segments:
+        start = int(getattr(segment, "start_index", 0) or 0)
+        end = int(getattr(segment, "end_index", 0) or 0)
+        if end > start:
+            parts.append(content[start:end])
+    return "\n".join(part.strip() for part in parts if part and part.strip()).strip()
+
+
+def _google_page_text(content: str, page) -> str:
+    layout = getattr(page, "layout", None)
+    if layout and getattr(layout, "text_anchor", None):
+        return _google_text_anchor_text(content, layout.text_anchor)
+    blocks = getattr(page, "blocks", None) or []
+    parts = []
+    for block in blocks:
+        block_layout = getattr(block, "layout", None)
+        if block_layout and getattr(block_layout, "text_anchor", None):
+            text = _google_text_anchor_text(content, block_layout.text_anchor)
+            if text:
+                parts.append(text)
+    return "\n".join(parts).strip()
+
+
+def _extract_google_document_ai(path: Path) -> tuple[str, list[dict[str, str]], int, dict[str, str]]:
+    from google.api_core.client_options import ClientOptions
+    from google.cloud import documentai
+
+    project_id, location, processor_id = _google_document_ai_config()
+    client = documentai.DocumentProcessorServiceClient(
+        client_options=ClientOptions(api_endpoint=f"{location}-documentai.googleapis.com")
+    )
+    name = client.processor_path(project_id, location, processor_id)
+    raw_document = documentai.RawDocument(content=path.read_bytes(), mime_type=_mime_type_for_path(path))
+    request = documentai.ProcessRequest(
+        name=name,
+        raw_document=raw_document,
+        process_options=documentai.ProcessOptions(
+            layout_config=documentai.ProcessOptions.LayoutConfig(
+                chunking_config=documentai.ProcessOptions.LayoutConfig.ChunkingConfig(
+                    include_ancestor_headings=True
+                )
+            )
+        ),
+    )
+    result = client.process_document(request=request)
+    document = result.document
+    full_text = (getattr(document, "text", "") or "").strip()
+    pages = []
+    result_pages = getattr(document, "pages", None) or []
+    for index, page in enumerate(result_pages, start=1):
+        text = _google_page_text(full_text, page)
+        if text:
+            page_number = getattr(page, "page_number", None) or index
+            pages.append(
+                {
+                    "page_label": f"Page {page_number}",
+                    "text": text,
+                    "section_heading": _page_heading(text),
+                    "extraction_backend": "google_document_ai",
+                }
+            )
+    if not pages and full_text:
+        pages.append(
+            {
+                "page_label": "Document",
+                "text": full_text,
+                "section_heading": _page_heading(full_text),
+                "extraction_backend": "google_document_ai",
+            }
+        )
+    return full_text, pages, len(result_pages) or len(pages), {"extraction_backend": "google_document_ai"}
+
+
 def _pdf_extractor_mode() -> str:
     mode = os.getenv("HELPMATE_PDF_EXTRACTOR", "pypdf").strip().lower()
-    return mode if mode in {"azure", "docling", "pypdf"} else "pypdf"
+    return mode if mode in {"azure", "docling", "google", "pypdf"} else "pypdf"
 
 
 def _docx_extractor_mode() -> str:
     mode = os.getenv("HELPMATE_DOCX_EXTRACTOR", "python-docx").strip().lower()
-    return mode if mode in {"azure", "docling", "python-docx"} else "python-docx"
+    return mode if mode in {"azure", "docling", "google", "python-docx"} else "python-docx"
 
 
 def _extract_pdf(path: Path) -> tuple[str, list[dict[str, str]], int, dict[str, str]]:
@@ -185,6 +282,8 @@ def _extract_pdf(path: Path) -> tuple[str, list[dict[str, str]], int, dict[str, 
         return _extract_pdf_pypdf(path)
     if mode == "azure":
         return _extract_azure_document_intelligence(path)
+    if mode == "google":
+        return _extract_google_document_ai(path)
     if mode == "docling":
         return _extract_pdf_docling(path)
     return _extract_pdf_pypdf(path)
@@ -213,6 +312,8 @@ def _extract_docx(path: Path) -> tuple[str, list[dict[str, str]], int, dict[str,
         return _extract_docx_python_docx(path)
     if mode == "azure":
         return _extract_azure_document_intelligence(path)
+    if mode == "google":
+        return _extract_google_document_ai(path)
     if mode == "docling":
         return _extract_docx_docling(path)
     return _extract_docx_python_docx(path)

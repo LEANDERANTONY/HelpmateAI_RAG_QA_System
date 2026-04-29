@@ -918,6 +918,22 @@ wheels = [
 ]
 
 [[package]]
+name = "google-cloud-documentai"
+version = "3.14.0"
+source = { registry = "https://pypi.org/simple" }
+dependencies = [
+    { name = "google-api-core", extra = ["grpc"] },
+    { name = "google-auth" },
+    { name = "grpcio" },
+    { name = "proto-plus" },
+    { name = "protobuf" },
+]
+sdist = { url = "https://files.pythonhosted.org/packages/76/77/53778324112f7b2a53c464be4f65398d34c97e758ea2e2d9a915f853549b/google_cloud_documentai-3.14.0.tar.gz", hash = "sha256:4107d35bd654c4ffd1f980c625578ed2f5b0f8cae90da9158b0b73c9bd7cc527", size = 364395, upload-time = "2026-04-02T21:23:36.276Z" }
+wheels = [
+    { url = "https://files.pythonhosted.org/packages/ae/70/87dda9750012d5c69bff44474b9e74444b915d99a84bef5cb421b9b9f370/google_cloud_documentai-3.14.0-py3-none-any.whl", hash = "sha256:809d2b42e6cf04b2408c8a243f5f28b2a8eace980acef175e5c74dabf677d1ee", size = 311057, upload-time = "2026-04-02T21:23:01.651Z" },
+]
+
+[[package]]
 name = "googleapis-common-protos"
 version = "1.73.1"
 source = { registry = "https://pypi.org/simple" }
@@ -1012,6 +1028,7 @@ dependencies = [
     { name = "cryptography" },
     { name = "docling" },
     { name = "fastapi" },
+    { name = "google-cloud-documentai" },
     { name = "numpy" },
     { name = "openai" },
     { name = "pypdf" },
@@ -1039,6 +1056,7 @@ requires-dist = [
     { name = "cryptography", specifier = ">=44,<46" },
     { name = "docling", specifier = ">=2,<3" },
     { name = "fastapi", specifier = ">=0.115,<1" },
+    { name = "google-cloud-documentai", specifier = ">=3,<4" },
     { name = "numpy", specifier = "<2" },
     { name = "openai", specifier = ">=1.30,<2" },
     { name = "pypdf", specifier = ">=5,<6" },
