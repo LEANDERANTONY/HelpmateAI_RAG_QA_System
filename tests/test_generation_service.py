@@ -1,6 +1,6 @@
 from src.config import Settings
 from src.generation.prompts import build_grounded_prompt
-from src.generation.service import AnswerGenerator
+from src.generation.service import AnswerGenerator, _uses_inferential_supported_language
 from src.schemas import RetrievalCandidate, RetrievalResult
 
 
@@ -58,7 +58,7 @@ def test_grounded_prompt_adds_summary_specific_guidance_for_global_questions():
     assert "what the document is about" in prompt.lower()
 
 
-def test_grounded_prompt_allows_partial_supported_answers():
+def test_grounded_prompt_requires_complete_support_for_multi_part_answers():
     prompt = build_grounded_prompt(
         "Compare the reported GAN, diffusion, and LLM findings.",
         [
@@ -70,5 +70,27 @@ def test_grounded_prompt_allows_partial_supported_answers():
         ],
     )
 
-    assert "answer the supported part directly" in prompt
-    assert "Set supported to false only when the supplied evidence cannot answer the question at all" in prompt
+    assert "set supported to true only when the evidence covers every required fact" in prompt
+    assert "which required fact is missing" in prompt
+    assert "only answers it partially" in prompt
+
+
+def test_grounded_prompt_bans_inferential_supported_answers():
+    prompt = build_grounded_prompt(
+        "What does the report conclude?",
+        [
+            RetrievalCandidate(
+                chunk_id="c1",
+                text="The report states the trial was small and more evidence is needed.",
+                metadata={"page_label": "Page 6"},
+            )
+        ],
+    )
+
+    assert "Do not use inferential wording" in prompt
+    assert "downgrade to supported=false" in prompt
+
+
+def test_inferential_supported_language_is_detected():
+    assert _uses_inferential_supported_language("The evidence suggests that the policy changed.") is True
+    assert _uses_inferential_supported_language("The policy changed on January 1.") is False

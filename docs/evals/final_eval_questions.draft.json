@@ -1,0 +1,841 @@
+[
+  {
+    "question_id": "nist-ai-rmf-1-0-lookup-001",
+    "document_id": "nist-ai-rmf-1-0",
+    "question": "What are the four core functions described in this framework for managing AI risks?",
+    "intent_type": "lookup",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Part 2: Core and Profiles, 5 AI RMF Core",
+        "page_label": "20"
+      }
+    ],
+    "gold_answer": "GOVERN, MAP, MEASURE, and MANAGE.",
+    "gold_answer_notes": "Section 5 introduces the AI RMF Core's four functions, with Figure 5 showing GOVERN as the cross-cutting function.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "nist-ai-rmf-1-0-lookup-002",
+    "document_id": "nist-ai-rmf-1-0",
+    "question": "By when does NIST plan to conduct the next formal review of the framework with input from the AI community?",
+    "intent_type": "lookup",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Update Schedule and Versions (front matter)",
+        "page_label": "front matter"
+      }
+    ],
+    "gold_answer": "No later than 2028.",
+    "gold_answer_notes": "Stated in the 'Update Schedule and Versions' note in the front matter.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "nist-ai-rmf-1-0-lookup-003",
+    "document_id": "nist-ai-rmf-1-0",
+    "question": "How does this framework define an AI system?",
+    "intent_type": "lookup",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Executive Summary",
+        "page_label": "1"
+      }
+    ],
+    "gold_answer": "An engineered or machine-based system that can, for a given set of objectives, generate outputs such as predictions, recommendations, or decisions influencing real or virtual environments, designed to operate with varying levels of autonomy.",
+    "gold_answer_notes": "Definition in the Executive Summary, adapted from the OECD Recommendation on AI:2019 and ISO/IEC 22989:2022.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "nist-ai-rmf-1-0-local_scope-004",
+    "document_id": "nist-ai-rmf-1-0",
+    "question": "In the discussion of fairness and harmful bias, what three major categories of AI bias does NIST say organizations should consider?",
+    "intent_type": "local_scope",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "3.7 Fair – with Harmful Bias Managed",
+        "page_label": "18"
+      }
+    ],
+    "gold_answer": "Systemic bias, computational and statistical bias, and human-cognitive bias.",
+    "gold_answer_notes": "Section 3.7 enumerates these three categories and references NIST Special Publication 1270 for further detail.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "nist-ai-rmf-1-0-local_scope-005",
+    "document_id": "nist-ai-rmf-1-0",
+    "question": "In the Govern function, what subcategory specifically addresses safely retiring or phasing out AI systems?",
+    "intent_type": "local_scope",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "5.1 Govern, Table 1",
+        "page_label": "23"
+      }
+    ],
+    "gold_answer": "GOVERN 1.7: Processes and procedures are in place for decommissioning and phasing out AI systems safely and in a manner that does not increase risks or decrease the organization's trustworthiness.",
+    "gold_answer_notes": "Listed in Table 1 under the GOVERN 1 category.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "nist-ai-rmf-1-0-broad_summary-006",
+    "document_id": "nist-ai-rmf-1-0",
+    "question": "What attributes does the framework say should be evaluated to consider an AI system trustworthy?",
+    "intent_type": "broad_summary",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "3 AI Risks and Trustworthiness (Sections 3.1-3.7)",
+        "page_label": "12-18"
+      }
+    ],
+    "gold_answer": "Valid and reliable, safe, secure and resilient, accountable and transparent, explainable and interpretable, privacy-enhanced, and fair with harmful bias managed.",
+    "gold_answer_notes": "These seven characteristics are introduced in Section 3 and detailed in Sections 3.1-3.7; Figure 4 illustrates how they relate.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "nist-ai-rmf-1-0-broad_summary-007",
+    "document_id": "nist-ai-rmf-1-0",
+    "question": "Why does the framework treat AI risks as different from risks in traditional software systems?",
+    "intent_type": "broad_summary",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Executive Summary",
+        "page_label": "1"
+      },
+      {
+        "section": "1 Framing Risk",
+        "page_label": "4-8"
+      },
+      {
+        "section": "Appendix B: How AI Risks Differ from Traditional Software Risks",
+        "page_label": "38"
+      }
+    ],
+    "gold_answer": "AI systems may be trained on data that changes over time in ways that are hard to understand, their deployment contexts are often complex and socio-technical, and risks can emerge from the interplay of technical aspects with societal factors and how the system is used and operated. The framework devotes Appendix B to this distinction.",
+    "gold_answer_notes": "Discussed in the Executive Summary and Section 1, with a dedicated discussion in Appendix B.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "nist-ai-rmf-1-0-comparison_synthesis-008",
+    "document_id": "nist-ai-rmf-1-0",
+    "question": "How does the framework distinguish transparency, explainability, and interpretability?",
+    "intent_type": "comparison_synthesis",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "3.4 Accountable and Transparent",
+        "page_label": "15-16"
+      },
+      {
+        "section": "3.5 Explainable and Interpretable",
+        "page_label": "16-17"
+      }
+    ],
+    "gold_answer": "Transparency answers 'what happened' in the system, explainability answers 'how' a decision was made, and interpretability answers 'why' a decision was made and what it means to the user.",
+    "gold_answer_notes": "Section 3.5 explicitly contrasts these three concepts after Section 3.4 introduces transparency.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "nist-ai-rmf-1-0-comparison_synthesis-009",
+    "document_id": "nist-ai-rmf-1-0",
+    "question": "What is the difference between a Current Profile and a Target Profile, and why would an organization compare the two?",
+    "intent_type": "comparison_synthesis",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "6 AI RMF Profiles",
+        "page_label": "33"
+      }
+    ],
+    "gold_answer": "A Current Profile indicates how AI is currently being managed and the related risks; a Target Profile indicates the outcomes needed to achieve the desired AI risk management goals. Comparing them reveals gaps that action plans can address to meet AI risk management objectives.",
+    "gold_answer_notes": "Section 6 introduces temporal profiles and explains the rationale for comparing them.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "nist-ai-rmf-1-0-unsupported-010",
+    "document_id": "nist-ai-rmf-1-0",
+    "question": "What is the maximum allowable false positive rate that the framework recommends for an AI system used in clinical diagnosis?",
+    "intent_type": "unsupported",
+    "answerable": false,
+    "expected_regions": [],
+    "gold_answer": "",
+    "gold_answer_notes": "",
+    "unsupported_reason": "The AI RMF is explicitly voluntary, non-sector-specific, and does not prescribe quantitative thresholds (such as false positive rate limits) for any application or domain, including clinical diagnosis."
+  },
+  {
+    "question_id": "arxiv-2510-03305-lookup-001",
+    "document_id": "arxiv-2510-03305",
+    "question": "What three phases does the paper use to organize a machine learning workflow for climate modeling?",
+    "intent_type": "lookup",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Section 3 / Figure 2",
+        "page_label": "6-7"
+      }
+    ],
+    "gold_answer": "Design, development, and deployment.",
+    "gold_answer_notes": "Figure 2 and Section 3 organize the workflow framework into these three phases.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "arxiv-2510-03305-lookup-002",
+    "document_id": "arxiv-2510-03305",
+    "question": "What three integration directions do the authors describe for combining machine learning with climate modeling?",
+    "intent_type": "lookup",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Section 2: Physics+Data+ML",
+        "page_label": "5-6"
+      }
+    ],
+    "gold_answer": "Direction I: Physics-First and ML-Augmented Simulation-Based Modeling; Direction II: Data-First (Observation-Integrated) ML Modeling; Direction III: ML-First Climate Modeling.",
+    "gold_answer_notes": "Section 2 introduces these three integration styles based on the physics-data-ML triad.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "arxiv-2510-03305-lookup-003",
+    "document_id": "arxiv-2510-03305",
+    "question": "Which agency and program funded the research described in this paper?",
+    "intent_type": "lookup",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Title page footnote",
+        "page_label": "1"
+      }
+    ],
+    "gold_answer": "The U.S. National Science Foundation, through the Learning the Earth with Artificial Intelligence and Physics (LEAP) Science and Technology Center, Award No. 2019625.",
+    "gold_answer_notes": "Acknowledged in the footnote on the title page.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "arxiv-2510-03305-local_scope-004",
+    "document_id": "arxiv-2510-03305",
+    "question": "In the ClimSim case study, what spatial resolution and temporal cadence does the dataset use, and how many years does it cover?",
+    "intent_type": "local_scope",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Case Study 1b: ClimSim (Supplement S1)",
+        "page_label": "16-17"
+      }
+    ],
+    "gold_answer": "Approximately 1.5° horizontal resolution at 20-minute temporal intervals, covering ten years of globally distributed input-output pairs.",
+    "gold_answer_notes": "Stated in the Case Study 1b description in Supplement Section S1.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "arxiv-2510-03305-local_scope-005",
+    "document_id": "arxiv-2510-03305",
+    "question": "In the equation discovery case study, how is the search for subgrid closure models translated into a machine learning task?",
+    "intent_type": "local_scope",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Section 3 (Scientific problem translation) / Case Study 1c",
+        "page_label": "7"
+      }
+    ],
+    "gold_answer": "It is framed as a sparse regression problem in which the algorithm identifies functional relationships between grid-level variables and physically meaningful composite terms, allowing the discovery of interpretable equations that can refine parameterizations and advance theory.",
+    "gold_answer_notes": "Described in Section 3 and tied to the Zanna and Bolton (2020) case study.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "arxiv-2510-03305-broad_summary-006",
+    "document_id": "arxiv-2510-03305",
+    "question": "What recurring design patterns do the authors highlight as common across the case studies they reviewed?",
+    "intent_type": "broad_summary",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Section 4 Conclusion and Discussion",
+        "page_label": "12-13"
+      }
+    ],
+    "gold_answer": "Modular workflow design that lets components be reused or swapped with minimal friction; integration of physical relevance through physics-informed architectures, conservation-based constraints, or domain-guided design; and the recognition that offline skill is not an adequate indicator of online deployment performance.",
+    "gold_answer_notes": "These recurring patterns are summarized in the concluding discussion.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "arxiv-2510-03305-broad_summary-007",
+    "document_id": "arxiv-2510-03305",
+    "question": "Why do the authors argue that transparent, structured documentation of ML workflows matters for climate modeling?",
+    "intent_type": "broad_summary",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Section 1 Introduction",
+        "page_label": "2-3"
+      },
+      {
+        "section": "Section 4 Conclusion and Discussion",
+        "page_label": "12-13"
+      }
+    ],
+    "gold_answer": "Transparent documentation supports reproducibility, enables critical evaluation of human design decisions, drives further methodological research, and lowers barriers for interdisciplinary collaboration between machine learning researchers and climate scientists. Inconsistent terminology and ad hoc documentation are identified as ongoing concerns.",
+    "gold_answer_notes": "Articulated in the Introduction and reiterated in the Conclusion.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "arxiv-2510-03305-comparison_synthesis-008",
+    "document_id": "arxiv-2510-03305",
+    "question": "How do physics-first workflows differ from ML-first workflows in their use of physical equations and their priorities?",
+    "intent_type": "comparison_synthesis",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Section 2 (Direction I and Direction III)",
+        "page_label": "5-6"
+      }
+    ],
+    "gold_answer": "Physics-first workflows keep physics-based models at the core and use ML to accelerate components, discover structure, or improve parameterizations, prioritizing theoretical grounding while extending computational feasibility. ML-first workflows aim to build ML-based models that emulate or predict climate behavior with minimal reliance on explicit physical equations, prioritizing predictive accuracy and large-scale data over theoretical interpretability.",
+    "gold_answer_notes": "Section 2 explicitly contrasts Direction I and Direction III.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "arxiv-2510-03305-numeric_procedure-009",
+    "document_id": "arxiv-2510-03305",
+    "question": "What loss function does the Physics-Informed Neural Operator approach use, and how does it differ from the canonical neural operator loss?",
+    "intent_type": "numeric_procedure",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Case Study 1a: Neural Operators (Supplement S1)",
+        "page_label": "15-16"
+      }
+    ],
+    "gold_answer": "The canonical neural operator loss minimizes only the L2 data loss between the predicted and true field. The Physics-Informed Neural Operator (PINO) adds a PDE residual term, giving L(θ) = ||G_θ(u_0) − u_T||²_L2 + ||R{G_θ(u_0)}||²_L2, where the data term uses coarse-resolution data and the PDE residual is enforced at higher resolution; the formulation has no explicit weighting between the two terms.",
+    "gold_answer_notes": "Defined in Case Study 1a in Supplement Section S1.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "arxiv-2510-03305-unsupported-010",
+    "document_id": "arxiv-2510-03305",
+    "question": "What benchmark accuracy did the authors achieve when they ran their own neural operator implementation against FourCastNet on the test set?",
+    "intent_type": "unsupported",
+    "answerable": false,
+    "expected_regions": [],
+    "gold_answer": "",
+    "gold_answer_notes": "",
+    "unsupported_reason": "The paper is a workflow-design synthesis built around third-party case studies; the authors do not run their own neural operator implementation or report head-to-head benchmark numbers against FourCastNet."
+  },
+  {
+    "question_id": "upenn-learning-environmental-models-thesis-2022-lookup-001",
+    "document_id": "upenn-learning-environmental-models-thesis-2022",
+    "question": "Who wrote this dissertation and who supervised it?",
+    "intent_type": "lookup",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Title page",
+        "page_label": "title page"
+      }
+    ],
+    "gold_answer": "Tahiya Salam wrote the dissertation; M. Ani Hsieh, Associate Professor of Mechanical Engineering and Applied Mechanics, supervised it.",
+    "gold_answer_notes": "Identified on the title page.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "upenn-learning-environmental-models-thesis-2022-lookup-002",
+    "document_id": "upenn-learning-environmental-models-thesis-2022",
+    "question": "Which graduate group at Penn awarded this PhD?",
+    "intent_type": "lookup",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Title page / Abstract metadata",
+        "page_label": "title page"
+      }
+    ],
+    "gold_answer": "Electrical and Systems Engineering.",
+    "gold_answer_notes": "Listed on the title page and in the dissertation metadata.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "upenn-learning-environmental-models-thesis-2022-lookup-003",
+    "document_id": "upenn-learning-environmental-models-thesis-2022",
+    "question": "Which Python libraries does the author use to implement the online DMD algorithms?",
+    "intent_type": "lookup",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Section 4.5 Simulation analysis of online algorithms",
+        "page_label": "92"
+      }
+    ],
+    "gold_answer": "The scipy Python library was used for eigendecomposition, with modified DMD functions from the PyDMD library.",
+    "gold_answer_notes": "Stated in Section 4.5 along with the hardware description.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "upenn-learning-environmental-models-thesis-2022-local_scope-004",
+    "document_id": "upenn-learning-environmental-models-thesis-2022",
+    "question": "In the mixed-reality experiment with marine vehicles, what are the dimensions of the indoor water tank used as the test bed?",
+    "intent_type": "local_scope",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Section 4.6.2 Experimental validation in water tank test bed",
+        "page_label": "98"
+      }
+    ],
+    "gold_answer": "4.5 m × 3.0 m × 1.2 m, equipped with a motion capture system used for localization.",
+    "gold_answer_notes": "Stated in Section 4.6.2 and shown in Figure 4.10.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "upenn-learning-environmental-models-thesis-2022-local_scope-005",
+    "document_id": "upenn-learning-environmental-models-thesis-2022",
+    "question": "In the chapter on coherent sets, what does the author use kernel transfer operators for?",
+    "intent_type": "local_scope",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Chapter 6 Leveraging coherent sets",
+        "page_label": "118"
+      },
+      {
+        "section": "Chapter 1 Introduction (roadmap)",
+        "page_label": "7"
+      }
+    ],
+    "gold_answer": "Chapter 6 uses kernel transfer operators to extract patterns in dynamical systems for high-level decision making, leveraging coherent sets to support tasks such as energy-efficient navigation in flow-like environments.",
+    "gold_answer_notes": "Described in the Chapter 1 roadmap and elaborated in Chapter 6.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "upenn-learning-environmental-models-thesis-2022-broad_summary-006",
+    "document_id": "upenn-learning-environmental-models-thesis-2022",
+    "question": "What does the author claim are the main contributions of this thesis?",
+    "intent_type": "broad_summary",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Abstract",
+        "page_label": "vi"
+      },
+      {
+        "section": "Chapter 1 Introduction",
+        "page_label": "6-7"
+      }
+    ],
+    "gold_answer": "Methods for representing the environment as a dynamical system using machine learning, including distributed algorithms, online adaptation, uncertainty quantification, and feature extraction, with the resulting environmental representations guiding robot behavior in optimal sensing and energy-efficient navigation; the methods are validated across complex spatiotemporal environments and on experimental robots.",
+    "gold_answer_notes": "Synthesized from the Abstract and the Chapter 1 statement of contributions.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "upenn-learning-environmental-models-thesis-2022-broad_summary-007",
+    "document_id": "upenn-learning-environmental-models-thesis-2022",
+    "question": "What gap between dynamical systems theory, machine learning, and multi-robot systems does the introduction argue this thesis addresses?",
+    "intent_type": "broad_summary",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Chapter 1 Introduction",
+        "page_label": "5-7"
+      },
+      {
+        "section": "Chapter 2 Background introduction",
+        "page_label": "8"
+      }
+    ],
+    "gold_answer": "Dynamical systems theory has historically not been studied in the context of uncertain, online, distributed sensor data; many machine learning methods used in robotics are disconnected from the dynamical systems representation of a process; and distributed sensing and estimation in robotics typically relies on known or structured models. The thesis unifies these perspectives so robot teams can capture persistent changes in space- and time-varying environments.",
+    "gold_answer_notes": "Argued in Chapter 1 (Introduction) and reinforced at the start of Chapter 2.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "upenn-learning-environmental-models-thesis-2022-comparison_synthesis-008",
+    "document_id": "upenn-learning-environmental-models-thesis-2022",
+    "question": "How does Dynamic Mode Decomposition compare with Principal Component Analysis for representing spatiotemporal environmental processes, according to the thesis?",
+    "intent_type": "comparison_synthesis",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Chapter 1 Introduction",
+        "page_label": "5"
+      },
+      {
+        "section": "Section 2.2 Techniques for studying dynamical systems",
+        "page_label": "20"
+      }
+    ],
+    "gold_answer": "PCA is widely used for dimensionality reduction but lacks an explicit, physically meaningful interpretation of the temporal characteristics of the system. DMD computes a set of modes each associated with a fixed oscillation frequency and decay or growth rate, giving DMD stronger ties to dynamical systems theory and making it better suited for spatiotemporal environmental modeling.",
+    "gold_answer_notes": "Contrasted in Chapter 1 in the discussion of dimensionality reduction methods, with deeper treatment in Chapter 2.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "upenn-learning-environmental-models-thesis-2022-numeric_procedure-009",
+    "document_id": "upenn-learning-environmental-models-thesis-2022",
+    "question": "In the mixed-reality plasma cloud experiment, how many vehicles of each type were used, and at what grid resolutions did the aerial and marine vehicles sense the workspace?",
+    "intent_type": "numeric_procedure",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Section 4.6.2 Experimental validation in water tank test bed",
+        "page_label": "98-99"
+      }
+    ],
+    "gold_answer": "Three real micro-autonomous surface vehicles plus one simulated mASV (four marine vehicles total) and two simulated aerial vehicles. The 384×768 workspace was downsampled to a 10×20 grid for the aerial vehicles' low-fidelity sensing and to a 48×96 grid for the marine vehicles' high-fidelity sensing, with marine vehicles having a sensing radius of 10 grid cells.",
+    "gold_answer_notes": "Stated in Section 4.6.2 with supporting figures 4.7 and 4.8.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "upenn-learning-environmental-models-thesis-2022-unsupported-010",
+    "document_id": "upenn-learning-environmental-models-thesis-2022",
+    "question": "How does the thesis evaluate its proposed methods on a swarm of more than fifty aerial drones in an outdoor wildfire monitoring deployment?",
+    "intent_type": "unsupported",
+    "answerable": false,
+    "expected_regions": [],
+    "gold_answer": "",
+    "gold_answer_notes": "",
+    "unsupported_reason": "The thesis evaluates its methods using small heterogeneous teams of marine and aerial vehicles in indoor or simulated water-tank environments; it does not include outdoor wildfire monitoring or large drone swarm experiments."
+  },
+  {
+    "question_id": "fomc-minutes-2026-01-28-lookup-001",
+    "document_id": "fomc-minutes-2026-01-28",
+    "question": "What target range did the Committee decide to maintain for the federal funds rate at this meeting?",
+    "intent_type": "lookup",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Committee Policy Actions / Domestic policy directive",
+        "page_label": "12-13"
+      }
+    ],
+    "gold_answer": "3½ to 3¾ percent.",
+    "gold_answer_notes": "Stated in the policy directive and the postmeeting statement.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "fomc-minutes-2026-01-28-lookup-002",
+    "document_id": "fomc-minutes-2026-01-28",
+    "question": "Which members dissented from the policy decision, and what alternative did they prefer?",
+    "intent_type": "lookup",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Committee Policy Actions (vote tally)",
+        "page_label": "14"
+      }
+    ],
+    "gold_answer": "Stephen I. Miran and Christopher J. Waller dissented; both preferred to lower the target range for the federal funds rate by ¼ percentage point at this meeting.",
+    "gold_answer_notes": "Stated in the vote tally for the policy action.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "fomc-minutes-2026-01-28-lookup-003",
+    "document_id": "fomc-minutes-2026-01-28",
+    "question": "When is the next FOMC meeting scheduled to take place?",
+    "intent_type": "lookup",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Committee Policy Actions (closing)",
+        "page_label": "14"
+      }
+    ],
+    "gold_answer": "Tuesday-Wednesday, March 17-18, 2026.",
+    "gold_answer_notes": "Stated near the end of the policy actions section.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "fomc-minutes-2026-01-28-local_scope-004",
+    "document_id": "fomc-minutes-2026-01-28",
+    "question": "In the staff's review of foreign developments, which foreign central banks cut their policy rates and which raised them?",
+    "intent_type": "local_scope",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Staff Review of the Economic Situation (foreign developments)",
+        "page_label": "6"
+      }
+    ],
+    "gold_answer": "The Bank of England and the Bank of Mexico cut their policy rates; most other foreign central banks left rates unchanged. The Bank of Japan was a notable exception, raising its key policy rate toward its assessment of the neutral range.",
+    "gold_answer_notes": "Stated in the foreign-developments paragraph of the staff review.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "fomc-minutes-2026-01-28-local_scope-005",
+    "document_id": "fomc-minutes-2026-01-28",
+    "question": "In the staff's financial stability assessment, which categories of vulnerability were characterized as 'notable' versus 'moderate'?",
+    "intent_type": "local_scope",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Staff Review of the Financial Situation (financial stability)",
+        "page_label": "8"
+      }
+    ],
+    "gold_answer": "Asset valuation pressures and leverage in the financial sector were characterized as notable. Vulnerabilities associated with nonfinancial business and household debt, and those associated with funding risks, were characterized as moderate.",
+    "gold_answer_notes": "Stated in the financial stability paragraphs of the staff review.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "fomc-minutes-2026-01-28-broad_summary-006",
+    "document_id": "fomc-minutes-2026-01-28",
+    "question": "What were the main reasons cited by participants who supported holding the federal funds rate steady at this meeting?",
+    "intent_type": "broad_summary",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Participants' Views on Current Conditions and the Economic Outlook",
+        "page_label": "11-12"
+      }
+    ],
+    "gold_answer": "After last year's 75 basis point lowering of the target range, supporters viewed the current stance as within the range of estimates of the neutral level. They argued that holding would leave policymakers well positioned to determine the extent and timing of additional adjustments based on incoming data, the evolving outlook, and the balance of risks, and several worried that further easing amid elevated inflation could be misinterpreted as diminished commitment to the 2 percent objective.",
+    "gold_answer_notes": "Synthesized from the participants' views and risk-management discussion.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "fomc-minutes-2026-01-28-broad_summary-007",
+    "document_id": "fomc-minutes-2026-01-28",
+    "question": "What financial stability concerns did participants raise specifically about the AI sector?",
+    "intent_type": "broad_summary",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Participants' Views on Current Conditions (financial stability)",
+        "page_label": "11"
+      },
+      {
+        "section": "Staff Review of the Financial Situation",
+        "page_label": "8"
+      }
+    ],
+    "gold_answer": "Some participants flagged elevated equity market valuations of AI-related firms, high concentration of market values and activities in a small number of firms, increased debt financing of AI investment, and the financing of AI infrastructure buildout in opaque private markets as potential vulnerabilities warranting monitoring.",
+    "gold_answer_notes": "Discussed in the financial stability paragraph of participants' views, with related concerns in the staff financial stability assessment.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "fomc-minutes-2026-01-28-comparison_synthesis-008",
+    "document_id": "fomc-minutes-2026-01-28",
+    "question": "How did the views of participants who preferred to lower rates differ from those who preferred to hold them steady?",
+    "intent_type": "comparison_synthesis",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Participants' Views on Current Conditions",
+        "page_label": "11-12"
+      }
+    ],
+    "gold_answer": "Those who preferred to lower the target range viewed the current stance as still meaningfully restrictive and saw downside risks to the labor market as a more prominent policy concern than persistently elevated inflation. Those who preferred to hold viewed the current stance as within neutral, judged downside labor risks as having moderated, and worried that easing further amid elevated inflation could be misinterpreted as a diminished commitment to the 2 percent objective and could entrench higher inflation.",
+    "gold_answer_notes": "Contrasted in the participants' views and risk-management discussion.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "fomc-minutes-2026-01-28-numeric_procedure-009",
+    "document_id": "fomc-minutes-2026-01-28",
+    "question": "What specific operating parameters did the policy directive set for the standing overnight repo and reverse repo facilities, effective January 29, 2026?",
+    "intent_type": "numeric_procedure",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Domestic policy directive",
+        "page_label": "13"
+      }
+    ],
+    "gold_answer": "Standing overnight repurchase agreement operations are conducted at a rate of 3.75 percent. Standing overnight reverse repurchase agreement operations are conducted at an offering rate of 3.50 percent with a per-counterparty limit of $160 billion per day.",
+    "gold_answer_notes": "Stated explicitly in the bullet points of the domestic policy directive.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "fomc-minutes-2026-01-28-unsupported-010",
+    "document_id": "fomc-minutes-2026-01-28",
+    "question": "What did this meeting's updated dot plot show about participants' median federal funds rate projection for year-end 2026?",
+    "intent_type": "unsupported",
+    "answerable": false,
+    "expected_regions": [],
+    "gold_answer": "",
+    "gold_answer_notes": "",
+    "unsupported_reason": "These January 27-28, 2026 minutes do not include or reference a Summary of Economic Projections or 'dot plot' for this meeting; SEP materials are not part of this document."
+  },
+  {
+    "question_id": "irena-world-energy-transitions-outlook-2023-lookup-001",
+    "document_id": "irena-world-energy-transitions-outlook-2023",
+    "question": "What two scenarios does this report use as its primary comparison?",
+    "intent_type": "lookup",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Scenarios",
+        "page_label": "17"
+      }
+    ],
+    "gold_answer": "The 1.5°C Scenario, an energy transition pathway aligned with limiting global average temperature rise to 1.5°C, and the Planned Energy Scenario (PES), the primary reference case based on governments' energy plans and existing policies.",
+    "gold_answer_notes": "Defined in the Scenarios section before the executive summary.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "irena-world-energy-transitions-outlook-2023-lookup-002",
+    "document_id": "irena-world-energy-transitions-outlook-2023",
+    "question": "Who is identified as the Director-General of IRENA in the foreword?",
+    "intent_type": "lookup",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Foreword",
+        "page_label": "5"
+      }
+    ],
+    "gold_answer": "Francesco La Camera.",
+    "gold_answer_notes": "Signed at the end of the foreword.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "irena-world-energy-transitions-outlook-2023-lookup-003",
+    "document_id": "irena-world-energy-transitions-outlook-2023",
+    "question": "What level of annual renewable power capacity additions does the report say is needed to stay on a 1.5°C pathway, and how much was actually added globally in 2022?",
+    "intent_type": "lookup",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Executive Summary",
+        "page_label": "21"
+      }
+    ],
+    "gold_answer": "About 1,000 GW per year of renewables are needed to stay on a 1.5°C pathway, while only about 300 GW were added globally in 2022 (accounting for 83% of new capacity additions that year).",
+    "gold_answer_notes": "Stated in the executive summary.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "irena-world-energy-transitions-outlook-2023-local_scope-004",
+    "document_id": "irena-world-energy-transitions-outlook-2023",
+    "question": "In the welfare impacts chapter of Volume 2, how many dimensions and how many indicators make up IRENA's welfare index?",
+    "intent_type": "local_scope",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Chapter 6 Welfare Impacts of the Energy Transition / Figure 6.1",
+        "page_label": "217"
+      }
+    ],
+    "gold_answer": "Five dimensions and ten indicators.",
+    "gold_answer_notes": "Stated in Figure 6.1 and the introduction to Chapter 6.1.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "irena-world-energy-transitions-outlook-2023-local_scope-005",
+    "document_id": "irena-world-energy-transitions-outlook-2023",
+    "question": "In the foreword's vision for overcoming barriers, what three pillars does the report propose as the foundations for a way forward?",
+    "intent_type": "local_scope",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Foreword",
+        "page_label": "4"
+      },
+      {
+        "section": "Box 1.1 Key energy transition pillars",
+        "page_label": "43"
+      }
+    ],
+    "gold_answer": "(1) Building the necessary infrastructure and investing at scale in grids and in land and sea routes to accommodate new production locations, trade patterns, and demand centres; (2) advancing an evolved policy and regulatory architecture that can facilitate targeted investments; and (3) strategically realigning institutional capacities so skills and capabilities match the energy system being created.",
+    "gold_answer_notes": "Articulated in the foreword and elaborated in Box 1.1.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "irena-world-energy-transitions-outlook-2023-broad_summary-006",
+    "document_id": "irena-world-energy-transitions-outlook-2023",
+    "question": "What does the report say about the geographic distribution of renewable energy investment, and why is that a problem?",
+    "intent_type": "broad_summary",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Foreword",
+        "page_label": "4"
+      },
+      {
+        "section": "Executive Summary",
+        "page_label": "23"
+      },
+      {
+        "section": "Chapter 3 Investment needs, financing and enabling policy frameworks",
+        "page_label": "145-167"
+      }
+    ],
+    "gold_answer": "Renewable energy investment remains concentrated in a small number of countries and a few technologies. About 85% of global renewable energy investment in 2022 benefitted less than 50% of the world's population, and Africa accounted for only 1% of additional capacity. This pattern excludes much of the world, particularly countries with significant energy access needs, and undermines a just and inclusive transition.",
+    "gold_answer_notes": "Discussed in the foreword, the executive summary, and Chapter 3.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "irena-world-energy-transitions-outlook-2023-broad_summary-007",
+    "document_id": "irena-world-energy-transitions-outlook-2023",
+    "question": "What is the report's overall assessment of progress on the energy transition through 2022, and where does it say the gap is largest?",
+    "intent_type": "broad_summary",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Foreword",
+        "page_label": "4"
+      },
+      {
+        "section": "Executive Summary",
+        "page_label": "21-23"
+      },
+      {
+        "section": "Chapter 1 The 1.5°C climate pathway and progress",
+        "page_label": "36-63"
+      }
+    ],
+    "gold_answer": "The energy transition is off-track. Most of the progress to date has been in the power sector, where a virtuous circle of technology, policy and innovation has been productive, but the scale and extent of implementation fall far short of what is required to stay on a 1.5°C pathway. Current pledges and plans (NDCs, LT-LEDS, and net-zero targets) leave a 16 Gt CO2 emissions gap in 2050 versus the 1.5°C scenario, and the energy-related emissions gap under the Planned Energy Scenario reaches 34 Gt by 2050.",
+    "gold_answer_notes": "Synthesized from the foreword, the executive summary, and Chapter 1.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "irena-world-energy-transitions-outlook-2023-comparison_synthesis-008",
+    "document_id": "irena-world-energy-transitions-outlook-2023",
+    "question": "Under the 1.5°C Scenario, how does the share of renewables in the global energy mix and the role of electricity change between 2020 and 2050?",
+    "intent_type": "comparison_synthesis",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Executive Summary",
+        "page_label": "25"
+      },
+      {
+        "section": "Chapter 1 The 1.5°C Scenario: Global perspectives",
+        "page_label": "45-54"
+      }
+    ],
+    "gold_answer": "The share of renewable energy in the global energy mix rises from 16% in 2020 to 77% by 2050, electricity becomes the main energy carrier and accounts for over 50% of total final energy consumption by 2050, and renewable electricity capacity needs to expand roughly twelve-fold by 2050 versus 2020 levels. By 2050, 94% of hydrogen would be renewables-based, and modern biomass and hydrogen would meet 16% and 14% of total final energy consumption respectively.",
+    "gold_answer_notes": "Synthesized from the executive summary and Chapter 1.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "irena-world-energy-transitions-outlook-2023-numeric_procedure-009",
+    "document_id": "irena-world-energy-transitions-outlook-2023",
+    "question": "How much cumulative investment does the 1.5°C Scenario require by 2050, how does that compare with the Planned Energy Scenario, and how much annual investment must be redirected away from fossil-fuel technologies?",
+    "intent_type": "numeric_procedure",
+    "answerable": true,
+    "expected_regions": [
+      {
+        "section": "Executive Summary (An enduring investment gap)",
+        "page_label": "25"
+      },
+      {
+        "section": "Chapter 3 Investments to accelerate the energy transition",
+        "page_label": "145-155"
+      }
+    ],
+    "gold_answer": "USD 150 trillion of cumulative investment is required by 2050 under the 1.5°C Scenario, averaging more than USD 5 trillion per year. The Planned Energy Scenario requires USD 103 trillion cumulative, so an additional USD 47 trillion is needed under the 1.5°C Scenario. Roughly USD 1 trillion of annual fossil-fuel-based investment currently envisaged in the PES must be redirected toward energy transition technologies and infrastructure.",
+    "gold_answer_notes": "Stated in the executive summary's investment-gap section and elaborated in Chapter 3.",
+    "unsupported_reason": ""
+  },
+  {
+    "question_id": "irena-world-energy-transitions-outlook-2023-unsupported-010",
+    "document_id": "irena-world-energy-transitions-outlook-2023",
+    "question": "What does the report recommend as the price floor for an internationally harmonized carbon tax through 2050?",
+    "intent_type": "unsupported",
+    "answerable": false,
+    "expected_regions": [],
+    "gold_answer": "",
+    "gold_answer_notes": "",
+    "unsupported_reason": "The report discusses fossil-fuel subsidies, public finance, concessional loans, and a possible wealth tax in its sensitivity analysis, but does not recommend or quantify a price floor for an internationally harmonized carbon tax."
+  }
+]

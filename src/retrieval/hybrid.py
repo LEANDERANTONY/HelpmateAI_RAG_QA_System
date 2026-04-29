@@ -259,6 +259,16 @@ class HybridRetriever:
         semantic_confidence = float(chunk.metadata.get("semantic_chunk_confidence", 0.0) or 0.0)
         semantic_body_evidence_score = float(chunk.metadata.get("semantic_body_evidence_score", body_evidence_score) or body_evidence_score)
         evidence_adjustment = 0.06 * max(min(body_evidence_score, 1.0), 0.0)
+        artifact_type = str(chunk.metadata.get("artifact_type", "")).lower()
+        artifact_entry = bool(chunk.metadata.get("artifact_entry"))
+        artifact_targeted = artifact_type in set(preferred_content_types)
+        if artifact_entry:
+            if artifact_type == "table":
+                evidence_adjustment += 0.18 if artifact_targeted or query_type in {"numeric_lookup", "comparison_lookup"} else -0.16
+            elif artifact_type in {"front_matter", "footnote"}:
+                evidence_adjustment += 0.16 if artifact_targeted else -0.14
+            elif artifact_type == "bibliography":
+                evidence_adjustment += 0.14 if artifact_targeted else -0.28
         if chunk_role == "navigation_like":
             evidence_adjustment -= 0.18
         elif chunk_role == "reference_like":

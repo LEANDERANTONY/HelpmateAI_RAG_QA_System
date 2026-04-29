@@ -76,8 +76,9 @@ def test_chunking_marks_heading_stubs_and_navigation_noise():
     assert chunks[0].metadata["chunk_role_prior"] == "heading_stub"
     assert chunks[0].metadata["heading_only_flag"] is True
     assert chunks[0].metadata["body_evidence_score"] < 0.2
-    assert chunks[1].metadata["chunk_role_prior"] == "navigation_like"
-    assert chunks[1].metadata["low_value_prior"] > 0.9
+    navigation_chunks = [chunk for chunk in chunks if chunk.page_label == "Page 2" and not chunk.metadata.get("artifact_entry")]
+    assert navigation_chunks[0].metadata["chunk_role_prior"] == "navigation_like"
+    assert navigation_chunks[0].metadata["low_value_prior"] > 0.9
 
 
 def test_chunking_propagates_front_matter_metadata():
@@ -111,11 +112,14 @@ def test_chunking_propagates_front_matter_metadata():
 
     chunks = chunk_document(document, chunk_size=1000, chunk_overlap=100)
 
-    assert len(chunks) == 1
-    assert chunks[0].metadata["front_matter_kind"] == "certificate"
-    assert chunks[0].metadata["front_matter_score"] >= 0.9
-    assert chunks[0].metadata["low_value_section_flag"] is True
-    assert chunks[0].metadata["low_value_prior"] >= 0.9
+    prose_chunks = [chunk for chunk in chunks if not chunk.metadata.get("artifact_entry")]
+    front_matter_artifacts = [chunk for chunk in chunks if chunk.metadata.get("artifact_type") == "front_matter"]
+    assert len(prose_chunks) == 1
+    assert len(front_matter_artifacts) == 1
+    assert prose_chunks[0].metadata["front_matter_kind"] == "certificate"
+    assert prose_chunks[0].metadata["front_matter_score"] >= 0.9
+    assert prose_chunks[0].metadata["low_value_section_flag"] is True
+    assert prose_chunks[0].metadata["low_value_prior"] >= 0.9
 
 
 def test_chunking_assigns_continuation_to_heading_stub_chunks():
@@ -152,3 +156,92 @@ def test_chunking_assigns_continuation_to_heading_stub_chunks():
     assert len(chunks) >= 2
     assert chunks[0].metadata["heading_only_flag"] is True
     assert chunks[0].metadata["continuation_chunk_id"] == chunks[1].chunk_id
+
+
+def test_chunking_creates_complete_table_artifact_and_page_metadata():
+    table_text = (
+        "Table 4.1 Operating parameters\n"
+        "Facility        Rate       Limit\n"
+        "Overnight repo  3.75%      n/a\n"
+        "Reverse repo    3.50%      $160 billion per day\n"
+        "The directive applies from January 29."
+    )
+    document = DocumentRecord(
+        document_id="doc5",
+        file_name="minutes.pdf",
+        file_type="pdf",
+        source_path="minutes.pdf",
+        fingerprint="mno",
+        char_count=len(table_text),
+        page_count=1,
+        metadata={
+            "pages": [
+                {
+                    "page_label": "Page 14",
+                    "text": table_text,
+                    "section_heading": "Domestic policy directive",
+                    "section_path": ["Policy Actions", "Domestic policy directive"],
+                    "section_id": "policy-directive",
+                    "clause_ids": [],
+                    "content_type": "general",
+                },
+            ]
+        },
+        extracted_text=table_text,
+    )
+
+    chunks = chunk_document(document, chunk_size=80, chunk_overlap=0)
+    table_artifacts = [chunk for chunk in chunks if chunk.metadata.get("artifact_type") == "table"]
+
+    assert len(table_artifacts) == 1
+    assert table_artifacts[0].metadata["artifact_entry"] is True
+    assert table_artifacts[0].metadata["table_complete"] is True
+    assert table_artifacts[0].metadata["retrieval_visibility"] == "targeted_or_numeric"
+    assert "Reverse repo    3.50%      $160 billion per day" in table_artifacts[0].text
+    assert document.metadata["pages"][0]["artifact_counts"]["table"] == 1
+
+
+def test_chunking_creates_footnote_and_bibliography_artifacts():
+    text = (
+        "Main text discusses the funding source.\n"
+        "1 Supported by the Learning the Earth with Artificial Intelligence and Physics center.\n"
+    )
+    document = DocumentRecord(
+        document_id="doc6",
+        file_name="paper.pdf",
+        file_type="pdf",
+        source_path="paper.pdf",
+        fingerprint="pqr",
+        char_count=len(text),
+        page_count=1,
+        metadata={
+            "pages": [
+                {
+                    "page_label": "Page 1",
+                    "text": text,
+                    "section_heading": "Title page",
+                    "section_path": ["Title page"],
+                    "section_id": "title",
+                    "clause_ids": [],
+                    "content_type": "general",
+                },
+                {
+                    "page_label": "Page 20",
+                    "text": "References\nSmith J. Climate models. 2024.",
+                    "section_heading": "References",
+                    "section_path": ["References"],
+                    "section_id": "references",
+                    "clause_ids": [],
+                    "content_type": "general",
+                    "section_kind": "references",
+                },
+            ]
+        },
+        extracted_text=text,
+    )
+
+    chunks = chunk_document(document, chunk_size=1000, chunk_overlap=0)
+    artifact_types = {chunk.metadata.get("artifact_type") for chunk in chunks if chunk.metadata.get("artifact_entry")}
+
+    assert "footnote" in artifact_types
+    assert "bibliography" in artifact_types

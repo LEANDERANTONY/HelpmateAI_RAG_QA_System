@@ -96,6 +96,22 @@ class QueryAnalyzer:
         "value",
         "values",
     )
+    TABLE_CUES = ("table", "tables", "tabular", "row", "rows", "column", "columns")
+    FRONT_MATTER_CUES = (
+        "author",
+        "authors",
+        "director-general",
+        "foreword",
+        "funded",
+        "funding",
+        "review",
+        "supervised",
+        "supervisor",
+        "title page",
+        "version",
+    )
+    FOOTNOTE_CUES = ("footnote", "footnotes", "note on", "notes on")
+    BIBLIOGRAPHY_CUES = ("bibliography", "cited", "references", "source list", "works cited")
     DISTRIBUTED_CUES = (
         "across",
         "all of the",
@@ -147,18 +163,31 @@ class QueryAnalyzer:
         asks_for_definition: bool,
         asks_for_process: bool,
         asks_for_numeric: bool,
+        asks_for_table: bool = False,
+        asks_for_front_matter: bool = False,
+        asks_for_footnote: bool = False,
+        asks_for_bibliography: bool = False,
     ) -> list[str]:
+        artifact_types: list[str] = []
+        if asks_for_table or asks_for_numeric:
+            artifact_types.append("table")
+        if asks_for_front_matter:
+            artifact_types.append("front_matter")
+        if asks_for_footnote:
+            artifact_types.append("footnote")
+        if asks_for_bibliography:
+            artifact_types.append("bibliography")
         if asks_for_definition:
-            return ["definition", "general"]
+            return [*artifact_types, "definition", "general"]
         if asks_for_process:
-            return ["methodology", "general", "results"]
+            return [*artifact_types, "methodology", "general", "results"]
         if asks_for_numeric:
-            return ["results", "general"]
+            return [*artifact_types, "results", "general"]
         if intent_type == "summary":
-            return ["general", "results"]
+            return [*artifact_types, "general", "results"]
         if intent_type in {"comparison", "cross_cutting"}:
-            return ["general", "definition", "results"]
-        return ["general", "definition"]
+            return [*artifact_types, "general", "definition", "results"]
+        return [*artifact_types, "general", "definition"]
 
     @classmethod
     def analyze(cls, question: str) -> QueryProfile:
@@ -182,6 +211,10 @@ class QueryAnalyzer:
         )
         asks_for_process = not asks_for_summary and (cls._contains_any(lowered, cls.PROCESS_CUES) or asks_for_specific_detail)
         asks_for_numeric = cls._contains_any(lowered, cls.NUMERIC_CUES)
+        asks_for_table = cls._contains_any(lowered, cls.TABLE_CUES)
+        asks_for_front_matter = cls._contains_any(lowered, cls.FRONT_MATTER_CUES)
+        asks_for_footnote = cls._contains_any(lowered, cls.FOOTNOTE_CUES)
+        asks_for_bibliography = cls._contains_any(lowered, cls.BIBLIOGRAPHY_CUES)
         asks_for_comparison = cls._contains_any(lowered, cls.COMPARISON_CUES)
         looks_distributed = cls._contains_any(lowered, cls.DISTRIBUTED_CUES) or bool(
             re.search(r"\bwhat\b.*\b[a-z0-9_-]{3,}s\b.*\bapply\b", lowered)
@@ -241,6 +274,10 @@ class QueryAnalyzer:
                 asks_for_definition=asks_for_definition,
                 asks_for_process=asks_for_process,
                 asks_for_numeric=asks_for_numeric,
+                asks_for_table=asks_for_table,
+                asks_for_front_matter=asks_for_front_matter,
+                asks_for_footnote=asks_for_footnote,
+                asks_for_bibliography=asks_for_bibliography,
             ),
             emphasized_terms=emphasized_terms,
             clause_terms=clause_terms,

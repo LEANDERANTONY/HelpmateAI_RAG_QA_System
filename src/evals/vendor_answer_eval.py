@@ -5,14 +5,11 @@ import re
 from pathlib import Path
 from statistics import mean
 
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from ragas import SingleTurnSample
-from ragas.embeddings import LangchainEmbeddingsWrapper
-from ragas.llms import LangchainLLMWrapper
-from ragas.metrics import Faithfulness, LLMContextPrecisionWithoutReference, ResponseRelevancy
 
 from src.config import get_settings
 from src.evals.openai_file_search_benchmark import OpenAIFileSearchBenchmark
+from src.evals.ragas_judge import build_ragas_metrics
 from src.evals.vectara_benchmark import VectaraBenchmark
 from src.generation import AnswerGenerator
 from src.schemas import RetrievalCandidate, RetrievalResult
@@ -32,18 +29,8 @@ class VendorAnswerEvaluator:
     def __init__(self) -> None:
         self.settings = get_settings()
         self.generator = AnswerGenerator(self.settings)
-        self.available = bool(self.settings.openai_api_key)
-        self._metrics = {}
-        if self.available:
-            llm = LangchainLLMWrapper(ChatOpenAI(model=self.settings.answer_model, api_key=self.settings.openai_api_key))
-            embeddings = LangchainEmbeddingsWrapper(
-                OpenAIEmbeddings(model=self.settings.embedding_model, api_key=self.settings.openai_api_key)
-            )
-            self._metrics = {
-                "faithfulness": Faithfulness(llm=llm),
-                "answer_relevancy": ResponseRelevancy(llm=llm, embeddings=embeddings),
-                "context_precision": LLMContextPrecisionWithoutReference(llm=llm),
-            }
+        self._metrics, self.judge_info = build_ragas_metrics(self.settings)
+        self.available = bool(self._metrics)
 
     @staticmethod
     def _candidates(vendor_name: str, snippets: list[dict]) -> list[RetrievalCandidate]:

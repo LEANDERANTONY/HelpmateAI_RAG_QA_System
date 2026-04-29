@@ -26,3 +26,7 @@ docs/quickstart.md
 tmp/
 static/UI/
 static/sample_files/test/
+static/held_out/*.pdf
+static/financebench/*.pdf
+docs/evals/financebench/
+docs/evals/financebench_manifest.json

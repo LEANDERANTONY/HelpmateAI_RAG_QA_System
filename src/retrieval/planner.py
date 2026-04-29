@@ -50,6 +50,10 @@ class RetrievalPlanner:
         "overview",
         "rules",
         "evidence",
+        "table",
+        "footnote",
+        "front_matter",
+        "bibliography",
     }
     VALID_FOCUS_TERMS = {
         "answer",

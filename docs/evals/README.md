@@ -20,6 +20,11 @@ HelpmateAI now uses a layered evaluation stack so retrieval changes can be judge
 - shared-answer quality benchmark:
   - `ragas` scoring on top of OpenAI retrieval contexts
   - `ragas` scoring on top of Vectara retrieval contexts
+- frozen final-eval suite:
+  - held-out manifest validation
+  - equalized context budgets
+  - per-intent answer-quality reporting
+  - abstention-aware vendor comparison
 
 ## Why This Matters
 
@@ -44,7 +49,8 @@ The current benchmark is useful, but it should be read precisely.
 - The main four-document suite contains documents and question families used during HelpmateAI development, so it is a tuned workload for HelpmateAI and a less tuned workload for external vendors.
 - Vendor answer-quality rows are generated with the shared Helpmate answer generator on top of vendor retrieval contexts. This makes retrieval context quality easier to compare, but it does not evaluate each vendor's full native answer product.
 - OpenAI File Search is queried with `rewrite_query=True` and `max_num_results=5`.
-- Vectara is queried with `limit=5`.
+- Historical Vectara rows before the final-eval scaffold used `limit=5`.
+- Final-eval Vectara rows use the `hybrid_rerank` profile: initial `limit=20`, `lexical_interpolation=0.025`, and `Rerank_Multilingual_v1` with returned `limit=5`.
 - Vendor snippets are truncated to 400 characters before answer generation and `ragas` scoring.
 - HelpmateAI uses its own final evidence bundle, currently `final_top_k=4`, after planning, fusion, reranking, and optional reorder-only evidence selection.
 - `ragas` uses the configured OpenAI-backed evaluator and no-reference metrics because these datasets are retrieval-labeled rather than gold-answer datasets.
@@ -60,6 +66,22 @@ The next stronger protocol is:
 - report abstention/support rates beside answer-quality metrics
 - break scores down by intent type
 - rerun with a second judge model family
+
+The scaffold for that protocol is now in:
+
+- `docs/evals/final_eval_protocol.md`
+- `docs/evals/final_eval_manifest.example.json`
+- `docs/evals/final_eval_sources_20260428.md`
+- `docs/evals/final_eval_question_authoring_prompt.md`
+- `docs/evals/download_final_eval_docs.ps1`
+- `docs/evals/financebench_protocol.md`
+- `src/evals/final_eval_suite.py`
+
+The final-eval runner is intentionally separate from the current project benchmark scripts. The project benchmark remains the regression suite; the final-eval suite is the blind, auditable comparison path.
+
+Held-out PDFs are stored locally under `static/held_out/` and ignored by git. This keeps the repo small while preserving reproducibility through source URLs and hashes.
+
+FinanceBench assets are also local-only and reproducible. Use `src/evals/financebench_eval.py` to convert the open-source 150-question sample into the same manifest format as the final-eval runner.
 
 ### Retrieval-Level Comparison
 

@@ -47,6 +47,10 @@ def _normalized_lines(text: str) -> list[str]:
     return [line.strip() for line in text.splitlines() if line.strip()]
 
 
+def _raw_lines(text: str) -> list[str]:
+    return [line.strip() for line in text.splitlines()]
+
+
 def _looks_like_heading_line(line: str) -> bool:
     compact = line.strip()
     if not compact:
@@ -98,6 +102,153 @@ def _chunk_role_prior(text: str) -> tuple[str, float]:
     return "body", 0.88
 
 
+def _looks_like_table_caption(line: str) -> bool:
+    compact = line.strip().lower()
+    if compact in {"table of contents", "list of tables"}:
+        return False
+    return bool(re.match(r"^(?:table|exhibit)\s+[A-Za-z0-9.\-:]+", line.strip(), flags=re.IGNORECASE))
+
+
+def _looks_like_tabular_line(line: str) -> bool:
+    compact = line.strip()
+    if not compact:
+        return False
+    numeric_ratio = sum(char.isdigit() for char in compact) / max(len(compact), 1)
+    has_columns = bool(re.search(r"\s{2,}|\t|[|]", compact))
+    return has_columns and (numeric_ratio >= 0.12 or len(compact.split()) >= 4)
+
+
+def _extract_table_blocks(text: str) -> list[str]:
+    lines = _raw_lines(text)
+    blocks: list[str] = []
+    consumed: set[int] = set()
+
+    for index, line in enumerate(lines):
+        if index in consumed or not _looks_like_table_caption(line):
+            continue
+        block: list[str] = [line]
+        consumed.add(index)
+        for following_index in range(index + 1, len(lines)):
+            following = lines[following_index].strip()
+            if not following:
+                if len(block) >= 3:
+                    break
+                continue
+            if len(block) >= 3 and _looks_like_heading_line(following) and not _looks_like_tabular_line(following):
+                break
+            block.append(following)
+            consumed.add(following_index)
+        if len(block) >= 2:
+            blocks.append("\n".join(block).strip())
+
+    index = 0
+    while index < len(lines):
+        if index in consumed:
+            index += 1
+            continue
+        run: list[str] = []
+        run_indices: list[int] = []
+        while index < len(lines) and index not in consumed and _looks_like_tabular_line(lines[index]):
+            run.append(lines[index].strip())
+            run_indices.append(index)
+            index += 1
+        if len(run) >= 3:
+            blocks.append("\n".join(run).strip())
+            consumed.update(run_indices)
+        index += 1
+
+    return list(dict.fromkeys(block for block in blocks if block))
+
+
+def _extract_footnote_block(text: str) -> str:
+    lines = [line for line in _normalized_lines(text)[-14:] if not _looks_like_table_caption(line)]
+    footnote_lines = [
+        line
+        for line in lines
+        if re.match(r"^(?:\d{1,3}|[*†‡§])\s+[\w(]", line)
+        and len(line) >= 24
+        and not re.match(r"^\d+(?:\.\d+)+\s+[A-Za-z]", line)
+    ]
+    return "\n".join(footnote_lines).strip()
+
+
+def _artifact_chunk(
+    *,
+    document: DocumentRecord,
+    page: dict,
+    artifact_type: str,
+    artifact_index: int,
+    chunk_index: int,
+    text: str,
+    section_heading: str,
+    section_path: list,
+    section_id: str,
+    clause_ids: list,
+    document_style: str,
+) -> ChunkRecord:
+    page_label = page.get("page_label", "Document")
+    artifact_id = f"{document.document_id}-{artifact_type}-{page_label.lower().replace(' ', '-')}-{artifact_index}"
+    visibility = {
+        "table": "targeted_or_numeric",
+        "footnote": "targeted_only",
+        "front_matter": "targeted_only",
+        "bibliography": "explicit_only",
+    }.get(artifact_type, "targeted_only")
+    body_score = {
+        "table": 0.72,
+        "footnote": 0.56,
+        "front_matter": 0.48,
+        "bibliography": 0.12,
+    }.get(artifact_type, 0.4)
+    return ChunkRecord(
+        chunk_id=f"{document.document_id}-artifact-{chunk_index:04d}",
+        document_id=document.document_id,
+        text=text.strip(),
+        chunk_index=chunk_index,
+        page_label=str(page_label),
+        metadata={
+            "source_file": document.file_name,
+            "page_label": page_label,
+            "document_id": document.document_id,
+            "section_heading": section_heading,
+            "section_path": section_path,
+            "section_id": section_id,
+            "clause_ids": clause_ids,
+            "primary_clause_id": clause_ids[0] if clause_ids else "",
+            "content_type": artifact_type,
+            "artifact_entry": True,
+            "artifact_type": artifact_type,
+            "artifact_id": artifact_id,
+            "artifact_index": artifact_index,
+            "artifact_parent_page": page_label,
+            "retrieval_visibility": visibility,
+            "document_style": document_style,
+            "chunk_role_prior": f"{artifact_type}_artifact",
+            "body_evidence_score": body_score,
+            "heading_only_flag": False,
+            "low_value_prior": 0.88 if artifact_type == "bibliography" else 0.35,
+            "table_complete": artifact_type == "table",
+        },
+    )
+
+
+def _artifact_specs(page: dict, *, front_matter_kind: str, front_matter_score: float, low_value_section_flag: bool) -> list[tuple[str, str]]:
+    text = str(page.get("text", ""))
+    section_heading = str(page.get("section_heading", ""))
+    section_kind = str(page.get("section_kind", section_heading)).lower()
+    specs: list[tuple[str, str]] = []
+    for table_block in _extract_table_blocks(text):
+        specs.append(("table", table_block))
+    footnote_block = _extract_footnote_block(text)
+    if footnote_block:
+        specs.append(("footnote", footnote_block))
+    if front_matter_score >= 0.5 and front_matter_kind and text.strip():
+        specs.append(("front_matter", text.strip()))
+    if section_kind in {"references", "bibliography"} or section_heading.strip().lower() in {"references", "bibliography"}:
+        specs.append(("bibliography", text.strip()))
+    return [(artifact_type, artifact_text) for artifact_type, artifact_text in specs if artifact_text.strip()]
+
+
 def chunk_document(document: DocumentRecord, chunk_size: int, chunk_overlap: int) -> list[ChunkRecord]:
     pages = document.metadata.get("pages") or [{"page_label": "Document", "text": document.extracted_text}]
     records: list[ChunkRecord] = []
@@ -117,6 +268,32 @@ def chunk_document(document: DocumentRecord, chunk_size: int, chunk_overlap: int
             str(text),
             [str(page_label)],
         )
+        specs = _artifact_specs(
+            page,
+            front_matter_kind=front_matter_kind,
+            front_matter_score=front_matter_score,
+            low_value_section_flag=low_value_section_flag,
+        )
+        artifact_ids_by_type: dict[str, list[str]] = {}
+        for artifact_type, artifact_text in specs:
+            artifact = _artifact_chunk(
+                document=document,
+                page=page,
+                artifact_type=artifact_type,
+                artifact_index=len(artifact_ids_by_type.get(artifact_type, [])) + 1,
+                chunk_index=chunk_index,
+                text=artifact_text,
+                section_heading=section_heading,
+                section_path=section_path,
+                section_id=section_id,
+                clause_ids=clause_ids,
+                document_style=document_style,
+            )
+            records.append(artifact)
+            artifact_ids_by_type.setdefault(artifact_type, []).append(str(artifact.metadata["artifact_id"]))
+            chunk_index += 1
+        page["artifact_counts"] = {artifact_type: len(ids) for artifact_type, ids in artifact_ids_by_type.items()}
+        page["artifact_ids"] = [artifact_id for ids in artifact_ids_by_type.values() for artifact_id in ids]
         blocks = _semantic_blocks(text) or [text]
         page_records: list[ChunkRecord] = []
         for block in blocks:
@@ -151,6 +328,8 @@ def chunk_document(document: DocumentRecord, chunk_size: int, chunk_overlap: int
                             "front_matter_kind": front_matter_kind,
                             "front_matter_score": front_matter_score,
                             "low_value_section_flag": low_value_section_flag,
+                            "page_artifact_counts": dict(page.get("artifact_counts", {})),
+                            "page_artifact_ids": list(page.get("artifact_ids", [])),
                         },
                     )
                 )

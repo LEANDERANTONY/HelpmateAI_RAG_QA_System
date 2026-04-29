@@ -10,6 +10,24 @@ from src.schemas import AnswerResult, CacheStatus, RetrievalCandidate, Retrieval
 logger = logging.getLogger(__name__)
 
 
+INFERENTIAL_SUPPORTED_MARKERS = (
+    "implied",
+    "implies",
+    "suggests",
+    "appears",
+    "likely",
+    "could mean",
+    "could indicate",
+    "may indicate",
+    "can be interpreted",
+)
+
+
+def _uses_inferential_supported_language(answer_text: str) -> bool:
+    lowered = answer_text.lower()
+    return any(marker in lowered for marker in INFERENTIAL_SUPPORTED_MARKERS)
+
+
 class AnswerGenerator:
     def __init__(self, settings: Settings):
         self.settings = settings
@@ -130,6 +148,12 @@ class AnswerGenerator:
         supported = bool(payload.get("supported", False))
         answer_text = str(payload.get("answer", "")).strip() or "Unsupported by the retrieved evidence."
         reason_text = str(payload.get("reason", "")).strip() or None
+        if supported and _uses_inferential_supported_language(answer_text):
+            supported = False
+            reason_text = (
+                (reason_text + " " if reason_text else "")
+                + "The answer used inferential wording, so it was downgraded because the evidence did not directly support a grounded claim."
+            )
         if citation_details and supported:
             references_block = "\n\nReferences:\n" + "\n".join(f"- {item}" for item in citation_details)
         return AnswerResult(

@@ -1,0 +1,1304 @@
+{
+  "suite": {
+    "suite_id": "heldout-product-fit-2026-04-draft",
+    "description": "Draft held-out product-fit final evaluation manifest. Documents are fixed; questions must be generated and frozen before any system run.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\final_eval_manifest.draft.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    }
+  },
+  "systems": [
+    "helpmate",
+    "openai_file_search",
+    "vectara"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v16-final-eval",
+    "generation_version": "v6-final-eval",
+    "openai_file_search": {
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      }
+    }
+  },
+  "summary": {
+    "overall": {
+      "helpmate": {
+        "dataset_size": 10,
+        "answerable_size": 9,
+        "unsupported_size": 1,
+        "supported_rate": 0.7,
+        "answerable_supported_rate": 0.7777777777777778,
+        "unsupported_abstention_rate": 1.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.2222222222222222,
+        "avg_context_count": 4.0,
+        "avg_context_chars": 2133.0,
+        "ragas_all": {
+          "faithfulness": 0.6764957264957265,
+          "answer_relevancy": 0.6527127927952546,
+          "context_precision": 0.8749999999552083
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.6814102564102564,
+          "answer_relevancy": 0.7690459640741965,
+          "context_precision": 0.7999999999433334
+        }
+      },
+      "openai_file_search": {
+        "dataset_size": 10,
+        "answerable_size": 9,
+        "unsupported_size": 1,
+        "supported_rate": 0.4,
+        "answerable_supported_rate": 0.4444444444444444,
+        "unsupported_abstention_rate": 1.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.5555555555555556,
+        "avg_context_count": 5.0,
+        "avg_context_chars": 1997.3,
+        "ragas_all": {
+          "faithfulness": 0.9761904761904762,
+          "answer_relevancy": 0.4790982700514663,
+          "context_precision": 0.99999999998
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.9285714285714286,
+          "answer_relevancy": 0.6984226711330419,
+          "context_precision": null
+        }
+      },
+      "vectara": {
+        "dataset_size": 10,
+        "answerable_size": 9,
+        "unsupported_size": 1,
+        "supported_rate": 0.7,
+        "answerable_supported_rate": 0.7777777777777778,
+        "unsupported_abstention_rate": 1.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.2222222222222222,
+        "avg_context_count": 5.0,
+        "avg_context_chars": 891.6,
+        "ragas_all": {
+          "faithfulness": 0.9194444444444444,
+          "answer_relevancy": 0.7678228277133449,
+          "context_precision": 0.7702380951916071
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.8964285714285715,
+          "answer_relevancy": 0.7776832848827852,
+          "context_precision": 0.7319444443935417
+        }
+      }
+    },
+    "by_intent": {
+      "helpmate": {
+        "broad_summary": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 2400.0,
+          "ragas_all": {
+            "faithfulness": 0.775,
+            "answer_relevancy": 0.9188192412391704,
+            "context_precision": 0.9999999999583333
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.775,
+            "answer_relevancy": 0.9188192412391704,
+            "context_precision": 0.9999999999583333
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 1747.0,
+          "ragas_all": {
+            "faithfulness": 0.5384615384615384,
+            "answer_relevancy": 0.8567980443899429,
+            "context_precision": null
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.5384615384615384,
+            "answer_relevancy": 0.8567980443899429,
+            "context_precision": null
+          }
+        },
+        "local_scope": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 2332.5,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.810449841993995,
+            "context_precision": 0.9999999999
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.810449841993995,
+            "context_precision": 0.9999999999
+          }
+        },
+        "lookup": {
+          "dataset_size": 3,
+          "answerable_size": 3,
+          "unsupported_size": 0,
+          "supported_rate": 0.3333333333333333,
+          "answerable_supported_rate": 0.3333333333333333,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.6666666666666666,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 2021.6666666666667,
+          "ragas_all": {
+            "faithfulness": 0.3333333333333333,
+            "answer_relevancy": 0.2659712182214251,
+            "context_precision": 0.66666666665
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.29893957358890505,
+            "context_precision": 0.0
+          }
+        },
+        "unsupported": {
+          "dataset_size": 1,
+          "answerable_size": 0,
+          "unsupported_size": 1,
+          "supported_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 2306.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7611652696367432,
+            "context_precision": 0.999999999975
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      },
+      "openai_file_search": {
+        "broad_summary": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1998.5,
+          "ragas_all": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 0.5,
+          "answerable_supported_rate": 0.5,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.5,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 2000.0,
+          "ragas_all": {
+            "faithfulness": 0.9285714285714286,
+            "answer_relevancy": 0.7583052348393717,
+            "context_precision": 0.99999999998
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.8571428571428571,
+            "answer_relevancy": 0.7358151351050829,
+            "context_precision": null
+          }
+        },
+        "local_scope": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 1.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1998.5,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.99999999998
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        },
+        "lookup": {
+          "dataset_size": 3,
+          "answerable_size": 3,
+          "unsupported_size": 0,
+          "supported_rate": 0.3333333333333333,
+          "answerable_supported_rate": 0.3333333333333333,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.6666666666666666,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1994.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.6789895753150272,
+            "context_precision": null
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.661030207161001,
+            "context_precision": null
+          }
+        },
+        "unsupported": {
+          "dataset_size": 1,
+          "answerable_size": 0,
+          "unsupported_size": 1,
+          "supported_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1997.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.99999999998
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      },
+      "vectara": {
+        "broad_summary": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 845.0,
+          "ragas_all": {
+            "faithfulness": 0.7,
+            "answer_relevancy": 0.941775051189014,
+            "context_precision": 0.5020833333167187
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.7,
+            "answer_relevancy": 0.941775051189014,
+            "context_precision": 0.5020833333167187
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 771.5,
+          "ragas_all": {
+            "faithfulness": 0.9375,
+            "answer_relevancy": 0.7579329095453469,
+            "context_precision": 0.8874999999778125
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.9375,
+            "answer_relevancy": 0.7579329095453469,
+            "context_precision": 0.8874999999778125
+          }
+        },
+        "local_scope": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 938.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.34510698208748786,
+            "context_precision": 0.749999999925
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.34510698208748786,
+            "context_precision": 0.749999999925
+          }
+        },
+        "lookup": {
+          "dataset_size": 3,
+          "answerable_size": 3,
+          "unsupported_size": 0,
+          "supported_rate": 0.3333333333333333,
+          "answerable_supported_rate": 0.3333333333333333,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.6666666666666666,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 995.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.818321541862321,
+            "context_precision": 0.99999999994
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9215768057405015,
+            "context_precision": 0.9999999999
+          }
+        },
+        "unsupported": {
+          "dataset_size": 1,
+          "answerable_size": 0,
+          "unsupported_size": 1,
+          "supported_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 822.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7614166344259073,
+            "context_precision": null
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {
+      "openai_file_search": {
+        "ragas_all_faithfulness": -0.29969474969474963,
+        "ragas_all_answer_relevancy": 0.1736145227437883,
+        "ragas_all_context_precision": -0.12500000002479172,
+        "supported_rate": 0.29999999999999993,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": -0.33333333333333337
+      },
+      "vectara": {
+        "ragas_all_faithfulness": -0.24294871794871786,
+        "ragas_all_answer_relevancy": -0.11511003491809024,
+        "ragas_all_context_precision": 0.10476190476360114,
+        "supported_rate": 0.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.0
+      }
+    }
+  },
+  "results": [
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-001",
+      "question": "What are the four core functions described in this framework for managing AI risks?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not include the four core functions.",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 13",
+        "nist-ai-rmf-1-0.pdf - Page 10",
+        "nist-ai-rmf-1-0.pdf - Page 3",
+        "nist-ai-rmf-1-0.pdf - Page 2"
+      ],
+      "context_count": 4,
+      "context_chars": 1741,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.4989740810753703,
+        "context_precision": 0.999999999975
+      },
+      "note": "The supplied excerpts discuss organizational integration and general risk management, but they do not name the four core functions of the framework. No substantive answer can be supported from the provided evidence."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-002",
+      "question": "By when does NIST plan to conduct the next formal review of the framework with input from the AI community?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "No later than 2028 [Source 2].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 3",
+        "nist-ai-rmf-1-0.pdf - Page 3",
+        "nist-ai-rmf-1-0.pdf - Page 8",
+        "nist-ai-rmf-1-0.pdf - Page 2"
+      ],
+      "context_count": 4,
+      "context_chars": 2148,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.29893957358890505,
+        "context_precision": 0.0
+      },
+      "note": "The evidence states that a review with formal input from the AI community is expected to take place no later than 2028 [Source 2]. It does not specify a more exact date beyond that."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-003",
+      "question": "How does this framework define an AI system?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "Not specified in the provided evidence.",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 5",
+        "nist-ai-rmf-1-0.pdf - Page 7",
+        "nist-ai-rmf-1-0.pdf - Page 46",
+        "nist-ai-rmf-1-0.pdf - Page 2"
+      ],
+      "context_count": 4,
+      "context_chars": 2176,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.999999999975
+      },
+      "note": "The supplied excerpts describe the AI RMF and its purpose, but do not give a definition of what an AI system is [Source 2][Source 1]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-004",
+      "question": "In the discussion of fairness and harmful bias, what three major categories of AI bias does NIST say organizations should consider?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "NIST says organizations should consider three major categories of AI bias: systemic, computational and statistical, and human-cognitive [Source 1].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 23",
+        "nist-ai-rmf-1-0.pdf - Page 23",
+        "nist-ai-rmf-1-0.pdf - Page 22",
+        "nist-ai-rmf-1-0.pdf - Page 17"
+      ],
+      "context_count": 4,
+      "context_chars": 2400,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.913629414926695,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence directly lists the three categories in the fairness/bias discussion. No additional coverage is needed."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-005",
+      "question": "In the Govern function, what subcategory specifically addresses safely retiring or phasing out AI systems?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "GOVERN 1.7 addresses this: it covers processes and procedures for decommissioning and phasing out AI systems safely [Source 1].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 28",
+        "nist-ai-rmf-1-0.pdf - Page 27",
+        "nist-ai-rmf-1-0.pdf - Page 29",
+        "nist-ai-rmf-1-0.pdf - Page 46"
+      ],
+      "context_count": 4,
+      "context_chars": 2265,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7072702690612948,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence directly names GOVERN 1.7 as the subcategory for safely decommissioning and phasing out AI systems. The question asks which subcategory specifically addresses that, and the evidence supports it fully."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-006",
+      "question": "What attributes does the framework say should be evaluated to consider an AI system trustworthy?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework says trustworthy AI systems should be evaluated for these characteristics: valid and reliable, safe, secure and resilient, accountable and transparent, explainable and interpretable, privacy-enhanced, and fair with harmful bias managed [Source 1]. It also says valid & reliable is a necessary condition of trustworthiness [Source 2].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 17",
+        "nist-ai-rmf-1-0.pdf - Page 17",
+        "nist-ai-rmf-1-0.pdf - Page 47",
+        "nist-ai-rmf-1-0.pdf - Page 3"
+      ],
+      "context_count": 4,
+      "context_chars": 2400,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.890382470245218,
+        "context_precision": 0.99999999995
+      },
+      "note": "The evidence directly lists the trustworthiness characteristics. It does not provide a specific evaluation checklist or metrics, only the attributes/characteristics that should be considered."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-007",
+      "question": "Why does the framework treat AI risks as different from risks in traditional software systems?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework treats AI risks differently because AI systems have risks that are new or increased compared with traditional software, and current risk frameworks do not comprehensively address them [Source 1][Source 2]. These include harmful bias and data quality issues, uncertainty about whether training data represents the intended context, rapidly changing data affecting trustworthiness, complex attack surfaces and AI-specific security abuses, and risks tied to generative AI, transfer learnin",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 43",
+        "nist-ai-rmf-1-0.pdf - Page 44",
+        "nist-ai-rmf-1-0.pdf - Page 6",
+        "nist-ai-rmf-1-0.pdf - Page 13"
+      ],
+      "context_count": 4,
+      "context_chars": 2400,
+      "ragas": {
+        "faithfulness": 0.55,
+        "answer_relevancy": 0.9472560122331227,
+        "context_precision": 0.9999999999666667
+      },
+      "note": "The evidence supports why AI risks are treated as different: they can be unique, context-dependent, and not fully covered by traditional software risk frameworks. The evidence does not provide a formal definition of the framework\u2019s overall theory, but it does list the specific reasons and examples."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-comparison_synthesis-008",
+      "question": "How does the framework distinguish transparency, explainability, and interpretability?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework distinguishes them as related but distinct characteristics: transparency answers \u201cwhat happened\u201d in the system, explainability answers \u201chow\u201d a decision was made, and interpretability answers \u201cwhy\u201d a decision was made and what it means in context to the user [Source 1]. It also defines explainability as a representation of the mechanisms underlying AI operation, and interpretability as the meaning of AI outputs in the context of their designed functional purposes [Source 2]. Transpa",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 22",
+        "nist-ai-rmf-1-0.pdf - Page 21",
+        "nist-ai-rmf-1-0.pdf - Page 4",
+        "nist-ai-rmf-1-0.pdf - Page 20"
+      ],
+      "context_count": 4,
+      "context_chars": 1813,
+      "ragas": {
+        "faithfulness": 0.5384615384615384,
+        "answer_relevancy": 0.8567980443899429,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The evidence directly provides the framework\u2019s distinctions and supporting definitions. It does not add any different or conflicting distinction beyond these descriptions."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-comparison_synthesis-009",
+      "question": "What is the difference between a Current Profile and a Target Profile, and why would an organization compare the two?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "A Current Profile describes how AI is currently being managed and the related risks in terms of current outcomes, while a Target Profile describes the outcomes needed to achieve desired AI risk management goals [Source 2]. An organization compares them to identify gaps between the current state and the desired state, so it can develop action plans, prioritize mitigation, and gauge the resources needed to meet its AI risk management objectives [Source 1][Source 2].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 38",
+        "nist-ai-rmf-1-0.pdf - Page 38",
+        "nist-ai-rmf-1-0.pdf - Page 39",
+        "nist-ai-rmf-1-0.pdf - Page 4"
+      ],
+      "context_count": 4,
+      "context_chars": 1681,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The evidence directly defines both profile types and explains that comparing them reveals gaps to address, supports action planning, prioritization, and resource estimation. The question is fully answered by [Source 1] and [Source 2]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-unsupported-010",
+      "question": "What is the maximum allowable false positive rate that the framework recommends for an AI system used in clinical diagnosis?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "No maximum false positive rate is specified.",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 19",
+        "nist-ai-rmf-1-0.pdf - Page 9",
+        "nist-ai-rmf-1-0.pdf - Page 13",
+        "nist-ai-rmf-1-0.pdf - Page 33"
+      ],
+      "context_count": 4,
+      "context_chars": 2306,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7611652696367432,
+        "context_precision": 0.999999999975
+      },
+      "note": "The provided evidence says false positive rates should be considered as part of accuracy measurements, but it does not give any numeric threshold or maximum allowable rate for clinical diagnosis [Source 1]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-001",
+      "question": "What are the four core functions described in this framework for managing AI risks?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The four core functions are GOVERN, MAP, MEASURE, and MANAGE [Source 4].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.661030207161001,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "Source 4 explicitly states that Part 2 of the Framework describes four specific functions to address AI risks: GOVERN, MAP, MEASURE, and MANAGE. The evidence does not provide further detail on what each function entails, only the names of the functions."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-002",
+      "question": "By when does NIST plan to conduct the next formal review of the framework with input from the AI community?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not state when the next formal review will occur.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1984,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The provided sources describe the AI RMF and its publication date, but do not mention any schedule for NIST\u2019s next formal review with input from the AI community."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-003",
+      "question": "How does this framework define an AI system?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not define an AI system.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6969489434690535,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The excerpts describe the AI Risk Management Framework and AI risk management, but they do not give a definition of an AI system. [Source 1], [Source 2], [Source 3], [Source 4], [Source 5]"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-004",
+      "question": "In the discussion of fairness and harmful bias, what three major categories of AI bias does NIST say organizations should consider?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not identify the three categories.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The excerpts mention fairness, harmful bias, and related risks, but they do not list the three major categories of AI bias NIST says organizations should consider."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-005",
+      "question": "In the Govern function, what subcategory specifically addresses safely retiring or phasing out AI systems?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not include the subcategory for safely retiring or phasing out AI systems.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1998,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision": 0.99999999998
+      },
+      "note": "The excerpts show GOVERN categories and some subcategories, but the specific subcategory about safely retiring or phasing out AI systems is not present in the supplied evidence."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-006",
+      "question": "What attributes does the framework say should be evaluated to consider an AI system trustworthy?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework says AI systems should be evaluated for their trustworthy characteristics [Source 3]. The provided evidence does not list all of those characteristics in full; it only shows that trustworthiness is assessed through evaluation of trustworthy characteristics and related metrics/measurements [Source 1][Source 2][Source 3].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1998,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The evidence supports that the framework calls for evaluating AI systems for trustworthy characteristics, but the excerpt does not enumerate the full set of attributes. Therefore only that general attribute can be answered directly."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-007",
+      "question": "Why does the framework treat AI risks as different from risks in traditional software systems?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework treats AI risks as different because AI systems can have risks that affect individuals, groups, organizations, communities, society, the environment, and the planet, and those risks may be long- or short-term, high- or low-probability, systemic or localized, and high- or low-impact [Source 1]. AI risks are also harder to measure because AI systems can be inscrutable due to limited explainability/interpretability, lack of transparency or documentation, and inherent uncertainties [So",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The evidence explains that AI risk is broader in scope and can be difficult to assess because of AI system opacity and uncertainty [Source 1][Source 4]. It does not explicitly compare AI risks to risks in traditional software systems beyond noting AI systems are more inscrutable and complex, so the answer is limited to that supported distinction."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-comparison_synthesis-008",
+      "question": "How does the framework distinguish transparency, explainability, and interpretability?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Transparency is the extent to which information about an AI system and its outputs is available to individuals [Source 1]. Explainability is tied to describing why an AI system made a particular prediction or recommendation [Source 3]. Interpretability is about interpreting AI system output within its context, and risks to interpretability can be addressed by communicating such a description [Source 5][Source 3].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2000,
+      "ragas": {
+        "faithfulness": 0.8571428571428571,
+        "answer_relevancy": 0.7358151351050829,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The evidence distinguishes transparency as information availability, explainability as providing a why-description for a prediction/recommendation, and interpretability as understanding/interpreting the output in context. The sources do not provide a fuller formal comparison beyond these points."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-comparison_synthesis-009",
+      "question": "What is the difference between a Current Profile and a Target Profile, and why would an organization compare the two?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The supplied evidence does not define Current Profile or Target Profile.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2000,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7807953345736606,
+        "context_precision": 0.99999999998
+      },
+      "note": "The evidence mentions AI RMF Profiles generally, but it does not explain the specific terms \"Current Profile\" and \"Target Profile\" or why an organization would compare them. I cannot answer without guessing."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-unsupported-010",
+      "question": "What is the maximum allowable false positive rate that the framework recommends for an AI system used in clinical diagnosis?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "Not specified in the provided evidence.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1997,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.99999999998
+      },
+      "note": "The evidence discusses validation, measurement, and stopping deployment for unacceptable risk, but it does not state any maximum allowable false positive rate for clinical diagnosis [Source 2][Source 3][Source 5]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-001",
+      "question": "What are the four core functions described in this framework for managing AI risks?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not name all four core functions.",
+      "citations": [
+        "Page 1",
+        "Page 25",
+        "Page 26",
+        "Page 14",
+        "Page 25"
+      ],
+      "context_count": 5,
+      "context_chars": 707,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The provided evidence says there are four specific functions, but it only clearly references one by name: GOVERN [Source 3]. The other three core functions are not identified in the supplied evidence, so the full set cannot be answered from these sources."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-002",
+      "question": "By when does NIST plan to conduct the next formal review of the framework with input from the AI community?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "NIST expects the next formal review with input from the AI community to take place no later than 2028 [Source 1].",
+      "citations": [
+        "Page 1",
+        "Page 1",
+        "Page 1",
+        "Page 1",
+        "Page 24"
+      ],
+      "context_count": 5,
+      "context_chars": 1234,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9215768057405015,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence explicitly states that a review with formal input from the AI community is expected to take place no later than 2028 [Source 1]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-003",
+      "question": "How does this framework define an AI system?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not define an AI system.",
+      "citations": [
+        "Page 17",
+        "Page 1",
+        "Page 29",
+        "Page 46",
+        "Page 9"
+      ],
+      "context_count": 5,
+      "context_chars": 1044,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7150662779841405,
+        "context_precision": 0.99999999998
+      },
+      "note": "The supplied sources describe the Framework\u2019s purpose and how to manage AI system trustworthiness and impacts, but none provides a definition of what an AI system is [Source 1][Source 2][Source 3][Source 4][Source 5]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-004",
+      "question": "In the discussion of fairness and harmful bias, what three major categories of AI bias does NIST say organizations should consider?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "NIST says organizations should consider three major categories of AI bias: systemic, computational and statistical, and human-cognitive [Source 2].",
+      "citations": [
+        "Page 22",
+        "Page 22",
+        "Page 22",
+        "Page 17",
+        "Page 38"
+      ],
+      "context_count": 5,
+      "context_chars": 839,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision": 0.49999999995
+      },
+      "note": "The evidence directly names the three categories in the fairness and harmful bias discussion. The question is fully answered by Source 2."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-005",
+      "question": "In the Govern function, what subcategory specifically addresses safely retiring or phasing out AI systems?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "GOVERN 1.7 [Source 1].",
+      "citations": [
+        "Page 26",
+        "Page 26",
+        "Page 36",
+        "Page 26",
+        "Page 26"
+      ],
+      "context_count": 5,
+      "context_chars": 1037,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.34510698208748786,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence explicitly states that GOVERN 1.7 covers \u201cdecommissioning and phasing out AI systems safely.\u201d This directly answers the question. [Source 1]"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-006",
+      "question": "What attributes does the framework say should be evaluated to consider an AI system trustworthy?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework says trustworthy AI should be evaluated for its characteristics, including safety, transparency, accountability, and risk management [Source 1][Source 2][Source 3][Source 4]. It also mentions evaluations involving human subjects as part of trustworthy characteristics [Source 5].",
+      "citations": [
+        "Page 17",
+        "Page 25",
+        "Page 33",
+        "Page 20",
+        "Page 33"
+      ],
+      "context_count": 5,
+      "context_chars": 798,
+      "ragas": {
+        "faithfulness": 0.4,
+        "answer_relevancy": 0.8939095925381632,
+        "context_precision": 0.32499999998375
+      },
+      "note": "The evidence explicitly names several trustworthy AI characteristics or related evaluation areas, but it does not provide a complete exhaustive list in the supplied excerpts. The supported attributes are safety, transparency, accountability, and continuous risk management, plus human-subject evaluation requirements."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-007",
+      "question": "Why does the framework treat AI risks as different from risks in traditional software systems?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework treats AI risks as different because AI system risks are described as \u201cin many ways unique\u201d and existing guidance for traditional software or information-based systems does not comprehensively address many AI system risks [Source 3][Source 5]. It also notes that AI risks can change across the AI lifecycle, with some risks latent at one stage and increasing as systems adapt and evolve [Source 4].",
+      "citations": [
+        "Page 38",
+        "Page 38",
+        "Page 1",
+        "Page 10",
+        "Page 38"
+      ],
+      "context_count": 5,
+      "context_chars": 892,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9896405098398647,
+        "context_precision": 0.6791666666496875
+      },
+      "note": "The evidence supports that AI risks are viewed as unique and lifecycle-dependent, and that prior software-focused guidance is not comprehensive for AI. The evidence does not provide a more detailed list of all specific differences beyond these points."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-comparison_synthesis-008",
+      "question": "How does the framework distinguish transparency, explainability, and interpretability?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework treats them as distinct but mutually reinforcing characteristics [Source 1]. Transparency is about how much information about the AI system and its outputs is available to people interacting with it [Source 4]. Explainability is a representation of the mechanisms underlying the AI system\u2019s operation and can answer \u201chow\u201d a decision was made [Source 2][Source 5]. Interpretability is the meaning of the AI system\u2019s output in the context of its designed functional purposes [Source 2].",
+      "citations": [
+        "Page 21",
+        "Page 21",
+        "Page 21",
+        "Page 20",
+        "Page 21"
+      ],
+      "context_count": 5,
+      "context_chars": 896,
+      "ragas": {
+        "faithfulness": 0.875,
+        "answer_relevancy": 0.7388115315580506,
+        "context_precision": 0.8874999999778125
+      },
+      "note": "The evidence directly defines all three terms and states they are distinct characteristics that support each other [Source 1]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-comparison_synthesis-009",
+      "question": "What is the difference between a Current Profile and a Target Profile, and why would an organization compare the two?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "A Current Profile describes how AI is currently being managed and the related risks in terms of current outcomes [Source 4], while a Target Profile describes the outcomes needed to achieve the desired AI risk management goals [Source 2]. An organization would compare them to identify gaps that need to be addressed to meet AI risk management objectives [Source 1].",
+      "citations": [
+        "Page 38",
+        "Page 38",
+        "Page 38",
+        "Page 38",
+        "Page 38"
+      ],
+      "context_count": 5,
+      "context_chars": 647,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7770542875326433,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The evidence directly defines both profile types and states that comparing them reveals gaps to close. The evidence does not provide additional detail beyond that basic purpose, but it is sufficient to answer the question."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-unsupported-010",
+      "question": "What is the maximum allowable false positive rate that the framework recommends for an AI system used in clinical diagnosis?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "No maximum allowable false positive rate is specified in the provided evidence.",
+      "citations": [
+        "Page 18",
+        "Page 1",
+        "Page 1",
+        "Page 33",
+        "Page 38"
+      ],
+      "context_count": 5,
+      "context_chars": 822,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7614166344259073,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The evidence mentions that false positive rates should be considered as a measure of accuracy [Source 1], but it does not give any maximum allowable threshold or recommendation for clinical diagnosis."
+    }
+  ]
+}

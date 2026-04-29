@@ -21,7 +21,7 @@ Recommended deployment shape:
 
 ## Main Pipeline
 
-1. ingest uploaded PDF or DOCX content
+1. ingest uploaded PDF or DOCX content through the configured extraction backend
 2. infer lightweight document structure and document style
 3. repair low-confidence section maps at indexing time when journal-style layout noise is detected
 4. enrich sections with generic document profiles such as chapter, role, page range, and scope labels
@@ -38,7 +38,17 @@ Recommended deployment shape:
 
 ## Ingestion And Structure Layer
 
-The ingestion path captures more than raw text:
+The ingestion path captures more than raw text. PDF extraction now runs through a configurable backend:
+
+- `HELPMATE_PDF_EXTRACTOR=auto` is the default for PDFs and tries Docling first, then falls back to `pypdf` if Docling cannot convert the file
+- `HELPMATE_PDF_EXTRACTOR=docling` forces Docling and raises conversion failures instead of silently falling back
+- `HELPMATE_PDF_EXTRACTOR=pypdf` uses the older lightweight text extractor
+- `HELPMATE_DOCX_EXTRACTOR=auto` applies the same Docling-first policy to DOCX files, falling back to `python-docx`
+- `HELPMATE_DOCX_EXTRACTOR=docling` and `HELPMATE_DOCX_EXTRACTOR=python-docx` force the strict/rich or lightweight DOCX path
+
+Docling is preferred because it can emit layout-aware Markdown, including less lossy table text when the PDF structure is recoverable. `pypdf` remains the reliability fallback because some user PDFs are malformed, scanned, encrypted, or otherwise rejected by richer layout parsers. The selected backend and any fallback reason are recorded in document and page metadata so extraction behavior is visible in traces and eval reports.
+
+After extraction, the ingestion path captures:
 
 - page labels
 - section headings
@@ -112,6 +122,15 @@ The current retrieval upgrade adds a lightweight topology layer on top of these 
 
 These topology artifacts are stored locally alongside the existing schema-versioned Chroma index rather than in a separate graph database.
 
+The indexing layer also preserves noisy but important document artifacts as typed retrieval entries instead of letting them pollute normal prose retrieval:
+
+- `table` artifacts preserve the complete detected table-like text block from extraction and are favored for numeric, comparison, table, row, column, rate, value, and parameter questions.
+- `footnote` artifacts are tied to their parent page and are favored only for note/footnote-style or front-matter lookup questions.
+- `front_matter` artifacts preserve title-page, foreword, version, author, funding, review, and similar metadata pages for targeted lookup.
+- `bibliography` artifacts are indexed as explicit-only citation backmatter, so references do not dominate ordinary semantic retrieval.
+
+Normal chunks receive `page_artifact_counts` and `page_artifact_ids` metadata so retrieval traces can show that a page had related tables, footnotes, or front-matter artifacts available. This keeps the previous noise controls for contents/references/table fragments, while still making those regions recoverable when the question actually asks for them.
+
 For noisy academic and journal PDFs, the indexing path now includes a low-confidence structure-repair step:
 
 - deterministic parsing runs first
@@ -130,6 +149,7 @@ HelpmateAI now uses a planned hybrid retrieval design:
 - reciprocal-rank style fusion
 - optional reranking
 - metadata-aware ranking preferences
+- typed artifact gating for tables, footnotes, front matter, and bibliographies
 - deterministic `RetrievalPlan` generation before retrieval
 - chunk-first retrieval for exact factual grounding
 - synopsis-first hierarchical retrieval for section-level and global questions

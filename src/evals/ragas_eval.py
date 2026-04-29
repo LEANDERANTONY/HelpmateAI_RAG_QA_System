@@ -1,18 +1,15 @@
 from __future__ import annotations
 
 import json
-import warnings
 from pathlib import Path
 from statistics import mean
 
 from dotenv import load_dotenv
-from langchain_openai import ChatOpenAI, OpenAIEmbeddings
 from ragas import SingleTurnSample
-from ragas.embeddings import LangchainEmbeddingsWrapper
-from ragas.llms import LangchainLLMWrapper
-from ragas.metrics import Faithfulness, LLMContextPrecisionWithoutReference, ResponseRelevancy
 
 from src.config import Settings, get_settings
+from src.evals.ragas_judge import build_ragas_metrics
+from src.evals.ragas_retry import call_with_ragas_retry
 from src.pipeline import HelpmatePipeline
 
 
@@ -30,24 +27,8 @@ class RagasEvaluator:
     def __init__(self, settings: Settings | None = None) -> None:
         settings = settings or get_settings()
         self.settings = settings
-        self.available = bool(settings.openai_api_key)
-        self._metrics = {}
-
-        if not self.available:
-            return
-
-        with warnings.catch_warnings():
-            warnings.simplefilter("ignore", category=DeprecationWarning)
-            llm = LangchainLLMWrapper(ChatOpenAI(model=settings.answer_model, api_key=settings.openai_api_key))
-            embeddings = LangchainEmbeddingsWrapper(
-                OpenAIEmbeddings(model=settings.embedding_model, api_key=settings.openai_api_key)
-            )
-
-        self._metrics = {
-            "faithfulness": Faithfulness(llm=llm),
-            "answer_relevancy": ResponseRelevancy(llm=llm, embeddings=embeddings),
-            "context_precision": LLMContextPrecisionWithoutReference(llm=llm),
-        }
+        self._metrics, self.judge_info = build_ragas_metrics(settings)
+        self.available = bool(self._metrics)
 
     @staticmethod
     def _contexts_from_answer(answer: dict) -> list[str]:
@@ -71,8 +52,9 @@ class RagasEvaluator:
         if not self.available:
             return {
                 "available": False,
-                "reason": "OPENAI_API_KEY is not configured, so ragas evaluation could not run.",
+                "reason": self.judge_info.get("reason", "RAGAS judge is not configured, so evaluation could not run."),
                 "dataset_size": len(dataset),
+                "ragas_judge": self.judge_info,
             }
 
         self.settings.ensure_dirs()
@@ -102,7 +84,7 @@ class RagasEvaluator:
 
             for metric_name, metric in self._metrics.items():
                 try:
-                    score = float(metric.single_turn_score(sample))
+                    score = float(call_with_ragas_retry(lambda: metric.single_turn_score(sample)))
                     row[metric_name] = score
                     if metric_name == "faithfulness":
                         faithfulness_scores.append(score)
@@ -121,6 +103,7 @@ class RagasEvaluator:
             "document_path": str(document_path),
             "answer_model": self.settings.answer_model,
             "embedding_model": self.settings.embedding_model,
+            "ragas_judge": self.judge_info,
             "faithfulness_mean": _safe_mean(faithfulness_scores),
             "answer_relevancy_mean": _safe_mean(answer_relevancy_scores),
             "context_precision_mean": _safe_mean(context_precision_scores),

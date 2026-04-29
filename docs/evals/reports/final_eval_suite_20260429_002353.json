@@ -1,0 +1,376 @@
+{
+  "suite": {
+    "suite_id": "heldout-product-fit-2026-04-draft",
+    "description": "Draft held-out product-fit final evaluation manifest. Documents are fixed; questions must be generated and frozen before any system run.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\final_eval_manifest.draft.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    }
+  },
+  "systems": [
+    "helpmate",
+    "openai_file_search",
+    "vectara"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v16-final-eval",
+    "generation_version": "v6-final-eval",
+    "openai_file_search": {
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      }
+    }
+  },
+  "summary": {
+    "overall": {
+      "helpmate": {
+        "dataset_size": 2,
+        "answerable_size": 2,
+        "unsupported_size": 0,
+        "supported_rate": 0.5,
+        "answerable_supported_rate": 0.5,
+        "unsupported_abstention_rate": 0.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.5,
+        "avg_context_count": 4.0,
+        "avg_context_chars": 1944.5,
+        "ragas_all": {
+          "faithfulness": 0.0,
+          "answer_relevancy": 0.40783008792679976,
+          "context_precision": 0.4999999999875
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.0,
+          "answer_relevancy": 0.3166860947782293,
+          "context_precision": 0.0
+        }
+      },
+      "openai_file_search": {
+        "dataset_size": 2,
+        "answerable_size": 2,
+        "unsupported_size": 0,
+        "supported_rate": 0.5,
+        "answerable_supported_rate": 0.5,
+        "unsupported_abstention_rate": 0.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.5,
+        "avg_context_count": 5.0,
+        "avg_context_chars": 1999.0,
+        "ragas_all": {
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.3305151035805005,
+          "context_precision": 0.624999999975
+        },
+        "ragas_attempted": {
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.661030207161001,
+          "context_precision": 0.249999999975
+        }
+      },
+      "vectara": {
+        "dataset_size": 2,
+        "answerable_size": 2,
+        "unsupported_size": 0,
+        "supported_rate": 0.5,
+        "answerable_supported_rate": 0.5,
+        "unsupported_abstention_rate": 0.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.5,
+        "avg_context_count": 5.0,
+        "avg_context_chars": 970.5,
+        "ragas_all": {
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.44255830654861095,
+          "context_precision": 0.99999999994
+        },
+        "ragas_attempted": {
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.3032704629266915,
+          "context_precision": 0.9999999999
+        }
+      }
+    },
+    "by_intent": {
+      "helpmate": {
+        "lookup": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 0.5,
+          "answerable_supported_rate": 0.5,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.5,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 1944.5,
+          "ragas_all": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.40783008792679976,
+            "context_precision": 0.4999999999875
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.3166860947782293,
+            "context_precision": 0.0
+          }
+        }
+      },
+      "openai_file_search": {
+        "lookup": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 0.5,
+          "answerable_supported_rate": 0.5,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.5,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1999.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.3305151035805005,
+            "context_precision": 0.624999999975
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.661030207161001,
+            "context_precision": 0.249999999975
+          }
+        }
+      },
+      "vectara": {
+        "lookup": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 0.5,
+          "answerable_supported_rate": 0.5,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.5,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 970.5,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.44255830654861095,
+            "context_precision": 0.99999999994
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.3032704629266915,
+            "context_precision": 0.9999999999
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {
+      "openai_file_search": {
+        "ragas_all_faithfulness": -1.0,
+        "ragas_all_answer_relevancy": 0.07731498434629924,
+        "ragas_all_context_precision": -0.1249999999875,
+        "supported_rate": 0.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.0
+      },
+      "vectara": {
+        "ragas_all_faithfulness": -1.0,
+        "ragas_all_answer_relevancy": -0.03472821862181119,
+        "ragas_all_context_precision": -0.4999999999525,
+        "supported_rate": 0.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.0
+      }
+    }
+  },
+  "results": [
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-001",
+      "question": "What are the four core functions described in this framework for managing AI risks?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not include the four core functions.",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 13",
+        "nist-ai-rmf-1-0.pdf - Page 10",
+        "nist-ai-rmf-1-0.pdf - Page 3",
+        "nist-ai-rmf-1-0.pdf - Page 2"
+      ],
+      "context_count": 4,
+      "context_chars": 1741,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.4989740810753703,
+        "context_precision": 0.999999999975
+      },
+      "note": "The supplied excerpts discuss organizational integration and general risk management, but they do not name the four core functions of the framework. No substantive answer can be supported from the provided evidence."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-002",
+      "question": "By when does NIST plan to conduct the next formal review of the framework with input from the AI community?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "No later than 2028 [Source 2].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 3",
+        "nist-ai-rmf-1-0.pdf - Page 3",
+        "nist-ai-rmf-1-0.pdf - Page 8",
+        "nist-ai-rmf-1-0.pdf - Page 2"
+      ],
+      "context_count": 4,
+      "context_chars": 2148,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.3166860947782293,
+        "context_precision": 0.0
+      },
+      "note": "The evidence states that a review with formal input from the AI community is expected to take place no later than 2028 [Source 2]. It does not specify a more exact date beyond that."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-001",
+      "question": "What are the four core functions described in this framework for managing AI risks?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The four core functions are GOVERN, MAP, MEASURE, and MANAGE [Source 4].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.661030207161001,
+        "context_precision": 0.249999999975
+      },
+      "note": "[Source 4] explicitly states that the Framework\u2019s core consists of four specific functions: GOVERN, MAP, MEASURE, and MANAGE. The other sources provide additional context but are not needed to answer the question."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-002",
+      "question": "By when does NIST plan to conduct the next formal review of the framework with input from the AI community?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not say.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.999999999975
+      },
+      "note": "The provided sources describe the framework but do not mention any schedule or date for NIST\u2019s next formal review with input from the AI community."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-001",
+      "question": "What are the four core functions described in this framework for managing AI risks?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not name the four core functions.",
+      "citations": [
+        "Page 1",
+        "Page 25",
+        "Page 26",
+        "Page 14",
+        "Page 25"
+      ],
+      "context_count": 5,
+      "context_chars": 707,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.5818461501705303,
+        "context_precision": 0.99999999998
+      },
+      "note": "The supplied evidence only says there are four specific functions to help manage AI risks [Source 1], but it does not identify or list all four functions. It provides partial information about one function/context (e.g., GOVERN) [Source 3] and mentions the need for diverse perspectives [Sources 4-5], which is not enough to answer the question fully."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-002",
+      "question": "By when does NIST plan to conduct the next formal review of the framework with input from the AI community?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "No later than 2028 [Source 1].",
+      "citations": [
+        "Page 1",
+        "Page 1",
+        "Page 1",
+        "Page 1",
+        "Page 24"
+      ],
+      "context_count": 5,
+      "context_chars": 1234,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.3032704629266915,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence states that a review with formal input from the AI community is expected to take place no later than 2028 [Source 1]."
+    }
+  ]
+}

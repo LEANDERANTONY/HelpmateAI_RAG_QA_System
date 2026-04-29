@@ -7,6 +7,7 @@ import os
 import urllib.error
 import urllib.request
 import uuid
+from dataclasses import dataclass
 from pathlib import Path
 
 from dotenv import load_dotenv
@@ -15,11 +16,63 @@ from dotenv import load_dotenv
 load_dotenv()
 
 
+@dataclass(frozen=True)
+class VectaraSearchProfile:
+    name: str
+    request_limit: int
+    return_limit: int
+    lexical_interpolation: float | None = None
+    reranker: dict | None = None
+
+    def search_payload(self, limit: int) -> dict:
+        request_limit = max(self.request_limit, limit)
+        search: dict = {"limit": request_limit}
+        if self.lexical_interpolation is not None:
+            search["lexical_interpolation"] = self.lexical_interpolation
+        if self.reranker:
+            reranker = dict(self.reranker)
+            reranker["limit"] = limit
+            search["reranker"] = reranker
+        return search
+
+
+VECTARA_SEARCH_PROFILES: dict[str, VectaraSearchProfile] = {
+    "baseline": VectaraSearchProfile(
+        name="baseline",
+        request_limit=5,
+        return_limit=5,
+    ),
+    "hybrid_rerank": VectaraSearchProfile(
+        name="hybrid_rerank",
+        request_limit=20,
+        return_limit=5,
+        lexical_interpolation=0.025,
+        reranker={
+            "type": "customer_reranker",
+            "reranker_name": "Rerank_Multilingual_v1",
+        },
+    ),
+}
+
+
+def get_vectara_search_profile(name: str | None = None) -> VectaraSearchProfile:
+    profile_name = (name or os.getenv("HELPMATE_VECTARA_SEARCH_PROFILE") or "hybrid_rerank").strip().lower()
+    if profile_name not in VECTARA_SEARCH_PROFILES:
+        allowed = ", ".join(sorted(VECTARA_SEARCH_PROFILES))
+        raise ValueError(f"Unknown Vectara search profile '{profile_name}'. Expected one of: {allowed}")
+    return VECTARA_SEARCH_PROFILES[profile_name]
+
+
 class VectaraBenchmark:
-    def __init__(self, api_key: str | None = None) -> None:
+    def __init__(self, api_key: str | None = None, *, search_profile: str | VectaraSearchProfile | None = None) -> None:
         self.api_key = api_key or os.getenv("VECTARA_API_KEY")
         self.base_url = "https://api.vectara.io/v2"
         self.available = bool(self.api_key)
+        self.search_profile = (
+            search_profile
+            if isinstance(search_profile, VectaraSearchProfile)
+            else get_vectara_search_profile(search_profile)
+        )
 
     @staticmethod
     def _fingerprint(path: str | Path) -> str:
@@ -148,7 +201,7 @@ class VectaraBenchmark:
         corpus_key = self.get_or_create_corpus(document_path)
         results = []
         for item in dataset:
-            search_result = self.search(document_path, item["question"], limit=5)
+            search_result = self.search(document_path, item["question"], limit=self.search_profile.return_limit)
             snippets = [result["text"] for result in search_result["results"]]
             matched = any(
                 expected_fragment.lower() in " ".join(snippets).lower()
@@ -167,6 +220,8 @@ class VectaraBenchmark:
             "available": True,
             "dataset_size": len(dataset),
             "corpus_key": corpus_key,
+            "search_profile": self.search_profile.name,
+            "search_config": self.search_profile.search_payload(self.search_profile.return_limit),
             "snippet_fragment_match_rate": match_rate,
             "results": results,
         }
@@ -178,7 +233,7 @@ class VectaraBenchmark:
         corpus_key = self.get_or_create_corpus(document_path)
         payload = {
             "query": question,
-            "search": {"limit": limit},
+            "search": self.search_profile.search_payload(limit),
             "stream_response": False,
         }
         response = self._request(
@@ -209,5 +264,7 @@ class VectaraBenchmark:
             )
         return {
             "corpus_key": corpus_key,
+            "search_profile": self.search_profile.name,
+            "search_config": payload["search"],
             "results": results,
         }

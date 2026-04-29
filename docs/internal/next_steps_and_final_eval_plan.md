@@ -602,12 +602,15 @@ Public framing if it works:
 
 ## Immediate Next Actions
 
-1. Let the current evaluation run finish.
-2. Save the report path and exact settings.
-3. Compare the result against the caveats in this document.
-4. Do not retune on the final held-out set.
-5. Start the scoring-weight refactor only after current eval artifacts are saved.
-6. Create the blind eval document list and question-generation protocol.
+1. Pick the first held-out product-fit document set.
+2. Create `docs/evals/final_eval_manifest.json` from `docs/evals/final_eval_manifest.example.json`.
+3. Record source URLs, access dates, license notes, and document type for every held-out PDF.
+4. Generate questions with a non-production model family and freeze the manifest before any system run.
+5. Run a dry pilot with `--systems helpmate --max-questions 8 --skip-ragas`.
+6. Run the full product-fit comparison with HelpmateAI, OpenAI File Search, and Vectara.
+7. Add QASPER or FinanceBench only after the product-fit harness is proven stable.
+8. Do not retune on the final held-out set.
+9. Start the scoring-weight refactor only after final eval artifacts are saved.
 
 ## Notes To Future Us
 

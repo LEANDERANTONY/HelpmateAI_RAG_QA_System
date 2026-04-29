@@ -62,42 +62,11 @@ Most RAG demos retrieve the top chunks and hope the answer model can stitch them
 
 ## Architecture
 
-```mermaid
-flowchart TD
-    A["User uploads PDF/DOCX"] --> B["Ingest text and metadata"]
-    B --> C["Deterministic section extraction"]
-    C --> D{"Structure confidence low?"}
-    D -->|Yes| E["Index-time structure repair"]
-    D -->|No| F["Keep deterministic structure"]
-    E --> G["Build chunks + sections"]
-    F --> G
-    G --> H["Enrich section profiles"]
-    H --> I["Build synopses + topology edges"]
-    I --> J["Persist chunk, section, and synopsis indexes"]
+![HelpmateAI architecture](images/helpmate-architecture.svg)
 
-    K["User asks a question"] --> L["Query analysis"]
-    L --> M["Retrieval orchestrator with validated scope"]
-    M --> N["Deterministic RetrievalPlan"]
-    N --> O{"Preferred route"}
-    O -->|chunk_first| P["Direct chunk retrieval"]
-    O -->|synopsis_first| Q["Synopsis -> section -> chunk retrieval"]
-    O -->|global_summary_first| R["Overview/findings/conclusion anchors"]
-    O -->|hybrid_both| S["Direct + topology-guided retrieval"]
-    O -->|section_first| T["Bounded section fallback"]
+The diagram leads with the index/query split. Color is reserved for the three parts that make HelpmateAI different from off-the-shelf RAG: amber for the document-topology layer, violet for plan-driven routing, and red for the abstention guardrail. The dashed amber handoff from topology to planning is the core design: query-time retrieval is guided by index-time document structure.
 
-    P --> U["Fusion + rerank"]
-    Q --> U
-    R --> U
-    S --> U
-    T --> U
-    U --> V["Evidence grading"]
-    V -->|unsupported| W["Abstain"]
-    V -->|strong or weak| X["Reorder-only evidence selector"]
-    X --> Y["Grounded answer generation"]
-    Y --> Z["Answer + citations + raw evidence + run trace"]
-```
-
-Full version: [docs/architecture-flow.md](docs/architecture-flow.md)
+Detailed flow: [docs/architecture-flow.md](docs/architecture-flow.md)
 
 ## Product Preview
 
@@ -135,7 +104,9 @@ Recent validation highlights:
 
 The retrieval core lives in `src/` and stays framework-agnostic. `backend/` exposes it through FastAPI upload, index, status, and ask endpoints. `frontend/` ships the Next.js workspace UI. `deploy/vps/` contains the Docker Compose and Caddy deployment path for the API, while the public app is split between landing, workspace, and backend surfaces.
 
-Built with Next.js, FastAPI, ChromaDB, OpenAI, sentence-transformers, scikit-learn, optional Supabase persistence, optional hosted Chroma-compatible storage, Docker, and `uv`.
+Built with Next.js, FastAPI, Docling with `pypdf` fallback, ChromaDB, OpenAI, sentence-transformers, scikit-learn, optional Supabase persistence, optional hosted Chroma-compatible storage, Docker, and `uv`.
+
+PDF extraction defaults to `HELPMATE_PDF_EXTRACTOR=auto`, which tries Docling first for layout-aware Markdown and table preservation, then falls back to `pypdf` when a PDF cannot be converted. DOCX extraction defaults to `HELPMATE_DOCX_EXTRACTOR=auto`, which applies the same Docling-first policy with `python-docx` fallback.
 
 ## Repository Map
 

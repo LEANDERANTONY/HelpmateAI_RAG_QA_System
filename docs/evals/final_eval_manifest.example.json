@@ -1,0 +1,67 @@
+{
+  "suite_id": "heldout-product-fit-pilot-2026-04",
+  "description": "Example schema for a frozen product-fit held-out evaluation. Replace these entries with real public documents before running a final report.",
+  "frozen": false,
+  "context_budget": {
+    "top_k": 5,
+    "max_chars_per_context": 600
+  },
+  "documents": [
+    {
+      "document_id": "nist-ai-rmf-1-0",
+      "path": "static/held_out/nist-ai-rmf-1-0.pdf",
+      "document_type": "policy_framework",
+      "source": "NIST AI Risk Management Framework 1.0 public PDF",
+      "license_notes": "Public NIST publication; record exact download URL and access date in the real manifest.",
+      "used_for_tuning": false
+    },
+    {
+      "document_id": "fresh-research-paper",
+      "path": "static/held_out/fresh-research-paper.pdf",
+      "document_type": "research_paper",
+      "source": "Public arXiv, bioRxiv, or institutional repository PDF outside the tuned pancreas/report-generation set.",
+      "license_notes": "Record the paper URL, license, and access date in the real manifest.",
+      "used_for_tuning": false
+    }
+  ],
+  "questions": [
+    {
+      "question_id": "nist-ai-rmf-lookup-001",
+      "document_id": "nist-ai-rmf-1-0",
+      "question": "What does the framework say organizations should do when mapping AI risks?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "expected_regions": [
+        {
+          "section": "MAP function",
+          "page_label": "record after golding"
+        }
+      ],
+      "gold_answer": "",
+      "gold_answer_notes": "Fill from full-document reading before running systems.",
+      "unsupported_reason": ""
+    },
+    {
+      "question_id": "paper-summary-001",
+      "document_id": "fresh-research-paper",
+      "question": "What are the main findings and limitations of the paper?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "expected_regions": [],
+      "gold_answer": "",
+      "gold_answer_notes": "Fill from full-document reading before running systems.",
+      "unsupported_reason": ""
+    },
+    {
+      "question_id": "nist-ai-rmf-unsupported-001",
+      "document_id": "nist-ai-rmf-1-0",
+      "question": "What subscription price does the framework recommend for commercial AI risk software?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "expected_regions": [],
+      "gold_answer": "",
+      "gold_answer_notes": "",
+      "unsupported_reason": "The framework is not a pricing document and should not contain this answer."
+    }
+  ]
+}

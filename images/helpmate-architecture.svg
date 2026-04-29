@@ -1,0 +1,154 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 640" font-family="ui-sans-serif, system-ui, -apple-system, sans-serif">
+  <defs>
+    <style>
+      .title { font-size: 26px; font-weight: 800; fill: #0F172A; }
+      .subtitle { font-size: 13px; font-weight: 400; fill: #475569; }
+      .lane { font-size: 10.5px; font-weight: 700; fill: #94A3B8; letter-spacing: 0.18em; }
+      .nh { font-size: 13px; font-weight: 700; fill: #0F172A; text-anchor: middle; }
+      .nd { font-size: 10.5px; font-weight: 400; fill: #475569; text-anchor: middle; }
+      .badge-amber { font-size: 10px; font-weight: 800; fill: #92400E; letter-spacing: 0.08em; text-anchor: middle; }
+      .badge-violet { font-size: 10px; font-weight: 800; fill: #5B21B6; letter-spacing: 0.08em; text-anchor: middle; }
+      .badge-red { font-size: 10px; font-weight: 800; fill: #991B1B; letter-spacing: 0.08em; text-anchor: middle; }
+      .badge-emerald { font-size: 10px; font-weight: 800; fill: #047857; letter-spacing: 0.08em; text-anchor: middle; }
+      .route { font-size: 11px; font-weight: 600; fill: #4338CA; text-anchor: middle; font-family: ui-monospace, SFMono-Regular, Menlo, monospace; }
+      .anno { font-size: 10px; font-weight: 500; fill: #64748B; font-style: italic; }
+      .cond { font-size: 10px; font-weight: 600; fill: #64748B; text-anchor: middle; }
+    </style>
+    <marker id="ar" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#94A3B8"/>
+    </marker>
+    <marker id="ar-r" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#DC2626"/>
+    </marker>
+    <marker id="ar-g" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+      <path d="M 0 0 L 10 5 L 0 10 z" fill="#10B981"/>
+    </marker>
+  </defs>
+
+  <rect width="1200" height="640" fill="#FAFAFA"/>
+
+  <!-- Title -->
+  <text x="60" y="48" class="title">HelpmateAI</text>
+  <text x="60" y="70" class="subtitle">Grounded long-document QA — plan-driven hybrid retrieval over a document topology, with abstention.</text>
+
+  <!-- INDEX TIME LANE -->
+  <text x="60" y="118" class="lane">INDEX TIME</text>
+  <line x1="155" y1="114" x2="1140" y2="114" stroke="#E2E8F0" stroke-width="1"/>
+
+  <!-- Index nodes -->
+  <g transform="translate(60, 138)">
+    <rect width="170" height="78" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
+    <text x="85" y="32" class="nh">Document upload</text>
+    <text x="85" y="52" class="nd">PDF / DOCX</text>
+  </g>
+  <line x1="232" y1="177" x2="266" y2="177" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#ar)"/>
+
+  <g transform="translate(268, 138)">
+    <rect width="190" height="78" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
+    <text x="95" y="32" class="nh">Sections + chunks</text>
+    <text x="95" y="50" class="nd">structure repair</text>
+    <text x="95" y="64" class="nd">when confidence is low</text>
+  </g>
+  <line x1="460" y1="177" x2="494" y2="177" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#ar)"/>
+
+  <g transform="translate(496, 128)">
+    <rect width="240" height="98" rx="10" fill="#FEF3C7" stroke="#F59E0B" stroke-width="2"/>
+    <text x="120" y="22" class="badge-amber">DOCUMENT TOPOLOGY LAYER</text>
+    <text x="120" y="46" class="nh">Synopses + edges</text>
+    <text x="120" y="64" class="nd">section roles · chunk semantics</text>
+    <text x="120" y="78" class="nd">topology graph (parent · neighbor</text>
+    <text x="120" y="90" class="nd">· same-region · semantic)</text>
+  </g>
+  <line x1="738" y1="177" x2="772" y2="177" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#ar)"/>
+
+  <g transform="translate(774, 138)">
+    <rect width="190" height="78" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
+    <text x="95" y="32" class="nh">Persisted index</text>
+    <text x="95" y="50" class="nd">chunks · sections</text>
+    <text x="95" y="64" class="nd">synopses · topology</text>
+  </g>
+
+  <!-- divider -->
+  <line x1="60" y1="252" x2="1140" y2="252" stroke="#E2E8F0" stroke-width="1" stroke-dasharray="4 4"/>
+
+  <!-- QUERY TIME LANE -->
+  <text x="60" y="282" class="lane">QUERY TIME</text>
+
+  <g transform="translate(60, 302)">
+    <rect width="170" height="78" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
+    <text x="85" y="32" class="nh">Question</text>
+    <text x="85" y="50" class="nd">+ query analysis</text>
+    <text x="85" y="64" class="nd">intent · spread · filters</text>
+  </g>
+  <line x1="232" y1="341" x2="266" y2="341" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#ar)"/>
+
+  <g transform="translate(268, 292)">
+    <rect width="220" height="98" rx="10" fill="#EDE9FE" stroke="#7C3AED" stroke-width="2"/>
+    <text x="110" y="22" class="badge-violet">PLAN-DRIVEN ROUTING</text>
+    <text x="110" y="46" class="nh">Orchestrator + Plan</text>
+    <text x="110" y="64" class="nd">deterministic plan, validated</text>
+    <text x="110" y="78" class="nd">LLM-refined when low confidence</text>
+  </g>
+  <line x1="490" y1="341" x2="524" y2="341" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#ar)"/>
+
+  <g transform="translate(526, 280)">
+    <rect width="220" height="124" rx="10" fill="#FFFFFF" stroke="#7C3AED" stroke-width="1.6" stroke-dasharray="3 3"/>
+    <text x="110" y="22" class="badge-violet">5 RETRIEVAL ROUTES</text>
+    <text x="110" y="44" class="route">chunk_first</text>
+    <text x="110" y="62" class="route">synopsis_first</text>
+    <text x="110" y="80" class="route">global_summary_first</text>
+    <text x="110" y="98" class="route">hybrid_both</text>
+    <text x="110" y="116" class="route">section_first</text>
+  </g>
+  <line x1="748" y1="341" x2="782" y2="341" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#ar)"/>
+
+  <g transform="translate(784, 302)">
+    <rect width="170" height="78" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
+    <text x="85" y="32" class="nh">Fusion + rerank</text>
+    <text x="85" y="50" class="nd">RRF</text>
+    <text x="85" y="64" class="nd">cross-encoder rerank</text>
+  </g>
+  <line x1="956" y1="341" x2="990" y2="341" stroke="#94A3B8" stroke-width="1.5" marker-end="url(#ar)"/>
+
+  <g transform="translate(992, 302)">
+    <rect width="148" height="78" rx="8" fill="#FFFFFF" stroke="#CBD5E1" stroke-width="1.4"/>
+    <text x="74" y="32" class="nh">Evidence grade</text>
+    <text x="74" y="50" class="nd">strong · weak</text>
+    <text x="74" y="64" class="nd">unsupported</text>
+  </g>
+
+  <!-- Connection topology -> plan (cross-row signal) -->
+  <path d="M 616 226 L 616 246 L 378 246 L 378 292" fill="none" stroke="#F59E0B" stroke-width="1.4" stroke-dasharray="3 3" marker-end="url(#ar)"/>
+  <text x="404" y="240" class="anno">indexed sections + synopses inform planning</text>
+
+  <!-- Decision split below evidence grade -->
+  <line x1="1066" y1="380" x2="1066" y2="408" stroke="#94A3B8" stroke-width="1.5"/>
+  <text x="1024" y="402" class="cond">if unsupported</text>
+  <line x1="1066" y1="408" x2="1066" y2="430" stroke="#DC2626" stroke-width="1.8" marker-end="url(#ar-r)"/>
+
+  <g transform="translate(966, 432)">
+    <rect width="200" height="74" rx="10" fill="#FEE2E2" stroke="#DC2626" stroke-width="2"/>
+    <text x="100" y="22" class="badge-red">ABSTENTION GUARDRAIL</text>
+    <text x="100" y="44" class="nd">refuses to answer when</text>
+    <text x="100" y="58" class="nd">evidence is too weak</text>
+  </g>
+
+  <!-- strong/weak path -->
+  <path d="M 1066 380 L 1066 396 L 700 396 L 700 432" fill="none" stroke="#10B981" stroke-width="1.6" marker-end="url(#ar-g)"/>
+  <text x="746" y="390" class="cond">strong / weak</text>
+  <text x="836" y="412" class="anno">reorder-only evidence selector (conditional)</text>
+
+  <g transform="translate(600, 434)">
+    <rect width="200" height="74" rx="10" fill="#ECFDF5" stroke="#10B981" stroke-width="2"/>
+    <text x="100" y="22" class="badge-emerald">GROUNDED ANSWER</text>
+    <text x="100" y="44" class="nd">citations · evidence</text>
+    <text x="100" y="58" class="nd">+ ephemeral run trace</text>
+  </g>
+
+  <!-- Footer caption -->
+  <text x="60" y="572" class="lane">DIFFERENTIATORS</text>
+  <line x1="155" y1="568" x2="1140" y2="568" stroke="#E2E8F0" stroke-width="1"/>
+  <text x="60" y="596" class="subtitle"><tspan font-weight="700" fill="#92400E">Topology layer.</tspan> Index-time graph of section roles, synopses, and edges — replaces flat chunk-only retrieval.</text>
+  <text x="60" y="614" class="subtitle"><tspan font-weight="700" fill="#5B21B6">Plan-driven routing.</tspan> Deterministic plan + LLM orchestrator with validated scope; 5 routes specialized by question shape.</text>
+  <text x="60" y="632" class="subtitle"><tspan font-weight="700" fill="#991B1B">Abstention guardrail.</tspan> Refuses to answer when evidence grades unsupported — vendors guess; HelpmateAI declines.</text>
+</svg>
