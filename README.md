@@ -41,7 +41,7 @@ Most RAG demos retrieve the top chunks and hope the answer model can stitch them
 
 ## Latest Validation Snapshot
 
-The latest saved held-out product-fit run is [final_eval_suite_20260429_033628.json](docs/evals/reports/final_eval_suite_20260429_033628.json). It used 50 fixed questions across five public documents, judged with RAGAS using Gemini 2.5 Flash plus OpenAI embeddings.
+The latest saved held-out product-fit run is [final_eval_suite_20260429_193058.json](docs/evals/reports/final_eval_suite_20260429_193058.json). It used 50 fixed questions across five public documents, running HelpmateAI only in native-context mode and judging with RAGAS using Gemini 2.5 Flash plus OpenAI embeddings.
 
 That run showed the current shape of the system clearly:
 
@@ -50,21 +50,26 @@ That run showed the current shape of the system clearly:
 | Questions | `50` |
 | Answerable questions | `45` |
 | Unsupported questions | `5` |
-| Answerable supported rate | `0.9111` |
+| Supported rate | `0.7200` |
+| Answerable supported rate | `0.8000` |
 | Unsupported abstention rate | `1.0000` |
 | False support rate | `0.0000` |
-| False abstention rate | `0.0889` |
+| False abstention rate | `0.2000` |
+| RAGAS faithfulness | `0.9334` |
+| RAGAS faithfulness, attempted only | `0.9600` |
+| RAGAS answer relevancy, attempted only | `0.7892` |
+| RAGAS context precision, attempted only | `0.9093` |
 
-The same run also exposed an evaluation-methodology issue: HelpmateAI had been generated from its full selected evidence, while RAGAS was judging against a clipped context payload. The eval harness now supports native-context and equalized-context modes so future reports can separate product behavior from controlled retrieval comparisons.
+The native-context scoring fixes an earlier evaluation-methodology issue where HelpmateAI generated from its full selected evidence while RAGAS judged against a clipped context payload. This latest run is the current HelpmateAI product score; earlier vendor rows remain useful as historical comparisons but should not be mixed into a single headline table without rerunning all systems under the same scoring mode.
 
 ## Evaluation Methodology
 
-Evaluation is treated as part of the architecture, not a one-off demo. The current final-eval harness uses fixed public documents, frozen question manifests, answerable and intentionally unsupported questions, per-intent reporting, and saved machine-readable reports under `docs/evals/reports/`.
+Evaluation is treated as part of the architecture, not a one-off demo. The current final-eval harness uses fixed public documents, fixed question manifests, answerable and intentionally unsupported questions, per-intent reporting, and saved machine-readable reports under `docs/evals/reports/`.
 
 The latest held-out suite uses:
 
 - public source documents recorded in [final_eval_sources_20260428.md](docs/evals/final_eval_sources_20260428.md)
-- frozen draft questions in [final_eval_questions.draft.json](docs/evals/final_eval_questions.draft.json)
+- fixed draft questions in [final_eval_questions.draft.json](docs/evals/final_eval_questions.draft.json)
 - RAGAS scoring with a non-generator judge model where configured
 - explicit abstention metrics alongside answer-quality metrics
 - separate native-context and equalized-context modes for future product and controlled retrieval comparisons
