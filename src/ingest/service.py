@@ -138,6 +138,19 @@ def _mime_type_for_path(path: Path) -> str:
     return "application/octet-stream"
 
 
+def _env_int(name: str, default: int) -> int:
+    try:
+        return int(os.getenv(name, str(default)))
+    except ValueError:
+        return default
+
+
+def _pdf_page_count(path: Path) -> int:
+    from pypdf import PdfReader
+
+    return len(PdfReader(str(path)).pages)
+
+
 def _page_spans_text(content: str, page) -> str:
     spans = getattr(page, "spans", None) or []
     parts = []
@@ -216,36 +229,54 @@ def _google_page_text(content: str, page) -> str:
     return "\n".join(parts).strip()
 
 
-def _extract_google_document_ai(path: Path) -> tuple[str, list[dict[str, str]], int, dict[str, str]]:
-    from google.api_core.client_options import ClientOptions
-    from google.cloud import documentai
+def _google_layout_page_span(block) -> tuple[int, int]:
+    page_span = getattr(block, "page_span", None)
+    start = int(getattr(page_span, "page_start", 0) or 0)
+    end = int(getattr(page_span, "page_end", 0) or start or 0)
+    return start, end
 
-    project_id, location, processor_id = _google_document_ai_config()
-    client = documentai.DocumentProcessorServiceClient(
-        client_options=ClientOptions(api_endpoint=f"{location}-documentai.googleapis.com")
-    )
-    name = client.processor_path(project_id, location, processor_id)
-    raw_document = documentai.RawDocument(content=path.read_bytes(), mime_type=_mime_type_for_path(path))
-    request = documentai.ProcessRequest(
-        name=name,
-        raw_document=raw_document,
-        process_options=documentai.ProcessOptions(
-            layout_config=documentai.ProcessOptions.LayoutConfig(
-                chunking_config=documentai.ProcessOptions.LayoutConfig.ChunkingConfig(
-                    include_ancestor_headings=True
-                )
-            )
-        ),
-    )
-    result = client.process_document(request=request)
-    document = result.document
-    full_text = (getattr(document, "text", "") or "").strip()
+
+def _google_layout_block_text(block) -> str:
+    text_block = getattr(block, "text_block", None)
+    if text_block and getattr(text_block, "text", None):
+        return str(text_block.text).strip()
+    table_block = getattr(block, "table_block", None)
+    if table_block and getattr(table_block, "body_rows", None):
+        rows = []
+        for row in list(getattr(table_block, "header_rows", []) or []) + list(getattr(table_block, "body_rows", []) or []):
+            cells = [str(getattr(cell, "text", "") or "").strip() for cell in getattr(row, "cells", []) or []]
+            if any(cells):
+                rows.append(" | ".join(cells))
+        return "\n".join(rows).strip()
+    return ""
+
+
+def _collect_google_layout_pages(blocks, page_texts: dict[int, list[str]]) -> None:
+    for block in blocks or []:
+        text = _google_layout_block_text(block)
+        start, _ = _google_layout_page_span(block)
+        if text and start > 0:
+            page_texts.setdefault(start, []).append(text)
+        children = []
+        text_block = getattr(block, "text_block", None)
+        if text_block:
+            children.extend(getattr(text_block, "blocks", []) or [])
+        table_block = getattr(block, "table_block", None)
+        if table_block:
+            children.extend(getattr(table_block, "blocks", []) or [])
+        children.extend(getattr(block, "blocks", []) or [])
+        _collect_google_layout_pages(children, page_texts)
+
+
+def _google_document_layout_pages(document) -> list[dict[str, str]]:
+    layout = getattr(document, "document_layout", None)
+    blocks = getattr(layout, "blocks", None) if layout else None
+    page_texts: dict[int, list[str]] = {}
+    _collect_google_layout_pages(blocks, page_texts)
     pages = []
-    result_pages = getattr(document, "pages", None) or []
-    for index, page in enumerate(result_pages, start=1):
-        text = _google_page_text(full_text, page)
+    for page_number in sorted(page_texts):
+        text = "\n".join(part for part in page_texts[page_number] if part).strip()
         if text:
-            page_number = getattr(page, "page_number", None) or index
             pages.append(
                 {
                     "page_label": f"Page {page_number}",
@@ -254,6 +285,50 @@ def _extract_google_document_ai(path: Path) -> tuple[str, list[dict[str, str]], 
                     "extraction_backend": "google_document_ai",
                 }
             )
+    return pages
+
+
+def _google_chunked_text(document) -> str:
+    chunked = getattr(document, "chunked_document", None)
+    chunks = getattr(chunked, "chunks", None) if chunked else None
+    return "\n\n".join(str(getattr(chunk, "content", "") or "").strip() for chunk in chunks or [] if getattr(chunk, "content", None)).strip()
+
+
+def _google_layout_process_options(page_numbers: list[int] | None = None):
+    from google.cloud import documentai
+
+    options = documentai.ProcessOptions(
+        layout_config=documentai.ProcessOptions.LayoutConfig(
+            chunking_config=documentai.ProcessOptions.LayoutConfig.ChunkingConfig(
+                chunk_size=500,
+                include_ancestor_headings=True
+            )
+        )
+    )
+    if page_numbers:
+        options.individual_page_selector = documentai.ProcessOptions.IndividualPageSelector(pages=page_numbers)
+    return options
+
+
+def _extract_google_response(document) -> tuple[str, list[dict[str, str]], int]:
+    full_text = (getattr(document, "text", "") or "").strip()
+    pages = _google_document_layout_pages(document)
+    if not full_text:
+        full_text = "\n\n".join(page["text"] for page in pages).strip() or _google_chunked_text(document)
+    result_pages = getattr(document, "pages", None) or []
+    if not pages:
+        for index, page in enumerate(result_pages, start=1):
+            text = _google_page_text(full_text, page)
+            if text:
+                page_number = getattr(page, "page_number", None) or index
+                pages.append(
+                    {
+                        "page_label": f"Page {page_number}",
+                        "text": text,
+                        "section_heading": _page_heading(text),
+                        "extraction_backend": "google_document_ai",
+                    }
+                )
     if not pages and full_text:
         pages.append(
             {
@@ -263,7 +338,82 @@ def _extract_google_document_ai(path: Path) -> tuple[str, list[dict[str, str]], 
                 "extraction_backend": "google_document_ai",
             }
         )
-    return full_text, pages, len(result_pages) or len(pages), {"extraction_backend": "google_document_ai"}
+    layout = getattr(document, "document_layout", None)
+    layout_blocks = getattr(layout, "blocks", None) if layout else None
+    layout_page_count = max(((_google_layout_page_span(block)[1]) for block in layout_blocks or []), default=0)
+    return full_text, pages, len(result_pages) or layout_page_count or len(pages)
+
+
+def _dedupe_google_pages(pages: list[dict[str, str]]) -> list[dict[str, str]]:
+    by_label: dict[str, dict[str, str]] = {}
+    for page in pages:
+        label = page.get("page_label", "Document")
+        text = page.get("text", "")
+        existing = by_label.get(label)
+        if existing is None or len(text) > len(existing.get("text", "")):
+            by_label[label] = page
+
+    def sort_key(item: tuple[str, dict[str, str]]) -> tuple[int, str]:
+        label = item[0]
+        if label.startswith("Page "):
+            try:
+                return int(label.split()[1]), label
+            except (IndexError, ValueError):
+                return 10**9, label
+        return 10**9, label
+
+    return [page for _, page in sorted(by_label.items(), key=sort_key)]
+
+
+def _extract_google_document_ai(path: Path) -> tuple[str, list[dict[str, str]], int, dict[str, str]]:
+    from google.api_core.retry import Retry
+    from google.api_core.client_options import ClientOptions
+    from google.cloud import documentai
+
+    project_id, location, processor_id = _google_document_ai_config()
+    client = documentai.DocumentProcessorServiceClient(
+        client_options=ClientOptions(api_endpoint=f"{location}-documentai.googleapis.com")
+    )
+    name = client.processor_path(project_id, location, processor_id)
+    raw_document = documentai.RawDocument(content=path.read_bytes(), mime_type=_mime_type_for_path(path))
+    page_count = _pdf_page_count(path) if path.suffix.lower() == ".pdf" else 0
+    request_timeout = _env_int("HELPMATE_GOOGLE_DOCUMENT_AI_TIMEOUT_SECONDS", 600)
+    request_retry = Retry(deadline=_env_int("HELPMATE_GOOGLE_DOCUMENT_AI_RETRY_DEADLINE_SECONDS", 900))
+    batch_size = max(1, min(30, _env_int("HELPMATE_GOOGLE_DOCUMENT_AI_BATCH_PAGES", 15)))
+    if page_count <= batch_size:
+        result = client.process_document(
+            request=documentai.ProcessRequest(
+                name=name,
+                raw_document=raw_document,
+                process_options=_google_layout_process_options(),
+            ),
+            retry=request_retry,
+            timeout=request_timeout,
+        )
+        full_text, pages, detected_pages = _extract_google_response(result.document)
+        return full_text, pages, detected_pages, {"extraction_backend": "google_document_ai"}
+
+    all_pages: list[dict[str, str]] = []
+    text_parts = []
+    for start in range(1, page_count + 1, batch_size):
+        end = min(start + batch_size - 1, page_count)
+        page_numbers = list(range(start, end + 1))
+        result = client.process_document(
+            request=documentai.ProcessRequest(
+                name=name,
+                raw_document=raw_document,
+                process_options=_google_layout_process_options(page_numbers),
+            ),
+            retry=request_retry,
+            timeout=request_timeout,
+        )
+        full_text, pages, _ = _extract_google_response(result.document)
+        if full_text:
+            text_parts.append(full_text)
+        all_pages.extend(pages)
+    all_pages = _dedupe_google_pages(all_pages)
+    full_text = "\n\n".join(page["text"] for page in all_pages).strip() or "\n\n".join(text_parts).strip()
+    return full_text, all_pages, page_count, {"extraction_backend": "google_document_ai"}
 
 
 def _pdf_extractor_mode() -> str:
