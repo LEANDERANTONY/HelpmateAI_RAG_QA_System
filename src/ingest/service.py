@@ -49,10 +49,24 @@ def _docling_page_count(document) -> int:
     return 0
 
 
-def _extract_docling(path: Path, *, fallback_page_label: str = "Document") -> tuple[str, list[dict[str, str]], int, dict[str, str]]:
-    from docling.document_converter import DocumentConverter
+def _docling_ocr_enabled() -> bool:
+    return os.getenv("HELPMATE_DOCLING_OCR", "false").strip().lower() in {"1", "true", "yes", "on"}
 
-    result = DocumentConverter().convert(path.resolve())
+
+def _docling_converter(path: Path):
+    from docling.document_converter import DocumentConverter, PdfFormatOption
+    from docling.datamodel.base_models import InputFormat
+    from docling.datamodel.pipeline_options import PdfPipelineOptions
+
+    if path.suffix.lower() != ".pdf":
+        return DocumentConverter()
+    pipeline_options = PdfPipelineOptions()
+    pipeline_options.do_ocr = _docling_ocr_enabled()
+    return DocumentConverter(format_options={InputFormat.PDF: PdfFormatOption(pipeline_options=pipeline_options)})
+
+
+def _extract_docling(path: Path, *, fallback_page_label: str = "Document") -> tuple[str, list[dict[str, str]], int, dict[str, str]]:
+    result = _docling_converter(path).convert(path.resolve())
     document = result.document
     page_count = _docling_page_count(document)
     pages: list[dict[str, str]] = []
@@ -92,37 +106,88 @@ def _extract_docx_docling(path: Path) -> tuple[str, list[dict[str, str]], int, d
     return _extract_docling(path, fallback_page_label="Document")
 
 
+def _azure_document_intelligence_config() -> tuple[str, str]:
+    endpoint = os.getenv("HELPMATE_AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT") or os.getenv("AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT")
+    key = os.getenv("HELPMATE_AZURE_DOCUMENT_INTELLIGENCE_KEY") or os.getenv("AZURE_DOCUMENT_INTELLIGENCE_KEY")
+    if not endpoint or not key:
+        raise RuntimeError(
+            "Azure Document Intelligence requires HELPMATE_AZURE_DOCUMENT_INTELLIGENCE_ENDPOINT "
+            "and HELPMATE_AZURE_DOCUMENT_INTELLIGENCE_KEY."
+        )
+    return endpoint, key
+
+
+def _page_spans_text(content: str, page) -> str:
+    spans = getattr(page, "spans", None) or []
+    parts = []
+    for span in spans:
+        offset = int(getattr(span, "offset", 0) or 0)
+        length = int(getattr(span, "length", 0) or 0)
+        if length > 0:
+            parts.append(content[offset : offset + length])
+    return "\n".join(part.strip() for part in parts if part and part.strip()).strip()
+
+
+def _extract_azure_document_intelligence(path: Path) -> tuple[str, list[dict[str, str]], int, dict[str, str]]:
+    from azure.ai.documentintelligence import DocumentIntelligenceClient
+    from azure.ai.documentintelligence.models import DocumentContentFormat
+    from azure.core.credentials import AzureKeyCredential
+
+    endpoint, key = _azure_document_intelligence_config()
+    client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
+    with path.open("rb") as document:
+        poller = client.begin_analyze_document(
+            "prebuilt-layout",
+            body=document,
+            output_content_format=DocumentContentFormat.MARKDOWN,
+        )
+    result = poller.result()
+    full_text = (getattr(result, "content", "") or "").strip()
+    pages = []
+    result_pages = getattr(result, "pages", None) or []
+    for index, page in enumerate(result_pages, start=1):
+        text = _page_spans_text(full_text, page)
+        if text:
+            page_number = getattr(page, "page_number", None) or index
+            pages.append(
+                {
+                    "page_label": f"Page {page_number}",
+                    "text": text,
+                    "section_heading": _page_heading(text),
+                    "extraction_backend": "azure_document_intelligence",
+                }
+            )
+    if not pages and full_text:
+        pages.append(
+            {
+                "page_label": "Document",
+                "text": full_text,
+                "section_heading": _page_heading(full_text),
+                "extraction_backend": "azure_document_intelligence",
+            }
+        )
+    return full_text, pages, len(result_pages) or len(pages), {"extraction_backend": "azure_document_intelligence"}
+
+
 def _pdf_extractor_mode() -> str:
-    mode = os.getenv("HELPMATE_PDF_EXTRACTOR", "auto").strip().lower()
-    return mode if mode in {"auto", "docling", "pypdf"} else "auto"
+    mode = os.getenv("HELPMATE_PDF_EXTRACTOR", "pypdf").strip().lower()
+    return mode if mode in {"azure", "docling", "pypdf"} else "pypdf"
 
 
 def _docx_extractor_mode() -> str:
-    mode = os.getenv("HELPMATE_DOCX_EXTRACTOR", "auto").strip().lower()
-    return mode if mode in {"auto", "docling", "python-docx"} else "auto"
+    mode = os.getenv("HELPMATE_DOCX_EXTRACTOR", "python-docx").strip().lower()
+    return mode if mode in {"azure", "docling", "python-docx"} else "python-docx"
 
 
 def _extract_pdf(path: Path) -> tuple[str, list[dict[str, str]], int, dict[str, str]]:
     mode = _pdf_extractor_mode()
     if mode == "pypdf":
         return _extract_pdf_pypdf(path)
-    try:
+    if mode == "azure":
+        return _extract_azure_document_intelligence(path)
+    if mode == "docling":
         return _extract_pdf_docling(path)
-    except Exception as exc:
-        if mode == "docling":
-            raise
-        full_text, pages, page_count, metadata = _extract_pdf_pypdf(path)
-        metadata.update(
-            {
-                "extraction_backend": "pypdf",
-                "preferred_extraction_backend": "docling",
-                "extraction_fallback_reason": f"{exc.__class__.__name__}: {str(exc)[:200]}",
-            }
-        )
-        for page in pages:
-            page["preferred_extraction_backend"] = "docling"
-            page["extraction_fallback_reason"] = metadata["extraction_fallback_reason"]
-        return full_text, pages, page_count, metadata
+    return _extract_pdf_pypdf(path)
 
 
 def _extract_docx_python_docx(path: Path) -> tuple[str, list[dict[str, str]], int, dict[str, str]]:
@@ -146,23 +211,11 @@ def _extract_docx(path: Path) -> tuple[str, list[dict[str, str]], int, dict[str,
     mode = _docx_extractor_mode()
     if mode == "python-docx":
         return _extract_docx_python_docx(path)
-    try:
+    if mode == "azure":
+        return _extract_azure_document_intelligence(path)
+    if mode == "docling":
         return _extract_docx_docling(path)
-    except Exception as exc:
-        if mode == "docling":
-            raise
-        full_text, pages, page_count, metadata = _extract_docx_python_docx(path)
-        metadata.update(
-            {
-                "extraction_backend": "python-docx",
-                "preferred_extraction_backend": "docling",
-                "extraction_fallback_reason": f"{exc.__class__.__name__}: {str(exc)[:200]}",
-            }
-        )
-        for page in pages:
-            page["preferred_extraction_backend"] = "docling"
-            page["extraction_fallback_reason"] = metadata["extraction_fallback_reason"]
-        return full_text, pages, page_count, metadata
+    return _extract_docx_python_docx(path)
 
 
 def ingest_document(path: str | Path) -> DocumentRecord:
