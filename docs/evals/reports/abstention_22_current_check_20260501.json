@@ -1,0 +1,1162 @@
+{
+  "created_at": "2026-05-01T15:08:14.264035",
+  "source_prior_report": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\reports\\final_eval_suite_20260501_131602.json",
+  "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\final_eval_manifest.draft.json",
+  "table_extractor": "pdfplumber",
+  "summary": {
+    "total": 22,
+    "supported": 8,
+    "abstained": 14,
+    "by_intent": {
+      "lookup": {
+        "total": 6,
+        "supported": 0,
+        "abstained": 6
+      },
+      "numeric_procedure": {
+        "total": 2,
+        "supported": 1,
+        "abstained": 1
+      },
+      "local_scope": {
+        "total": 6,
+        "supported": 5,
+        "abstained": 1
+      },
+      "broad_summary": {
+        "total": 4,
+        "supported": 2,
+        "abstained": 2
+      },
+      "comparison_synthesis": {
+        "total": 4,
+        "supported": 0,
+        "abstained": 4
+      }
+    },
+    "by_doc": {
+      "nist-ai-rmf-1-0": {
+        "total": 3,
+        "supported": 2,
+        "abstained": 1
+      },
+      "irena-world-energy-transitions-outlook-2023": {
+        "total": 9,
+        "supported": 2,
+        "abstained": 7
+      },
+      "arxiv-2510-03305": {
+        "total": 4,
+        "supported": 1,
+        "abstained": 3
+      },
+      "upenn-learning-environmental-models-thesis-2022": {
+        "total": 5,
+        "supported": 2,
+        "abstained": 3
+      },
+      "fomc-minutes-2026-01-28": {
+        "total": 1,
+        "supported": 1,
+        "abstained": 0
+      }
+    }
+  },
+  "results": [
+    {
+      "question_id": "nist-ai-rmf-1-0-lookup-003",
+      "document_id": "nist-ai-rmf-1-0",
+      "intent_type": "lookup",
+      "question": "How does this framework define an AI system?",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer": "The supplied evidence does not provide a direct definition of an AI system. It describes the AI RMF’s lifecycle and key dimensions of an AI system, including Application Context, Data and Input, AI Model, and Task and Output [Source 2], and notes that the framework generalizes the operational context of an AI system [Source 1]. However, it does not state what an AI system is in definitional terms.",
+      "note": "The question asks for the framework’s definition of an AI system. The evidence mentions dimensions, lifecycle stages, and operational context, but no explicit definition of 'AI system' is provided in the supplied excerpts. Therefore the required fact is missing.",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 14",
+        "nist-ai-rmf-1-0.pdf - Page 5",
+        "nist-ai-rmf-1-0.pdf - Page 46",
+        "nist-ai-rmf-1-0.pdf - Page 44"
+      ],
+      "evidence_status": "strong",
+      "route_used": "synopsis_first+abstention_recovery",
+      "best_score": 1.0188000000000001,
+      "context": [
+        {
+          "rank": 1,
+          "page_label": "Page 14",
+          "section_heading": "NIST AI 100-1 AI RMF 1.0",
+          "preview": "disciplinarily diverse teams. The AI RMF is intended to be used by AI actors across the AI lifecycle and dimensions. The OECD has developed a framework for classifying AI lifecycle activities according to five key socio-technical dimensions",
+          "fused_score": 0.8946423643886763
+        },
+        {
+          "rank": 2,
+          "page_label": "Page 5",
+          "section_heading": "NIST AI 100-1 AI RMF 1.0",
+          "preview": "NIST AI 100-1 AI RMF 1.0 List of Figures Fig. 1 Examples of potential harms related to AI systems. Trustworthy AI systems and their responsible use can mitigate negative risks and contribute to bene- fits for people, organizations, and ecos",
+          "fused_score": 1.0188000000000001
+        },
+        {
+          "rank": 3,
+          "page_label": "Page 46",
+          "section_heading": "NIST AI 100-1 AI RMF 1.0",
+          "preview": "NIST AI 100-1 AI RMF 1.0 4. Presenting AI system information to humans is complex. Humans perceive and derive meaning from AI system output and explanations in different ways, reflecting different individual preferences, traits, and skills.",
+          "fused_score": 0.9704597871813141
+        },
+        {
+          "rank": 4,
+          "page_label": "Page 44",
+          "section_heading": "NIST AI 100-1 AI RMF 1.0",
+          "preview": "AI RMF. At the same time, guidance available before publication of this AI RMF does not compre- hensively address many AI system risks. For example, existing frameworks and guidance are unable to: • adequately manage the problem of harmful",
+          "fused_score": 0.9216788084310392
+        }
+      ]
+    },
+    {
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-001",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "intent_type": "lookup",
+      "question": "What two scenarios does this report use as its primary comparison?",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer": "The evidence does not identify two scenarios used as the report’s primary comparison. It only states that the Planned Energy Scenario is the primary reference case for the study, and separately mentions the 1.5°C Scenario [Source 1]. The second scenario used for the primary comparison is not explicitly provided in the evidence.",
+      "note": "The question asks for two scenarios and requires both to be identified. The evidence explicitly names only one scenario as the primary reference case: the Planned Energy Scenario [Source 1]. It also mentions the 1.5°C Scenario [Source 1], but does not state that these two are the report’s primary comparison pair or explain the comparison relationship. Therefore the required fact set is incomplete.",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 17",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 58",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 58",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 225"
+      ],
+      "evidence_status": "weak",
+      "route_used": "chunk_first+abstention_recovery",
+      "best_score": 0.700367857142857,
+      "context": [
+        {
+          "rank": 1,
+          "page_label": "Page 17",
+          "section_heading": "°C Scenario",
+          "preview": "1.5°C Scenario The Planned Energy Scenario  is the primary reference case for this study, providing a perspective on energy system developments based on governments’ energy plans and other planned targets and policies in place at the time o",
+          "fused_score": 0.678239658848614
+        },
+        {
+          "rank": 2,
+          "page_label": "Page 58",
+          "section_heading": "WORLD ENERGY",
+          "preview": "straints. The report finds that aligning LTES and LT-LEDS processes leads to more robust mitigation plans; planning documents produced by multiple or interdisciplinary ministries lay out scenarios that cover more elements of the transition.",
+          "fused_score": 0.700367857142857
+        },
+        {
+          "rank": 3,
+          "page_label": "Page 58",
+          "section_heading": "WORLD ENERGY",
+          "preview": "e based on scenarios, as this leads to more scientifically robust co-ordination of planning with the resulting proposals. Thirty six out of the fifty three LT-LEDS published as of October 2022 have featured scenarios as their main tool to o",
+          "fused_score": 0.6789392857142856
+        },
+        {
+          "rank": 4,
+          "page_label": "Page 225",
+          "section_heading": "VOLUME 2 | CHAPTER 6",
+          "preview": "2 emissions. This index has 36 indicators of vulnerability across health, food, ecosystem, habitat, water and infrastructure 15 Emissions for the sensitivities in the 1.5˚°C Scenario are the same, since energy balances are unchanged using t",
+          "fused_score": 0.5884571428571429
+        }
+      ]
+    },
+    {
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-002",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "intent_type": "lookup",
+      "question": "Who is identified as the Director-General of IRENA in the foreword?",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer": "The provided evidence does not identify the Director-General of IRENA in the foreword. The foreword page is not included in the evidence, and no source names the Director-General in that section.",
+      "note": "The question asks for a specific person identified as Director-General of IRENA in the foreword. None of the supplied sources contain the foreword text or a statement naming the Director-General. Source 2 lists acknowledgements and Source 3 describes IRENA, but neither identifies the Director-General in the foreword.",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 137",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 3",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 2",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 136"
+      ],
+      "evidence_status": "strong",
+      "route_used": "chunk_first+abstention_recovery",
+      "best_score": 1.0274730158730159,
+      "context": [
+        {
+          "rank": 1,
+          "page_label": "Page 137",
+          "section_heading": "Fuel economy standards",
+          "preview": "137 Vehicle efficiency policies and standards, including fuel economy standards and tailpipe emissions standards,  are a cornerstone of the decarbonisation of the transport sector. Fuel economy standards typically regulate  the distance new",
+          "fused_score": 1.0274730158730159
+        },
+        {
+          "rank": 2,
+          "page_label": "Page 3",
+          "section_heading": "WORLD",
+          "preview": "3 WORLD  ENERGY TRA NSITIONS OUTLOOK 2023 ACKNOWLEDGEMENTS Volume 1 of this report was developed under the guidance of Roland Roesch  (Director, IRENA Innovation and Technology Centre) and Rabia Ferroukhi (ex-IRENA),  and was led by Ute Col",
+          "fused_score": 0.9008
+        },
+        {
+          "rank": 3,
+          "page_label": "Page 2",
+          "section_heading": "ABOUT IRENA",
+          "preview": "ABOUT IRENA The International Renewable E nergy Agency (IRENA) serves as the principal platform for international  co-operation, a centre of excellence, a repository of policy, technology, resource and financial knowledge,  and a driver of",
+          "fused_score": 0.8818256005105419
+        },
+        {
+          "rank": 4,
+          "page_label": "Page 136",
+          "section_heading": "WORLD ENERGY",
+          "preview": "TRANSITIONS OUTLOOK 2023 BOX 2.10    Av oid-shift-improve strategies for road transport “Avoid” policies can reduce the frequency of car trips and the distance therein, reduce trip length, or remove the need to travel by car at all. Availab",
+          "fused_score": 0.7974730158730158
+        }
+      ]
+    },
+    {
+      "question_id": "irena-world-energy-transitions-outlook-2023-numeric_procedure-009",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "intent_type": "numeric_procedure",
+      "question": "How much cumulative investment does the 1.5°C Scenario require by 2050, how does that compare with the Planned Energy Scenario, and how much annual investment must be redirected away from fossil-fuel technologies?",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer": "The evidence gives two different cumulative investment figures for the 1.5°C Scenario, so the question cannot be answered consistently from the supplied sources. One source says the 1.5°C Scenario requires USD 61 trillion by 2050 and that this is more than double the Planned Energy Scenario’s USD 28.5 trillion [Source 2]. Another source says the 1.5°C pathway requires an additional USD 47 trillion compared with the Planned Energy Scenario, which requires USD 103 trillion cumulatively, and that around USD 1 trillion of annual fossil-fuel-based investments must be redirected [Source 1]. A third source says about USD 1 trillion of average annual investments in coal- and oil-based fossil fuel technologies would be redirected, totaling about USD 26 trillion over the period to 2050 [Source 4]. Because the cumulative investment figures conflict, I cannot provide a single supported answer.",
+      "note": "Required facts: (1) cumulative investment required under the 1.5°C Scenario by 2050; (2) comparison with the Planned Energy Scenario; (3) annual investment redirected away from fossil-fuel technologies. The evidence contains conflicting cumulative totals for both scenarios: USD 61 trillion vs USD 103 trillion for 1.5°C, and USD 28.5 trillion vs USD 103 trillion for Planned Energy Scenario. The redirection amount is consistently about USD 1 trillion annually, but the conflicting cumulative figures prevent a fully supported single answer.",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 25",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 150",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 151",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 147"
+      ],
+      "evidence_status": "strong",
+      "route_used": "hybrid_both+abstention_recovery",
+      "best_score": 0.9310725565735312,
+      "context": [
+        {
+          "rank": 1,
+          "page_label": "Page 25",
+          "section_heading": "EXECUTIVE SUMMARY",
+          "preview": "1.5°C pathway. Compared with the Planned Energy Scenario - under which a cumulative investment of USD 103 trillion is required – an additional USD 47 trillion in cumulative investment is required by 2050 to remain on the 1.5°C pathway. Arou",
+          "fused_score": 0.9310725565735312
+        },
+        {
+          "rank": 2,
+          "page_label": "Page 150",
+          "section_heading": "References",
+          "preview": "1.5°C Scenario would require an average of more than USD  2.2  trillion per year through 2050. A total of USD 61 trillion would be needed under the scenario – more than double the cumulative investment required under the Planned Energy Scen",
+          "fused_score": 0.8919619254477348
+        },
+        {
+          "rank": 3,
+          "page_label": "Page 151",
+          "section_heading": "VOLUME 1 | CHAPTER 03",
+          "preview": "the total and its development would be key for the ramping up of the electric vehicle’s adoption. Energy efficiency would represent 27%, support for transport electrification 9% and hydrogen stations and bunkering facilities the remaining 5",
+          "fused_score": 0.8761136476426798
+        },
+        {
+          "rank": 4,
+          "page_label": "Page 147",
+          "section_heading": "VOLUME 1 | CHAPTER 03",
+          "preview": "els supply would account for USD  12  trillion and investment in fossil fuel and nuclear power generation for USD  1.9  trillion and USD 1.6 trillion, respectively. About USD  1  trillion of average annual investments in coal- and oil-based",
+          "fused_score": 0.8627706496375236
+        }
+      ]
+    },
+    {
+      "question_id": "nist-ai-rmf-1-0-local_scope-016",
+      "document_id": "nist-ai-rmf-1-0",
+      "intent_type": "local_scope",
+      "question": "In the section on AI safety, which kinds of safety risks does the framework say require the most urgent prioritization?",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer": "The framework says the safety risks that pose a potential risk of serious injury or death require the most urgent prioritization and the most thorough risk management process [Source 3].\n\nReferences:\n- [1] nist-ai-rmf-1-0.pdf - Page 20\n- [2] nist-ai-rmf-1-0.pdf - Page 20\n- [3] nist-ai-rmf-1-0.pdf - Page 19\n- [4] nist-ai-rmf-1-0.pdf - Page 4",
+      "note": "Source 3 explicitly states which safety risks get the highest priority: those posing a potential risk of serious injury or death. No other kinds are identified as requiring the most urgent prioritization. Recovery support verifier: The question asks which kinds of safety risks the framework says require the most urgent prioritization. Source 3 directly states: \"Safety risks that pose a potential risk of serious injury or death call for the most urgent prioritization and most thorough risk management process.\" The proposed answer matches this exactly and does not add unsupported information.",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 20",
+        "nist-ai-rmf-1-0.pdf - Page 20",
+        "nist-ai-rmf-1-0.pdf - Page 19",
+        "nist-ai-rmf-1-0.pdf - Page 4"
+      ],
+      "evidence_status": "strong",
+      "route_used": "chunk_first+abstention_recovery",
+      "best_score": 0.8810454537388581,
+      "context": [
+        {
+          "rank": 1,
+          "page_label": "Page 20",
+          "section_heading": "NIST AI 100-1 AI RMF 1.0",
+          "preview": "3.3 Secure and Resilient AI systems, as well as the ecosystems in which they are deployed, may be said to be re- silient if they can withstand unexpected adverse events or unexpected changes in their envi- ronment or use – or if they can ma",
+          "fused_score": 0.8810454537388581
+        },
+        {
+          "rank": 2,
+          "page_label": "Page 20",
+          "section_heading": "NIST AI 100-1 AI RMF 1.0",
+          "preview": "NIST AI 100-1 AI RMF 1.0 Employing safety considerations during the lifecycle and starting as early as possible with planning and design can prevent failures or conditions that can render a system dangerous. Other practical approaches for A",
+          "fused_score": 0.8535629362563407
+        },
+        {
+          "rank": 3,
+          "page_label": "Page 19",
+          "section_heading": "NIST AI 100-1 AI RMF 1.0",
+          "preview": "3.2 Safe AI systems should “not under defined conditions, lead to a state in which human life, health, property, or the environment is endangered” (Source: ISO /IEC TS 5723:2022). Safe operation of AI systems is improved through: • responsi",
+          "fused_score": 0.6394342649276694
+        },
+        {
+          "rank": 4,
+          "page_label": "Page 4",
+          "section_heading": "Executive Summary 1",
+          "preview": "Table of Contents Executive Summary 1 Part 1: Foundational Information 4 1 Framing Risk 4 1.1 Understanding and Addressing Risks, Impacts, and Harms 4 1.2 Challenges for AI Risk Management 5 1.2.1 Risk Measurement 5 1.2.2 Risk Tolerance 7 1",
+          "fused_score": 0.5791180144445719
+        }
+      ]
+    },
+    {
+      "question_id": "nist-ai-rmf-1-0-broad_summary-020",
+      "document_id": "nist-ai-rmf-1-0",
+      "intent_type": "broad_summary",
+      "question": "Who does the framework say it is intended for, and why does it use the term 'AI actors'?",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer": "The framework is intended for organizations and individuals, referred to as AI actors, including those designing, developing, deploying, or using AI systems [Source 1]. It says it uses the term “AI actors” because it defines them as those who play an active role in the AI system lifecycle, including organizations and individuals that deploy or operate AI [Source 1]. It also states that AI actors across the AI lifecycle are the primary AI RMF audience [Source 2].\n\nReferences:\n- [1] nist-ai-rmf-1-0.pdf - Page 7\n- [2] nist-ai-rmf-1-0.pdf - Page 14\n- [3] nist-ai-rmf-1-0.pdf - Page 3\n- [4] nist-ai-rmf-1-0.pdf - Page 42",
+      "note": "The evidence directly states who the framework is intended for and defines why the term “AI actors” is used. It identifies organizations and individuals as the intended users and explains that “AI actors” means active participants in the AI system lifecycle.",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 7",
+        "nist-ai-rmf-1-0.pdf - Page 14",
+        "nist-ai-rmf-1-0.pdf - Page 3",
+        "nist-ai-rmf-1-0.pdf - Page 42"
+      ],
+      "evidence_status": "strong",
+      "route_used": "hybrid_both",
+      "best_score": 0.17558688524590166,
+      "context": [
+        {
+          "rank": 1,
+          "page_label": "Page 7",
+          "section_heading": "NIST AI 100-1 AI RMF 1.0",
+          "preview": "TR 24368:2022). As directed by the National Artificial Intelligence Initiative Act of 2020 (P.L. 116-283), the goal of the AI RMF is to offer a resource to the organizations designing, developing, deploying, or using AI systems to help mana",
+          "fused_score": 0.17558688524590166
+        },
+        {
+          "rank": 2,
+          "page_label": "Page 14",
+          "section_heading": "NIST AI 100-1 AI RMF 1.0",
+          "preview": "disciplinarily diverse teams. The AI RMF is intended to be used by AI actors across the AI lifecycle and dimensions. The OECD has developed a framework for classifying AI lifecycle activities according to five key socio-technical dimensions",
+          "fused_score": 0.17359838900734423
+        },
+        {
+          "rank": 3,
+          "page_label": "Page 3",
+          "section_heading": "Update Schedule and Versions",
+          "preview": "Certain commercial entities, equipment, or materials may be identified in this document in order to describe an experimental procedure or concept adequately. Such identification is not intended to imply recommenda- tion or endorsement by th",
+          "fused_score": 0.0209290322580645
+        },
+        {
+          "rank": 4,
+          "page_label": "Page 42",
+          "section_heading": "NIST AI 100-1 AI RMF 1.0",
+          "preview": "NIST AI 100-1 AI RMF 1.0 signed, developed, and/or deployed. Key AI actors responsible for AI governance include organizational management, senior leadership, and the Board of Directors. These actors are parties that are concerned with the",
+          "fused_score": 0.09892903225806451
+        }
+      ]
+    },
+    {
+      "question_id": "arxiv-2510-03305-lookup-012",
+      "document_id": "arxiv-2510-03305",
+      "intent_type": "lookup",
+      "question": "Who is the corresponding author for this paper?",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer": "The provided evidence does not identify the corresponding author for this paper.",
+      "note": "The excerpts shown are from the paper body and references, but none of the supplied sources include the paper’s author list, title page, or a corresponding-author note/email. Therefore the corresponding author cannot be determined from the evidence. [Source 1] [Source 2] [Source 3] [Source 4]",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 24",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 25",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 41",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 25"
+      ],
+      "evidence_status": "strong",
+      "route_used": "synopsis_first+abstention_recovery",
+      "best_score": 0.8478,
+      "context": [
+        {
+          "rank": 1,
+          "page_label": "Page 24",
+          "section_heading": "Figure S3: NASA’s Earth Mineral Dust Investigation (EMIT) mission. EMIT David R",
+          "preview": "Figure S3: NASA’s Earth Mineral Dust Investigation (EMIT) mission. EMIT David R. Thompson and co authors [2024] was launched to the International Space Station in July 2022 with a primary mission of collecting data that quantifies abundance",
+          "fused_score": 0.8478
+        },
+        {
+          "rank": 2,
+          "page_label": "Page 25",
+          "section_heading": "Retrieval",
+          "preview": "X Proposal for Forward Function F Unsupervised Learning Fixed Deployment of ML modules in Simulated-Based UQ Joint Distribution of True State State Estimate Data Conditional Distribution Simulatior Uncertainty Quantification Figure S4: Simu",
+          "fused_score": 0.7578
+        },
+        {
+          "rank": 3,
+          "page_label": "Page 41",
+          "section_heading": "Stephan Rasp, Peter D. Dueben, Sebastian Scher, Jonathan A. Weyn, Soukayna Mouatadid,",
+          "preview": ", Peter D. Dueben, Sebastian Scher, Jonathan A. Weyn, Soukayna Mouatadid, and Nils Thuerey. Weatherbench: A benchmark data set for data-driven weather fore- casting.Journal of Advances in Modeling Earth Systems, 12(11):e2020MS002203, 2020.",
+          "fused_score": 0.6303000000000001
+        },
+        {
+          "rank": 4,
+          "page_label": "Page 25",
+          "section_heading": "Retrieval",
+          "preview": "module II.Given eachX ∗ m, the simulator must apply a forward function F to generate a corresponding observationY∗ m. As shown in Figure S4, F is unknown. A straightforward option is to substituteFwith bF assumed in the retrieval algorithm.",
+          "fused_score": 0.5778
+        }
+      ]
+    },
+    {
+      "question_id": "arxiv-2510-03305-lookup-013",
+      "document_id": "arxiv-2510-03305",
+      "intent_type": "lookup",
+      "question": "What does the abbreviation PINO stand for in the paper?",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer": "The provided evidence does not define what the abbreviation \"PINO\" stands for in the paper.",
+      "note": "None of the supplied sources mention the abbreviation \"PINO\" or expand it. The evidence only discusses climate modeling workflows and the ClimSim case study, so the required fact is missing [Source 1][Source 2][Source 3][Source 4].",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 11",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 2",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 16",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 17"
+      ],
+      "evidence_status": "strong",
+      "route_used": "chunk_first+abstention_recovery",
+      "best_score": 0.4828,
+      "context": [
+        {
+          "rank": 1,
+          "page_label": "Page 11",
+          "section_heading": "Conclusions",
+          "preview": "learning components are integrated into larger Earth system models. Beyond offline testing using validation data, the key challenge is to evaluate online performance, ensuring that the machine learning surrogate interacts stably with other",
+          "fused_score": 0.4828
+        },
+        {
+          "rank": 2,
+          "page_label": "Page 2",
+          "section_heading": "Abstract",
+          "preview": "nciples to guide the evaluation of human choices. More recently, Kapoor and Narayanan (2023) [Kapoor and Narayanan, 2023] highlighted the problem of data leakage as a key driver of irreproducibility in ML-based science and offered amodel in",
+          "fused_score": 0.43575151515151517
+        },
+        {
+          "rank": 3,
+          "page_label": "Page 16",
+          "section_heading": "L2",
+          "preview": "[2023]. Prior to training, all fields are interpolated to a common resolution (with up/down- sampling as needed), temporal cadences are synchronized to a uniform ∆t, and systematic biases are corrected via ensemble-mean subtraction. The can",
+          "fused_score": 0.4038740983606558
+        },
+        {
+          "rank": 4,
+          "page_label": "Page 17",
+          "section_heading": "L2",
+          "preview": "ion, and precipitation, which are readily inputs for the hosting Earth system model. Per its design, the ClimSim data set invites a wide range of high-dimensional regression machine learning models:f:X→Y, which accurately map resolved high-",
+          "fused_score": 0.4038740983606558
+        }
+      ]
+    },
+    {
+      "question_id": "arxiv-2510-03305-lookup-014",
+      "document_id": "arxiv-2510-03305",
+      "intent_type": "lookup",
+      "question": "What does GNO refer to in the discussion of neural operator variants?",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer": "The provided evidence does not define what “GNO” refers to in the discussion of neural operator variants.",
+      "note": "The evidence mentions neural operators and related training objectives, but it does not expand or define the acronym GNO anywhere in the supplied sources [Source 1][Source 2][Source 4].",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 16",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 10",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 39",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 11"
+      ],
+      "evidence_status": "strong",
+      "route_used": "chunk_first+abstention_recovery",
+      "best_score": 0.5955107142857143,
+      "context": [
+        {
+          "rank": 1,
+          "page_label": "Page 16",
+          "section_heading": "L2",
+          "preview": "[2023]. Prior to training, all fields are interpolated to a common resolution (with up/down- sampling as needed), temporal cadences are synchronized to a uniform ∆t, and systematic biases are corrected via ensemble-mean subtraction. The can",
+          "fused_score": 0.5955107142857143
+        },
+        {
+          "rank": 2,
+          "page_label": "Page 10",
+          "section_heading": "Dynamics Resolved",
+          "preview": "that reflect both statistical and scientific priorities (e.g., accuracy, physical consistency, un- certainty awareness). Case Study 1a (Neural Operators) provides an overview of training neural operators as surrogate models for climate proc",
+          "fused_score": 0.5070857142857144
+        },
+        {
+          "rank": 3,
+          "page_label": "Page 39",
+          "section_heading": "Zongyi Li, Nikola Kovachki, Kamyar Azizzadenesheli, Burigede Liu, Kaushik Bhattacharya,",
+          "preview": "na Spitzer, Inioluwa Deborah Raji, and Timnit Gebru. Model cards for model reporting. InProceedings of the conference on fairness, accountability, and trans- parency, pages 220–229, 2019. Juan Nathaniel, Yongquan Qu, Tung Nguyen, Sungduk Yu",
+          "fused_score": 0.4883868852459017
+        },
+        {
+          "rank": 4,
+          "page_label": "Page 11",
+          "section_heading": "Conclusions",
+          "preview": "learning components are integrated into larger Earth system models. Beyond offline testing using validation data, the key challenge is to evaluate online performance, ensuring that the machine learning surrogate interacts stably with other",
+          "fused_score": 0.4599428571428572
+        }
+      ]
+    },
+    {
+      "question_id": "arxiv-2510-03305-local_scope-019",
+      "document_id": "arxiv-2510-03305",
+      "intent_type": "local_scope",
+      "question": "Beyond the three integration directions in Figure 1, what 'fourth direction' do the authors describe?",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer": "The authors describe the fourth direction as a human-in-the-loop approach: workflows guided by scientific reasoning, modeling practices, and domain expertise [Source 1].\n\nReferences:\n- [1] arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 6\n- [2] arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 4\n- [3] arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 5\n- [4] arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 6",
+      "note": "The evidence explicitly states that, in addition to the three directions in Figure 1, a fourth direction is human-in-the-loop and defines it as workflow design guided by scientific reasoning, modeling practices, and domain expertise [Source 1].",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 6",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 4",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 5",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 6"
+      ],
+      "evidence_status": "strong",
+      "route_used": "synopsis_first",
+      "best_score": 0.2070664584959667,
+      "context": [
+        {
+          "rank": 1,
+          "page_label": "Page 6",
+          "section_heading": "3 Structuring Machine Learning Workflows for Climate",
+          "preview": "ated data and then fine- tuned with real observations using a transfer learning Pan et al. [2010] framework. These models are typically designed for generalization, speed, and data fusion, not mechanistic un- derstanding. Key challenges in",
+          "fused_score": 0.2070664584959667
+        },
+        {
+          "rank": 2,
+          "page_label": "Page 4",
+          "section_heading": "2 Physics+Data+ML: ML-Enabled Climate Modeling",
+          "preview": "This section uses the conceptual diagram in Figure 1 to illustrate these interconnections. Each edge represents a relationship: models are guided by physics, constrained and validated by data, and increasingly augmented by machine learning",
+          "fused_score": 0.3800664584959667
+        },
+        {
+          "rank": 3,
+          "page_label": "Page 5",
+          "section_heading": "Direction I: Physics-First and ML-Augmented Simulation-Based Modeling.These",
+          "preview": "nity towards machine learning resembles that which arose in an earlier era, where meteorolo- gists debated whether forecasting should rely on theory-based simulation or empirical pattern recognition. This time, however, machine learning may",
+          "fused_score": 0.07505806451612904
+        },
+        {
+          "rank": 4,
+          "page_label": "Page 6",
+          "section_heading": "3 Structuring Machine Learning Workflows for Climate",
+          "preview": "Direction III: ML-First Climate Modeling.These workflows aim to build ML-based models that emulate or predict climate system behavior with minimal reliance on explicit physical equations. They prioritize predictive accuracy over theoretical",
+          "fused_score": 0.11408571428571426
+        }
+      ]
+    },
+    {
+      "question_id": "upenn-learning-environmental-models-thesis-2022-local_scope-018",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "intent_type": "local_scope",
+      "question": "In the water tank experiment, what onboard hardware components are listed for each micro-autonomous surface vehicle?",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer": "The onboard hardware components listed for each micro-autonomous surface vehicle are a micro-controller board, an XBee radio module, and an inertial measurement unit [Source 1][Source 2].\n\nReferences:\n- [1] upenn-learning-environmental-models-thesis-2022.pdf - Page 111\n- [2] upenn-learning-environmental-models-thesis-2022.pdf - Page 112\n- [3] upenn-learning-environmental-models-thesis-2022.pdf - Page 142\n- [4] upenn-learning-environmental-models-thesis-2022.pdf - Page 143",
+      "note": "The evidence explicitly states that the mASVs “include a micro-controller board, an XBee radio module, and an inertial measurement unit” [Source 1][Source 2].",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 111",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 112",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 142",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 143"
+      ],
+      "evidence_status": "strong",
+      "route_used": "hybrid_both",
+      "best_score": 0.5032791929382093,
+      "context": [
+        {
+          "rank": 1,
+          "page_label": "Page 111",
+          "section_heading": "N",
+          "preview": "4.6.2. Experimental validation in water tank test bed In the following, we present results to show our method successfully uses a heterogeneous team of robots to model and infer the properties of a complex spatiotemporal phenomena. We evalu",
+          "fused_score": 0.5032791929382093
+        },
+        {
+          "rank": 2,
+          "page_label": "Page 112",
+          "section_heading": "Weranexperimentson 100 secondsofdatatoevaluateourgeneralonlineadaptationstrategy",
+          "preview": "XBee radio module, and an inertial measurement unit. The XBee radio modules are used to communicate the information collected onboard. The testbed tank is4.5m × 3.0m × 1.2m and is equipped within a motion capture system used for localizatio",
+          "fused_score": 0.23116941687344914
+        },
+        {
+          "rank": 3,
+          "page_label": "Page 142",
+          "section_heading": "Energy-efficient trajectories for surface vehicles",
+          "preview": "6.4.2. Energy-efficient trajectories for surface vehicles Currents in rivers, oceans, and in the atmosphere are other examples of flow fields. While global information is complex and hard to analyze, local information does not provide an ac",
+          "fused_score": 0.5086482019772343
+        },
+        {
+          "rank": 4,
+          "page_label": "Page 143",
+          "section_heading": "Energy-efficient trajectories for surface vehicles",
+          "preview": "ypoints near coherent sets, exerting control effort to travel to and escape from coherent sets, and remaining in coherent sets until the next waypoint is close. This is ideologically similar to the waypoint selection method from Ramos et al",
+          "fused_score": 0.24451916971916973
+        }
+      ]
+    },
+    {
+      "question_id": "upenn-learning-environmental-models-thesis-2022-local_scope-019",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "intent_type": "local_scope",
+      "question": "In Chapter 2, how does the thesis distinguish a differential equation from an iterated map (difference equation)?",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer": "In Chapter 2, the thesis distinguishes them by time domain and notation: differential equations are for continuous time and are written with derivatives, e.g. \\u02d9x = f(x), while iterated maps/difference equations are for discrete time and are written with next-step updates, e.g. x(t+1) = f(x(t)) [Source 2][Source 1].\n\nReferences:\n- [1] upenn-learning-environmental-models-thesis-2022.pdf - Page 23\n- [2] upenn-learning-environmental-models-thesis-2022.pdf - Page 22\n- [3] upenn-learning-environmental-models-thesis-2022.pdf - Page 10\n- [4] upenn-learning-environmental-models-thesis-2022.pdf - Page 24",
+      "note": "The evidence states that differential equations are used to study systems in continuous time and iterated maps (difference equations) in discrete time [Source 2]. It also gives the corresponding forms: differential equations use derivatives (\\u02d9x = f(x)) and difference equations use time-step updates (x(t+1) = f(x(t))) [Source 1].",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 23",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 22",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 10",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 24"
+      ],
+      "evidence_status": "strong",
+      "route_used": "section_first",
+      "best_score": 0.2844757741347905,
+      "context": [
+        {
+          "rank": 1,
+          "page_label": "Page 23",
+          "section_heading": "Background",
+          "preview": "Differential equations are represented in the form ˙x0 = f0(x0, . . . , xn−1) (2.1) ˙x1 = f1(x0, . . . , xn−1) (2.2) ... (2.3) ˙xn−1 = fn−1(x0, . . . , xn−1) (2.4) (2.5) where as difference equations are represented in the form x0(t + 1) =",
+          "fused_score": 0.2844757741347905
+        },
+        {
+          "rank": 2,
+          "page_label": "Page 22",
+          "section_heading": "Background",
+          "preview": "ough, introduction to the topics presented below, we refer the reader to Stephen Strogratz’s introductory text to nonlinear dynamical systems and chaos (Strogatz, 2001). Definition 2.1.1(Dynamical system). (Strogatz, 2001) A dynamical syste",
+          "fused_score": 0.2836909370199693
+        },
+        {
+          "rank": 3,
+          "page_label": "Page 10",
+          "section_heading": "Problem statement . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 68",
+          "preview": "BIBLIOGRAPHY . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 138 1Accompanying video can be found at https://youtu.be/D-4S6hnFr2E viii",
+          "fused_score": 0.23828387096774195
+        },
+        {
+          "rank": 4,
+          "page_label": "Page 24",
+          "section_heading": "Ws(x∗) := {x ∈ Rn| lim",
+          "preview": "in partial differential equations, both space and time are independent variables. Since in this document we focus mostly on temporal evolution, we will primarily explore techniques for studying ordinary differential equations, though we wil",
+          "fused_score": 0.10200634920634921
+        }
+      ]
+    },
+    {
+      "question_id": "upenn-learning-environmental-models-thesis-2022-broad_summary-020",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "intent_type": "broad_summary",
+      "question": "How does the thesis describe the limitations of Gaussian Process modeling for spatiotemporal environmental processes?",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer": "The supplied evidence does not mention Gaussian Process modeling or describe its limitations for spatiotemporal environmental processes.",
+      "note": "The evidence discusses nonlinear system identification, transfer operators, and spatiotemporal environmental representations, but it does not provide any statement about Gaussian Processes or their limitations. Therefore the question cannot be answered from the supplied sources.",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 34",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 148",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 151",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 9"
+      ],
+      "evidence_status": "strong",
+      "route_used": "hybrid_both+abstention_recovery",
+      "best_score": 0.6038,
+      "context": [
+        {
+          "rank": 1,
+          "page_label": "Page 34",
+          "section_heading": "Transfer operators",
+          "preview": "from this structure (Jin et al., 2001). For nonlinear systems identification, there have been many methods developed by focusing on specific classes of systems (Nelles, 2001; Billings, 2013). Despite the considerable progress in the field o",
+          "fused_score": 0.6038
+        },
+        {
+          "rank": 2,
+          "page_label": "Page 148",
+          "section_heading": ". Outlook",
+          "preview": "4 introduce and verify techniques related to spatiotemporal environmental representations,",
+          "fused_score": 0.5825957741004218
+        },
+        {
+          "rank": 3,
+          "page_label": "Page 151",
+          "section_heading": "BIBLIOGRAPHY",
+          "preview": "BIBLIOGRAPHY I. Abraham and T. D. Murphey. Active Learning of Dynamics for Data-Driven Control Using Koopman Operators. IEEE Transactions on Robotics, 35(5):1071–1083, 10 2019. doi: 10.1109/TRO.2019.2923880. L. A. Aguirre and C. Letellier.",
+          "fused_score": 0.5438000000000001
+        },
+        {
+          "rank": 4,
+          "page_label": "Page 9",
+          "section_heading": "TABLE OF CONTENTS",
+          "preview": "TABLE OF CONTENTS ACKNOWLEDGEMENT . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . iv ABSTRACT . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . vi LIST OF TABLES . . . . . . . . . . . . .",
+          "fused_score": 0.5288
+        }
+      ]
+    },
+    {
+      "question_id": "upenn-learning-environmental-models-thesis-2022-comparison_synthesis-024",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "intent_type": "comparison_synthesis",
+      "question": "How does the long-term online DMD method compare with the general adaptation method in terms of accuracy, storage, and computational performance?",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer": "The evidence supports a partial comparison only. It shows that the long-term algorithm uses less storage than the general algorithm because it does not require past snapshots, while the general algorithm does and can use up to 3MB versus several hundred kilobytes for long-term monitoring [Source 1]. It also shows mixed computational performance: for a 20×10 grid with 2000 time steps, the long-term algorithm is faster than the general algorithm without eigendecomposition [Source 1], but the general adaptation method outperforms the long-term adaptation method for a 20×20 grid with 1000 time steps [Source 1]. The evidence does not provide a single, complete accuracy comparison between the two methods across all cases, so the full question is not fully supported.",
+      "note": "Required facts: compare long-term online DMD vs general adaptation on accuracy, storage, and computational performance. Evidence clearly covers storage and some runtime comparisons, but accuracy is only partially addressed and performance is mixed across environments. Source 1 states the general adaptation method outperforms the long-term adaptation method in one setting, while the long-term algorithm is faster in another setting. It also states long-term requires no past-snapshot storage and general does, with memory up to 3MB vs several hundred kilobytes. No complete, general accuracy comparison is provided.",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 106",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 105",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 101",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 106"
+      ],
+      "evidence_status": "strong",
+      "route_used": "hybrid_both+abstention_recovery",
+      "best_score": 0.8206352008647091,
+      "context": [
+        {
+          "rank": 1,
+          "page_label": "Page 106",
+          "section_heading": "Mixed-reality experimental validation",
+          "preview": "× 20 with 1000 time steps, the general adaptation method outperforms long-term adaptation method both with and without the SVD computation. The online algorithm is not well-suited for large environments. For smaller environments (∼ 200 spat",
+          "fused_score": 0.8206352008647091
+        },
+        {
+          "rank": 2,
+          "page_label": "Page 105",
+          "section_heading": "Simulation analysis of online algorithms",
+          "preview": "4.6, we were unable to test the algorithm experimentally on a high-dimensional system pro- jected onto the water tank where we only had∼ 100 time steps of data. Second, there is additional computational time associated with the construction",
+          "fused_score": 0.8027780580075662
+        },
+        {
+          "rank": 3,
+          "page_label": "Page 101",
+          "section_heading": "Environmental",
+          "preview": "Extracted table: | Environmental Parameters | Time | 500 | 500 | 1000 | 2000 | | --- | --- | --- | --- | --- | --- | |  | Dimension | 10 10 | 10 10 | 20 20 | 20 10 | |  | T | × 100 | × 100 | × 400 | × 200 | |  | τ | 10 | 100 | 100 | 100 | |",
+          "fused_score": 0.6476197491534346
+        },
+        {
+          "rank": 4,
+          "page_label": "Page 106",
+          "section_heading": "Mixed-reality experimental validation",
+          "preview": "4.6.1. Simulation of proposed approach on barium cloud data In this section, we show that using our proposed algorithm, the performance of the hetero- geneous system is better than that of a homogeneous system and that the optimal sensing l",
+          "fused_score": 0.6320637722932805
+        }
+      ]
+    },
+    {
+      "question_id": "upenn-learning-environmental-models-thesis-2022-comparison_synthesis-025",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "intent_type": "comparison_synthesis",
+      "question": "How does the thesis compare coverage control with optimal design as approaches to sensor placement?",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer": "The evidence supports that coverage control is used to determine robot placement for robots with low spatial resolution measurements collected over time, and that the workspace is partitioned into Voronoi regions [Source 2]. It also supports that the thesis discusses optimal sensor location / optimal sensing as a separate topic in the context of distributed process systems and robot locations for field reconstruction [Source 4; Source 3]. However, the evidence does not state how the thesis compares coverage control with optimal design as approaches to sensor placement, so the comparison itself is not supported.",
+      "note": "Required facts: (1) what coverage control is described as doing for sensor/robot placement, and (2) how it is compared with optimal design. The evidence covers (1) and mentions optimal sensor location/optimal sensing, but it does not provide an explicit comparison between coverage control and optimal design.",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 34",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 94",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 9",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 151"
+      ],
+      "evidence_status": "strong",
+      "route_used": "hybrid_both+abstention_recovery",
+      "best_score": 0.5915272727272727,
+      "context": [
+        {
+          "rank": 1,
+          "page_label": "Page 34",
+          "section_heading": "Transfer operators",
+          "preview": "from this structure (Jin et al., 2001). For nonlinear systems identification, there have been many methods developed by focusing on specific classes of systems (Nelles, 2001; Billings, 2013). Despite the considerable progress in the field o",
+          "fused_score": 0.5915272727272727
+        },
+        {
+          "rank": 2,
+          "page_label": "Page 94",
+          "section_heading": "(CΦ)⊤ CΦ",
+          "preview": "4.4.2. Coverage control using temporal characteristics For robots with low spatial resolution measurements collected over time, a coverage control technique can be used to determine the placement of the robots. In coverage control, the work",
+          "fused_score": 0.5329679516746291
+        },
+        {
+          "rank": 3,
+          "page_label": "Page 9",
+          "section_heading": "TABLE OF CONTENTS",
+          "preview": "TABLE OF CONTENTS ACKNOWLEDGEMENT . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . iv ABSTRACT . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . vi LIST OF TABLES . . . . . . . . . . . . .",
+          "fused_score": 0.5288
+        },
+        {
+          "rank": 4,
+          "page_label": "Page 151",
+          "section_heading": "BIBLIOGRAPHY",
+          "preview": "BIBLIOGRAPHY I. Abraham and T. D. Murphey. Active Learning of Dynamics for Data-Driven Control Using Koopman Operators. IEEE Transactions on Robotics, 35(5):1071–1083, 10 2019. doi: 10.1109/TRO.2019.2923880. L. A. Aguirre and C. Letellier.",
+          "fused_score": 0.5288
+        }
+      ]
+    },
+    {
+      "question_id": "fomc-minutes-2026-01-28-local_scope-016",
+      "document_id": "fomc-minutes-2026-01-28",
+      "intent_type": "local_scope",
+      "question": "In the Annual Organizational Matters section, who was selected as Secretary of the Committee?",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer": "Joshua Gallin was selected as Secretary of the Committee [Source 1].\n\nReferences:\n- [1] fomc-minutes-2026-01-28.pdf - Page 3\n- [2] fomc-minutes-2026-01-28.pdf - Page 4\n- [3] fomc-minutes-2026-01-28.pdf - Page 2\n- [4] fomc-minutes-2026-01-28.pdf - Page 3",
+      "note": "The evidence in the Annual Organizational Matters section lists the officers selected to serve, including “Joshua Gallin Secretary” [Source 1].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 3",
+        "fomc-minutes-2026-01-28.pdf - Page 4",
+        "fomc-minutes-2026-01-28.pdf - Page 2",
+        "fomc-minutes-2026-01-28.pdf - Page 3"
+      ],
+      "evidence_status": "strong",
+      "route_used": "section_first",
+      "best_score": 0.2898725995316159,
+      "context": [
+        {
+          "rank": 1,
+          "page_label": "Page 3",
+          "section_heading": "Jerome H. Powell Chair",
+          "preview": "2    January 27–28, 2026 By unanimous vote, the following officers of the Committee were selected to serve until the selection of their successors at the first regularly scheduled meeting of the Committee in 2027: Jerome H. Powell  Chair Jo",
+          "fused_score": 0.2898725995316159
+        },
+        {
+          "rank": 2,
+          "page_label": "Page 4",
+          "section_heading": "Minutes of the Federal Open Market Committee 3",
+          "preview": "Minutes of the Federal Open Market Committee    3 Secretary’s note:  The Federal Reserve Bank of New York subsequently sent advice that the selections indicated previously were satisfactory. By unanimous vote, the Committee approved the FOM",
+          "fused_score": 0.32724444444444445
+        },
+        {
+          "rank": 3,
+          "page_label": "Page 2",
+          "section_heading": "M",
+          "preview": "M inutes of the Federal Open Market Committee January 27–28, 2026 A joint meeting of the Federal Open Market Committee and the Board of Governors of the Federal Reserve System was held in the offices of the Board of Governors on Tuesday, Ja",
+          "fused_score": 0.29860478345184227
+        },
+        {
+          "rank": 4,
+          "page_label": "Page 3",
+          "section_heading": "Jerome H. Powell Chair",
+          "preview": "the Committee selected Roberto Perli and Julie Ann Remache to serve at the pleasure of the Committee as manager and deputy manager of the SOMA, respectively, on the understanding that these selections were subject to being satisfactory to t",
+          "fused_score": 0.26690714285714284
+        }
+      ]
+    },
+    {
+      "question_id": "irena-world-energy-transitions-outlook-2023-local_scope-019",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "intent_type": "local_scope",
+      "question": "In the executive summary's tracking-progress table, what average annual investment is required in power grids and flexibility through 2030 and through 2050 under the 1.5 degree C scenario?",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer": "Unsupported by the recovered evidence. The recovered evidence did not fully support every required fact in the question.",
+      "note": "The evidence explicitly gives the 2050 annual average investment for grids and system flexibility as USD 0.8 trillion per year [Source 1]. The executive summary tracking-progress table is shown, but the supplied evidence does not include the specific power grids and flexibility investment value through 2030 [Source 2]. Recovery support verifier: The question asks for the average annual investment required in power grids and flexibility through 2030 and through 2050 under the 1.5°C scenario. The evidence directly supports only the 2050 figure: USD 0.8 trillion per year in grids and system flexibility by 2050. It does not provide a through-2030 figure for power grids and flexibility in the executive summary tracking-progress table, so the proposed answer is incomplete for the question asked.",
+      "citations": [],
+      "evidence_status": "strong",
+      "route_used": "synopsis_first+abstention_recovery",
+      "best_score": 0.7568776531492667,
+      "context": [
+        {
+          "rank": 1,
+          "page_label": "Page 150",
+          "section_heading": "References",
+          "preview": "1.5°C Scenario would require an average of more than USD  2.2  trillion per year through 2050. A total of USD 61 trillion would be needed under the scenario – more than double the cumulative investment required under the Planned Energy Scen",
+          "fused_score": 0.6859673074321566
+        },
+        {
+          "rank": 2,
+          "page_label": "Page 23",
+          "section_heading": "EXECUTIVE SUMMARY",
+          "preview": "EXECUTIVE SUMMARY Indicators Recent years 2050 Progress (off / on track) 2030 Indicators Recent years 2050 Progress (off / on track) 2030 Share of renewables in electricity generation Renewable power capacity additions Annual solar PV addit",
+          "fused_score": 0.7370808006462942
+        },
+        {
+          "rank": 3,
+          "page_label": "Page 24",
+          "section_heading": "WORLD ENERGY",
+          "preview": "2 stations, bunkering facilities and long-term storage; [28] 2022; [29] Includes CO2 capture",
+          "fused_score": 0.7568776531492667
+        },
+        {
+          "rank": 4,
+          "page_label": "Page 25",
+          "section_heading": "EXECUTIVE SUMMARY",
+          "preview": "1.5°C pathway. Compared with the Planned Energy Scenario - under which a cumulative investment of USD 103 trillion is required – an additional USD 47 trillion in cumulative investment is required by 2050 to remain on the 1.5°C pathway. Arou",
+          "fused_score": 0.7154132427843802
+        }
+      ]
+    },
+    {
+      "question_id": "irena-world-energy-transitions-outlook-2023-broad_summary-021",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "intent_type": "broad_summary",
+      "question": "How does Volume 2 differ from Volume 1 in scope and approach?",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer": "The provided evidence does not mention Volume 1 or Volume 2, so it cannot answer how Volume 2 differs from Volume 1 in scope and approach.",
+      "note": "The evidence only contains a table of key performance indicators for the 1.5°C Scenario versus the Planned Energy Scenario on page 46. It provides no information about any volumes, their scope, or their approach.",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 46",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 46",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 46",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 46"
+      ],
+      "evidence_status": "weak",
+      "route_used": "hybrid_both+abstention_recovery",
+      "best_score": 0.9398172043010753,
+      "context": [
+        {
+          "rank": 1,
+          "page_label": "Page 46",
+          "section_heading": "PES 1.5°C",
+          "preview": "Extracted table: |  |  |  | Recent years | 2030 |  | 2050 |  | | --- | --- | --- | --- | --- | --- | --- | --- | |  |  |  | 2020 | PES | 1.5°C Scenario | PES | 1.5°C Scenario | |  | Electricity generation (TWh/yr) | Global | 7 468 | 16 504",
+          "fused_score": 0.9398172043010753
+        },
+        {
+          "rank": 2,
+          "page_label": "Page 46",
+          "section_heading": "PES 1.5°C",
+          "preview": "46 TABLE 1. 1    Ke y performance indicators for achieving the 1.5°C Scenario compared with the Planned Energy Scenario in 2030 and 2050 Recent years 2030 2050",
+          "fused_score": 0.6944172043010752
+        },
+        {
+          "rank": 3,
+          "page_label": "Page 46",
+          "section_heading": "PES 1.5°C",
+          "preview": "TABLE 1. 1    Ke y performance indicators for achieving the 1.5°C Scenario compared with the Planned Energy Scenario in 2030 and 2050 Recent years 2030 2050",
+          "fused_score": 0.6448172043010753
+        },
+        {
+          "rank": 4,
+          "page_label": "Page 46",
+          "section_heading": "PES 1.5°C",
+          "preview": "68 16  5 04 27  3 58 38  1 18 82  1",
+          "fused_score": 0.6448172043010753
+        }
+      ]
+    },
+    {
+      "question_id": "irena-world-energy-transitions-outlook-2023-broad_summary-023",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "intent_type": "broad_summary",
+      "question": "What does the executive summary say about the relationship between the energy crisis and the transition?",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer": "The executive summary says the energy crisis/Ukraine crisis has further compounded the challenges facing the energy transition, and that the transition is off-track [Source 1].\n\nReferences:\n- [1] irena-world-energy-transitions-outlook-2023.pdf - Page 21\n- [2] irena-world-energy-transitions-outlook-2023.pdf - Page 33\n- [3] irena-world-energy-transitions-outlook-2023.pdf - Page 31\n- [4] irena-world-energy-transitions-outlook-2023.pdf - Page 35",
+      "note": "The question asks about the relationship between the energy crisis and the transition. Source 1 states that the aftermath of the COVID-19 pandemic and the ripple effects of the Ukraine crisis have further compounded the challenges facing the transition, and that the energy transition is off-track. This directly answers the relationship.",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 21",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 33",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 31",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 35"
+      ],
+      "evidence_status": "strong",
+      "route_used": "synopsis_first",
+      "best_score": 0.5649290322580645,
+      "context": [
+        {
+          "rank": 1,
+          "page_label": "Page 21",
+          "section_heading": "EXECUTIVE SUMMARY",
+          "preview": "EXECUTIVE SUMMARY The energy transition is off-track. The aftermath of the COVID-19 pandemic and the ripple effects of the Ukraine crisis have further compounded the challenges facing the transition. The stakes could not be higher - every f",
+          "fused_score": 0.5649290322580645
+        },
+        {
+          "rank": 2,
+          "page_label": "Page 33",
+          "section_heading": "EXECUTIVE SUMMARY",
+          "preview": "EXECUTIVE SUMMARY Socio-economic impacts of the energy transition To date, policy makers have predominantly concentrated on the technological, institutional, regulatory and policy facets of the energy transition, with less attention to its",
+          "fused_score": 0.5660664584959667
+        },
+        {
+          "rank": 3,
+          "page_label": "Page 31",
+          "section_heading": "EXECUTIVE SUMMARY",
+          "preview": "EXECUTIVE SUMMARY The energy transition will increase energy sector employment.  Given front-loaded investments, by 2030 the number of jobs in the energy sector could grow to 101 million under the PES. Under the 1.5°C Scenario, the number w",
+          "fused_score": 0.5639515151515151
+        },
+        {
+          "rank": 4,
+          "page_label": "Page 35",
+          "section_heading": "EXECUTIVE SUMMARY",
+          "preview": "EXECUTIVE SUMMARY Rewriting international co-operation The dynamism of energy sectors and geopolitical developments necessitates greater scrutiny of international co-operation modalities, instruments and approaches to ensure their relevance",
+          "fused_score": 0.5341846153846154
+        }
+      ]
+    },
+    {
+      "question_id": "irena-world-energy-transitions-outlook-2023-comparison_synthesis-024",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "intent_type": "comparison_synthesis",
+      "question": "How do the cumulative and per-year investment requirements differ between the Planned Energy Scenario and the 1.5 degree C Scenario?",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer": "The evidence says the 1.5°C Scenario requires higher cumulative investment than the Planned Energy Scenario. Specifically, total investment under the 1.5°C Scenario is USD 61 trillion through 2050, which is more than double the Planned Energy Scenario’s USD 28.5 trillion through 2050 [Source 3]. For the industry sector, cumulative investments under the 1.5°C Scenario are about USD 12 trillion between 2023 and 2050, double the levels under the Planned Energy Scenario [Source 2]. On a per-year basis, the 1.5°C Scenario requires an average of more than USD 2.2 trillion per year through 2050 [Source 3]. The evidence does not give a per-year investment figure for the Planned Energy Scenario, only its cumulative total [Source 3].",
+      "note": "The question asks for both cumulative and per-year differences between the two scenarios. The evidence fully supports the cumulative comparison: USD 61 trillion vs USD 28.5 trillion overall, and USD 12 trillion vs Planned Energy Scenario double in industry [Sources 2, 3]. It also supports the 1.5°C Scenario per-year requirement of more than USD 2.2 trillion per year [Source 3]. However, it does not provide a per-year investment requirement for the Planned Energy Scenario, so the per-year comparison is incomplete. The answer was downgraded because the model's own support reason identified a missing, partial, or inconsistent required fact.",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 25",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 151",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 150",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 151"
+      ],
+      "evidence_status": "strong",
+      "route_used": "hybrid_both+abstention_recovery",
+      "best_score": 0.7710813049853372,
+      "context": [
+        {
+          "rank": 1,
+          "page_label": "Page 25",
+          "section_heading": "EXECUTIVE SUMMARY",
+          "preview": "ditional capacity in 2022 (IRENA, 2023a; IRENA and CPI, 2023). Investments in off-grid renewable energy solutions in 2021 amounted to USD 0.5 billion (IRENA and CPI, 2023) – far below the USD 15 billion needed annually to 2030. While many t",
+          "fused_score": 0.7710813049853372
+        },
+        {
+          "rank": 2,
+          "page_label": "Page 151",
+          "section_heading": "VOLUME 1 | CHAPTER 03",
+          "preview": "the total and its development would be key for the ramping up of the electric vehicle’s adoption. Energy efficiency would represent 27%, support for transport electrification 9% and hydrogen stations and bunkering facilities the remaining 5",
+          "fused_score": 0.6832969696969696
+        },
+        {
+          "rank": 3,
+          "page_label": "Page 150",
+          "section_heading": "References",
+          "preview": "1.5°C Scenario would require an average of more than USD  2.2  trillion per year through 2050. A total of USD 61 trillion would be needed under the scenario – more than double the cumulative investment required under the Planned Energy Scen",
+          "fused_score": 0.6211275543042954
+        },
+        {
+          "rank": 4,
+          "page_label": "Page 151",
+          "section_heading": "VOLUME 1 | CHAPTER 03",
+          "preview": "151 Investment also needs to be scaled up in other renewable power technologies. This includes over USD 400 billion annually until 2050 in a range of technologies including hydropower, bioenergy, geothermal, solar thermal and ocean technolo",
+          "fused_score": 0.6205696969696969
+        }
+      ]
+    },
+    {
+      "question_id": "irena-world-energy-transitions-outlook-2023-comparison_synthesis-025",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "intent_type": "comparison_synthesis",
+      "question": "How does the role of bioenergy in 2050 differ between the Planned Energy Scenario and the 1.5 degree C Scenario?",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer": "The evidence does not provide the Planned Energy Scenario 2050 role of bioenergy, so a direct comparison with the 1.5°C Scenario cannot be fully answered. The evidence does state that under the 1.5°C Scenario, bioenergy plays a significant role in transport decarbonisation by 2050, including 12 EJ of bioenergy consumption in transport, 24% of overall transport energy demand met by liquid biofuel, and a 10% shipping energy mix share [Source 3][Source 4]. The missing required fact is the corresponding 2050 role or indicators for the Planned Energy Scenario.",
+      "note": "The question asks for a comparison between two scenarios in 2050. The supplied evidence includes 2050 details only for the 1.5°C Scenario and does not include the Planned Energy Scenario values or description for 2050. Therefore the comparison is only partially supported.",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 100",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 100",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 99",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 99"
+      ],
+      "evidence_status": "weak",
+      "route_used": "hybrid_both+abstention_recovery",
+      "best_score": 0.835625,
+      "context": [
+        {
+          "rank": 1,
+          "page_label": "Page 100",
+          "section_heading": "Historical 2030 2050",
+          "preview": "TABLE 2.3    Ke y performance indicators for bioenergy supply and consumption: Planned Energy Scenario and 1.5°C Scenario in 2030 and 2050 Historical 2030 2050",
+          "fused_score": 0.835625
+        },
+        {
+          "rank": 2,
+          "page_label": "Page 100",
+          "section_heading": "Historical 2030 2050",
+          "preview": "100 TABLE 2.3    Ke y performance indicators for bioenergy supply and consumption: Planned Energy Scenario and 1.5°C Scenario in 2030 and 2050 Historical 2030 2050",
+          "fused_score": 0.785225
+        },
+        {
+          "rank": 3,
+          "page_label": "Page 99",
+          "section_heading": "VOLUME 1 | CHAPTER 02",
+          "preview": "synthetic organic materials would be produced from biomass feedstock by 2050. Bio-based feedstocks play a minor role in chemical production today. Bio-based feedstocks are used to produce about 1% of plastics and less than 1% of chemicals.",
+          "fused_score": 0.762225
+        },
+        {
+          "rank": 4,
+          "page_label": "Page 99",
+          "section_heading": "VOLUME 1 | CHAPTER 02",
+          "preview": "Under the 1.5°C Scenario, approximately 110 billion litres of biojet fuels would be produced annually. Liquid biofuel would meet 24% of the overall energy demand in the transport sector, and their production would grow almost four-fold by 2",
+          "fused_score": 0.762225
+        }
+      ]
+    },
+    {
+      "question_id": "irena-world-energy-transitions-outlook-2023-numeric_procedure-028",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "intent_type": "numeric_procedure",
+      "question": "According to the executive summary, what size emissions gap remains in 2050 between fully implemented current pledges and the 1.5 degree C pathway, and how much do those pledges actually reduce emissions by 2030 and 2050?",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer": "According to the executive summary, current pledges and plans fall well short of IRENA’s 1.5°C pathway and leave a 16 Gt emissions gap in 2050 [Source 4]. If fully implemented, those pledges would reduce CO2 emissions by 6% by 2030 and 56% by 2050, compared with 2022 levels [Source 1].\n\nReferences:\n- [1] irena-world-energy-transitions-outlook-2023.pdf - Page 21\n- [2] irena-world-energy-transitions-outlook-2023.pdf - Page 185\n- [3] irena-world-energy-transitions-outlook-2023.pdf - Page 54\n- [4] irena-world-energy-transitions-outlook-2023.pdf - Page 21",
+      "note": "The executive summary states the 2050 emissions gap is 16 Gt [Source 4]. The supporting evidence also gives the reductions from fully implemented pledges as 6% by 2030 and 56% by 2050 compared with 2022 levels [Source 1].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 21",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 185",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 54",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 21"
+      ],
+      "evidence_status": "strong",
+      "route_used": "global_summary_first",
+      "best_score": 0.5435868852459017,
+      "context": [
+        {
+          "rank": 1,
+          "page_label": "Page 21",
+          "section_heading": "EXECUTIVE SUMMARY",
+          "preview": "d produce energy. Current pledges and plans fall well short of IRENA’s 1.5°C pathway and will result in an emissions gap of 16 Gt in 2050. Nationally Determined Contributions (NDCs), long-term low greenhouse gas emission development strateg",
+          "fused_score": 0.5435868852459017
+        },
+        {
+          "rank": 2,
+          "page_label": "Page 185",
+          "section_heading": "VOLUME 2 | CHAPTER 4",
+          "preview": "(CO 2) emissions by 37 gigatonnes (GtCO2) from estimated levels in 2022 and attaining net-zero energy sector emissions by 2050 (Figure 4.1). Current pledges and plans fall short of IRENA's 1.5°C pathway, resulting in a 16 GtCO 2 emissions d",
+          "fused_score": 0.26155763125763126
+        },
+        {
+          "rank": 3,
+          "page_label": "Page 54",
+          "section_heading": "WORLD ENERGY",
+          "preview": "1.3  Implications for the 1.5°C Scenario of revised NDCs a nd other pledges Global energy-related CO 2 emissions grew by 0.9%, or 321 Mt, in 2022, to reach a new high of 36.8 Gt (IEA, 2023a). As noted above, IRENA’s 1.5°C Scenario plots a s",
+          "fused_score": 0.29255806451612903
+        },
+        {
+          "rank": 4,
+          "page_label": "Page 21",
+          "section_heading": "EXECUTIVE SUMMARY",
+          "preview": "EXECUTIVE SUMMARY The energy transition is off-track. The aftermath of the COVID-19 pandemic and the ripple effects of the Ukraine crisis have further compounded the challenges facing the transition. The stakes could not be higher - every f",
+          "fused_score": 0.5194290322580646
+        }
+      ]
+    }
+  ]
+}

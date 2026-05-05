@@ -1,0 +1,616 @@
+{
+  "suite": {
+    "suite_id": "vectara_native_150_batch_06_20260501",
+    "description": "Draft held-out product-fit final evaluation manifest. Documents are fixed; questions must be generated and frozen before any system run.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\vectara_native_batches\\batch_06.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "vectara"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      },
+      "mode": "native_mockingbird_answer",
+      "generation_preset_name": "mockingbird-2.0"
+    }
+  },
+  "summary": {
+    "overall": {
+      "vectara": {
+        "dataset_size": 15,
+        "answerable_size": 13,
+        "unsupported_size": 2,
+        "supported_rate": 0.8,
+        "answerable_supported_rate": 0.9230769230769231,
+        "unsupported_abstention_rate": 1.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.07692307692307693,
+        "avg_context_count": 5.0,
+        "avg_context_chars": 950.8,
+        "ragas_all": {
+          "faithfulness": 0.557012882447665,
+          "answer_relevancy": 0.6748641307165282,
+          "context_precision": 0.7707407406989846
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.6962661030595814,
+          "answer_relevancy": 0.8177153314714731,
+          "context_precision": 0.7865740740283989
+        }
+      }
+    },
+    "by_intent": {
+      "vectara": {
+        "broad_summary": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 962.75,
+          "ragas_all": {
+            "faithfulness": 0.6473214285714286,
+            "answer_relevancy": 0.9313338306768886,
+            "context_precision": 0.7874999999478125
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.6473214285714286,
+            "answer_relevancy": 0.9313338306768886,
+            "context_precision": 0.7874999999478125
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 3,
+          "answerable_size": 3,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 988.6666666666666,
+          "ragas_all": {
+            "faithfulness": 0.8748677248677248,
+            "answer_relevancy": 0.8614667069168631,
+            "context_precision": 0.8166666666313889
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.8748677248677248,
+            "answer_relevancy": 0.8614667069168631,
+            "context_precision": 0.8166666666313889
+          }
+        },
+        "local_scope": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 0.75,
+          "answerable_supported_rate": 0.75,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.25,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 918.25,
+          "ragas_all": {
+            "faithfulness": 0.5625,
+            "answer_relevancy": 0.6861470695192883,
+            "context_precision": 0.7999999999469445
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.75,
+            "answer_relevancy": 0.8853790513054427,
+            "context_precision": 0.7777777777166667
+          }
+        },
+        "numeric_procedure": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1008.5,
+          "ragas_all": {
+            "faithfulness": 0.44565217391304346,
+            "answer_relevancy": 0.4233556901416027,
+            "context_precision": 0.7527777777526852
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.44565217391304346,
+            "answer_relevancy": 0.4233556901416027,
+            "context_precision": 0.7527777777526852
+          }
+        },
+        "unsupported": {
+          "dataset_size": 2,
+          "answerable_size": 0,
+          "unsupported_size": 2,
+          "supported_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 877.5,
+          "ragas_all": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.11096342946471016,
+            "context_precision": 0.6277777777531018
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "vectara_native_150_batch_06_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-016",
+      "question": "In the inverse parameter inference case study (Case Study 2b), what model architecture is adopted and why?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "No result found.",
+      "citations": [
+        "Page 3",
+        "Page 6",
+        "Page 12",
+        "Page 6",
+        "Page 12"
+      ],
+      "context_count": 5,
+      "context_chars": 1005,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.08845112416082496,
+        "context_precision": 0.8666666666377778
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.004119873"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_06_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-017",
+      "question": "In the pCO2 upscaling case study (Case Study 3b), how does the transfer learning approach handle the sparsity of in-situ observations?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "In the pCO2 upscaling case study (Case Study 3b), the transfer learning approach handles the sparsity of in-situ observations by using simulated full-field data from ocean biogeochemical models to pre-train machine learning models before fine-tuning with sparse observational data. This algorithmic design centers on transfer learning, where models are first pretrained on simulated full-field data and then fine-tuned on sparse observations to improve generalization across under-sampled regions [1,",
+      "citations": [
+        "Page 6",
+        "Page 6",
+        "Page 12",
+        "Page 3",
+        "Page 12"
+      ],
+      "context_count": 5,
+      "context_chars": 1029,
+      "ragas": {
+        "faithfulness": 0.75,
+        "answer_relevancy": 0.9553669648533875,
+        "context_precision": 0.99999999995
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.26367188"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_06_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-018",
+      "question": "In the development stage of the workflow framework, what does 'iterative refinement' specifically involve according to the paper?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the paper, iterative refinement in the development stage of the workflow framework involves using insights from validation to adjust objective functions, training procedures, or data preprocessing [3]. This process is often an iterative one that includes algorithmic refinement and scientific validation [5]. The goal of this stage is to complete the workflow loop by supporting ongoing interpretation, uncertainty assessment, and feedback of new insights to earlier design stages [2].\n\n",
+      "citations": [
+        "Page 6",
+        "Page 6",
+        "Page 6",
+        "Page 6",
+        "Page 6"
+      ],
+      "context_count": 5,
+      "context_chars": 766,
+      "ragas": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.8897000759373309,
+        "context_precision": 0.3333333333
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.66015625"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_06_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-019",
+      "question": "Beyond the three integration directions in Figure 1, what 'fourth direction' do the authors describe?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The authors describe a \"fourth direction\" as human-in-the-loop, which involves the design of workflows guided by scientific reasoning, modeling practices, and domain expertise [1]. This direction is in addition to the three integration directions mentioned in Figure 1.",
+      "citations": [
+        "Page 6",
+        "Page 3",
+        "Page 3",
+        "Page 6",
+        "Page 3"
+      ],
+      "context_count": 5,
+      "context_chars": 873,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8110701131256097,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.99609375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_06_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-broad_summary-020",
+      "question": "What open challenges in scientific machine learning workflows for climate modeling does the paper highlight in its conclusion?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The paper highlights several open challenges in scientific machine learning workflows for climate modeling in its conclusion. These challenges include:\n\n* Physical consistency: Ensuring that machine learning models are physically consistent with the underlying climate system [1].\n* Multi-scale coupling: Addressing the challenge of coupling different scales in climate modeling [1].\n* Data sparsity: Dealing with the issue of sparse data in climate modeling [1].\n* Robust generalization: Improving t",
+      "citations": [
+        "Page 1",
+        "Page 12",
+        "Page 6",
+        "Page 1",
+        "Page 12"
+      ],
+      "context_count": 5,
+      "context_chars": 1329,
+      "ragas": {
+        "faithfulness": 0.6428571428571429,
+        "answer_relevancy": 0.9628696432332259,
+        "context_precision": 0.699999999965
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.94140625"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_06_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-broad_summary-021",
+      "question": "How does the paper describe the role of reanalysis datasets such as ERA5 in climate modeling and ML?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the sources, reanalysis datasets such as ERA5 play a crucial role in climate modeling and machine learning (ML) by addressing fundamental observational gaps in climate science [2]. These datasets are designed to provide a comprehensive and consistent representation of the Earth's atmosphere, which can be used to train ML models and develop emulators for Cloud Resolving Models (CRMs) that can be integrated into operational climate simulators like General Circulation Models (GCMs) [1,",
+      "citations": [
+        "Page 3",
+        "Page 6",
+        "Page 6",
+        "Page 6",
+        "Page 12"
+      ],
+      "context_count": 5,
+      "context_chars": 653,
+      "ragas": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.8923103759609794,
+        "context_precision": 0.49999999995
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.46484375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_06_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-broad_summary-022",
+      "question": "Why do the authors say machine learning is not used as a generic plug-in to existing climate models?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The authors say that machine learning is not used as a generic plug-in to existing climate models because it requires thoughtful integration of three foundational elements: physical theory, data, and machine learning [1]. This integration is especially critical in climate modeling, where machine learning components are integrated into larger Earth system models [2]. Additionally, the computational burden of training and inference grows rapidly as machine learning models are increasingly applied ",
+      "citations": [
+        "Page 3",
+        "Page 6",
+        "Page 12",
+        "Page 1",
+        "Page 6"
+      ],
+      "context_count": 5,
+      "context_chars": 1031,
+      "ragas": {
+        "faithfulness": 0.875,
+        "answer_relevancy": 0.9380122952512856,
+        "context_precision": 0.94999999997625
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.796875"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_06_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-broad_summary-023",
+      "question": "How does the paper position its case study summaries relative to model cards and model info sheets?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The paper positions its case study summaries relative to model cards and model info sheets by using a framework similar to that of Model Cards [1]. This framework is used to structure full case study summaries in the Supplement, which are similar in spirit to Model Cards and Model Info Sheets [1]. The paper focuses primarily on supervised or predictive machine learning workflows, as opposed to exploratory or unsupervised approaches (with exception of Case Study 2a) [3]. The case study summaries ",
+      "citations": [
+        "Page 6",
+        "Page 12",
+        "Page 6",
+        "Page 1",
+        "Page 6"
+      ],
+      "context_count": 5,
+      "context_chars": 838,
+      "ragas": {
+        "faithfulness": 0.5714285714285714,
+        "answer_relevancy": 0.9321430082620634,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.67578125"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_06_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-comparison_synthesis-024",
+      "question": "How does the Fourier Neural Operator differ from the Spherical Fourier Neural Operator in terms of underlying transform and intended use case?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The Fourier Neural Operator (FNO) and the Spherical Fourier Neural Operator (SFNO) differ in their underlying transforms and intended use cases. The FNO uses the Fast Fourier Transform (FFT) as its transform, making it suitable for learning homogeneous, periodic dynamics such as idealized fluid flows [1]. On the other hand, the SFNO uses the Spherical Harmonic Transform (SHT), which is designed for global weather and climate fields on the sphere with built-in rotational equivariance [5]. This ma",
+      "citations": [
+        "Page 12",
+        "Page 12",
+        "Page 12",
+        "Page 12",
+        "Page 12"
+      ],
+      "context_count": 5,
+      "context_chars": 820,
+      "ragas": {
+        "faithfulness": 0.8888888888888888,
+        "answer_relevancy": 0.8094050630053585,
+        "context_precision": 0.699999999965
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.064941406"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_06_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-comparison_synthesis-025",
+      "question": "How does the paper distinguish offline evaluation from online evaluation for ML components in climate models?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The paper distinguishes offline evaluation from online evaluation for ML components in climate models by highlighting the differences in their assessment methods and critical factors. Offline evaluation assesses model accuracy using standard metrics such as weighted RMSE, while online performance depends on the model's ability to maintain physical stability and coherence over extended rollouts [1]. The key challenge in online evaluation is to ensure that the machine learning surrogate interacts ",
+      "citations": [
+        "Page 12",
+        "Page 6",
+        "Page 12",
+        "Page 6",
+        "Page 12"
+      ],
+      "context_count": 5,
+      "context_chars": 1014,
+      "ragas": {
+        "faithfulness": 0.95,
+        "answer_relevancy": 0.9145766399503245,
+        "context_precision": 0.7499999999625
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.9453125"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_06_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-comparison_synthesis-026",
+      "question": "How do autoregressive and direct forecasting strategies compare for subseasonal-to-seasonal prediction, according to the paper?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the paper, autoregressive and direct forecasting strategies have different trade-offs for subseasonal-to-seasonal prediction. The choice of model depends on both data availability and forecasting strategy [1]. Autoregressive surrogates are suitable for stepwise predictions, while direct predictors are better for longer lead times [1]. The construction of training input-output pairs also depends on the forecasting strategy, whether it is autoregressive or direct [3]. Additionally, th",
+      "citations": [
+        "Page 6",
+        "Page 6",
+        "Page 12",
+        "Page 6",
+        "Page 12"
+      ],
+      "context_count": 5,
+      "context_chars": 1132,
+      "ragas": {
+        "faithfulness": 0.7857142857142857,
+        "answer_relevancy": 0.8604184177949062,
+        "context_precision": 0.9999999999666667
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.72265625"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_06_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-numeric_procedure-027",
+      "question": "What is the generic form of the kernel integral operator used in neural operators, and what role do T, R_phi, and T-inverse play?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The generic form of the kernel integral operator used in neural operators is (K\u03d5 v)(x) = T \u22121 R\u03d5 \u00b7 (T v) (x). [1] In this equation, T is a transformation matrix, R\u03d5 is a radial basis function, and T\u22121 is the inverse of the transformation matrix. The role of these components is as follows:\n\n* T: A transformation matrix that maps the input data to a different domain or space. Different choices of T yield different operator architectures. For example, in Fourier Neural Operator (FNO), T = F (Fast F",
+      "citations": [
+        "Page 12",
+        "Page 12",
+        "Page 12",
+        "Page 12",
+        "Page 12"
+      ],
+      "context_count": 5,
+      "context_chars": 1347,
+      "ragas": {
+        "faithfulness": 0.391304347826087,
+        "answer_relevancy": 0.8467113802832054,
+        "context_precision": 0.8666666666377778
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.19921875"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_06_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-numeric_procedure-028",
+      "question": "What update rule do FNO layers apply to the feature field at each iteration, as written in the paper?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Based on the provided sources, the update rule applied to the feature field at each iteration in FNO layers is not explicitly stated. However, it can be inferred that the update takes a specific form, as mentioned in [2]. The exact form of this update rule is not provided in the given sources.\n\nAdditionally, it is mentioned that neural operator layers are typically applied iteratively [3], and OE (which stands for Operator Equations) is a computational implementation of Bayes' Rule under Gaussia",
+      "citations": [
+        "Page 12",
+        "Page 12",
+        "Page 12",
+        "Page 12",
+        "Page 12"
+      ],
+      "context_count": 5,
+      "context_chars": 670,
+      "ragas": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.6388888888675925
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.80859375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_06_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-unsupported-029",
+      "question": "Which proprietary cloud platform did the authors use to train and deploy the neural operators discussed in the case studies?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "No result found.",
+      "citations": [
+        "Page 12",
+        "Page 12",
+        "Page 6",
+        "Page 12",
+        "Page 12"
+      ],
+      "context_count": 5,
+      "context_chars": 783,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.1421496579551955,
+        "context_precision": 0.8055555555287036
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.0028076172"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_06_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-unsupported-030",
+      "question": "How many GPU-hours did the winning team in the ClimSim Kaggle competition use to train their final model?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "No result found.",
+      "citations": [
+        "Page 6",
+        "Page 12",
+        "Page 12",
+        "Page 6",
+        "Page 12"
+      ],
+      "context_count": 5,
+      "context_chars": 972,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.07977720097422482,
+        "context_precision": 0.4499999999775
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.0046081543"
+    }
+  ]
+}

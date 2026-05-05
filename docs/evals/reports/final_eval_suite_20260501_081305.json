@@ -1,0 +1,212 @@
+{
+  "suite": {
+    "suite_id": "heldout-product-fit-2026-04-draft-openai-native-suspicious-faithfulness-rerun-01",
+    "description": "Tiny rerun for three suspicious OpenAI native faithfulness=0 rows.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\openai_native_metric_retries\\openai_native_suspicious_faithfulness_03.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "openai_file_search"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      }
+    }
+  },
+  "summary": {
+    "overall": {
+      "openai_file_search": {
+        "dataset_size": 3,
+        "answerable_size": 3,
+        "unsupported_size": 0,
+        "supported_rate": 1.0,
+        "answerable_supported_rate": 1.0,
+        "unsupported_abstention_rate": 0.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.0,
+        "avg_context_count": 5.0,
+        "avg_context_chars": 12901.666666666666,
+        "ragas_all": {
+          "faithfulness": 0.0,
+          "answer_relevancy": 0.7569846221099071,
+          "context_precision": 0.76111111105875
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.0,
+          "answer_relevancy": 0.7569846221099071,
+          "context_precision": 0.76111111105875
+        }
+      }
+    },
+    "by_intent": {
+      "openai_file_search": {
+        "local_scope": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 13159.0,
+          "ragas_all": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.9140306937918146,
+            "context_precision": 0.641666666638125
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.9140306937918146,
+            "context_precision": 0.641666666638125
+          }
+        },
+        "lookup": {
+          "dataset_size": 1,
+          "answerable_size": 1,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 12387.0,
+          "ragas_all": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.44289247874609233,
+            "context_precision": 0.9999999999
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.44289247874609233,
+            "context_precision": 0.9999999999
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-suspicious-faithfulness-rerun-01",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-011",
+      "question": "Where physically was this two-day FOMC meeting held?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "It was held in the offices of the Board of Governors of the Federal Reserve System in Washington, D.C.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 12387,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.44289247874609233,
+        "context_precision": 0.9999999999
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0ef7e0efb5f01bf20069f412a85e8c81959f5b5bcd6385931b; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-suspicious-faithfulness-rerun-01",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-016",
+      "question": "In the Annual Organizational Matters section, who was selected as Secretary of the Committee?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Joshua Gallin was selected as Secretary of the Committee in the Annual Organizational Matters section.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 15796,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.9409171101220327,
+        "context_precision": 0.94999999997625
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_05485eea5fd30ea30069f412d775b0819785f3160459d07300; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-suspicious-faithfulness-rerun-01",
+      "system": "openai_file_search",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-local_scope-017",
+      "question": "According to the executive summary, what share of global renewable energy investment in 2022 went to solar PV and wind power?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the executive summary, 95% of global renewable energy investment in 2022 went to solar PV and wind power",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 10522,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.8871442774615964,
+        "context_precision": 0.3333333333
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_004f678a0e6d36970069f413089bc881958e91added5c0eed5; attempts=1"
+    }
+  ]
+}

@@ -10,6 +10,7 @@ from src.chunking import ChunkSemanticsService, chunk_document
 from src.config import Settings, get_settings
 from src.generation import AnswerGenerator, EvidenceSelector
 from src.ingest import ingest_document
+from src.landmarks import DocumentLandmarkService
 from src.retrieval import ChromaIndexStore, HybridRetriever
 from src.sections import build_sections
 from src.sections.profiles import enrich_section_profiles
@@ -30,6 +31,7 @@ class HelpmatePipeline:
         self.topology_service = DocumentTopologyService()
         self.synopsis_semantics_service = SynopsisSemanticsService(self.settings)
         self.structure_repair_service = StructureRepairService(self.settings)
+        self.document_landmark_service = DocumentLandmarkService(self.settings)
         self.chunk_semantics_service = ChunkSemanticsService(self.settings)
         self.run_trace_store = build_run_trace_store(self.settings)
 
@@ -82,6 +84,7 @@ class HelpmatePipeline:
         sections = enrich_section_profiles(sections)
         chunks = chunk_document(document, self.settings.chunk_size, self.settings.chunk_overlap)
         self._apply_section_metadata_to_chunks(chunks, sections)
+        chunks = self.document_landmark_service.annotate_chunks(document, chunks)
         chunks = self.chunk_semantics_service.annotate_chunks(document, chunks)
         for section in sections:
             section.metadata.setdefault("structure_confidence", repair_decision.confidence)
@@ -133,6 +136,26 @@ class HelpmatePipeline:
             if recovered_retrieval.retrieval_plan.get("abstention_recovery_applied"):
                 retrieval_result = self.evidence_selector.select(question, recovered_retrieval)
                 answer = self.generate_answer(document.document_id, question, retrieval_result)
+                if answer.supported:
+                    verified, verifier_reason = self.generator.verify_supported_answer(
+                        question=question,
+                        answer=answer,
+                        evidence=answer.evidence,
+                    )
+                    answer.note = (
+                        f"{answer.note} Recovery support verifier: {verifier_reason}"
+                        if answer.note
+                        else f"Recovery support verifier: {verifier_reason}"
+                    )
+                    if not verified:
+                        answer.supported = False
+                        answer.support_status = "unsupported"
+                        answer.answer = (
+                            "Unsupported by the recovered evidence. "
+                            "The recovered evidence did not fully support every required fact in the question."
+                        )
+                        answer.citations = []
+                        answer.citation_details = []
         answer.cache_status = CacheStatus(index_reused=index_record.reused, answer_cache_hit=False)
         trace = self._build_run_trace(
             document=document,
@@ -225,6 +248,7 @@ class HelpmatePipeline:
             },
             "answer": {
                 "supported": answer.supported,
+                "support_status": answer.support_status,
                 "model_name": answer.model_name,
                 "citations": list(answer.citations),
                 "citation_details": list(answer.citation_details),

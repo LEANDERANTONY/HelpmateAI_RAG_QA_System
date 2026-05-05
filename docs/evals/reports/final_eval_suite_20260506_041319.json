@@ -1,0 +1,515 @@
+{
+  "suite": {
+    "suite_id": "heldout-product-fit-2026-04-draft",
+    "description": "Draft held-out product-fit final evaluation manifest. Documents are fixed; questions must be generated and frozen before any system run.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\final_eval_manifest.draft.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native",
+    "question_offset": 0,
+    "question_ids": [
+      "upenn-learning-environmental-models-thesis-2022-local_scope-005",
+      "fomc-minutes-2026-01-28-local_scope-005",
+      "upenn-learning-environmental-models-thesis-2022-broad_summary-023",
+      "upenn-learning-environmental-models-thesis-2022-comparison_synthesis-026",
+      "upenn-learning-environmental-models-thesis-2022-numeric_procedure-027",
+      "upenn-learning-environmental-models-thesis-2022-numeric_procedure-028",
+      "upenn-learning-environmental-models-thesis-2022-unsupported-029",
+      "upenn-learning-environmental-models-thesis-2022-unsupported-030",
+      "fomc-minutes-2026-01-28-lookup-011"
+    ],
+    "question_count": 9
+  },
+  "systems": [
+    "helpmate"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      },
+      "mode": "native_mockingbird_answer",
+      "generation_preset_name": "mockingbird-2.0"
+    }
+  },
+  "summary": {
+    "overall": {
+      "helpmate": {
+        "dataset_size": 9,
+        "answerable_size": 7,
+        "unsupported_size": 2,
+        "supported_rate": 0.5555555555555556,
+        "partial_rate": 0.0,
+        "answered_rate": 0.5555555555555556,
+        "answerable_supported_rate": 0.7142857142857143,
+        "answerable_coverage_rate": 0.7142857142857143,
+        "unsupported_abstention_rate": 1.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.2857142857142857,
+        "strict_false_abstention_rate": 0.2857142857142857,
+        "avg_context_count": 4.0,
+        "avg_context_chars": 3389.8888888888887,
+        "ragas_all": {
+          "faithfulness": 0.8055555555555556,
+          "answer_relevancy": 0.4674862983564148,
+          "context_precision": 0.8672839505772634
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.85,
+          "answer_relevancy": 0.812608831077021,
+          "context_precision": 0.7999999999483334
+        }
+      }
+    },
+    "by_intent": {
+      "helpmate": {
+        "broad_summary": {
+          "dataset_size": 1,
+          "answerable_size": 1,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "partial_rate": 0.0,
+          "answered_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "answerable_coverage_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 3350.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.878517184978335,
+            "context_precision": 0.999999999975
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.878517184978335,
+            "context_precision": 0.999999999975
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 1,
+          "answerable_size": 1,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "partial_rate": 0.0,
+          "answered_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "answerable_coverage_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 3177.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9258932154308983,
+            "context_precision": 0.49999999995
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9258932154308983,
+            "context_precision": 0.49999999995
+          }
+        },
+        "local_scope": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "partial_rate": 0.0,
+          "answered_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "answerable_coverage_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 4360.0,
+          "ragas_all": {
+            "faithfulness": 0.75,
+            "answer_relevancy": 0.684718786701586,
+            "context_precision": 0.749999999925
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.75,
+            "answer_relevancy": 0.684718786701586,
+            "context_precision": 0.749999999925
+          }
+        },
+        "lookup": {
+          "dataset_size": 1,
+          "answerable_size": 1,
+          "unsupported_size": 0,
+          "supported_rate": 0.0,
+          "partial_rate": 0.0,
+          "answered_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "answerable_coverage_rate": 0.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 1.0,
+          "strict_false_abstention_rate": 1.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 2730.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.999999999975
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        },
+        "numeric_procedure": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 0.5,
+          "partial_rate": 0.0,
+          "answered_rate": 0.5,
+          "answerable_supported_rate": 0.5,
+          "answerable_coverage_rate": 0.5,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.5,
+          "strict_false_abstention_rate": 0.5,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 2146.5,
+          "ragas_all": {
+            "faithfulness": 0.375,
+            "answer_relevancy": 0.5167643556976639,
+            "context_precision": 0.9027777777476851
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.75,
+            "answer_relevancy": 0.8891961815726993,
+            "context_precision": 0.9999999999666667
+          }
+        },
+        "unsupported": {
+          "dataset_size": 2,
+          "answerable_size": 0,
+          "unsupported_size": 2,
+          "supported_rate": 0.0,
+          "partial_rate": 0.0,
+          "answered_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "answerable_coverage_rate": 0.0,
+          "unsupported_abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 4119.5,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.999999999975
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-local_scope-005",
+      "question": "In the chapter on coherent sets, what does the author use kernel transfer operators for?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The author uses kernel transfer operators to apply them as an online environmental feature generator for computing coherent sets online, which are then used to improve robot situational awareness and support decision-making and high-level, coarse planning [Source 1][Source 4].",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 131",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 132",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 132",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 132"
+      ],
+      "context_count": 4,
+      "context_chars": 4062,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.727834551792481,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence states that Chapter 6 demonstrates how to apply the kernel transfer operator for an online environmental feature generator and specifically investigates coherent sets, computing them online and leveraging them for robot awareness, decision-making, and coarse planning [Source 1][Source 4]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-005",
+      "question": "In the staff's financial stability assessment, which categories of vulnerability were characterized as 'notable' versus 'moderate'?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The staff characterized vulnerabilities associated with asset valuation pressures and leverage in the financial sector as \"notable.\" They characterized vulnerabilities associated with nonfinancial business and household debt and funding risks as \"moderate.\" [Source 1] [Source 2]",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 9",
+        "fomc-minutes-2026-01-28.pdf - Page 9",
+        "fomc-minutes-2026-01-28.pdf - Page 11",
+        "fomc-minutes-2026-01-28.pdf - Page 7"
+      ],
+      "context_count": 4,
+      "context_chars": 4658,
+      "ragas": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.6416030216106912,
+        "context_precision": 0.49999999995
+      },
+      "note": "The evidence explicitly states which vulnerability categories were labeled notable versus moderate in the staff\u2019s financial stability assessment."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-broad_summary-023",
+      "question": "How does the thesis describe the role of transfer operator theory for analyzing dynamical systems?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The thesis describes transfer operator theory as a framework for analyzing dynamical systems by studying the evolution of probability densities or mass densities over time, rather than tracking individual trajectories. It says this is useful because it can be easier to model large collections of initial conditions, and that transfer operators lift potentially nonlinear dynamics to a linear, infinite-dimensional function space for global analysis [Source 1][Source 4]. It also notes that this fram",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 34",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 36",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 36",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 19"
+      ],
+      "context_count": 4,
+      "context_chars": 3350,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.878517184978335,
+        "context_precision": 0.999999999975
+      },
+      "note": "The evidence directly states that transfer operators describe the evolution of processes over time, focus on mass/probability densities, make nonlinear dynamics linear in a lifted space, and support global analysis and identification of key properties."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-comparison_synthesis-026",
+      "question": "How does the thesis distinguish the Perron-Frobenius operator from the Koopman operator, and which one does it focus on?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The thesis says the Perron-Frobenius and Koopman operators are two important transfer operators and that they are adjoint to one another [Source 2]. It also states that, although there are different transfer operators such as Perron-Frobenius and Koopman, the thesis focuses mainly on the Koopman operator because of its direct connection to sensor measurements from robots [Source 3].",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 36",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 36",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 19",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 116"
+      ],
+      "context_count": 4,
+      "context_chars": 3177,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9258932154308983,
+        "context_precision": 0.49999999995
+      },
+      "note": "The evidence identifies the relationship between the two operators as adjoint and explicitly states which one the thesis focuses on. Both required facts are covered."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-numeric_procedure-027",
+      "question": "In the long-term online DMD update, how is the matrix S' computed and which matrix identity is invoked?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "Unsupported by the recovered evidence. The recovered evidence did not fully support every required fact in the question.",
+      "citations": [],
+      "context_count": 4,
+      "context_chars": 2219,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.14433252982262837,
+        "context_precision": 0.8055555555287036
+      },
+      "note": "The evidence explicitly gives the updated computation for S' in Eq. (4.28) and the preceding inverse update in Eq. (4.27), which is the form obtained via the Sherman-Morrison-Woodbury identity. Recovery support verifier: The answer correctly states the formula for S' and identifies the Sherman-Morrison-Woodbury identity, but it adds an unsupported derivation detail: the evidence only gives (S')^{-1} = \u03b3S^{-1} + X_new^\u22a4X_new and then the explicit update S' = (1/\u03b3)(S - SX_new\u0393X_new^\u22a4S). It does not explicitly say that the identity is invoked in the way described, nor does it mention the exact intermediate form claimed in the answer. Because the question asks how S' is computed and which identity is invoked, the identity part is only partially supported as stated."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-numeric_procedure-028",
+      "question": "How is the forgetting factor gamma incorporated into the online DMD update equations for Q' and S'?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The forgetting factor gamma is incorporated by weighting past training data in the online DMD updates: the updated cross-covariance is Q' = \u03b3Q + Y_new X_new^\u22a4, and the inverse of S' is updated as (S')^{-1} = \u03b3S^{-1} + X_new^\u22a4 X_new [Source 1]. The text also gives the equivalent explicit update for S' as S' = (1/\u03b3) * (S - S X_new \u0393 X_new^\u22a4 S) [Source 3].",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 101",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 101",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 101",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 101"
+      ],
+      "context_count": 4,
+      "context_chars": 2074,
+      "ragas": {
+        "faithfulness": 0.75,
+        "answer_relevancy": 0.8891961815726993,
+        "context_precision": 0.9999999999666667
+      },
+      "note": "The evidence directly states how gamma enters both update equations for Q' and S' and provides the explicit S' form."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-unsupported-029",
+      "question": "What battery life specification do the micro-autonomous surface vehicles report under continuous operation?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not mention any battery life specification for the micro-autonomous surface vehicles under continuous operation.",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 110",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 111",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 110",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 110"
+      ],
+      "context_count": 4,
+      "context_chars": 2931,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.999999999975
+      },
+      "note": "The evidence discusses marine vehicles, aerial vehicles, sampling rates, and model estimation results, but it does not provide a battery life specification or any continuous-operation duration for micro-autonomous surface vehicles. Support-status verifier classified the answer as unsupported. Missing or ambiguous facts: The question asks for a battery life specification under continuous operation, but the evidence does not provide any battery life or continuous-operation duration for the micro-autonomous surface vehicles. The proposed answer is an acknowledged gap statement, but it does not supply any grounded battery-life specification because the evidence contains no such specification. Since the required fact is absent from the evidence, the answer cannot be supported."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-unsupported-030",
+      "question": "What classification accuracy does the thesis report when applying Koopman operators to the ImageNet benchmark?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not mention any classification accuracy for applying Koopman operators to the ImageNet benchmark.",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 34",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 33",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 34",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 122"
+      ],
+      "context_count": 4,
+      "context_chars": 5308,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.999999999975
+      },
+      "note": "The sources discuss transfer operators and Koopman operators in dynamical systems and simulation environments, but none of the provided evidence reports an ImageNet benchmark classification accuracy or any classification result for Koopman operators. Support-status verifier classified the answer as unsupported. Missing or ambiguous facts: The thesis's classification accuracy for applying Koopman operators to the ImageNet benchmark is not provided in the evidence. The proposed answer correctly notes that the evidence does not mention an ImageNet benchmark classification accuracy for Koopman operators, but it does not provide the requested accuracy. Since the question asks for a specific reported accuracy and the evidence contains none, the answer is not a supported answer to the question."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-011",
+      "question": "Where physically was this two-day FOMC meeting held?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not state where the two-day FOMC meeting was physically held.",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 2",
+        "fomc-minutes-2026-01-28.pdf - Page 14",
+        "fomc-minutes-2026-01-28.pdf - Page 14",
+        "fomc-minutes-2026-01-28.pdf - Page 3"
+      ],
+      "context_count": 4,
+      "context_chars": 2730,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.999999999975
+      },
+      "note": "The excerpts include committee members, policy directives, and statement text, but no meeting location or venue is given in the supplied sources. Support-status verifier classified the answer as unsupported. Missing or ambiguous facts: The physical location/venue of the two-day FOMC meeting is not stated in the supplied evidence. The proposed answer only says the evidence does not state the meeting location, which is an acknowledged gap rather than a grounded factual answer. The supplied excerpts mention committee members, directives, and statement text, but do not identify where the meeting was physically held."
+    }
+  ]
+}

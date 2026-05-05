@@ -1,0 +1,361 @@
+{
+  "suite": {
+    "suite_id": "helpmate_suspicious_metric_retry_20260501",
+    "description": "Draft held-out product-fit final evaluation manifest. Documents are fixed; questions must be generated and frozen before any system run.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\helpmate_metric_retries\\helpmate_suspicious_metric_07.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "helpmate"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      }
+    }
+  },
+  "summary": {
+    "overall": {
+      "helpmate": {
+        "dataset_size": 7,
+        "answerable_size": 7,
+        "unsupported_size": 0,
+        "supported_rate": 1.0,
+        "answerable_supported_rate": 1.0,
+        "unsupported_abstention_rate": 0.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.0,
+        "avg_context_count": 4.0,
+        "avg_context_chars": 4318.285714285715,
+        "ragas_all": {
+          "faithfulness": 0.8142857142857143,
+          "answer_relevancy": 0.8657901775382478,
+          "context_precision": 0.8412698412142195
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.8142857142857143,
+          "answer_relevancy": 0.8657901775382478,
+          "context_precision": 0.8412698412142195
+        }
+      }
+    },
+    "by_intent": {
+      "helpmate": {
+        "broad_summary": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 4671.5,
+          "ragas_all": {
+            "faithfulness": 0.8500000000000001,
+            "answer_relevancy": 0.8688578562564742,
+            "context_precision": 0.9027777777476851
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.8500000000000001,
+            "answer_relevancy": 0.8688578562564742,
+            "context_precision": 0.9027777777476851
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 4094.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8873920944941277,
+            "context_precision": 0.749999999925
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8873920944941277,
+            "context_precision": 0.749999999925
+          }
+        },
+        "local_scope": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 3163.0,
+          "ragas_all": {
+            "faithfulness": 0.5,
+            "answer_relevancy": 0.8268773266868293,
+            "context_precision": 0.7916666666270833
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.5,
+            "answer_relevancy": 0.8268773266868293,
+            "context_precision": 0.7916666666270833
+          }
+        },
+        "lookup": {
+          "dataset_size": 1,
+          "answerable_size": 1,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 6371.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8942766878928724,
+            "context_precision": 0.9999999999
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8942766878928724,
+            "context_precision": 0.9999999999
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "helpmate_suspicious_metric_retry_20260501",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-comparison_synthesis-008",
+      "question": "How do physics-first workflows differ from ML-first workflows in their use of physical equations and their priorities?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Physics-first workflows retain physics-based models at the core and use machine learning to accelerate components, discover new structure, or improve parameterizations, with an emphasis on preserving theoretical grounding [Source 3]. ML-first workflows build ML-based models with minimal reliance on explicit physical equations, prioritizing predictive accuracy over theoretical interpretability [Source 1].",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 6",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 14",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 5",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 1"
+      ],
+      "context_count": 4,
+      "context_chars": 4799,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8810634758993748,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence fully covers both required facts: physics-first workflows use physics-based models as the core and aim to preserve theoretical grounding [Source 3], while ML-first workflows minimize explicit physical equations and prioritize predictive accuracy over interpretability [Source 1]."
+    },
+    {
+      "suite_id": "helpmate_suspicious_metric_retry_20260501",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-broad_summary-007",
+      "question": "What gap between dynamical systems theory, machine learning, and multi-robot systems does the introduction argue this thesis addresses?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The introduction argues that the thesis addresses the disconnect between dynamical systems theory and the operational challenges of multi-robot systems, while also bridging the gap between dynamical systems and machine learning. It states that these areas had been \u201clargely disconnected\u201d from multi-robot challenges such as distributed computations, uncertainty in sensing data, and computational complexity of high-dimensional data, and that combining coordination strategies for distributed teams w",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 21",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 14",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 8",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 20"
+      ],
+      "context_count": 4,
+      "context_chars": 4655,
+      "ragas": {
+        "faithfulness": 0.8,
+        "answer_relevancy": 0.8508526102804788,
+        "context_precision": 0.9999999999666667
+      },
+      "note": "The evidence covers the full relationship asked about: it identifies (1) dynamical systems theory as historically disconnected from multi-robot operational challenges, and (2) the thesis as combining machine learning-based dynamical systems modeling with multi-robot team coordination [Source 2][Source 3]."
+    },
+    {
+      "suite_id": "helpmate_suspicious_metric_retry_20260501",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-local_scope-004",
+      "question": "In the welfare impacts chapter of Volume 2, how many dimensions and how many indicators make up IRENA's welfare index?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "IRENA\u2019s welfare index has five dimensions and 10 indicators [Source 1].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 217",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 223",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 221",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 219"
+      ],
+      "context_count": 4,
+      "context_chars": 3448,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.882727904867206,
+        "context_precision": 0.8333333332916666
+      },
+      "note": "Source 1 states that the index has five dimensions, each informed by two indicators, and Figure 6.1 labels it as having five dimensions and 10 indicators. This fully answers both parts of the question."
+    },
+    {
+      "suite_id": "helpmate_suspicious_metric_retry_20260501",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-broad_summary-007",
+      "question": "What is the report's overall assessment of progress on the energy transition through 2022, and where does it say the gap is largest?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The report says the energy transition was off-track through 2022: there was real progress, especially in the power sector and renewable capacity, but overall the scale of implementation still fell far short of what was required for a 1.5\u00b0C pathway [Source 2] [Source 4]. It also says the largest gap is in the geographic spread of deployment, because progress was concentrated in a few countries and regions and remained insufficient in developing nations and countries with significant energy access",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 68",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 21",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 38",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 4"
+      ],
+      "context_count": 4,
+      "context_chars": 4688,
+      "ragas": {
+        "faithfulness": 0.9,
+        "answer_relevancy": 0.8868631022324697,
+        "context_precision": 0.8055555555287036
+      },
+      "note": "The evidence directly states both the overall assessment of progress and the location of the largest gap. Source 2 says the transition is off-track and that significant gaps remain despite some progress. Source 4 says most progress has been in the power sector but implementation is far short of what is required, and that geographic concentration is a concerning trend. Source 1 adds that deployment is centered on a few countries and regions and must be expanded elsewhere, especially in developing nations lacking electricity access."
+    },
+    {
+      "suite_id": "helpmate_suspicious_metric_retry_20260501",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-comparison_synthesis-008",
+      "question": "Under the 1.5\u00b0C Scenario, how does the share of renewables in the global energy mix and the role of electricity change between 2020 and 2050?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Under the 1.5\u00b0C Scenario, the share of renewables in the global energy mix rises from 16% in 2020 to 77% by 2050 [Source 2]. Electricity also becomes the main energy carrier, accounting for over 50% of total final energy consumption by 2050 [Source 2].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 48",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 25",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 105",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 11"
+      ],
+      "context_count": 4,
+      "context_chars": 3389,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8937207130888806,
+        "context_precision": 0.49999999995
+      },
+      "note": "The evidence states both required facts: the renewable share in the global energy mix increases from 16% to 77% between 2020 and 2050, and electricity becomes the main energy carrier, exceeding 50% of total final energy consumption by 2050 [Source 2]."
+    },
+    {
+      "suite_id": "helpmate_suspicious_metric_retry_20260501",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-012",
+      "question": "Where does the report indicate IRENA is headquartered?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The report indicates IRENA is headquartered in Abu Dhabi [Source 1].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 2",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 3",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 2",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 227"
+      ],
+      "context_count": 4,
+      "context_chars": 6371,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8942766878928724,
+        "context_precision": 0.9999999999
+      },
+      "note": "The question asks for IRENA's headquarters location. Source 1 cites the publication as from the International Renewable Energy Agency, Abu Dhabi, which provides the location needed to answer the question."
+    },
+    {
+      "suite_id": "helpmate_suspicious_metric_retry_20260501",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-local_scope-017",
+      "question": "According to the executive summary, what share of global renewable energy investment in 2022 went to solar PV and wind power?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the executive summary, solar PV and wind power received 97% of total renewable energy investment in 2022 [Source 4].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 159",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 25",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 23",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 159"
+      ],
+      "context_count": 4,
+      "context_chars": 2878,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.7710267485064527,
+        "context_precision": 0.7499999999625
+      },
+      "note": "The executive summary states that solar and wind technologies attracted the lion\u2019s share of investment, and that in 2022 their combined share of total renewable energy investment was 97% [Source 4]."
+    }
+  ]
+}

@@ -285,12 +285,12 @@ class HybridRetriever:
         artifact_entry = bool(chunk.metadata.get("artifact_entry"))
         artifact_targeted = artifact_type in set(preferred_content_types)
         if artifact_entry:
-            if artifact_type == "table":
-                evidence_adjustment += 0.18 if artifact_targeted or query_type in {"numeric_lookup", "comparison_lookup"} else -0.16
-            elif artifact_type in {"front_matter", "footnote"}:
-                evidence_adjustment += 0.20 if recovery_front_matter else (0.16 if artifact_targeted else -0.14)
-            elif artifact_type == "bibliography":
+            if artifact_type == "bibliography":
                 evidence_adjustment += 0.14 if artifact_targeted else -0.28
+            elif artifact_targeted:
+                evidence_adjustment += 0.10
+            else:
+                evidence_adjustment -= 0.04
         if chunk_role == "navigation_like":
             evidence_adjustment -= 0.18
         elif chunk_role == "reference_like":
@@ -305,6 +305,8 @@ class HybridRetriever:
             evidence_adjustment += 0.08 * semantic_confidence * (max(min(semantic_body_evidence_score, 1.0), 0.0) - 0.5)
             if semantic_role == "body_evidence":
                 evidence_adjustment += 0.06 * semantic_confidence
+            elif semantic_role in {"definition_evidence", "metadata_evidence", "table_evidence"}:
+                evidence_adjustment += 0.10 * semantic_confidence
             elif semantic_role == "summary_evidence":
                 evidence_adjustment += (0.08 if query_type == "summary_lookup" else 0.04) * semantic_confidence
             elif semantic_role == "heading_stub":
@@ -452,9 +454,12 @@ class HybridRetriever:
         if retrieval_result.retrieval_plan.get("abstention_recovery_applied"):
             return False
         profile = self.query_analyzer.analyze(question)
-        if profile.query_type in {"summary_lookup", "comparison_lookup", "cross_cutting_lookup"}:
-            return False
-        return profile.query_type in self.RECOVERY_QUERY_TYPES or profile.evidence_spread == "atomic"
+        return profile.query_type in self.RECOVERY_QUERY_TYPES or profile.evidence_spread in {
+            "atomic",
+            "sectional",
+            "distributed",
+            "global",
+        }
 
     @classmethod
     def _artifact_recovery_text(cls, chunk: ChunkRecord) -> str:
@@ -473,27 +478,17 @@ class HybridRetriever:
     def _looks_like_recovery_artifact(cls, chunk: ChunkRecord, preferred_content_types: list[str]) -> bool:
         metadata = chunk.metadata or {}
         artifact_type = str(metadata.get("artifact_type", "")).lower()
+        artifact_entry = bool(metadata.get("artifact_entry"))
         front_matter_kind = str(metadata.get("front_matter_kind", "")).lower()
-        if artifact_type in {"front_matter", "footnote", "table"} and artifact_type in set(preferred_content_types + ["front_matter", "footnote"]):
+        preferred = set(preferred_content_types)
+        if artifact_type in {"front_matter", "footnote", "table", "definition"} and artifact_type in preferred:
             return True
-        if front_matter_kind and front_matter_kind != "body":
+        if front_matter_kind and front_matter_kind != "body" and "front_matter" in preferred:
             return True
+        if artifact_entry and artifact_type in {"front_matter", "definition"}:
+            return False
         recovery_text = cls._artifact_recovery_text(chunk)
         return any(term in recovery_text for term in cls.RECOVERY_ARTIFACT_TERMS)
-
-    @classmethod
-    def _definition_target(cls, question: str) -> str:
-        lowered = question.lower()
-        patterns = (
-            r"\bdefine\s+(?:an?|the)?\s*([a-z][a-z0-9 -]{2,60})\??",
-            r"\bdefinition of\s+(?:an?|the)?\s*([a-z][a-z0-9 -]{2,60})\??",
-            r"\bhow does .{0,80} define\s+(?:an?|the)?\s*([a-z][a-z0-9 -]{2,60})\??",
-        )
-        for pattern in patterns:
-            match = re.search(pattern, lowered)
-            if match:
-                return match.group(1).strip(" ?.")
-        return ""
 
     @classmethod
     def _required_fact_signal_score(cls, question: str, text: str, query_type: str) -> float:
@@ -507,12 +502,9 @@ class HybridRetriever:
             score += 0.18 * (len(terms & text_terms) / max(len(terms), 1))
 
         if query_type == "definition_lookup":
-            target = cls._definition_target(question)
             has_definition_marker = bool(re.search(r"\b(refers to|defined as|means|is an?|are)\b", lowered_text))
             if has_definition_marker:
                 score += 0.12
-            if target and target in lowered_text and has_definition_marker:
-                score += 0.28
 
         if lowered_question.startswith("when ") or " scheduled " in lowered_question:
             has_date = bool(
@@ -583,7 +575,9 @@ class HybridRetriever:
         query_type: str,
         limit: int = 6,
         forward_window: int = 8,
+        backward_window: int = 4,
         max_neighbors: int = 10,
+        max_neighbors_per_seed: int = 2,
     ) -> list[RetrievalCandidate]:
         if not seeds:
             return []
@@ -593,13 +587,20 @@ class HybridRetriever:
         neighbors: list[RetrievalCandidate] = []
         seen: set[str] = set()
         for seed in seeds[:limit]:
+            if seed.metadata.get("artifact_entry"):
+                continue
             index = position.get(seed.chunk_id)
-            if index is None or index + 1 >= len(ordered):
+            if index is None:
                 continue
             source = by_id.get(seed.chunk_id)
             if source is None:
                 continue
-            for neighbor in ordered[index + 1 : index + 1 + forward_window]:
+            window_start = max(0, index - backward_window)
+            window_end = min(len(ordered), index + 1 + forward_window)
+            per_seed_added = 0
+            for neighbor in ordered[window_start:window_end]:
+                if neighbor.chunk_id == seed.chunk_id:
+                    continue
                 if neighbor.document_id != source.document_id:
                     continue
                 same_section = (
@@ -625,8 +626,11 @@ class HybridRetriever:
                         recovery_reason="neighbor_chunk",
                     )
                 )
+                per_seed_added += 1
                 if len(neighbors) >= max_neighbors:
                     return neighbors
+                if per_seed_added >= max_neighbors_per_seed:
+                    break
         return neighbors
 
     def recover_after_abstention(self, fingerprint: str, question: str, initial_result: RetrievalResult) -> RetrievalResult:
@@ -638,7 +642,13 @@ class HybridRetriever:
 
         profile = self.query_analyzer.analyze(question)
         metadata_filters = initial_result.metadata_filters or self._extract_metadata_filters(question)
-        preferred_content_types = list(dict.fromkeys(profile.preferred_content_types + ["front_matter", "footnote"]))
+        recovery_content_types = []
+        if "front_matter" in profile.preferred_content_types:
+            recovery_content_types.append("front_matter")
+            recovery_content_types.append("footnote")
+        elif "footnote" in profile.preferred_content_types:
+            recovery_content_types.append("footnote")
+        preferred_content_types = list(dict.fromkeys(profile.preferred_content_types + recovery_content_types))
         lexical_scores = self._rank_lexical(
             question,
             [(chunk.chunk_id, self._artifact_recovery_text(chunk)) for chunk in chunks],

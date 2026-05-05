@@ -1,0 +1,128 @@
+{
+  "suite": {
+    "suite_id": "single_problem_check_20260501",
+    "description": "Draft held-out product-fit final evaluation manifest. Documents are fixed; questions must be generated and frozen before any system run.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\helpmate_abstention_smoke\\single_problem_check.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "helpmate"
+  ],
+  "ragas_enabled": false,
+  "ragas_judge": {
+    "reason": "RAGAS scoring disabled."
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-abstention-recovery-single-gapguard-20260501-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      },
+      "mode": "native_mockingbird_answer",
+      "generation_preset_name": "mockingbird-2.0"
+    }
+  },
+  "summary": {
+    "overall": {
+      "helpmate": {
+        "dataset_size": 1,
+        "answerable_size": 1,
+        "unsupported_size": 0,
+        "supported_rate": 1.0,
+        "answerable_supported_rate": 1.0,
+        "unsupported_abstention_rate": 0.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.0,
+        "avg_context_count": 4.0,
+        "avg_context_chars": 2298.0,
+        "ragas_all": {
+          "faithfulness": null,
+          "answer_relevancy": null,
+          "context_precision": null
+        },
+        "ragas_attempted": {
+          "faithfulness": null,
+          "answer_relevancy": null,
+          "context_precision": null
+        }
+      }
+    },
+    "by_intent": {
+      "helpmate": {
+        "comparison_synthesis": {
+          "dataset_size": 1,
+          "answerable_size": 1,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 2298.0,
+          "ragas_all": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "single_problem_check_20260501",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-comparison_synthesis-024",
+      "question": "How do the cumulative and per-year investment requirements differ between the Planned Energy Scenario and the 1.5 degree C Scenario?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The Planned Energy Scenario requires USD 103 trillion in cumulative energy sector investments for 2023-2050, while the 1.5\u00b0C Scenario requires USD 150 trillion, which is USD 47 trillion more. For annual investment, the evidence says the 1.5\u00b0C pathway needs an additional USD 1.7 trillion per year compared with the Planned Energy Scenario, and around USD 1 trillion per year of fossil fuel-based investments envisaged in the Planned Energy Scenario must be redirected to energy transition technologie",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 25",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 12",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 146",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 147"
+      ],
+      "context_count": 4,
+      "context_chars": 2298,
+      "ragas": {},
+      "note": "The evidence provides both cumulative totals and the difference between scenarios. Source 3 states the Planned Energy Scenario cumulative investment is USD 103 trillion and the 1.5\u00b0C Scenario is USD 150 trillion, with USD +47 trillion more. It also states the difference in annual investment is USD +1.7 trillion per year. Source 1 adds that around USD 1 trillion of annual fossil fuel-based investments in the Planned Energy Scenario must be redirected, but the direct annual comparison between scenarios is the USD 1.7 trillion figure in Source 3."
+    }
+  ]
+}

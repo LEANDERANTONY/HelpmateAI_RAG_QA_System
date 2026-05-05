@@ -612,6 +612,36 @@ Public framing if it works:
 8. Do not retune on the final held-out set.
 9. Start the scoring-weight refactor only after final eval artifacts are saved.
 
+## Deployment Hygiene Note
+
+Backend image rebuilds and repeated pulls can accumulate old Docker image layers and BuildKit cache on the VPS.
+
+Current cleanup policy:
+
+- keep named Docker volumes
+- keep the currently running backend image
+- prune unused images older than 72 hours after deploy
+- prune unused BuildKit cache older than 72 hours after deploy
+- never use `docker system prune --volumes` for routine cleanup
+
+Operational script:
+
+- `deploy/vps/cleanup-docker.sh`
+
+Automation:
+
+- GitHub Actions runs `cleanup-docker.sh` after the `helpmate-api` health check passes.
+- Do not keep the old weekly VPS cron safety net; cleanup should run after successful deploys with a 72-hour retention window.
+
+Recommended manual post-deploy flow:
+
+```sh
+cd deploy/vps
+sh ./deploy-api.sh
+```
+
+Use `deploy-api.sh` for GHCR image deploys and `deploy-api-build.sh` only when building directly on the VPS.
+
 ## Notes To Future Us
 
 The goal is not to make the benchmark smaller or less confident. The goal is to make it harder to dismiss.

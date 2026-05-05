@@ -1,0 +1,636 @@
+{
+  "suite": {
+    "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-02",
+    "description": "OpenAI native File Search corrected rerun chunk 2/10, questions 16-30.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\openai_native_15_chunks\\openai_native_15_chunk_02.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "openai_file_search"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      }
+    }
+  },
+  "summary": {
+    "overall": {
+      "openai_file_search": {
+        "dataset_size": 15,
+        "answerable_size": 13,
+        "unsupported_size": 2,
+        "supported_rate": 0.8666666666666667,
+        "answerable_supported_rate": 1.0,
+        "unsupported_abstention_rate": 1.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.0,
+        "avg_context_count": 5.0,
+        "avg_context_chars": 16468.333333333332,
+        "ragas_all": {
+          "faithfulness": 0.9733333333333334,
+          "answer_relevancy": 0.7171950215846091,
+          "context_precision": 0.8991666666307708
+        },
+        "ragas_attempted": {
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.7647369666631373,
+          "context_precision": 0.8836538461158894
+        }
+      }
+    },
+    "by_intent": {
+      "openai_file_search": {
+        "broad_summary": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 19746.75,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7431549191841301,
+            "context_precision": 0.9229166666448437
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7431549191841301,
+            "context_precision": 0.9229166666448437
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 17381.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7515817547285507,
+            "context_precision": 0.8499999999325
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7515817547285507,
+            "context_precision": 0.8499999999325
+          }
+        },
+        "local_scope": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 14618.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7283446398788849,
+            "context_precision": 0.7562499999706771
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7283446398788849,
+            "context_precision": 0.7562499999706771
+          }
+        },
+        "lookup": {
+          "dataset_size": 3,
+          "answerable_size": 3,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 13749.333333333334,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.793360651291413,
+            "context_precision": 0.99999999995
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.793360651291413,
+            "context_precision": 0.99999999995
+          }
+        },
+        "numeric_procedure": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 16154.5,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8037220496580734,
+            "context_precision": 0.7916666666354166
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8037220496580734,
+            "context_precision": 0.7916666666354166
+          }
+        },
+        "unsupported": {
+          "dataset_size": 2,
+          "answerable_size": 0,
+          "unsupported_size": 2,
+          "supported_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 15241.5,
+          "ragas_all": {
+            "faithfulness": 0.8,
+            "answer_relevancy": 0.4319433511134407,
+            "context_precision": 0.9999999999775
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-02",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-broad_summary-006",
+      "question": "What recurring design patterns do the authors highlight as common across the case studies they reviewed?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The authors say three recurring patterns emerged across the case studies: modular workflow design, integration of physical relevance into the modeling process, and the finding that offline skill is not enough to predict online deployment performance. They describe modularity as letting models, diagnostics, and inference components be reused or swapped easily, physical relevance as coming through physics-informed architectures or conservation-based constraints, and deployment performance as needi",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 20654,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8024665188785461,
+        "context_precision": 0.8874999999778125
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0f7190d5a7cd3ffe0069f37c13892481959938a6efde209d67"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-02",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-broad_summary-007",
+      "question": "Why do the authors argue that transparent, structured documentation of ML workflows matters for climate modeling?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The authors argue that transparent, structured documentation matters because ML workflows in climate modeling involve many human design choices\u2014about data, model construction, training, validation, and iteration\u2014and those choices strongly affect scientific conclusions. They say that documenting these choices is critical for reproducibility, critical evaluation, further methodological research, and interdisciplinary collaboration .\n\nThey also note that climate-ML papers are often scattered across",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 19791,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision": 0.999999999975
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0238b99c36fad1fa0069f37c6e87e08194bd150e4c2a4b7922"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-02",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-comparison_synthesis-008",
+      "question": "How do physics-first workflows differ from ML-first workflows in their use of physical equations and their priorities?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Physics-first workflows keep physical equations at the core and use ML to augment them\u2014e.g., to accelerate components, discover new structure, or improve parameterizations\u2014while preserving theoretical grounding and physical realism . In contrast, ML-first workflows aim to build ML-based models that emulate or predict system behavior with minimal reliance on explicit physical equations; they prioritize predictive accuracy over theoretical interpretability and often lean heavily on large datasets ",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 18296,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8687535322196641,
+        "context_precision": 0.9999999999
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_06a2778b3b1658810069f37d1801748195a3c48a136aef3e32"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-02",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-numeric_procedure-009",
+      "question": "What loss function does the Physics-Informed Neural Operator approach use, and how does it differ from the canonical neural operator loss?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The Physics-Informed Neural Operator (PINO) uses a combined loss made of two terms: a data loss and a PDE residual loss. In the document, it is written as\n\nL(\u03b8) = ||G\u03b8(u0) \u2212 uT||\u00b2L2 + ||R{G\u03b8(u0)}||\u00b2L2,\n\nwhere R[\u00b7] is the PDE residual operator. The first term is trained on coarse-resolution data, and the second term enforces the PDE residual at higher resolution, without an explicit weighting parameter between them \n\nThis differs from the canonical neural operator loss, which is just the data los",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 16905,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7744307519249215,
+        "context_precision": 0.9999999999666667
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_016e0c5df3d0dcdf0069f37d9fd484819098a8e4c0f76d8ffa"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-02",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-unsupported-010",
+      "question": "What benchmark accuracy did the authors achieve when they ran their own neural operator implementation against FourCastNet on the test set?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: The retrieved file excerpts mention that FourCastNet was evaluated on the test data, but they do not give the benchmark accuracy value for the authors\u2019 own neural operator implementation against FourCastNet on the test set. The available snippets only describe the evaluation setup and metrics, not the specific accuracy number",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 15580,
+      "ragas": {
+        "faithfulness": 0.6,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.999999999975
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_08460f880293c0be0069f37debb510819699c5073c0109042d"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-02",
+      "system": "openai_file_search",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-lookup-001",
+      "question": "Who wrote this dissertation and who supervised it?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The dissertation was written by Tahiya Salam, and it was supervised by M. Ani Hsieh",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 14099,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9101312962432709,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_081676b23942ff5c0069f37e4b1a4081938850055e00dac7b7"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-02",
+      "system": "openai_file_search",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-lookup-002",
+      "question": "Which graduate group at Penn awarded this PhD?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The PhD was awarded by the Graduate Group in Electrical & Systems Engineering at Penn",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 14707,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6853491973054441,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0417ca550b0868540069f37e7a08208196a8ffb7ed0542b788"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-02",
+      "system": "openai_file_search",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-lookup-003",
+      "question": "Which Python libraries does the author use to implement the online DMD algorithms?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The author says they implemented the online adaptation DMD algorithms using eigendecomposition algorithms from the scipy Python library and modified DMD functions from the PyDMD library",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 12442,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7846014603255238,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0743554f97a526ae0069f37eef28348196811da257a03a22b5"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-02",
+      "system": "openai_file_search",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-local_scope-004",
+      "question": "In the mixed-reality experiment with marine vehicles, what are the dimensions of the indoor water tank used as the test bed?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The indoor water tank used as the test bed is 4.5 m \u00d7 3.0 m \u00d7 1.2 m",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 13880,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8009761640916698,
+        "context_precision": 0.6791666666496875
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0bad11a433e30a620069f37f3a08a48197ba7fb124c6f1a963"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-02",
+      "system": "openai_file_search",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-local_scope-005",
+      "question": "In the chapter on coherent sets, what does the author use kernel transfer operators for?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The author uses kernel transfer operators to compute coherent sets online as an environmental feature generator for robots, helping with high-level decision-making, situational awareness, and planning in flow-like environments . The chapter says this approach is applied to robot monitoring of pedestrian behavior and robot navigation through water .",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 15356,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6557131156661,
+        "context_precision": 0.8333333332916666
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0d554231c3e5c07b0069f37f88ebf4819582d5df1af3dfc494"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-02",
+      "system": "openai_file_search",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-broad_summary-006",
+      "question": "What does the author claim are the main contributions of this thesis?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The author says the thesis\u2019s main contributions are developing novel models for spatiotemporal, complex environmental phenomena that enable optimal sensing, feature extraction, state estimation, state prediction, and uncertainty quantification for multi-robot decision-making . In the conclusion, the thesis also frames its contributions as creating linear spatial models and using kernel methods to capture nonlinearities, supporting distributed low-dimensional modeling, online data assimilation, f",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 19141,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8802023517046863,
+        "context_precision": 0.99999999998
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_06977aefb2b6977b0069f3800c03cc8197839f79cf5766962a"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-02",
+      "system": "openai_file_search",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-broad_summary-007",
+      "question": "What gap between dynamical systems theory, machine learning, and multi-robot systems does the introduction argue this thesis addresses?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The introduction argues that the thesis addresses a gap where dynamical systems theory provides physically interpretable models, but had not historically been applied to uncertain, online, distributed data collected by robot teams, while machine learning can build models from data but is often not connected to dynamical systems representations. It also notes that distributed sensing and estimation in robotics typically rely on known or structured models. The thesis aims to unify these three area",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 19401,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.5467958869691578,
+        "context_precision": 0.8041666666465626
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0183b61b0fe89e370069f38076550881948111e4d6cc41ec72"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-02",
+      "system": "openai_file_search",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-comparison_synthesis-008",
+      "question": "How does Dynamic Mode Decomposition compare with Principal Component Analysis for representing spatiotemporal environmental processes, according to the thesis?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the thesis, PCA and DMD both reduce high-dimensional spatiotemporal data, but they emphasize different aspects of the process. PCA is presented as a method that preserves statistical variance and captures mainly the key spatial characteristics of time-series data, but it is limited in spatiotemporal settings because it lacks an explicit, physically meaningful interpretation of the temporal behavior  . In contrast, DMD is described as learning modes that each have a fixed oscillation",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 16466,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6344099772374373,
+        "context_precision": 0.699999999965
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_02a77df438e1550f0069f380cc0d3c8195a15d121a59715ebf"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-02",
+      "system": "openai_file_search",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-numeric_procedure-009",
+      "question": "In the mixed-reality plasma cloud experiment, how many vehicles of each type were used, and at what grid resolutions did the aerial and marine vehicles sense the workspace?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The mixed-reality plasma cloud experiment used four marine robots and two aerial vehicles. The aerial vehicles sensed the workspace on a 10 \u00d7 20 grid, while the marine vehicles sensed it on a 48 \u00d7 96 grid",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 15404,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8330133473912252,
+        "context_precision": 0.5833333333041666
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_04d4f5f4b7b7fd230069f3811ca5188197ae798f279d6ed9bd"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-02",
+      "system": "openai_file_search",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-unsupported-010",
+      "question": "How does the thesis evaluate its proposed methods on a swarm of more than fifty aerial drones in an outdoor wildfire monitoring deployment?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: The retrieved thesis excerpts describe evaluations with simulated and physical multi-robot setups, including four marine robots and two aerial vehicles in a 384 \u00d7 768 workspace, but they do not mention an outdoor wildfire monitoring deployment or a swarm of more than fifty aerial drones. The available evidence only supports smaller-scale experiments and general validation of the methods",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 14903,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8638867022268814,
+        "context_precision": 0.99999999998
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0f01370050bce1e60069f38168a58c8197951525a539b2bdc1"
+    }
+  ]
+}

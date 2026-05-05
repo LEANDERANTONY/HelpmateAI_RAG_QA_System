@@ -1,0 +1,240 @@
+{
+  "suite": {
+    "suite_id": "heldout-product-fit-2026-04-openai-native-diagnostic-4",
+    "description": "Diagnostic OpenAI native rerun for indexing readiness and full context extraction.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\openai_eval_chunks\\openai_native_diagnostic_4.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "openai_file_search"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      }
+    }
+  },
+  "summary": {
+    "overall": {
+      "openai_file_search": {
+        "dataset_size": 4,
+        "answerable_size": 4,
+        "unsupported_size": 0,
+        "supported_rate": 1.0,
+        "answerable_supported_rate": 1.0,
+        "unsupported_abstention_rate": 0.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.0,
+        "avg_context_count": 5.0,
+        "avg_context_chars": 18672.0,
+        "ragas_all": {
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.831910072426687,
+          "context_precision": 0.9166666666361111
+        },
+        "ragas_attempted": {
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.831910072426687,
+          "context_precision": 0.9166666666361111
+        }
+      }
+    },
+    "by_intent": {
+      "openai_file_search": {
+        "local_scope": {
+          "dataset_size": 1,
+          "answerable_size": 1,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 16769.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8756646836912957,
+            "context_precision": null
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8756646836912957,
+            "context_precision": null
+          }
+        },
+        "lookup": {
+          "dataset_size": 3,
+          "answerable_size": 3,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 19306.333333333332,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8173252020051509,
+            "context_precision": 0.9166666666361111
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8173252020051509,
+            "context_precision": 0.9166666666361111
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "heldout-product-fit-2026-04-openai-native-diagnostic-4",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-001",
+      "question": "What three phases does the paper use to organize a machine learning workflow for climate modeling?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The paper says the machine learning workflow has three phases: design, development, and deployment.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 18708,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7963939940215788,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_023e247acf28aa6a0069f368ba4f7c819398de4c4896b0733e"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-openai-native-diagnostic-4",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-004",
+      "question": "In the ClimSim case study, what spatial resolution and temporal cadence does the dataset use, and how many years does it cover?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The ClimSim case study says the dataset uses approximately 1.5\u00b0 horizontal spatial resolution and 20-minute temporal intervals, and it covers ten years of data",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 16769,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8756646836912957,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_038fbe05dd6bc7a20069f3691ca0788197960987197de64a23"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-openai-native-diagnostic-4",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-001",
+      "question": "What target range did the Committee decide to maintain for the federal funds rate at this meeting?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The Committee decided to maintain the target range for the federal funds rate at 3\u00bd to 3\u00be percent.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 19515,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8141611392042302,
+        "context_precision": 0.9166666666361111
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0fc11fcdba09f4bd0069f369ad44ec8197af29579b4c90fd2d"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-openai-native-diagnostic-4",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-002",
+      "question": "Which members dissented from the policy decision, and what alternative did they prefer?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Stephen I. Miran and Christopher J. Waller dissented from the policy decision, and they preferred to lower the target range for the federal funds rate by 1/4 percentage point at that meeting.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 19696,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8414204727896436,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0c91b9018478b0f20069f36a1b03d08197824d36f3808f17c9"
+    }
+  ]
+}

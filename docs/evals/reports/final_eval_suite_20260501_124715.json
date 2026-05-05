@@ -1,0 +1,699 @@
+{
+  "suite": {
+    "suite_id": "helpmate_abstention_recovery_all_22_20260501",
+    "description": "Draft held-out product-fit final evaluation manifest. Documents are fixed; questions must be generated and frozen before any system run.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\helpmate_abstention_smoke\\all_abstained_22.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "helpmate"
+  ],
+  "ragas_enabled": false,
+  "ragas_judge": {
+    "reason": "RAGAS scoring disabled."
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-abstention-recovery-all-20260501-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      },
+      "mode": "native_mockingbird_answer",
+      "generation_preset_name": "mockingbird-2.0"
+    }
+  },
+  "summary": {
+    "overall": {
+      "helpmate": {
+        "dataset_size": 22,
+        "answerable_size": 22,
+        "unsupported_size": 0,
+        "supported_rate": 0.4090909090909091,
+        "answerable_supported_rate": 0.4090909090909091,
+        "unsupported_abstention_rate": 0.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.5909090909090909,
+        "avg_context_count": 4.0,
+        "avg_context_chars": 4345.772727272727,
+        "ragas_all": {
+          "faithfulness": null,
+          "answer_relevancy": null,
+          "context_precision": null
+        },
+        "ragas_attempted": {
+          "faithfulness": null,
+          "answer_relevancy": null,
+          "context_precision": null
+        }
+      }
+    },
+    "by_intent": {
+      "helpmate": {
+        "broad_summary": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 0.5,
+          "answerable_supported_rate": 0.5,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.5,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 5306.0,
+          "ragas_all": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 1.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 3799.75,
+          "ragas_all": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        },
+        "local_scope": {
+          "dataset_size": 6,
+          "answerable_size": 6,
+          "unsupported_size": 0,
+          "supported_rate": 0.5,
+          "answerable_supported_rate": 0.5,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.5,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 3851.8333333333335,
+          "ragas_all": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        },
+        "lookup": {
+          "dataset_size": 6,
+          "answerable_size": 6,
+          "unsupported_size": 0,
+          "supported_rate": 0.3333333333333333,
+          "answerable_supported_rate": 0.3333333333333333,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.6666666666666666,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 4636.0,
+          "ragas_all": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        },
+        "numeric_procedure": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 4128.5,
+          "ragas_all": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "helpmate_abstention_recovery_all_22_20260501",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-003",
+      "question": "How does this framework define an AI system?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not define an AI system. It mentions AI systems, their lifecycle, key dimensions, and risk-management functions, but it does not give a definition of what an AI system is [Source 1][Source 2][Source 3][Source 4].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 5",
+        "nist-ai-rmf-1-0.pdf - Page 5",
+        "nist-ai-rmf-1-0.pdf - Page 46",
+        "nist-ai-rmf-1-0.pdf - Page 44"
+      ],
+      "context_count": 4,
+      "context_chars": 5145,
+      "ragas": {},
+      "note": "The question asks for the framework\u2019s definition of an AI system, but none of the supplied excerpts contains an explicit definition. The evidence only describes related concepts such as AI system lifecycle stages, key dimensions, trustworthiness characteristics, and risk-management functions."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_all_22_20260501",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-001",
+      "question": "What two scenarios does this report use as its primary comparison?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The report uses the Planned Energy Scenario and the 1.5\u00b0C Scenario as its primary comparison [Source 1].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 17",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 17",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 18",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 225"
+      ],
+      "context_count": 4,
+      "context_chars": 1855,
+      "ragas": {},
+      "note": "The evidence explicitly states that the Planned Energy Scenario is the primary reference case and also identifies the 1.5\u00b0C Scenario [Source 1], with additional description of the 1.5\u00b0C climate goal [Source 2]."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_all_22_20260501",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-002",
+      "question": "Who is identified as the Director-General of IRENA in the foreword?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not identify the Director-General of IRENA in the foreword. [Source 2] includes acknowledgements and mentions other IRENA roles, but no Director-General is named. [Source 3] gives general information about IRENA, but no foreword or Director-General identification is provided.",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 137",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 3",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 2",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 136"
+      ],
+      "context_count": 4,
+      "context_chars": 8777,
+      "ragas": {},
+      "note": "The question requires the name of the person identified as Director-General of IRENA in the foreword. None of the supplied sources include the foreword text or a Director-General name. The evidence is therefore insufficient to answer the question."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_all_22_20260501",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-numeric_procedure-009",
+      "question": "How much cumulative investment does the 1.5\u00b0C Scenario require by 2050, how does that compare with the Planned Energy Scenario, and how much annual investment must be redirected away from fossil-fuel technologies?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The 1.5\u00b0C Scenario requires about USD 26 trillion in total redirected investments by 2050, and the Planned Energy Scenario has about USD 103 trillion in cumulative investment; the 1.5\u00b0C Scenario is therefore described as requiring an additional USD 47 trillion compared with the Planned Energy Scenario [Source 1]. Around USD 1 trillion of annual investments in fossil-fuel technologies must be redirected away from those technologies toward energy transition technologies and infrastructure [Source ",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 25",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 150",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 151",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 147"
+      ],
+      "context_count": 4,
+      "context_chars": 4057,
+      "ragas": {},
+      "note": "The evidence gives the Planned Energy Scenario cumulative investment (USD 103 trillion), the additional cumulative investment needed for the 1.5\u00b0C pathway by 2050 (USD 47 trillion), and the annual fossil-fuel investment to be redirected (around USD 1 trillion) [Source 1]."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_all_22_20260501",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-016",
+      "question": "In the section on AI safety, which kinds of safety risks does the framework say require the most urgent prioritization?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework says the safety risks that pose a potential risk of serious injury or death require the most urgent prioritization and the most thorough risk management process [Source 3].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 20",
+        "nist-ai-rmf-1-0.pdf - Page 20",
+        "nist-ai-rmf-1-0.pdf - Page 19",
+        "nist-ai-rmf-1-0.pdf - Page 4"
+      ],
+      "context_count": 4,
+      "context_chars": 3929,
+      "ragas": {},
+      "note": "The question asks which kinds of safety risks get the most urgent prioritization. Source 3 explicitly states that safety risks posing a potential risk of serious injury or death require the most urgent prioritization and the most thorough risk management process. This fully answers the question."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_all_22_20260501",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-020",
+      "question": "Who does the framework say it is intended for, and why does it use the term 'AI actors'?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework says it is intended for organizations and individuals across the AI lifecycle, including organizations designing, developing, deploying, or using AI systems, and it is also intended to be used by AI actors across the AI lifecycle and dimensions [Source 1] [Source 3]. It uses the term \u201cAI actors\u201d to refer to those organizations and individuals who play an active role in the AI system lifecycle, including those that deploy or operate AI, as defined by the OECD [Source 1].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 7",
+        "nist-ai-rmf-1-0.pdf - Page 42",
+        "nist-ai-rmf-1-0.pdf - Page 14",
+        "nist-ai-rmf-1-0.pdf - Page 3"
+      ],
+      "context_count": 4,
+      "context_chars": 4797,
+      "ragas": {},
+      "note": "The evidence states both the intended audience and the reason for the term. It says the AI RMF is a resource for organizations designing, developing, deploying, or using AI systems, and that it is intended to be used by AI actors across the AI lifecycle and dimensions. It also defines AI actors as organizations and individuals who play an active role in the AI system lifecycle, including those who deploy or operate AI."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_all_22_20260501",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-012",
+      "question": "Who is the corresponding author for this paper?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not identify the corresponding author for this paper.",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 24",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 25",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 1",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 41"
+      ],
+      "context_count": 4,
+      "context_chars": 4058,
+      "ragas": {},
+      "note": "The supplied sources show the paper title/overview and references, but none list the paper\u2019s author list or a corresponding author designation. The required fact missing is the corresponding author name."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_all_22_20260501",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-013",
+      "question": "What does the abbreviation PINO stand for in the paper?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not define the abbreviation PINO in the paper.",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 11",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 11",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 7",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 2"
+      ],
+      "context_count": 4,
+      "context_chars": 4419,
+      "ragas": {},
+      "note": "The evidence includes workflow and climate-modeling discussion, but it does not mention the abbreviation PINO or expand it. The required fact\u2014the full form of PINO\u2014is missing from the supplied sources."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_all_22_20260501",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-014",
+      "question": "What does GNO refer to in the discussion of neural operator variants?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "GNO refers to Graph Neural Operator [Source 1]. It is described as constructing a spatial proximity graph over the discretization and approximating the integral operator via message-passing updates with learned kernels, which makes it mesh-independent and suitable for unstructured grids [Source 1].",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 15",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 15",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 16",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 39"
+      ],
+      "context_count": 4,
+      "context_chars": 3562,
+      "ragas": {},
+      "note": "The evidence explicitly expands GNO as \"Graph Neural Operator\" and provides its description [Source 1]."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_all_22_20260501",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-019",
+      "question": "Beyond the three integration directions in Figure 1, what 'fourth direction' do the authors describe?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not mention Figure 1 or any 'three integration directions,' so it does not support identifying a fourth direction.",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 24",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 24",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 24",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 14"
+      ],
+      "context_count": 4,
+      "context_chars": 3464,
+      "ragas": {},
+      "note": "The question requires knowing what the authors describe as a fourth direction beyond three integration directions in Figure 1. None of the supplied evidence references Figure 1, integration directions, or a fourth direction. Therefore the necessary facts are missing."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_all_22_20260501",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-local_scope-018",
+      "question": "In the water tank experiment, what onboard hardware components are listed for each micro-autonomous surface vehicle?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence only states that each micro-autonomous surface vehicle (mASV) is differential drive and includes a micro-controller board. It does not list any other onboard hardware components for each mASV in the water tank experiment [Source 1].",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 111",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 142",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 143",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 34"
+      ],
+      "context_count": 4,
+      "context_chars": 5558,
+      "ragas": {},
+      "note": "The question asks for all onboard hardware components listed for each mASV in the water tank experiment. The evidence explicitly mentions only one component: a micro-controller board, and says the mASVs are differential drive [Source 1]. It does not provide a complete list of onboard hardware components, so the required facts are only partially supported."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_all_22_20260501",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-local_scope-019",
+      "question": "In Chapter 2, how does the thesis distinguish a differential equation from an iterated map (difference equation)?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "In Chapter 2, the thesis distinguishes them by the time variable: differential equations are for continuous time, written with derivatives such as \\u02d9x = f(x), while iterated maps (difference equations) are for discrete time, written in step form such as x(t + 1) = f(x(t)) [Source 2] [Source 1].",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 23",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 22",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 10",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 24"
+      ],
+      "context_count": 4,
+      "context_chars": 2946,
+      "ragas": {},
+      "note": "The evidence explicitly states that differential equations are used to study systems in continuous time and iterated maps/difference equations in discrete time [Source 2]. It also gives their representative forms: differential equations use derivatives (\\u02d9x = f(x)) and difference equations use next-step updates (x(t + 1) = f(x(t))) [Source 1]."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_all_22_20260501",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-broad_summary-020",
+      "question": "How does the thesis describe the limitations of Gaussian Process modeling for spatiotemporal environmental processes?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not describe the limitations of Gaussian Process modeling for spatiotemporal environmental processes. It mentions distributed modeling, dimensionality reduction, kernel methods, and limitations of nonlinear system identification generally, but it does not specifically state any limitations of Gaussian Process modeling for spatiotemporal environmental processes [Source 1][Source 2][Source 3].",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 147",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 146",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 34",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 148"
+      ],
+      "context_count": 4,
+      "context_chars": 4737,
+      "ragas": {},
+      "note": "The question asks for the thesis\u2019s description of limitations specific to Gaussian Process modeling for spatiotemporal environmental processes. The evidence provided does not mention Gaussian Processes or their limitations. Source 3 discusses general limitations in nonlinear system identification (e.g., lack of physical information, many parameters, high-dimensional data, model structure selection), but that is not specific to Gaussian Process modeling."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_all_22_20260501",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-comparison_synthesis-024",
+      "question": "How does the long-term online DMD method compare with the general adaptation method in terms of accuracy, storage, and computational performance?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not fully support a complete comparison across accuracy, storage, and computational performance between the long-term online DMD method and the general adaptation method. It does support that the general adaptation method outperforms the long-term adaptation method in accuracy for a 20\u00d720 environment with 1000 time steps, and that the long-term algorithm uses much less storage because it does not require past snapshots while the general algorithm does, with storage cited as sev",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 106",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 105",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 107",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 106"
+      ],
+      "context_count": 4,
+      "context_chars": 2587,
+      "ragas": {},
+      "note": "Required facts: (1) accuracy comparison, (2) storage comparison, (3) computational performance comparison. Source 1 supports accuracy for one tested case and storage differences generally, and supports one computational timing comparison for a specific small/long-duration case. Source 2 adds that the general method has extra computational time from matrix construction and eigendecomposition. The evidence is partial because it does not establish an overall, comprehensive comparison across all settings."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_all_22_20260501",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-comparison_synthesis-025",
+      "question": "How does the thesis compare coverage control with optimal design as approaches to sensor placement?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence supports that coverage control is used to determine robot placement for low spatial resolution measurements collected over time, with the workspace partitioned into Voronoi regions [Source 2]. However, the evidence does not provide any description of optimal design as a sensor placement approach or a direct comparison between coverage control and optimal design. The comparison requested is therefore not supported.",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 34",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 94",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 9",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 151"
+      ],
+      "context_count": 4,
+      "context_chars": 6840,
+      "ragas": {},
+      "note": "Required facts: (1) how coverage control is characterized for sensor placement, and (2) how it is compared with optimal design. The evidence only covers (1) [Source 2] and does not state anything about optimal design in this context."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_all_22_20260501",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-016",
+      "question": "In the Annual Organizational Matters section, who was selected as Secretary of the Committee?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Joshua Gallin was selected as Secretary of the Committee [Source 1].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 3",
+        "fomc-minutes-2026-01-28.pdf - Page 4",
+        "fomc-minutes-2026-01-28.pdf - Page 2",
+        "fomc-minutes-2026-01-28.pdf - Page 3"
+      ],
+      "context_count": 4,
+      "context_chars": 3876,
+      "ragas": {},
+      "note": "The evidence explicitly lists the officers selected during the Annual Organizational Matters section and names Joshua Gallin as Secretary [Source 1]."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_all_22_20260501",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-local_scope-019",
+      "question": "In the executive summary's tracking-progress table, what average annual investment is required in power grids and flexibility through 2030 and through 2050 under the 1.5 degree C scenario?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not state the average annual investment required in power grids and flexibility through 2030 and through 2050 under the 1.5\u00b0C scenario. It does mention an investment needed of USD 15 billion annually to 2030 for off-grid renewable energy solutions [Source 3], and it says hydrogen plays a key role in the flexibility of the power system [Source 4], but it does not give the requested grid-and-flexibility investment figures for 2030 or 2050.",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 25",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 24",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 25",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 25"
+      ],
+      "context_count": 4,
+      "context_chars": 3338,
+      "ragas": {},
+      "note": "The question asks for two specific numeric facts from the executive summary's tracking-progress table: the average annual investment required in power grids and flexibility through 2030 and through 2050 under the 1.5\u00b0C scenario. None of the supplied evidence provides those two figures. The closest supported figure is USD 15 billion annually to 2030 for off-grid renewable energy solutions [Source 3], which is not the same as power grids and flexibility. Because one required fact is missing for each time horizon, the evidence cannot fully answer the question."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_all_22_20260501",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-broad_summary-021",
+      "question": "How does Volume 2 differ from Volume 1 in scope and approach?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not state how Volume 2 differs from Volume 1 in scope and approach. It only shows that Volume 1 and Volume 2 had different authorship and guidance, and that Volume 2 received reviews, inputs, and modelling results from specific contributors [Source 4].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 70",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 70",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 2",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 3"
+      ],
+      "context_count": 4,
+      "context_chars": 7489,
+      "ragas": {},
+      "note": "The evidence identifies who developed and authored each volume and notes support and modelling contributions for Volume 2, but it does not describe the scope or methodological approach of either volume, nor does it provide a direct comparison between them."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_all_22_20260501",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-broad_summary-023",
+      "question": "What does the executive summary say about the relationship between the energy crisis and the transition?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The executive summary says the energy crisis and the transition are linked because high energy prices have led some governments to cushion consumers and businesses with fossil fuel subsidies, even as the transition requires much greater renewable investment. It also says renewables and energy efficiency are best placed to meet climate, energy security, and affordability goals, so the crisis strengthens the case for accelerating the transition rather than delaying it [Source 1].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 21",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 21",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 33",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 21"
+      ],
+      "context_count": 4,
+      "context_chars": 4201,
+      "ragas": {},
+      "note": "The evidence directly states that governments responded to high energy prices with fossil fuel subsidies, while also saying renewables and energy efficiency best meet climate commitments, energy security, and affordability objectives, and that investments need to be redirected toward the transition [Source 1]. This fully supports a concise summary of the relationship."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_all_22_20260501",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-comparison_synthesis-024",
+      "question": "How do the cumulative and per-year investment requirements differ between the Planned Energy Scenario and the 1.5 degree C Scenario?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not state the cumulative or per-year investment requirements for the Planned Energy Scenario or the 1.5 degree C Scenario, so I cannot compare them from this evidence alone.",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 26",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 26",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 26",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 25"
+      ],
+      "context_count": 4,
+      "context_chars": 4089,
+      "ragas": {},
+      "note": "Required facts: the cumulative investment requirement for each scenario and the per-year investment requirement for each scenario, plus a source that explicitly identifies Planned Energy Scenario and 1.5 degree C Scenario. The supplied evidence only mentions off-grid renewable energy needing USD 15 billion annually to 2030 [Source 4] and general discussion of public/private finance [Sources 1-3]. It does not provide the scenario-specific cumulative or annual investment figures needed to answer the comparison."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_all_22_20260501",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-comparison_synthesis-025",
+      "question": "How does the role of bioenergy in 2050 differ between the Planned Energy Scenario and the 1.5 degree C Scenario?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The supplied evidence does not provide the Planned Energy Scenario value for bioenergy in 2050, so a full comparison with the 1.5\u00b0C Scenario cannot be answered. The evidence does state that under the 1.5\u00b0C Scenario, bioenergy consumption in transport would reach 12 EJ by 2050 [Source 4], but it does not give the corresponding Planned Energy Scenario figure or describe how bioenergy\u2019s role differs overall in 2050.",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 100",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 100",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 12",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 99"
+      ],
+      "context_count": 4,
+      "context_chars": 1683,
+      "ragas": {},
+      "note": "To answer the question fully, we need the 2050 role of bioenergy in both the Planned Energy Scenario and the 1.5\u00b0C Scenario. The evidence only provides a 2050 bioenergy consumption value for the 1.5\u00b0C Scenario in transport (12 EJ) [Source 4]. It does not provide the Planned Energy Scenario 2050 value or a direct comparison of bioenergy\u2019s role between the two scenarios."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_all_22_20260501",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-numeric_procedure-028",
+      "question": "According to the executive summary, what size emissions gap remains in 2050 between fully implemented current pledges and the 1.5 degree C pathway, and how much do those pledges actually reduce emissions by 2030 and 2050?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the executive summary, the emissions gap in 2050 is 16 Gt between fully implemented current pledges and IRENA\u2019s 1.5\u00b0C pathway [Source 1]. Those pledges would reduce CO2 emissions by 6% by 2030 and 56% by 2050, compared to 2022 levels [Source 1].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 21",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 21",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 54",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 21"
+      ],
+      "context_count": 4,
+      "context_chars": 4200,
+      "ragas": {},
+      "note": "The evidence directly states the 2050 emissions gap and the emission reductions associated with fully implemented NDCs, long-term strategies, and net-zero targets. All required facts are provided in Source 1."
+    }
+  ]
+}

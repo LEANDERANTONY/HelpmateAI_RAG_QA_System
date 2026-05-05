@@ -490,7 +490,11 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
                 </div>
                 {answer ? (
                     <span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs uppercase tracking-[0.24em] text-blue-100 shadow-[0_8px_20px_rgba(44,91,255,0.08)]">
-                      {answer.supported ? "Supported" : "Unsupported"}
+                      {answer.support_status === "partial"
+                        ? "Partially supported"
+                        : answer.supported
+                          ? "Supported"
+                          : "Unsupported"}
                     </span>
                 ) : null}
               </div>

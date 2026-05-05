@@ -1,0 +1,596 @@
+{
+  "suite": {
+    "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-01",
+    "description": "OpenAI native File Search corrected rerun chunk 1/10, questions 1-15.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\openai_native_15_chunks\\openai_native_15_chunk_01.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "openai_file_search"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      }
+    }
+  },
+  "summary": {
+    "overall": {
+      "openai_file_search": {
+        "dataset_size": 15,
+        "answerable_size": 14,
+        "unsupported_size": 1,
+        "supported_rate": 0.7333333333333333,
+        "answerable_supported_rate": 0.7857142857142857,
+        "unsupported_abstention_rate": 1.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.21428571428571427,
+        "avg_context_count": 4.0,
+        "avg_context_chars": 14113.333333333334,
+        "ragas_all": {
+          "faithfulness": 0.8592592592592593,
+          "answer_relevancy": 0.6637005528619282,
+          "context_precision": 0.7003968253607804
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.98989898989899,
+          "answer_relevancy": 0.8421410089456449,
+          "context_precision": 0.8805555555075926
+        }
+      }
+    },
+    "by_intent": {
+      "openai_file_search": {
+        "broad_summary": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 18148.0,
+          "ragas_all": {
+            "faithfulness": 0.9444444444444444,
+            "answer_relevancy": 0.9407831612734227,
+            "context_precision": 0.6944444444150463
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.9444444444444444,
+            "answer_relevancy": 0.9407831612734227,
+            "context_precision": 0.6944444444150463
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 0.5,
+          "answerable_supported_rate": 0.5,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.5,
+          "avg_context_count": 2.5,
+          "avg_context_chars": 9734.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.37727194388240953,
+            "context_precision": 0.499999999975
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7545438877648191,
+            "context_precision": 0.99999999995
+          }
+        },
+        "local_scope": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 0.75,
+          "answerable_supported_rate": 0.75,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.25,
+          "avg_context_count": 3.75,
+          "avg_context_chars": 12971.5,
+          "ragas_all": {
+            "faithfulness": 0.75,
+            "answer_relevancy": 0.6506870949574413,
+            "context_precision": 0.7083333332979167
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8675827932765884,
+            "context_precision": 0.9444444443972222
+          }
+        },
+        "lookup": {
+          "dataset_size": 6,
+          "answerable_size": 6,
+          "unsupported_size": 0,
+          "supported_rate": 0.8333333333333334,
+          "answerable_supported_rate": 0.8333333333333334,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.16666666666666666,
+          "avg_context_count": 4.166666666666667,
+          "avg_context_chars": 14429.333333333334,
+          "ragas_all": {
+            "faithfulness": 0.8333333333333334,
+            "answer_relevancy": 0.636510299863004,
+            "context_precision": 0.7166666666208333
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.795637874828755,
+            "context_precision": 0.8958333332760416
+          }
+        },
+        "unsupported": {
+          "dataset_size": 1,
+          "answerable_size": 0,
+          "unsupported_size": 1,
+          "supported_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 17474.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8703976506105455,
+            "context_precision": 0.999999999975
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-01",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-001",
+      "question": "What are the four core functions described in this framework for managing AI risks?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The four core functions in this framework are GOVERN, MAP, MEASURE, and MANAGE. The document says Part 2 of the Framework \u201cdescribes four specific functions\u201d to address AI risks in practice: GOVERN, MAP, MEASURE, and MANAGE",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 17086,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6951810188720958,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0b1bfd6bf056ec0b0069f3737612c0819695b1152e36966294"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-01",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-002",
+      "question": "By when does NIST plan to conduct the next formal review of the framework with input from the AI community?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "NIST expects the next formal review of the framework with input from the AI community to take place no later than 2028.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 17859,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision": 0.9999999999
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_05cd58be4ed5eb850069f3743a84088197b1b3e67cb92f6bb2"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-01",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-003",
+      "question": "How does this framework define an AI system?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: I couldn\u2019t find any uploaded file content that defines \u201cAI system\u201d in the framework, so I don\u2019t have enough evidence to answer from the document.",
+      "citations": [],
+      "context_count": 0,
+      "context_chars": 0,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0adc2a54c7c5b46c0069f374acde908196815c1f8137202ef6"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-01",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-004",
+      "question": "In the discussion of fairness and harmful bias, what three major categories of AI bias does NIST say organizations should consider?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "NIST says organizations should consider three major categories of AI bias: systemic bias, computational and statistical bias, and human-cognitive bias",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 17874,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9131330920306647,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_03ded874f2b65b4a0069f374ea10048190a4557b5d5e6ce908"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-01",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-005",
+      "question": "In the Govern function, what subcategory specifically addresses safely retiring or phasing out AI systems?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: I couldn\u2019t find any matching text in the uploaded file to identify the specific Govern subcategory about safely retiring or phasing out AI systems.",
+      "citations": [],
+      "context_count": 0,
+      "context_chars": 0,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_00cda31c23724c640069f37531dcbc81948fb325031ff57cf9"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-01",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-006",
+      "question": "What attributes does the framework say should be evaluated to consider an AI system trustworthy?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework says an AI system should be evaluated for these trustworthy characteristics: valid and reliable, safe, secure and resilient, accountable and transparent, explainable and interpretable, privacy-enhanced, and fair with harmful bias managed. It also notes that these are the characteristics of trustworthy AI systems and that they should be balanced based on the system\u2019s context of use.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 16695,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8964411639736235,
+        "context_precision": 0.7499999999625
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0af8a1dc402e98960069f375628e148194a5cab1274c8c1563"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-01",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-007",
+      "question": "Why does the framework treat AI risks as different from risks in traditional software systems?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework treats AI risks as different from traditional software risks because AI systems introduce risk sources that standard software risk approaches do not comprehensively address. The document says AI systems can depend on training data that may be unrepresentative, biased, stale, or detached from the intended context; training can change performance in fundamental ways; and large AI systems can be complex, opaque, and hard to test, predict, or reproduce reliably  \n\nIt also explains that",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 19601,
+      "ragas": {
+        "faithfulness": 0.8888888888888888,
+        "answer_relevancy": 0.9851251585732218,
+        "context_precision": 0.6388888888675925
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_030b59d17e801c230069f375b2139c8190a5172c5cd030a359"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-01",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-comparison_synthesis-008",
+      "question": "How does the framework distinguish transparency, explainability, and interpretability?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: I couldn\u2019t find any relevant text in the uploaded file about how the framework distinguishes transparency, explainability, and interpretability.",
+      "citations": [],
+      "context_count": 0,
+      "context_chars": 0,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0f6eef2c365320300069f3762c47048197830840ad2d1cca1b"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-01",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-comparison_synthesis-009",
+      "question": "What is the difference between a Current Profile and a Target Profile, and why would an organization compare the two?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "A Current Profile describes how AI is being managed right now and the related risks in terms of current outcomes, while a Target Profile describes the outcomes needed to achieve the organization\u2019s desired AI risk management goals \n\nAn organization compares the two to identify gaps between the current state and the desired state. Those gaps help it create action plans, prioritize what to fix first, and estimate the resources needed to reach its AI risk management objectives in a cost-effective wa",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 19468,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7545438877648191,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0b5c11c360196ed70069f37648710c8190931c31406f469806"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-01",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-unsupported-010",
+      "question": "What is the maximum allowable false positive rate that the framework recommends for an AI system used in clinical diagnosis?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: The framework file says accuracy measures should consider false positive and false negative rates, but it does not specify a maximum allowable false positive rate for clinical diagnosis. It also says human judgment should be used to decide the precise threshold values for metrics, and that thresholds depend on context and risk tolerance",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 17474,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8703976506105455,
+        "context_precision": 0.999999999975
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0dbf3226797307500069f376897cac819781e7fbdbe58e3998"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-01",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-001",
+      "question": "What three phases does the paper use to organize a machine learning workflow for climate modeling?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The paper organizes the machine learning workflow into three phases: design, development, and deployment. It states that \u201cApplying machine learning to Earth system modeling and climate data analysis spans three phases: design, development, and deployment\u201d",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 18708,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7768745885376562,
+        "context_precision": 0.5833333333041666
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_05ac58f11590de110069f3772103048194b02f411544759430"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-01",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-002",
+      "question": "What three integration directions do the authors describe for combining machine learning with climate modeling?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The authors describe three integration directions for combining machine learning with climate modeling:\n\n1. Direction I: Physics-First and ML-Augmented Simulation-Based Modeling \u2014 keep physics-based models at the core and use ML to accelerate components, discover structure, or improve parameterizations. \n\n2. Direction II: Data-First (Observation-Integrated) ML Modeling \u2014 start from observations and use ML to extract structure, perform inference, and integrate observational data with process unde",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 18106,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9587028574821647,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_065d55863a8537320069f377552bf48193bd411fc2a153c178"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-01",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-003",
+      "question": "Which agency and program funded the research described in this paper?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The research was funded by the National Science Foundation of the U.S.A. through the Learning the Earth with Artificial Intelligence and Physics (LEAP) Science and Technology Center (STC), Award No. 2019625",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 14817,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7517930344231035,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0ffeb23469da94430069f3779482848193b6984f32ce4ec32e"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-01",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-004",
+      "question": "In the ClimSim case study, what spatial resolution and temporal cadence does the dataset use, and how many years does it cover?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The ClimSim dataset uses approximately 1.5\u00b0 horizontal spatial resolution and 20-minute temporal intervals, and it covers ten years of globally distributed input\u2013output pairs",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 15720,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8000138521215298,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0726e006e34f48270069f377bd8dd48193b9a3bd6fa5c22138"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-01",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-005",
+      "question": "In the equation discovery case study, how is the search for subgrid closure models translated into a machine learning task?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "In the equation discovery case study, the search for subgrid closure models is translated into a supervised learning problem by using high-resolution simulations to generate training data, then filtering them to coarse-grained fields and computing the subgrid forcing as the target output. The inputs are resolved variables such as coarse-resolution velocity and temperature fields, along with their spatial derivatives and physically meaningful composites like vorticity and divergence. The learning",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 18292,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8896014356775707,
+        "context_precision": 0.8333333332916666
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_01b4a9a58f9f10520069f377edaeb08194a6bbbf251998192f"
+    }
+  ]
+}

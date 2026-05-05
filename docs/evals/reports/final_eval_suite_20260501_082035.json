@@ -1,0 +1,240 @@
+{
+  "suite": {
+    "suite_id": "openai_native_zero_context_retry_20260501",
+    "description": "Draft held-out product-fit final evaluation manifest. Documents are fixed; questions must be generated and frozen before any system run.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\openai_native_metric_retries\\openai_native_zero_context_04.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "openai_file_search"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      }
+    }
+  },
+  "summary": {
+    "overall": {
+      "openai_file_search": {
+        "dataset_size": 4,
+        "answerable_size": 4,
+        "unsupported_size": 0,
+        "supported_rate": 1.0,
+        "answerable_supported_rate": 1.0,
+        "unsupported_abstention_rate": 0.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.0,
+        "avg_context_count": 5.0,
+        "avg_context_chars": 17165.75,
+        "ragas_all": {
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.803442749501458,
+          "context_precision": 0.7999999999483334
+        },
+        "ragas_attempted": {
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.803442749501458,
+          "context_precision": 0.7999999999483334
+        }
+      }
+    },
+    "by_intent": {
+      "openai_file_search": {
+        "broad_summary": {
+          "dataset_size": 1,
+          "answerable_size": 1,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 16327.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9032445265540644,
+            "context_precision": 0.6999999999766667
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9032445265540644,
+            "context_precision": 0.6999999999766667
+          }
+        },
+        "lookup": {
+          "dataset_size": 3,
+          "answerable_size": 3,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 17445.333333333332,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7701754904839226,
+            "context_precision": 0.8333333332722223
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7701754904839226,
+            "context_precision": 0.8333333332722223
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "openai_native_zero_context_retry_20260501",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-001",
+      "question": "What are the four core functions described in this framework for managing AI risks?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The four core functions are GOVERN, MAP, MEASURE, and MANAGE. The framework says Part 2 \u201ccomprises the \u2018Core\u2019 of the Framework\u201d and that it describes these four functions to help organizations address AI risks in practice",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 17086,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6803008914792071,
+        "context_precision": 0.49999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0fa17d018f0116570069f4141ecc888197bb6e7657ba2c2bee; attempts=1"
+    },
+    {
+      "suite_id": "openai_native_zero_context_retry_20260501",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-002",
+      "question": "By when does NIST plan to conduct the next formal review of the framework with input from the AI community?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "NIST says the next formal review of the framework with input from the AI community is expected to take place no later than 2028",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 17859,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9208623043499932,
+        "context_precision": 0.9999999999
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0508fe5468803d7d0069f41467de7c8194a7517760a8bf89be; attempts=1"
+    },
+    {
+      "suite_id": "openai_native_zero_context_retry_20260501",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-006",
+      "question": "What attributes does the framework say should be evaluated to consider an AI system trustworthy?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework says an AI system\u2019s trustworthiness should be evaluated across these characteristics: valid and reliable, safe, secure and resilient, accountable and transparent, explainable and interpretable, privacy-enhanced, and fair with harmful bias managed. It also notes that valid and reliable is a necessary condition of trustworthiness.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 16327,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9032445265540644,
+        "context_precision": 0.6999999999766667
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0d07b61fd8e3d0040069f4149532bc8194a99270591c45eec0; attempts=1"
+    },
+    {
+      "suite_id": "openai_native_zero_context_retry_20260501",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-015",
+      "question": "Which act of Congress directed the development of this framework?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework was directed by the National Artificial Intelligence Initiative Act of 2020, as stated in the NIST AI RMF document: \u201cAs directed by the National Artificial Intelligence Initiative Act of 2020 (P.L. 116-283)\u2026\u201d",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 17391,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7093632756225675,
+        "context_precision": 0.9999999999666667
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0b05cb3178e774860069f414cb65748193bb6b486e775bd946; attempts=1"
+    }
+  ]
+}

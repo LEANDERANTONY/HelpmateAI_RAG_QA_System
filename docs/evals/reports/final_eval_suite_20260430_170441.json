@@ -1,0 +1,1050 @@
+{
+  "suite": {
+    "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+    "description": "OpenAI File Search chunk 2: fomc-minutes-2026-01-28, same held-out final eval questions.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\openai_eval_chunks\\openai_chunk_02_fomc-minutes-2026-01-28.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "openai_file_search"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      }
+    }
+  },
+  "summary": {
+    "overall": {
+      "openai_file_search": {
+        "dataset_size": 30,
+        "answerable_size": 27,
+        "unsupported_size": 3,
+        "supported_rate": 0.8333333333333334,
+        "answerable_supported_rate": 0.9259259259259259,
+        "unsupported_abstention_rate": 1.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.07407407407407407,
+        "avg_context_count": 4.833333333333333,
+        "avg_context_chars": 2883.2,
+        "ragas_all": {
+          "faithfulness": 0.31485569985569983,
+          "answer_relevancy": 0.7814967662606326,
+          "context_precision": 0.30592592590268675
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.2754025974025974,
+          "answer_relevancy": 0.8626089130688159,
+          "context_precision": 0.239999999976
+        }
+      }
+    },
+    "by_intent": {
+      "openai_file_search": {
+        "broad_summary": {
+          "dataset_size": 6,
+          "answerable_size": 6,
+          "unsupported_size": 0,
+          "supported_rate": 0.8333333333333334,
+          "answerable_supported_rate": 0.8333333333333334,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.16666666666666666,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 3000.0,
+          "ragas_all": {
+            "faithfulness": 0.32886002886002885,
+            "answer_relevancy": 0.8843452802752005,
+            "context_precision": 0.29166666664375
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.29463203463203463,
+            "answer_relevancy": 0.8732530894274146,
+            "context_precision": 0.19999999998
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 3000.0,
+          "ragas_all": {
+            "faithfulness": 0.16964285714285715,
+            "answer_relevancy": 0.8154063587506913,
+            "context_precision": 0.06249999999375
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.16964285714285715,
+            "answer_relevancy": 0.8154063587506913,
+            "context_precision": 0.06249999999375
+          }
+        },
+        "local_scope": {
+          "dataset_size": 6,
+          "answerable_size": 6,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 3000.0,
+          "ragas_all": {
+            "faithfulness": 0.48333333333333334,
+            "answer_relevancy": 0.8648512872157514,
+            "context_precision": 0.4583333332875
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.48333333333333334,
+            "answer_relevancy": 0.8648512872157514,
+            "context_precision": 0.4583333332875
+          }
+        },
+        "lookup": {
+          "dataset_size": 8,
+          "answerable_size": 8,
+          "unsupported_size": 0,
+          "supported_rate": 0.875,
+          "answerable_supported_rate": 0.875,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.125,
+          "avg_context_count": 4.375,
+          "avg_context_chars": 2562.0,
+          "ragas_all": {
+            "faithfulness": 0.1875,
+            "answer_relevancy": 0.782562254382932,
+            "context_precision": 0.249999999975
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.21428571428571427,
+            "answer_relevancy": 0.8943568621519222,
+            "context_precision": 0.2857142856857143
+          }
+        },
+        "numeric_procedure": {
+          "dataset_size": 3,
+          "answerable_size": 3,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 3000.0,
+          "ragas_all": {
+            "faithfulness": 0.1111111111111111,
+            "answer_relevancy": 0.8292420620741978,
+            "context_precision": 0.0
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.1111111111111111,
+            "answer_relevancy": 0.8292420620741978,
+            "context_precision": 0.0
+          }
+        },
+        "unsupported": {
+          "dataset_size": 3,
+          "answerable_size": 0,
+          "unsupported_size": 3,
+          "supported_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 3000.0,
+          "ragas_all": {
+            "faithfulness": 0.6868686868686869,
+            "answer_relevancy": 0.3132913088614832,
+            "context_precision": 0.8092592592393673
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-001",
+      "question": "What target range did the Committee decide to maintain for the federal funds rate at this meeting?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: I couldn\u2019t find any matching text in the uploaded file indicating the target range for the federal funds rate at that meeting.",
+      "citations": [],
+      "context_count": 0,
+      "context_chars": 0,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0146c353aaf6be570069f3361d122481948364ba0ce4679df0"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-002",
+      "question": "Which members dissented from the policy decision, and what alternative did they prefer?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Stephen I. Miran and Christopher J. Waller dissented from the policy decision, and they preferred to lower the target range for the federal funds rate by \u00bc percentage point.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.8414200503554875,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_043e0faa90ff29340069f3369bf27c8190a51b12434cd3fe42"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-003",
+      "question": "When is the next FOMC meeting scheduled to take place?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The next FOMC meeting is scheduled for Tuesday\u2013Wednesday, March 17\u201318, 2026, according to the minutes of the January 27\u201328, 2026 meeting.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2496,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.9919027722317924,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_00a5c6088950a7710069f336e353988190a6a3729eb1141d6e"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-004",
+      "question": "In the staff's review of foreign developments, which foreign central banks cut their policy rates and which raised them?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "A few foreign central banks cut their policy rates, including the Bank of England and the Bank of Mexico, while the Bank of Japan raised its key policy rate toward its assessment of the neutral range",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7922873330157705,
+        "context_precision": 0.49999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0e89ccc9f0bfa7c80069f33746e13c819086bdc3a4ec80b2ff"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-005",
+      "question": "In the staff's financial stability assessment, which categories of vulnerability were characterized as 'notable' versus 'moderate'?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The staff characterized vulnerabilities associated with nonfinancial business and household debt and vulnerabilities associated with funding risks as moderate, while vulnerabilities associated with leverage in the financial sector were characterized as notable. The overall system\u2019s financial vulnerabilities were also described as notable, and asset valuation pressures were elevated.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.6845224934241309,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_006f749b677170fa0069f3379982748197810859b352fa3f92"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-broad_summary-006",
+      "question": "What were the main reasons cited by participants who supported holding the federal funds rate steady at this meeting?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "Participants who supported holding the federal funds rate steady mainly pointed to three reasons: inflation was still somewhat elevated, economic activity was expanding at a solid pace, and the current policy stance was viewed as roughly within the range of neutral after the 75 basis point easing last year. They also said keeping rates unchanged would leave policymakers well positioned to judge the extent and timing of any further moves based on incoming data, the evolving outlook, and the balan",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.9398062345141297,
+        "context_precision": 0.7499999999625
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_01be70c7a79fa1a10069f337ec68e08193acfba17ff4a51c5d"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-broad_summary-007",
+      "question": "What financial stability concerns did participants raise specifically about the AI sector?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Participants said the AI sector could pose financial stability risks through elevated equity market valuations, high concentration of market values and activity in a small number of firms, increased debt financing, and the need to monitor financing of AI infrastructure buildout in opaque private markets",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.8477218763902744,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_02fe45db79422eda0069f33887024c819694d419dfa112e07d"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-comparison_synthesis-008",
+      "question": "How did the views of participants who preferred to lower rates differ from those who preferred to hold them steady?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Those who preferred to lower rates were more concerned that policy was still meaningfully restrictive and that downside risks to the labor market were more important than the risk of persistently elevated inflation. By contrast, those who preferred to hold rates steady thought the current policy stance was already around neutral after the earlier 75 basis point cut, and they wanted to wait for more incoming data to judge the timing and extent of any further changes.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.42857142857142855,
+        "answer_relevancy": 0.7606209717357494,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0c0b0299603684870069f338ec82e48190b32ef66d6ff0d0b0"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-numeric_procedure-009",
+      "question": "What specific operating parameters did the policy directive set for the standing overnight repo and reverse repo facilities, effective January 29, 2026?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The policy directive set the standing overnight repurchase agreement facility at a rate of 3.75 percent, and the standing overnight reverse repurchase agreement facility at an offering rate of 3.5 percent with a per-counterparty limit of $160 billion per day, effective January 29, 2026.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.3333333333333333,
+        "answer_relevancy": 0.7887006807198021,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_02acc82062c93a4b0069f33945ae6c8194b3de101f93fb0ae9"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-unsupported-010",
+      "question": "What did this meeting's updated dot plot show about participants' median federal funds rate projection for year-end 2026?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: The uploaded meeting minutes excerpt does not mention the updated dot plot or participants\u2019 median federal funds rate projection for year-end 2026. The available file only shows the decision to maintain the target range at 3\u00bd to 3\u00be percent and related policy language, not the 2026 dot plot projection.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.8333333333333334,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.99999999998
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0fb700f0096500320069f339983d208190a61fa4a483eaf9b4"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-011",
+      "question": "Where physically was this two-day FOMC meeting held?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The two-day FOMC meeting was held in the offices of the Board of Governors of the Federal Reserve System in Washington, D.C.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.9611413456581119,
+        "context_precision": 0.9999999999
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0af1f56bba710b7b0069f339dbf34c8190ae3a2d40dd28eb09"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-012",
+      "question": "Who was selected as Vice Chair of the Committee for the term beginning January 27, 2026?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "John C. Williams was selected as Vice Chair of the Committee for the term beginning January 27, 2026.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8908246394420883,
+        "context_precision": 0.9999999999
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0eda7ea6c93904420069f33a2e00b8819081fb80dfa30f5db1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-013",
+      "question": "Who was selected to serve as Manager of the System Open Market Account?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Roberto Perli was selected to serve as Manager of the System Open Market Account. The minutes also say Julie Ann Remache was selected as Deputy Manager.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.9194807296186615,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_06b8196f7300516c0069f33a5d1dc48193ae6f6daa68d9558a"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-014",
+      "question": "What was the unemployment rate in December as cited in the staff review?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The unemployment rate in December was 4.4 percent, according to the staff review",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.8679188816549259,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_00ee0f73fac326ab0069f33a89332881949d43e0108f295b15"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-015",
+      "question": "What rate is paid on reserve balances effective January 29, 2026?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The interest rate paid on reserve balances is 3.65 percent, effective January 29, 2026.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.7878096161023884,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_02a4948ec08d885d0069f33ac360488196808b9a3bdcec44a6"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-016",
+      "question": "In the Annual Organizational Matters section, who was selected as Secretary of the Committee?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Joshua Gallin was selected as Secretary of the Committee in the Annual Organizational Matters section.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.9409171101220327,
+        "context_precision": 0.9999999999
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0741727ddd7e8b350069f33af080ec8197a654c44be64faaba"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-017",
+      "question": "In the discussion of money markets, what factors did contacts attribute to the better-than-expected year-end repo outcome?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Money market contacts said the better-than-expected year-end repo outcome was due to several factors: increased available liquidity from reserve management purchases and a lower Treasury General Account, recent changes to standing repo operations\u2019 design and communications, greater use of centrally cleared repo, and investors being generally well prepared for year-end tightness",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.4,
+        "answer_relevancy": 0.9164838227247561,
+        "context_precision": 0.249999999975
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0ee044d8b92cabba0069f33b1fd6a881968347cbdb7dcfd3c5"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-018",
+      "question": "Among the elected FOMC members, who were the presidents of the Federal Reserve Banks of New York and Philadelphia?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The presidents of the Federal Reserve Banks of New York and Philadelphia among the elected FOMC members were John C. Williams of the Federal Reserve Bank of New York and Anna Paulson of the Federal Reserve Bank of Philadelphia",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.9316481976947611,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_02da5fb9758c89d60069f33b69670c81948a49922d34487017"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-019",
+      "question": "By approximately how much did the staff estimate the government shutdown reduced fourth-quarter real GDP growth?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The staff estimated that the government shutdown reduced fourth-quarter real GDP growth by about 1 percentage point",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9232487663130572,
+        "context_precision": 0.9999999999
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_090bed827eea409a0069f33b9a92e881908e1f82b2218516aa"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-broad_summary-020",
+      "question": "How does the staff describe credit performance in domestic markets at the time of the meeting?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The staff describes credit performance in domestic markets as \u201cstable but generally weaker than average pre-pandemic performance levels.\u201d It notes that default rates for corporate bonds and leveraged loans declined in November and December, while default rates for direct private lending borrowers stayed low; however, small business and CMBS delinquency rates were little changed and remained elevated relative to pre-pandemic levels.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.36363636363636365,
+        "answer_relevancy": 0.7982996138129052,
+        "context_precision": 0.49999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_093cea3b1470bfd20069f33bc61e808197bde549ec402a002d"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-broad_summary-021",
+      "question": "How does the staff's January economic outlook compare with the projection prepared for the December meeting?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The staff\u2019s January economic outlook was more optimistic than the projection prepared for the December meeting. The minutes say the January projection for economic activity was \u201cstronger,\u201d reflecting incoming data, greater expected support from financial conditions, and a small upward revision to potential output. It also projected real GDP growth to outpace potential growth through 2028, with unemployment gradually declining and moving below the staff\u2019s estimate of its natural rate by year-end.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.4666666666666667,
+        "answer_relevancy": 0.9219080600246876,
+        "context_precision": 0.49999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0c93ceb844fd39090069f33c01548c8197a07c587d040a431c"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-broad_summary-022",
+      "question": "How does the staff characterize the U.S. financial system's overall vulnerabilities, and what categories does it use?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The staff said the U.S. financial system\u2019s vulnerabilities were, on balance, notable. It broke them into four categories: asset valuation pressures, nonfinancial business and household debt, leverage in the financial sector, and funding risks. It characterized asset valuation pressures as elevated, nonfinancial business and household debt as moderate, leverage in the financial sector as notable, and funding risks as moderate",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.9028010982723159,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_03f5e044fd89a3210069f33c42d5d48196a9c78848a024348c"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-broad_summary-023",
+      "question": "What were participants' general views on consumer spending and business fixed investment?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Participants generally said consumer spending had been resilient, supported importantly by gains in household wealth, though they noted a split between stronger sales to higher-income consumers and softer sales to lower-income consumers. They also said business fixed investment remained robust, especially in the technology sector.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.14285714285714285,
+        "answer_relevancy": 0.8955347986368903,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0692be6746a105610069f33c7ce3fc8197b5230d7fa2bd6eca"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-comparison_synthesis-024",
+      "question": "How does the staff describe the change over the past year in core services price inflation versus core goods price inflation?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The staff says core services price inflation has declined relative to a year earlier, led by slower housing services inflation, while core goods price inflation has picked up over the same period, which the staff largely attributes to higher tariffs",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.25,
+        "answer_relevancy": 0.8127945739061776,
+        "context_precision": 0.249999999975
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_06be4c402edca53d0069f33cb59cec81939bb8bf341243dac4"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-comparison_synthesis-025",
+      "question": "How did the equity performance of the largest technology companies compare with the rest of the S&P 500 over the intermeeting period?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The largest technology companies underperformed the broader market over the intermeeting period. The minutes say that they \u201ccontinued to underperform the market,\u201d while excluding those companies, the S&P 500 was up nearly 3 percent; cyclical sectors and smaller-cap indexes did even better",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.8561316207746771,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0980051427714fe50069f33ce90b488195b1eb806f3a6e15a3"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-comparison_synthesis-026",
+      "question": "How did the staff's January inflation projection compare with the projection prepared for the December meeting, and why?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The staff\u2019s January inflation forecast was slightly higher than the projection prepared for the December meeting, because the staff expected tighter resource utilization and a higher path for core import prices than previously projected. The minutes also note that higher tariffs were expected to wane starting around midyear, after which inflation was projected to return to its prior disinflationary trend.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.8320782685861614,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_03823e0081d24ab40069f33d17cd6c81979c45f4c679709cc8"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-numeric_procedure-027",
+      "question": "According to the staff, what were the 12-month CPI and core CPI inflation rates in December?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the staff, in December the 12-month CPI inflation rate was 2.7 percent and core CPI inflation was 2.6 percent",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.9453950217227928,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_08d1a1465a22905c0069f33d5874288190b95ecfe9ba08fff2"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-numeric_procedure-028",
+      "question": "What size rate change did the FOMC make at the December meeting and how did it pass through to money market rates?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The FOMC made a 25 basis point decrease at the December meeting, and it \u201cquickly passed through to secured and unsecured money market rates.\u201d The minutes also note that conditions in short-term funding markets were stable and that the decrease in the target range reduced upward pressure on money market rates",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.7536304837799986,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_06dcbdcb531e38ab0069f33d88bcb0819783dac31c29d8a9a0"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-unsupported-029",
+      "question": "What numeric estimate of the natural rate of unemployment did the staff present in this meeting's projections?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: The meeting minutes say the unemployment rate was expected to move below the staff\u2019s estimate of its natural rate, but the excerpt provided does not give the numeric estimate itself.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.47777777776185176
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_064aa4a8e26528920069f33dbe7b688194aba863d6b252ea0f"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-unsupported-030",
+      "question": "What were the results of the FOMC's vote at this meeting on amending the standing repo facility's aggregate limit?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The minutes do not show any vote to amend the standing repo facility\u2019s aggregate limit at this meeting. Instead, they note that the Committee\u2019s vote covered the domestic policy directive, which included standing overnight repo operations and other actions, and that the vote on the statement was 10-2 on the federal funds rate decision, with Governors Miran and Waller voting against. The directive mentions standing overnight reverse repo operations with a per-counterparty limit, but not an aggrega",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.7272727272727273,
+        "answer_relevancy": 0.9398739265844496,
+        "context_precision": 0.94999999997625
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0a85d95f5963b5830069f33df6ea348195887bf9df68804d68"
+    }
+  ]
+}

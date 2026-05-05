@@ -1,0 +1,616 @@
+{
+  "suite": {
+    "suite_id": "vectara_native_150_batch_05_20260501",
+    "description": "Draft held-out product-fit final evaluation manifest. Documents are fixed; questions must be generated and frozen before any system run.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\vectara_native_batches\\batch_05.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "vectara"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      },
+      "mode": "native_mockingbird_answer",
+      "generation_preset_name": "mockingbird-2.0"
+    }
+  },
+  "summary": {
+    "overall": {
+      "vectara": {
+        "dataset_size": 15,
+        "answerable_size": 13,
+        "unsupported_size": 2,
+        "supported_rate": 0.8666666666666667,
+        "answerable_supported_rate": 1.0,
+        "unsupported_abstention_rate": 1.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.0,
+        "avg_context_count": 5.0,
+        "avg_context_chars": 889.0,
+        "ragas_all": {
+          "faithfulness": 0.6327469135802469,
+          "answer_relevancy": 0.6996095981974673,
+          "context_precision": 0.7655555555115092
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.7300925925925926,
+          "answer_relevancy": 0.8015213969856693,
+          "context_precision": 0.7743589743116773
+        }
+      }
+    },
+    "by_intent": {
+      "vectara": {
+        "broad_summary": {
+          "dataset_size": 3,
+          "answerable_size": 3,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 720.3333333333334,
+          "ragas_all": {
+            "faithfulness": 0.8277777777777777,
+            "answer_relevancy": 0.8779193004616178,
+            "context_precision": 0.8259259259056173
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.8277777777777777,
+            "answer_relevancy": 0.8779193004616178,
+            "context_precision": 0.8259259259056173
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 3,
+          "answerable_size": 3,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1019.6666666666666,
+          "ragas_all": {
+            "faithfulness": 0.8197530864197531,
+            "answer_relevancy": 0.9504548081601981,
+            "context_precision": 0.7611111110854166
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.8197530864197531,
+            "answer_relevancy": 0.9504548081601981,
+            "context_precision": 0.7611111110854166
+          }
+        },
+        "lookup": {
+          "dataset_size": 5,
+          "answerable_size": 5,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 949.4,
+          "ragas_all": {
+            "faithfulness": 0.5888888888888889,
+            "answer_relevancy": 0.8450395179636789,
+            "context_precision": 0.69999999993
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.5888888888888889,
+            "answer_relevancy": 0.8450395179636789,
+            "context_precision": 0.69999999993
+          }
+        },
+        "numeric_procedure": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 806.5,
+          "ragas_all": {
+            "faithfulness": 0.8020833333333333,
+            "answer_relevancy": 0.35472912256492917,
+            "context_precision": 0.9027777777143517
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.8020833333333333,
+            "answer_relevancy": 0.35472912256492917,
+            "context_precision": 0.9027777777143517
+          }
+        },
+        "unsupported": {
+          "dataset_size": 2,
+          "answerable_size": 0,
+          "unsupported_size": 2,
+          "supported_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 877.5,
+          "ragas_all": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.03718290607415427,
+            "context_precision": 0.7083333333104167
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "vectara_native_150_batch_05_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-021",
+      "question": "How does the framework describe its overall stance on risk tolerance for organizations using it?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework does not prescribe a specific risk tolerance for organizations using it [1]. However, it acknowledges that organizations should define reasonable risk tolerance when established guidelines do not exist [2]. The level of risk that is acceptable to an organization or society is highly contextual and application-specific [3]. Risk tolerance refers to the organization's readiness to bear the risk in order to achieve its objectives [4]. The framework allows for flexibility in implementa",
+      "citations": [
+        "Page 12",
+        "Page 12",
+        "Page 12",
+        "Page 12",
+        "Page 38"
+      ],
+      "context_count": 5,
+      "context_chars": 587,
+      "ragas": {
+        "faithfulness": 0.875,
+        "answer_relevancy": 0.8906163287336422,
+        "context_precision": 0.999999999975
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.99609375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_05_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-022",
+      "question": "What outcomes does the framework say organizations and users should expect to gain from applying it?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the framework, organizations and users should expect to gain several outcomes from applying it. Firstly, the framework should support organizations' abilities to operate under applicable domestic and international legal or regulatory regimes [2]. Secondly, it should provide a catalog of outcomes and approaches rather than prescribe one-size-fits-all requirements [3]. Additionally, by applying the framework, organizations can improve their ability to manage AI risks, including their ",
+      "citations": [
+        "Page 24",
+        "Page 46",
+        "Page 46",
+        "Page 21",
+        "Page 12"
+      ],
+      "context_count": 5,
+      "context_chars": 909,
+      "ragas": {
+        "faithfulness": 0.875,
+        "answer_relevancy": 0.8724509186614099,
+        "context_precision": 0.99999999998
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.99609375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_05_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-023",
+      "question": "How does the framework characterize residual risk, and what does it say organizations should do about it?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework characterizes residual risk as the remaining negative risk that an AI system may pose after it has been demonstrated to be safe and can fail safely, particularly if operated beyond its knowledge limits [1]. It does not prescribe risk tolerance, but rather supports organizations' abilities to operate under applicable domestic and international legal or regulatory regimes [3][5]. In terms of what organizations should do about residual risk, the framework suggests following procedures",
+      "citations": [
+        "Page 33",
+        "Page 10",
+        "Page 12",
+        "Page 36",
+        "Page 46"
+      ],
+      "context_count": 5,
+      "context_chars": 665,
+      "ragas": {
+        "faithfulness": 0.7333333333333333,
+        "answer_relevancy": 0.8706906539898015,
+        "context_precision": 0.47777777776185176
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.9921875"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_05_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-comparison_synthesis-024",
+      "question": "How does the framework distinguish between security and resilience for AI systems?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework distinguishes between security and resilience for AI systems by defining security as a broader concept that includes protocols to avoid, protect against, respond to, or recover from attacks [3]. Resilience, on the other hand, is the ability to return to normal function after an unexpected adverse event [3]. The NIST Cybersecurity Framework and other available standards and guidance can be leveraged to reduce security and privacy risks in AI systems [2]. These frameworks can inform ",
+      "citations": [
+        "Page 33",
+        "Page 38",
+        "Page 20",
+        "Page 38",
+        "Page 20"
+      ],
+      "context_count": 5,
+      "context_chars": 1284,
+      "ragas": {
+        "faithfulness": 0.8333333333333334,
+        "answer_relevancy": 1.0,
+        "context_precision": 0.3333333333
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.99609375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_05_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-comparison_synthesis-025",
+      "question": "How does the framework distinguish reliability from robustness?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework distinguishes reliability from robustness in the following ways:\n\nReliability refers to the overall correctness of an AI system's operation under expected use conditions and over a given period of time, including the entire lifetime of the system [5]. It focuses on ensuring that the system performs as intended under normal circumstances.\n\nOn the other hand, robustness is defined as \"the ability of a system to maintain its level of performance under a variety of circumstances\" [1]. ",
+      "citations": [
+        "Page 18",
+        "Page 18",
+        "Page 20",
+        "Page 18",
+        "Page 18"
+      ],
+      "context_count": 5,
+      "context_chars": 918,
+      "ragas": {
+        "faithfulness": 0.7,
+        "answer_relevancy": 0.8776285123827813,
+        "context_precision": 0.94999999997625
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.9921875"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_05_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-comparison_synthesis-026",
+      "question": "How is the Govern function related to the Manage function in the framework?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The Govern function and Manage function are related in the framework as follows:\n\nThe Govern function is a cross-cutting function that enables the other functions of the process, including Manage [2]. The Manage function involves allocating risk resources to mapped and measured risks on a regular basis, as defined by the Govern function [1]. Additionally, organizations should utilize both Measure and Manage functions along with policies and procedures put into place in the Govern function to ass",
+      "citations": [
+        "Page 36",
+        "Page 26",
+        "Page 29",
+        "Page 26",
+        "Page 36"
+      ],
+      "context_count": 5,
+      "context_chars": 857,
+      "ragas": {
+        "faithfulness": 0.9259259259259259,
+        "answer_relevancy": 0.9737359120978132,
+        "context_precision": 0.99999999998
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=1.0"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_05_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-numeric_procedure-027",
+      "question": "How does the framework define risk in terms of harm and likelihood when considering negative impacts?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the provided sources, the framework defines risk in terms of harm and likelihood when considering negative impacts as follows:\n\nRisk is a function of two factors: 1) the negative impact, or magnitude of harm, that would arise if the circumstance or event occurs [1], and 2) the likelihood of occurrence [1]. In other words, risk is determined by both the severity of potential harm and how likely it is to happen.\n\nIt's important to note that while this framework addresses negative impa",
+      "citations": [
+        "Page 9",
+        "Page 10",
+        "Page 9",
+        "Page 38",
+        "Page 12"
+      ],
+      "context_count": 5,
+      "context_chars": 907,
+      "ragas": {
+        "faithfulness": 0.6666666666666666,
+        "answer_relevancy": 0.7094582451298583,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=1.0"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_05_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-numeric_procedure-028",
+      "question": "How does the framework describe its versioning scheme for the AI RMF?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework describes its versioning scheme for the AI RMF using a two-number versioning system, where the first number represents the generation of the AI RMF and its companion documents, and will change only with major revisions [1, 4]. The second number is not explicitly mentioned in the provided sources. The framework also uses use-case profiles to implement specific settings or applications based on user requirements, risk tolerance, and resources [5]. An example of such a profile is an A",
+      "citations": [
+        "Page 1",
+        "Vectara Result 2",
+        "Page 1",
+        "Page 1",
+        "Page 38"
+      ],
+      "context_count": 5,
+      "context_chars": 706,
+      "ragas": {
+        "faithfulness": 0.9375,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.8055555555287036
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=1.0"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_05_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-unsupported-029",
+      "question": "What specific quantitative bias threshold does the framework recommend for face recognition systems used in law enforcement?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "No result found.",
+      "citations": [
+        "Page 38",
+        "Page 14",
+        "Page 46",
+        "Page 17",
+        "Page 17"
+      ],
+      "context_count": 5,
+      "context_chars": 538,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.07436581214830854,
+        "context_precision": 0.999999999975
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.037841797"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_05_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-unsupported-030",
+      "question": "What fee does NIST charge organizations to be officially certified as compliant with the AI RMF?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "No result found.",
+      "citations": [
+        "Page 1",
+        "Page 1",
+        "Page 1",
+        "Page 29",
+        "Page 26"
+      ],
+      "context_count": 5,
+      "context_chars": 1217,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.4166666666458333
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.018432617"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_05_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-011",
+      "question": "What arXiv identifier and submission date are listed for this paper?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The arXiv identifier and submission date for the paper are as follows:\n\n* arXiv identifier: 2205.02191 [1]\n* Submission date: Not explicitly mentioned, but it is a preprint, which means it was submitted to arXiv in May 2022 [1]\n\nNote that the other sources provided do not contain information about a specific paper's arXiv identifier and submission date. They only mention other papers or provide general information about arXiv preprints.",
+      "citations": [
+        "Page 12",
+        "Page 12",
+        "Page 12",
+        "Page 12",
+        "Page 12"
+      ],
+      "context_count": 5,
+      "context_chars": 225,
+      "ragas": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.95219159862837,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.016357422"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_05_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-012",
+      "question": "Who is the corresponding author for this paper?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The corresponding author for this paper is David R. Thompson [2].",
+      "citations": [
+        "Page 12",
+        "Page 12",
+        "Page 12",
+        "Page 12",
+        "Page 6"
+      ],
+      "context_count": 5,
+      "context_chars": 854,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 1.0,
+        "context_precision": 0.0
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.018554688"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_05_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-013",
+      "question": "What does the abbreviation PINO stand for in the paper?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The abbreviation PINO stands for Physics-Informed Neural Operator [1]. This is a method that minimizes a combined loss function, which includes data loss and PDE residual loss [1]. The PINO loss uses coarse-resolution data for the first term and enforces the PDE residual at higher resolution, without introducing an explicit weighting parameter between them [2].",
+      "citations": [
+        "Page 12",
+        "Page 12",
+        "Page 6",
+        "Page 3",
+        "Page 12"
+      ],
+      "context_count": 5,
+      "context_chars": 1295,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7140776356141151,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.66796875"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_05_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-014",
+      "question": "What does GNO refer to in the discussion of neural operator variants?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "In the discussion of neural operator variants, GNO refers to Graph Neural Operator [2]. This variant constructs a spatial proximity graph over the discretization and approximates the integral operator via message-passing updates with learned kernels. It handles unstructured grids through Nystro\u00a8m-style subsampling and local aggregation, making it mesh-independent [2].",
+      "citations": [
+        "Page 12",
+        "Page 12",
+        "Page 12",
+        "Page 12",
+        "Page 12"
+      ],
+      "context_count": 5,
+      "context_chars": 1327,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.810599527594539,
+        "context_precision": 0.49999999995
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.7421875"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_05_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-015",
+      "question": "Which prior work do the authors cite for introducing 'Model Cards' as a way to document key modeling decisions?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The authors cite Mitchell et al. (2019) [Mitchell et al., 2019] for introducing 'Model Cards' as a way to document key modeling decisions. This is evident from the statement in [1] which mentions \"Mitchell et al. (2019) proposed Model Cards to document key modeling decisions\". Additionally, [3] also mentions \"Model cards for model reporting\", further supporting the use of Model Cards as a documentation tool.\n\nNo other sources in the provided list mention Model Cards or their introduction by any ",
+      "citations": [
+        "Page 1",
+        "Page 6",
+        "Page 12",
+        "Page 1",
+        "Page 12"
+      ],
+      "context_count": 5,
+      "context_chars": 1046,
+      "ragas": {
+        "faithfulness": 0.4444444444444444,
+        "answer_relevancy": 0.7483288279813705,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.64453125"
+    }
+  ]
+}

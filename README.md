@@ -18,7 +18,7 @@ Most RAG demos retrieve the top chunks and hope the answer model can stitch them
 | Typical RAG failure | HelpmateAI behavior |
 | --- | --- |
 | "What are the conclusions?" returns a few random result paragraphs. | A dedicated `global_summary_first` route anchors overview, findings, discussion, and conclusion regions before assembling raw chunk evidence. |
-| The model answers even when retrieval is weak. | Evidence is graded as `strong`, `weak`, or `unsupported`; unsupported questions stop before answer generation. |
+| The model answers even when retrieval is weak. | Evidence is graded as `strong`, `weak`, or `unsupported`; unsupported questions stop before answer generation, and a verifier can mark a response as `partial` only when grounded facts and missing facts are both visible. |
 | Section-scoped questions drift into the wrong chapter or policy region. | A bounded orchestrator can resolve explicit local scope to validated section IDs, with deterministic safety checks. |
 | The right chunk appears in top-k but not at rank 1. | A spread-triggered, reorder-only evidence selector can promote stronger evidence without pruning away support. |
 | Architecture changes are chosen by intuition. | The repo carries ADRs, ablations, and benchmark reports for retrieval, reranking, planning, abstention, and evidence selection. |
@@ -72,6 +72,7 @@ The latest held-out suite uses:
 - fixed draft questions in [final_eval_questions.draft.json](docs/evals/final_eval_questions.draft.json)
 - RAGAS scoring with a non-generator judge model where configured
 - explicit abstention metrics alongside answer-quality metrics
+- strict support metrics separated from partial-answer coverage metrics
 - separate native-context and equalized-context modes for future product and controlled retrieval comparisons
 - documented vendor comparison settings when OpenAI File Search or Vectara baselines are run
 
@@ -81,12 +82,20 @@ Full protocol details live in [final_eval_protocol.md](docs/evals/final_eval_pro
 
 The retrieval core lives in `src/` and stays framework-agnostic. `backend/` exposes it through FastAPI upload, index, status, and ask endpoints. `frontend/` ships the Next.js workspace UI. `deploy/vps/` contains the Docker Compose and Caddy deployment path for the API, while the public app is split between landing, workspace, and backend surfaces.
 
-Built with Next.js, FastAPI, `pypdf`, `python-docx`, optional Docling, ChromaDB, OpenAI, sentence-transformers, scikit-learn, optional Supabase persistence, optional hosted Chroma-compatible storage, Docker, and `uv`.
+Built with Next.js, FastAPI, `pypdf`, `pdfplumber`, `python-docx`, ChromaDB, OpenAI, sentence-transformers, scikit-learn, optional Supabase persistence, optional hosted Chroma-compatible storage, Docker, and `uv`.
 
-PDF extraction defaults to `HELPMATE_PDF_EXTRACTOR=pypdf` for reliability. DOCX extraction defaults to `HELPMATE_DOCX_EXTRACTOR=python-docx`. Set either extractor to `docling` only for local layout-parser experiments; production stays on the predictable local extractors.
+PDF extraction defaults to `HELPMATE_PDF_EXTRACTOR=pypdf` for reliability. DOCX extraction defaults to `HELPMATE_DOCX_EXTRACTOR=python-docx`. PDF table enrichment defaults to `HELPMATE_TABLE_EXTRACTOR=pdfplumber`, which selectively scans likely table-heavy pages and stores extracted tables as page-linked artifacts.
 
-Docling OCR is disabled by default (`HELPMATE_DOCLING_OCR=false`) to avoid unnecessary memory pressure on born-digital PDFs. It can be enabled for scanned PDFs when the runtime has enough memory. Docling runs with expanded Markdown tables and records OCR/table-mode metadata when explicitly enabled.
+Set `HELPMATE_TABLE_EXTRACTOR=off` to disable table enrichment, or adjust `HELPMATE_TABLE_EXTRACTOR_MAX_PAGES` to cap how many likely table pages pdfplumber reviews during ingestion.
+
+Artifact interpretation is handled by the indexing-time chunk semantics layer when `HELPMATE_CHUNK_SEMANTICS_ENABLED=true`. Deterministic parsers propose raw candidates such as tables, footnotes, bibliography blocks, front matter, and acronym/definition snippets; the semantic layer classifies whether those candidates are useful evidence, metadata evidence, table evidence, definition evidence, or noise before retrieval uses them.
+
+Document landmarks are built at indexing time when `HELPMATE_DOCUMENT_LANDMARKS_ENABLED=true`. A bounded model call reviews likely front/back matter and structural pages, then emits page-linked landmarks such as title page, foreword, abstract, executive summary, author/correspondence block, definition region, glossary, or volume boundary. These landmarks are indexed as normal evidence candidates with semantic labels rather than query-specific boosts.
+
+Answer support is also checked in two layers. The answer model returns `supported`, `partial`, or `unsupported`; when the first pass is not fully supported, `HELPMATE_SUPPORT_STATUS_VERIFIER_ENABLED=true` runs a strict support-status verifier that can distinguish a genuinely unsupported refusal from a visible partial answer. The verifier cannot upgrade a refused answer into full support.
 
 ## Current Limits
 
 HelpmateAI is strongest on grounded long-document QA, policy questions, thesis/report navigation, and citation-visible answers. The hardest remaining cases are the broadest academic synthesis prompts on noisy journal-style PDFs, plus broader held-out coverage for orchestrated local-scope behavior.
+
+Partial support is intentionally conservative: it is not treated as full support, and it is only allowed when the retrieved evidence supports a substantive part of the question while the visible answer explicitly states what the evidence does not provide.

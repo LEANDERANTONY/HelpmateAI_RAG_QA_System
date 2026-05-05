@@ -1,0 +1,614 @@
+{
+  "suite": {
+    "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-10",
+    "description": "OpenAI native File Search corrected rerun chunk 10/10, questions 136-150.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\openai_native_15_chunks\\openai_native_15_chunk_10.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "openai_file_search"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      }
+    }
+  },
+  "summary": {
+    "overall": {
+      "openai_file_search": {
+        "dataset_size": 15,
+        "answerable_size": 13,
+        "unsupported_size": 2,
+        "supported_rate": 0.8,
+        "answerable_supported_rate": 0.9230769230769231,
+        "unsupported_abstention_rate": 1.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.07692307692307693,
+        "avg_context_count": 5.0,
+        "avg_context_chars": 14144.2,
+        "ragas_all": {
+          "faithfulness": 0.9158834586466166,
+          "answer_relevancy": 0.6809686349246544,
+          "context_precision": 0.804563492033206
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.9043062200956937,
+          "answer_relevancy": 0.851210793655818,
+          "context_precision": 0.7886363636044508
+        }
+      }
+    },
+    "by_intent": {
+      "openai_file_search": {
+        "broad_summary": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 15662.25,
+          "ragas_all": {
+            "faithfulness": 0.9868421052631579,
+            "answer_relevancy": 0.7928434700166186,
+            "context_precision": 0.8885416666272656
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.9868421052631579,
+            "answer_relevancy": 0.7928434700166186,
+            "context_precision": 0.8885416666272656
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 3,
+          "answerable_size": 3,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 13182.666666666666,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.88445879242362,
+            "context_precision": 0.5333333333066667
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.88445879242362,
+            "context_precision": 0.5333333333066667
+          }
+        },
+        "local_scope": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 0.75,
+          "answerable_supported_rate": 0.75,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.25,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 12843.75,
+          "ragas_all": {
+            "faithfulness": 0.71875,
+            "answer_relevancy": 0.6770456979501465,
+            "context_precision": 0.8124999999666667
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.6666666666666666,
+            "answer_relevancy": 0.902727597266862,
+            "context_precision": 0.7499999999666667
+          }
+        },
+        "numeric_procedure": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 15056.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8407982373659477,
+            "context_precision": 0.9020833333132813
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8407982373659477,
+            "context_precision": 0.9020833333132813
+          }
+        },
+        "unsupported": {
+          "dataset_size": 2,
+          "answerable_size": 0,
+          "unsupported_size": 2,
+          "supported_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 14239.5,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.7944444444246297
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-10",
+      "system": "openai_file_search",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-local_scope-016",
+      "question": "According to the executive summary, how much was invested in off-grid renewable energy solutions in 2021, and how does that compare with what is needed annually to 2030?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the executive summary, investments in off-grid renewable energy solutions in 2021 amounted to USD 0.5 billion, which was far below the USD 15 billion needed annually to 2030.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 13736,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8900081192573602,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_05a249003d3c305a0069f3b151636c81968d4b3484f02f04f1; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-10",
+      "system": "openai_file_search",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-local_scope-017",
+      "question": "According to the executive summary, what share of global renewable energy investment in 2022 went to solar PV and wind power?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the executive summary, 95% of global renewable energy investment in 2022 went to solar PV and wind power",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 10522,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.8677401981184328,
+        "context_precision": 0.249999999975
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_040abd24c69c93350069f3b19cb6588195a5515bc71a109e36; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-10",
+      "system": "openai_file_search",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-local_scope-018",
+      "question": "Under the 1.5 degree C Scenario, what shares of total final energy consumption do hydrogen and modern biomass meet by 2050?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Under the 1.5\u00b0C Scenario, hydrogen meets 14% of total final energy consumption by 2050, and modern biomass meets 16%",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 13817,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9504344744247929,
+        "context_precision": 0.999999999975
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0a7385a35639c2d70069f3b1e6012881979a47c5c63f4cb72b; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-10",
+      "system": "openai_file_search",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-local_scope-019",
+      "question": "In the executive summary's tracking-progress table, what average annual investment is required in power grids and flexibility through 2030 and through 2050 under the 1.5 degree C scenario?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "Under the 1.5\u00b0C Scenario, the executive summary says average annual investment in power grids and system flexibility is estimated to need to reach USD 0.8 trillion per year by 2050 \n\nFor the through-2030 figure, the file search results only mention that the 1.5\u00b0C Scenario requires almost 360 GW of battery storage by 2030 and other flexibility-related capacity, but they do not state an average annual investment amount for power grids and flexibility through 2030. I cannot confirm that number from",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 13300,
+      "ragas": {
+        "faithfulness": 0.875,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.9999999999666667
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_04a44fdaa37e24660069f3b225d6648193b74c15f5a751b4d7; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-10",
+      "system": "openai_file_search",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-broad_summary-020",
+      "question": "What does the report say multilateral financing institutions and concessional finance should do to support the energy transition?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The report says multilateral financing institutions should prioritise building the infrastructure that underpins the new energy system, because that can support both development and climate goals and help unlock private investment in places facing high capital costs. It says most of that funding should come as concessional loans, with grant funding for the most vulnerable countries, especially LDCs and SIDS \n\nIt also says development finance institutions should reform lending practices by provid",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 14719,
+      "ragas": {
+        "faithfulness": 0.9473684210526315,
+        "answer_relevancy": 0.7767308764763089,
+        "context_precision": 0.8041666666465626
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0d6463c1d4f45b7c0069f3b2a1a43881948827dfe61f4d44ff; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-10",
+      "system": "openai_file_search",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-broad_summary-021",
+      "question": "How does Volume 2 differ from Volume 1 in scope and approach?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Volume 2 differs from Volume 1 mainly in that it shifts from energy-system roadmaps to socio-economic analysis. Volume 2 explicitly says it \u201cdiscusses the socio-economic impacts\u201d of IRENA\u2019s 1.5\u00b0C Scenario compared to the Planned Energy Scenario, and that it is based on macro-econometric modelling to show effects on economic activity, employment, and wellbeing. It is intended to help policymakers design measures that maximize transition benefits and reduce adjustment burdens \n\nBy contrast, Volume",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 16724,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8166970132230572,
+        "context_precision": 0.7499999999625
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0485cdb21fb0c26b0069f3b3192bdc8195892c83142c6ad644; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-10",
+      "system": "openai_file_search",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-broad_summary-022",
+      "question": "What does the executive summary say about the consequences of continued delays in scaling the energy transition?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The executive summary says that continued delays will worsen the already difficult challenge of meeting 2030 and 2050 emissions reduction targets, while also increasing future investment needs and the costs of worsening climate change effects. It also notes that \u201cevery year\u201d the gap between what is achieved and what is required keeps growing, and that delays add to the challenge of staying on a 1.5\u00b0C pathway",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 17000,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7581227086366013,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_063d90500f0e059e0069f3b36cf3e881968172e722c84c8943; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-10",
+      "system": "openai_file_search",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-broad_summary-023",
+      "question": "What does the executive summary say about the relationship between the energy crisis and the transition?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The executive summary says the energy crisis has complicated the transition: global events, especially the Ukraine crisis, worsened the situation by driving up energy prices and tightening supplies. It also notes that governments responded in mixed ways\u2014some measures supported the transition, like faster renewable deployment, while others pushed for more fossil fuel investment, which is incompatible with the energy transition. \n\nIt further frames the crisis as a reason to accelerate, not slow do",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 14206,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8198232817305069,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0fb79c6667a267870069f3b3ab2ec881949326aff1453da731; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-10",
+      "system": "openai_file_search",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-comparison_synthesis-024",
+      "question": "How do the cumulative and per-year investment requirements differ between the Planned Energy Scenario and the 1.5 degree C Scenario?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The Planned Energy Scenario requires USD 103 trillion in cumulative energy sector investments from 2023 to 2050, while the 1.5\u00b0C Scenario requires USD 150 trillion over the same period  \n\nSo the difference is:\n- Cumulative: USD 47 trillion more in the 1.5\u00b0C Scenario\n- Per year: about USD 1.7 trillion more per year in the 1.5\u00b0C Scenario, rising to about USD 5.3 trillion annually versus the lower Planned Energy Scenario level \n\nThe file also notes that, through 2030, the 1.5\u00b0C Scenario would need ",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 13205,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8472500348167155,
+        "context_precision": 0.699999999965
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_04a0fc90a8b265bd0069f3b3ffe71c81908f1fb3ff68acc842; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-10",
+      "system": "openai_file_search",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-comparison_synthesis-025",
+      "question": "How does the role of bioenergy in 2050 differ between the Planned Energy Scenario and the 1.5 degree C Scenario?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The 1.5\u00b0C Scenario shows bioenergy playing a much larger and more active role by 2050 than in the Planned Energy Scenario. In the 1.5\u00b0C Scenario, bioenergy is described as key for replacing fossil fuels across electricity, industry, buildings, transport, and as a chemical feedstock, with biomass supply reaching 135 EJ by 2050 and modern bioenergy quadrupling from 2020 levels . By contrast, the Planned Energy Scenario is only shown as a reference case with much lower bioenergy deployment in Figur",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 12862,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9347739914377421,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0c8b892b22ee296f0069f3b48367fc81978f988bffdb838934; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-10",
+      "system": "openai_file_search",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-comparison_synthesis-026",
+      "question": "How does the share of renewables in electricity generation in recent years compare with what is needed by 2030 and 2050 under the 1.5 degree C scenario?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "In recent years, renewables made up about 28% of global electricity generation. Under the 1.5\u00b0C scenario, that share needs to rise to 68% by 2030 and 91% by 2050  \n\nSo compared with recent years, the required increase is:\n- by 2030: +40 percentage points\n- by 2050: +63 percentage points\n\nThe same source also shows variable renewables alone rising from 9% in 2020 to 46% in 2030 and 70% in 2050",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 13481,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy": 0.8713523510164026,
+        "context_precision": 0.36666666664833336
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0128d7c2b517459d0069f3b51719ec819481cdb2ebfc94debc; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-10",
+      "system": "openai_file_search",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-numeric_procedure-027",
+      "question": "How much does the report say global CO2 emissions need to be cut from 2022 levels by 2050 to limit warming to 1.5 degree C, and what end-state for the energy sector does that imply?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The report says global CO2 emissions need to be cut by around 37 gigatonnes from 2022 levels by 2050, and that this implies reaching net-zero emissions in the energy sector by 2050",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 14502,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8095286148783614,
+        "context_precision": 0.99999999998
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_09288796fbd3162e0069f3b5a9346081979026a14079863828; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-10",
+      "system": "openai_file_search",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-numeric_procedure-028",
+      "question": "According to the executive summary, what size emissions gap remains in 2050 between fully implemented current pledges and the 1.5 degree C pathway, and how much do those pledges actually reduce emissions by 2030 and 2050?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the executive summary, the current pledges and plans leave a 16 Gt emissions gap in 2050 versus the 1.5\u00b0C pathway. If fully implemented, those pledges would reduce CO2 emissions by 6% by 2030 and 56% by 2050, compared with 2022 levels.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 15610,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.872067859853534,
+        "context_precision": 0.8041666666465626
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0bfb1882874c71c60069f3b60fc6ec8196b73ab5654227d1c7; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-10",
+      "system": "openai_file_search",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-unsupported-029",
+      "question": "What does the report list as the levelized cost of nuclear power in 2050 under the 1.5 degree C Scenario?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: The retrieved report excerpts mention that nuclear power accounts for 4% of electricity supply in 2050 under the 1.5\u00b0C Scenario, but they do not list a levelized cost of nuclear power for 2050.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 14213,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.5888888888692593
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0337559b97615abd0069f3b685a9cc8193aeefc052c950da26; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-10",
+      "system": "openai_file_search",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-unsupported-030",
+      "question": "What is the report's projected per-kilogram price of green hydrogen produced via PEM electrolysis in the European Union by 2030?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: The uploaded report excerpts mention that green hydrogen could become cost-competitive by 2030 and discuss EU hydrogen targets, but they do not provide a specific projected per-kilogram price for green hydrogen produced via PEM electrolysis in the European Union by 2030 in the available file snippets.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 14266,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.99999999998
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_09bc1249c4101a540069f3b6f7e9a4819587861162817ea0ee; attempts=1"
+    }
+  ]
+}

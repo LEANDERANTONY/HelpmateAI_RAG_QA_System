@@ -1,0 +1,162 @@
+{
+  "suite": {
+    "suite_id": "heldout-product-fit-2026-04-draft-openai-native-metric-retry-final-02",
+    "description": "Final tiny metric retry for remaining Gemini context_precision errors.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\openai_native_metric_retries\\openai_native_metric_retry_final_02.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "openai_file_search"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      }
+    }
+  },
+  "summary": {
+    "overall": {
+      "openai_file_search": {
+        "dataset_size": 2,
+        "answerable_size": 2,
+        "unsupported_size": 0,
+        "supported_rate": 1.0,
+        "answerable_supported_rate": 1.0,
+        "unsupported_abstention_rate": 0.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.0,
+        "avg_context_count": 5.0,
+        "avg_context_chars": 18931.0,
+        "ragas_all": {
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.8201859076994937,
+          "context_precision": 0.9749999999714583
+        },
+        "ragas_attempted": {
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.8201859076994937,
+          "context_precision": 0.9749999999714583
+        }
+      }
+    },
+    "by_intent": {
+      "openai_file_search": {
+        "local_scope": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 18931.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8201859076994937,
+            "context_precision": 0.9749999999714583
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8201859076994937,
+            "context_precision": 0.9749999999714583
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-metric-retry-final-02",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-017",
+      "question": "In the pCO2 upscaling case study (Case Study 3b), how does the transfer learning approach handle the sparsity of in-situ observations?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The transfer learning approach handles the sparsity of in-situ observations by first pretraining on dense simulated full-field pCO2 data from ocean biogeochemical models, then fine-tuning on the sparse SOCAT observations. During fine-tuning, losses are computed only at observed locations, and only 2\u20135% of the parameters are unfrozen to reduce overfitting while preserving the learned spatiotemporal structure. This lets the model use model simulations for broad coverage and observations for realis",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 18262,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8059091080184103,
+        "context_precision": 0.94999999997625
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0e71e88871a89ece0069f3bef89ab081958677bf1cd2a8528b; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-metric-retry-final-02",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-018",
+      "question": "In the development stage of the workflow framework, what does 'iterative refinement' specifically involve according to the paper?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the paper, \u201citerative refinement\u201d in the development stage means using validation insights to revise the model\u2014specifically by adjusting objective functions, training procedures, or data preprocessing, and incorporating scientific feedback into model revisions",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 19600,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8344627073805772,
+        "context_precision": 0.9999999999666667
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0812fd6caeaafb080069f3bf7f99c08194bce5f795f0caef29; attempts=1"
+    }
+  ]
+}

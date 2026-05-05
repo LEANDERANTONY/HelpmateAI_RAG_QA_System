@@ -1,0 +1,638 @@
+{
+  "suite": {
+    "suite_id": "vectara_native_150_batch_02_20260501",
+    "description": "Draft held-out product-fit final evaluation manifest. Documents are fixed; questions must be generated and frozen before any system run.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\vectara_native_batches\\batch_02.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "vectara"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      },
+      "mode": "native_mockingbird_answer",
+      "generation_preset_name": "mockingbird-2.0"
+    }
+  },
+  "summary": {
+    "overall": {
+      "vectara": {
+        "dataset_size": 15,
+        "answerable_size": 13,
+        "unsupported_size": 2,
+        "supported_rate": 0.9333333333333333,
+        "answerable_supported_rate": 1.0,
+        "unsupported_abstention_rate": 0.5,
+        "false_support_rate": 0.5,
+        "false_abstention_rate": 0.0,
+        "avg_context_count": 5.0,
+        "avg_context_chars": 906.0666666666667,
+        "ragas_all": {
+          "faithfulness": 0.5759687680740312,
+          "answer_relevancy": 0.7023646121414286,
+          "context_precision": 0.7448148147757376
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.6171093943650334,
+          "answer_relevancy": 0.7444011702442642,
+          "context_precision": 0.7346230158327323
+        }
+      }
+    },
+    "by_intent": {
+      "vectara": {
+        "broad_summary": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 915.75,
+          "ragas_all": {
+            "faithfulness": 0.7916666666666666,
+            "answer_relevancy": 0.8418165384287493,
+            "context_precision": 0.8461805555307436
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.7916666666666666,
+            "answer_relevancy": 0.8418165384287493,
+            "context_precision": 0.8461805555307436
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 606.0,
+          "ragas_all": {
+            "faithfulness": 0.3101503759398496,
+            "answer_relevancy": 0.4126722652964425,
+            "context_precision": 0.499999999975
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.3101503759398496,
+            "answer_relevancy": 0.4126722652964425,
+            "context_precision": 0.499999999975
+          }
+        },
+        "local_scope": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 947.0,
+          "ragas_all": {
+            "faithfulness": 0.6666666666666666,
+            "answer_relevancy": 0.8149479963297366,
+            "context_precision": 0.7083333332930555
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.6666666666666666,
+            "answer_relevancy": 0.8149479963297366,
+            "context_precision": 0.7083333332930555
+          }
+        },
+        "lookup": {
+          "dataset_size": 3,
+          "answerable_size": 3,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1196.6666666666667,
+          "ragas_all": {
+            "faithfulness": 0.6666666666666666,
+            "answer_relevancy": 0.777574963153866,
+            "context_precision": 0.9999999999166667
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.6666666666666666,
+            "answer_relevancy": 0.777574963153866,
+            "context_precision": 0.9999999999166667
+          }
+        },
+        "numeric_procedure": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 805.5,
+          "ragas_all": {
+            "faithfulness": 0.38461538461538464,
+            "answer_relevancy": 0.8494695042803214,
+            "context_precision": 0.5166666666358333
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.38461538461538464,
+            "answer_relevancy": 0.8494695042803214,
+            "context_precision": 0.5166666666358333
+          }
+        },
+        "unsupported": {
+          "dataset_size": 2,
+          "answerable_size": 0,
+          "unsupported_size": 2,
+          "supported_rate": 0.5,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 0.5,
+          "false_support_rate": 0.5,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 810.5,
+          "ragas_all": {
+            "faithfulness": 0.375,
+            "answer_relevancy": 0.3406493035659172,
+            "context_precision": 0.6687499999776563
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.75,
+            "answer_relevancy": 0.5674458084301033,
+            "context_precision": 0.4499999999775
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "vectara_native_150_batch_02_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-broad_summary-006",
+      "question": "What recurring design patterns do the authors highlight as common across the case studies they reviewed?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The authors highlight several recurring design patterns across the case studies they reviewed, which are illustrated through machine learning workflows in climate modeling [1, 2]. These patterns are identified through a common machine learning workflow framework and are used to discuss design choices from various case studies [3, 4]. The specific case studies mentioned include Physics-First Case studies, such as Neural Operators for Physics-Relevant Emulation [5].",
+      "citations": [
+        "Page 12",
+        "Page 6",
+        "Vectara Result 3",
+        "Page 1",
+        "Page 12"
+      ],
+      "context_count": 5,
+      "context_chars": 663,
+      "ragas": {
+        "faithfulness": 0.6666666666666666,
+        "answer_relevancy": 0.9329063723655403,
+        "context_precision": 0.7555555555303703
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.22363281"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_02_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-broad_summary-007",
+      "question": "Why do the authors argue that transparent, structured documentation of ML workflows matters for climate modeling?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The authors argue that transparent, structured documentation of ML workflows matters for climate modeling because it simplifies the process of testing hybrid ML\u2013physics models in a production climate modeling environment, accelerating the development of robust ML parameterizations [3]. This is important because workflows in climate modeling could place a greater emphasis on formally modeling uncertainty, not only to improve predictive reliability but also to support scientific interpretation and",
+      "citations": [
+        "Page 3",
+        "Page 6",
+        "Page 12",
+        "Page 3",
+        "Page 12"
+      ],
+      "context_count": 5,
+      "context_chars": 820,
+      "ragas": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.986150754225731,
+        "context_precision": 0.94999999997625
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.96484375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_02_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-comparison_synthesis-008",
+      "question": "How do physics-first workflows differ from ML-first workflows in their use of physical equations and their priorities?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Physics-first workflows and ML-first workflows differ in their use of physical equations and priorities. Physics-first workflows aim to build ML-based models that emulate or predict climate system behavior with minimal reliance on explicit physical equations [1]. In contrast, ML-first workflows retain physics-based models at the core and use machine learning to accelerate components, discover new structure, or improve parameterizations [2].\n\nThe key difference lies in the priority given to physi",
+      "citations": [
+        "Page 3",
+        "Page 3",
+        "Page 3",
+        "Page 3",
+        "Page 12"
+      ],
+      "context_count": 5,
+      "context_chars": 716,
+      "ragas": {
+        "faithfulness": 0.2631578947368421,
+        "answer_relevancy": 0.825344530592885,
+        "context_precision": 0.99999999995
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.84765625"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_02_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-numeric_procedure-009",
+      "question": "What loss function does the Physics-Informed Neural Operator approach use, and how does it differ from the canonical neural operator loss?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The Physics-Informed Neural Operator (PINO) approach uses a combined loss function that includes both data loss and PDE residual loss, while the canonical neural operator loss only includes data loss. The PINO approach minimizes the following combined loss:\n\nL(\u03b8) = G\u03b8(u0) \u2212 uT L2 + R{G\u03b8(u0)} L2\n\nwhere R[\u00b7] denotes the PDE residual operator. [1]\n\nIn contrast, the canonical neural operator loss is written as:\n\nL(\u03b8) = G\u03b8(u0) \u2212 uT L2\n\nand is minimized by models such as FNO and SFNO during training. ",
+      "citations": [
+        "Page 12",
+        "Page 12",
+        "Page 12",
+        "Page 12",
+        "Page 12"
+      ],
+      "context_count": 5,
+      "context_chars": 1158,
+      "ragas": {
+        "faithfulness": 0.7692307692307693,
+        "answer_relevancy": 0.8042591960540176,
+        "context_precision": 0.8333333332916666
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.80859375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_02_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-unsupported-010",
+      "question": "What benchmark accuracy did the authors achieve when they ran their own neural operator implementation against FourCastNet on the test set?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "No result found.",
+      "citations": [
+        "Page 12",
+        "Page 12",
+        "Page 3",
+        "Page 12",
+        "Page 6"
+      ],
+      "context_count": 5,
+      "context_chars": 926,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.11385279870173119,
+        "context_precision": 0.8874999999778125
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.001045227"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_02_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-lookup-001",
+      "question": "Who wrote this dissertation and who supervised it?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Tahiya Salam wrote the dissertation titled \"Learning Environmental Models with Multi-Robot Teams Using a Dynamical Systems Approach\" [1]. The dissertation was supervised by M. Ani Hsieh, Associate Professor of Mechanical Engineering and Applied Mechanics [1]. The Graduate Group Chairperson was Alejandro Ribeiro, Professor of Electrical and Systems Engineering [1].",
+      "citations": [
+        "Page 2",
+        "Page 6",
+        "Page 6",
+        "Page 6",
+        "Page 33"
+      ],
+      "context_count": 5,
+      "context_chars": 2152,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6145391835413876,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.96875"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_02_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-lookup-002",
+      "question": "Which graduate group at Penn awarded this PhD?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The PhD was awarded by the Graduate Group in Electrical & Systems Engineering at Penn [1]. This information is directly stated in source [1], which mentions the Graduate Group in Electrical & Systems Engineering. The other sources do not provide any information about the specific graduate group that awarded the PhD.",
+      "citations": [
+        "Page 2",
+        "Page 14",
+        "Page 2",
+        "Page 57",
+        "Page 81"
+      ],
+      "context_count": 5,
+      "context_chars": 678,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.9270680784228915,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.029541016"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_02_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-lookup-003",
+      "question": "Which Python libraries does the author use to implement the online DMD algorithms?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The author uses the eigendecomposition algorithms from the scipy Python library and modified the DMD functions from the PyDMD (Demo et al., 2018) library to implement the online DMD algorithms. [1, 2]",
+      "citations": [
+        "Page 101",
+        "Page 151",
+        "Page 101",
+        "Page 90",
+        "Page 33"
+      ],
+      "context_count": 5,
+      "context_chars": 760,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7911176274973188,
+        "context_precision": 0.99999999995
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.08105469"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_02_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-local_scope-004",
+      "question": "In the mixed-reality experiment with marine vehicles, what are the dimensions of the indoor water tank used as the test bed?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The dimensions of the indoor water tank used as the test bed in the mixed-reality experiment with marine vehicles are 4.5m \u00d7 3.0m \u00d7 1.2m [2]. This information is provided in source [2], which mentions an \"Indoor 4.5m \u00d7 3.0m \u00d7 1.2m water tank equipped with motion capture system for multi-robot experiments\".",
+      "citations": [
+        "Page 74",
+        "Page 106",
+        "Page 106",
+        "Page 141",
+        "Page 106"
+      ],
+      "context_count": 5,
+      "context_chars": 778,
+      "ragas": {
+        "faithfulness": 0.3333333333333333,
+        "answer_relevancy": 0.957319106402467,
+        "context_precision": 0.49999999995
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.87890625"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_02_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-local_scope-005",
+      "question": "In the chapter on coherent sets, what does the author use kernel transfer operators for?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "In the chapter on coherent sets, the author uses kernel transfer operators to extract patterns in dynamical systems for high-level decision making [4]. This is achieved by learning coherent sets with kernel methods, estimating them online, and integrating them into decision-making for robots [1]. The author also demonstrates the online learning of coherent sets using kernel-based techniques from machine learning [2]. Additionally, the author shows how this transfer operator representation can be",
+      "citations": [
+        "Page 141",
+        "Page 133",
+        "Page 131",
+        "Page 14",
+        "Page 146"
+      ],
+      "context_count": 5,
+      "context_chars": 1116,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6725768862570062,
+        "context_precision": 0.9166666666361111
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.87890625"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_02_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-broad_summary-006",
+      "question": "What does the author claim are the main contributions of this thesis?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The author claims that the main contributions of this thesis are:\n\n1. Novel development of models for spatiotemporal, complex phenomena in environments that allow for optimal sensing, feature extraction, state estimation, state prediction, and uncertainty quantification for decision-making with multi-robot teams [1].\n2. Online feature detection methods within complex environmental structures and demonstrations of how coherent set features can be used for decision-making and planning in two appli",
+      "citations": [
+        "Page 14",
+        "Page 131",
+        "Page 146",
+        "Page 2",
+        "Page 8"
+      ],
+      "context_count": 5,
+      "context_chars": 1027,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9199337149808374,
+        "context_precision": 0.6791666666496875
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.9921875"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_02_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-broad_summary-007",
+      "question": "What gap between dynamical systems theory, machine learning, and multi-robot systems does the introduction argue this thesis addresses?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The introduction argues that the thesis addresses the gap between dynamical systems theory, machine learning, and multi-robot systems. Specifically, it highlights that developments in dynamical systems theory have largely been disconnected from the operational challenges of multi-robot systems, such as distributed computations, uncertainty in sensing data, and computational complexity of high-dimensional data [1]. The thesis aims to bridge this gap by leveraging the relative advantages of machin",
+      "citations": [
+        "Page 14",
+        "Page 146",
+        "Page 148",
+        "Page 21",
+        "Page 146"
+      ],
+      "context_count": 5,
+      "context_chars": 1153,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.5282753121428884,
+        "context_precision": 0.9999999999666667
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.91796875"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_02_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-comparison_synthesis-008",
+      "question": "How does Dynamic Mode Decomposition compare with Principal Component Analysis for representing spatiotemporal environmental processes, according to the thesis?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the thesis, Dynamic Mode Decomposition (DMD) is a method for representing spatiotemporal environmental processes, and it is compared with Principal Component Analysis (PCA) in terms of their effectiveness. The thesis suggests that DMD can be more effective than PCA for representing spatiotemporal environmental processes because it is a data-driven adaptive spectral decomposition of the Koopman operator [3]. This means that DMD can capture the underlying dynamics of the system more a",
+      "citations": [
+        "Page 151",
+        "Page 151",
+        "Page 151",
+        "Page 151",
+        "Page 151"
+      ],
+      "context_count": 5,
+      "context_chars": 496,
+      "ragas": {
+        "faithfulness": 0.35714285714285715,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.0
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.06542969"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_02_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-numeric_procedure-009",
+      "question": "In the mixed-reality plasma cloud experiment, how many vehicles of each type were used, and at what grid resolutions did the aerial and marine vehicles sense the workspace?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "In the mixed-reality plasma cloud experiment, two aerial vehicles and four marine vehicles were used [4]. The aerial and marine vehicles sensed the workspace at a grid resolution of 15 units [4]. This information is derived from the provided sources, which mention the number of vehicles used in the experiment and their sensing capabilities.",
+      "citations": [
+        "Page 106",
+        "Page 101",
+        "Page 106",
+        "Page 106",
+        "Page 106"
+      ],
+      "context_count": 5,
+      "context_chars": 453,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.8946798125066252,
+        "context_precision": 0.19999999998
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.37109375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_02_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-unsupported-010",
+      "question": "How does the thesis evaluate its proposed methods on a swarm of more than fifty aerial drones in an outdoor wildfire monitoring deployment?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The thesis evaluates its proposed methods on a swarm of more than fifty aerial drones in an outdoor wildfire monitoring deployment by applying the online algorithms, as described in Sect. 4.4.3, to various environments with different time scales and resolutions [1]. The evaluation is conducted in flow-like environments, where global dynamics may be more useful than tracking individual trajectories [2]. The thesis presents methods for representing the environment as a dynamical system with machin",
+      "citations": [
+        "Page 101",
+        "Page 141",
+        "Page 2",
+        "Page 8",
+        "Page 131"
+      ],
+      "context_count": 5,
+      "context_chars": 695,
+      "ragas": {
+        "faithfulness": 0.75,
+        "answer_relevancy": 0.5674458084301033,
+        "context_precision": 0.4499999999775
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.55859375"
+    }
+  ]
+}

@@ -1,7 +1,43 @@
 from src.config import Settings
 from src.generation.prompts import build_grounded_prompt
-from src.generation.service import AnswerGenerator, _uses_inferential_supported_language
+import json
+
+from src.generation.service import AnswerGenerator, _reason_reports_support_gap, _uses_inferential_supported_language
 from src.schemas import RetrievalCandidate, RetrievalResult
+
+
+class _FakeMessage:
+    def __init__(self, content: str):
+        self.content = content
+
+
+class _FakeChoice:
+    def __init__(self, content: str):
+        self.message = _FakeMessage(content)
+
+
+class _FakeResponse:
+    def __init__(self, content: str):
+        self.choices = [_FakeChoice(content)]
+
+
+class _FakeCompletions:
+    def __init__(self, content: str | list[str]):
+        self._contents = list(content) if isinstance(content, list) else [content]
+
+    def create(self, **_: object):
+        content = self._contents.pop(0) if len(self._contents) > 1 else self._contents[0]
+        return _FakeResponse(content)
+
+
+class _FakeChat:
+    def __init__(self, content: str | list[str]):
+        self.completions = _FakeCompletions(content)
+
+
+class _FakeClient:
+    def __init__(self, content: str | list[str]):
+        self.chat = _FakeChat(content)
 
 
 def test_fallback_generation_uses_evidence_when_api_key_missing():
@@ -72,7 +108,7 @@ def test_grounded_prompt_requires_complete_support_for_multi_part_answers():
 
     assert "set supported to true only when the evidence covers every required fact" in prompt
     assert "which required fact is missing" in prompt
-    assert "only answers it partially" in prompt
+    assert "support_status to partial" in prompt
 
 
 def test_grounded_prompt_bans_inferential_supported_answers():
@@ -94,3 +130,129 @@ def test_grounded_prompt_bans_inferential_supported_answers():
 def test_inferential_supported_language_is_detected():
     assert _uses_inferential_supported_language("The evidence suggests that the policy changed.") is True
     assert _uses_inferential_supported_language("The policy changed on January 1.") is False
+
+
+def test_support_gap_reason_detects_missing_explicit_fact():
+    reason = (
+        "The evidence does not provide a separate explicit 2030 figure, "
+        "so the requested comparison is only partially supported."
+    )
+
+    assert _reason_reports_support_gap(reason) is True
+
+
+def test_generation_preserves_partial_support_as_distinct_status():
+    answer_payload = json.dumps(
+        {
+            "supported": False,
+            "support_status": "partial",
+            "answer": "The evidence states that Jane Smith dissented, but it does not state what alternative she preferred [Source 1].",
+            "reason": "One required fact is supported and one required fact is missing.",
+        }
+    )
+    verifier_payload = json.dumps(
+        {
+            "support_status": "partial",
+            "answer_acknowledges_gap": True,
+            "supported_facts": ["Jane Smith dissented."],
+            "missing_or_ambiguous_facts": ["The preferred alternative is not stated."],
+            "reason": "The answer separates the supported dissenter fact from the missing alternative fact.",
+        }
+    )
+    generator = AnswerGenerator(Settings(openai_api_key="test-key"))
+    generator.client = _FakeClient([answer_payload, verifier_payload])
+    retrieval = RetrievalResult(
+        question="Who dissented and what alternative did they prefer?",
+        candidates=[
+            RetrievalCandidate(
+                chunk_id="c1",
+                text="Jane Smith dissented from the policy decision.",
+                metadata={"page_label": "Page 10"},
+            )
+        ],
+    )
+
+    answer = generator.generate("Who dissented and what alternative did they prefer?", retrieval)
+
+    assert answer.supported is False
+    assert answer.support_status == "partial"
+    assert answer.citations == ["Page 10"]
+    assert "References:" in answer.answer
+
+
+def test_generation_downgrades_hidden_partial_to_unsupported():
+    answer_payload = json.dumps(
+        {
+            "supported": False,
+            "support_status": "partial",
+            "answer": "Jane Smith dissented [Source 1].",
+            "reason": "The preferred alternative is missing.",
+        }
+    )
+    verifier_payload = json.dumps(
+        {
+            "support_status": "unsupported",
+            "answer_acknowledges_gap": False,
+            "supported_facts": ["Jane Smith dissented."],
+            "missing_or_ambiguous_facts": ["The preferred alternative is not stated."],
+            "reason": "The answer omits the missing required fact, so it hides the gap.",
+        }
+    )
+    generator = AnswerGenerator(Settings(openai_api_key="test-key"))
+    generator.client = _FakeClient([answer_payload, verifier_payload])
+    retrieval = RetrievalResult(
+        question="Who dissented and what alternative did they prefer?",
+        candidates=[
+            RetrievalCandidate(
+                chunk_id="c1",
+                text="Jane Smith dissented from the policy decision.",
+                metadata={"page_label": "Page 10"},
+            )
+        ],
+    )
+
+    answer = generator.generate("Who dissented and what alternative did they prefer?", retrieval)
+
+    assert answer.support_status == "unsupported"
+    assert "Support-status verifier classified the answer as unsupported" in (answer.note or "")
+
+
+def test_support_status_verifier_recovers_general_gap_phrasing_to_partial():
+    answer_payload = json.dumps(
+        {
+            "supported": False,
+            "support_status": "unsupported",
+            "answer": (
+                "The evidence supports that each vehicle includes a micro-controller board and an inertial measurement unit. "
+                "However, it does not clearly state whether the radio module is part of each vehicle's onboard hardware [Source 1]."
+            ),
+            "reason": "The hardware list is incomplete.",
+        }
+    )
+    verifier_payload = json.dumps(
+        {
+            "support_status": "partial",
+            "answer_acknowledges_gap": True,
+            "supported_facts": ["Each vehicle includes a micro-controller board and an inertial measurement unit."],
+            "missing_or_ambiguous_facts": ["Whether the radio module is part of each vehicle's onboard hardware is ambiguous."],
+            "reason": "The answer states a grounded hardware subset and visibly acknowledges the ambiguous radio-module fact.",
+        }
+    )
+    generator = AnswerGenerator(Settings(openai_api_key="test-key"))
+    generator.client = _FakeClient([answer_payload, verifier_payload])
+    retrieval = RetrievalResult(
+        question="What onboard hardware components are listed for each vehicle?",
+        candidates=[
+            RetrievalCandidate(
+                chunk_id="c1",
+                text="Each vehicle has a micro-controller board and an inertial measurement unit.",
+                metadata={"page_label": "Page 10"},
+            )
+        ],
+    )
+
+    answer = generator.generate("What onboard hardware components are listed for each vehicle?", retrieval)
+
+    assert answer.supported is False
+    assert answer.support_status == "partial"
+    assert "Support-status verifier classified the answer as partial" in (answer.note or "")

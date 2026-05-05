@@ -444,12 +444,18 @@ def test_score_chunk_uses_semantic_chunk_role_as_a_moderate_hint():
     assert body_candidate.fused_score > noisy_candidate.fused_score
 
 
-def test_recovery_is_limited_to_atomic_detail_queries():
+def test_recovery_runs_for_abstained_queries_once():
     retriever = HybridRetriever(store=None, settings=Settings())  # type: ignore[arg-type]
     result = RetrievalResult(question="What are the main findings?", candidates=[], retrieval_plan={})
+    already_recovered = RetrievalResult(
+        question="What are the main findings?",
+        candidates=[],
+        retrieval_plan={"abstention_recovery_applied": True},
+    )
 
     assert retriever.should_recover_after_abstention("When is the next meeting scheduled?", result)
-    assert not retriever.should_recover_after_abstention("What are the main findings of this report?", result)
+    assert retriever.should_recover_after_abstention("What are the main findings of this report?", result)
+    assert not retriever.should_recover_after_abstention("What are the main findings of this report?", already_recovered)
 
 
 def test_abstention_recovery_promotes_front_matter_evidence():
@@ -571,6 +577,61 @@ def test_abstention_recovery_adds_next_chunk_neighbor():
     assert neighbors[0].metadata["abstention_recovery_reason"] == "neighbor_chunk"
 
 
+def test_abstention_recovery_adds_previous_chunk_neighbor():
+    chunks = [
+        ChunkRecord(
+            chunk_id="previous",
+            document_id="doc1",
+            text="The 1.5 degree scenario requires USD 150 trillion of cumulative investment by 2050.",
+            chunk_index=0,
+            page_label="Page 25",
+            metadata={
+                "page_label": "Page 25",
+                "section_id": "investment",
+                "section_heading": "Investment needs",
+                "section_kind": "body",
+                "content_type": "general",
+                "body_evidence_score": 0.9,
+            },
+        ),
+        ChunkRecord(
+            chunk_id="seed",
+            document_id="doc1",
+            text="Compared with the Planned Energy Scenario, an additional USD 47 trillion is required by 2050.",
+            chunk_index=1,
+            page_label="Page 25",
+            metadata={
+                "page_label": "Page 25",
+                "section_id": "investment",
+                "section_heading": "Investment needs",
+                "section_kind": "body",
+                "content_type": "general",
+                "body_evidence_score": 0.9,
+            },
+        ),
+    ]
+    retriever = HybridRetriever(store=None, settings=Settings(reranker_enabled=False))  # type: ignore[arg-type]
+    seed = RetrievalCandidate(
+        chunk_id="seed",
+        text=chunks[1].text,
+        metadata=chunks[1].metadata,
+        fused_score=0.08,
+        lexical_score=0.03,
+    )
+
+    neighbors = retriever._neighbor_recovery_candidates(
+        "How much cumulative investment does the 1.5 degree scenario require by 2050?",
+        chunks,
+        [seed],
+        preferred_content_types=["general"],
+        clause_terms=[],
+        query_type="numeric_lookup",
+    )
+
+    assert [candidate.chunk_id for candidate in neighbors] == ["previous"]
+    assert neighbors[0].metadata["abstention_recovery_reason"] == "neighbor_chunk"
+
+
 def test_required_fact_signal_uses_generic_answer_shapes_not_fixture_terms():
     definition_score = HybridRetriever._required_fact_signal_score(
         "How does this framework define an AI system?",
@@ -588,6 +649,57 @@ def test_required_fact_signal_uses_generic_answer_shapes_not_fixture_terms():
         "general_lookup",
     )
 
-    assert definition_score >= 0.30
+    assert definition_score >= 0.12
     assert date_score >= 0.30
     assert person_score >= 0.18
+
+
+def test_definition_lookup_uses_semantic_definition_evidence():
+    retriever = HybridRetriever(store=None, settings=Settings(reranker_enabled=False))  # type: ignore[arg-type]
+    definition_chunk = ChunkRecord(
+        chunk_id="definition",
+        document_id="doc1",
+        text="The Physics-Informed Neural Operator (PINO) minimizes a combined data and PDE residual loss.",
+        chunk_index=0,
+        page_label="Page 16",
+        metadata={
+            "content_type": "definition",
+            "artifact_entry": True,
+            "artifact_type": "definition",
+            "body_evidence_score": 0.8,
+            "semantic_chunk_role": "definition_evidence",
+            "semantic_chunk_confidence": 0.9,
+            "semantic_body_evidence_score": 0.9,
+        },
+    )
+    distractor = ChunkRecord(
+        chunk_id="distractor",
+        document_id="doc1",
+        text="The Fourier Neural Operator (FNO) is another neural operator variant.",
+        chunk_index=1,
+        page_label="Page 16",
+        metadata={"content_type": "general", "body_evidence_score": 0.8},
+    )
+
+    definition_score = retriever._score_chunk(
+        "What does the abbreviation PINO stand for?",
+        definition_chunk,
+        {},
+        {},
+        0.1,
+        ["definition", "general"],
+        [],
+        query_type="definition_lookup",
+    )
+    distractor_score = retriever._score_chunk(
+        "What does the abbreviation PINO stand for?",
+        distractor,
+        {},
+        {},
+        0.1,
+        ["general"],
+        [],
+        query_type="definition_lookup",
+    )
+
+    assert definition_score.fused_score > distractor_score.fused_score

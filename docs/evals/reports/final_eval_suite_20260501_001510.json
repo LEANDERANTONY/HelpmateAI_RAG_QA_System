@@ -1,0 +1,614 @@
+{
+  "suite": {
+    "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-06",
+    "description": "OpenAI native File Search corrected rerun chunk 6/10, questions 76-90.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\openai_native_15_chunks\\openai_native_15_chunk_06.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "openai_file_search"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      }
+    }
+  },
+  "summary": {
+    "overall": {
+      "openai_file_search": {
+        "dataset_size": 15,
+        "answerable_size": 13,
+        "unsupported_size": 2,
+        "supported_rate": 0.9333333333333333,
+        "answerable_supported_rate": 1.0,
+        "unsupported_abstention_rate": 0.5,
+        "false_support_rate": 0.5,
+        "false_abstention_rate": 0.0,
+        "avg_context_count": 5.0,
+        "avg_context_chars": 17732.666666666668,
+        "ragas_all": {
+          "faithfulness": 0.9904761904761905,
+          "answer_relevancy": 0.7306067745988786,
+          "context_precision": 0.9999999999507143
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.9888888888888889,
+          "answer_relevancy": 0.7970255722896857,
+          "context_precision": 0.9999999999507143
+        }
+      }
+    },
+    "by_intent": {
+      "openai_file_search": {
+        "broad_summary": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 18650.0,
+          "ragas_all": {
+            "faithfulness": 0.9666666666666667,
+            "answer_relevancy": 0.8691681368119617,
+            "context_precision": 0.9999999999433333
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.9666666666666667,
+            "answer_relevancy": 0.8691681368119617,
+            "context_precision": 0.9999999999433333
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 3,
+          "answerable_size": 3,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 17444.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8538580892765418,
+            "context_precision": 0.999999999975
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8538580892765418,
+            "context_precision": 0.999999999975
+          }
+        },
+        "local_scope": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 18462.75,
+          "ragas_all": {
+            "faithfulness": null,
+            "answer_relevancy": 0.769521032046136,
+            "context_precision": 0.99999999995
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": 0.769521032046136,
+            "context_precision": 0.99999999995
+          }
+        },
+        "numeric_procedure": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 14651.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7664307514072399,
+            "context_precision": 0.99999999995
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7664307514072399,
+            "context_precision": 0.99999999995
+          }
+        },
+        "unsupported": {
+          "dataset_size": 2,
+          "answerable_size": 0,
+          "unsupported_size": 2,
+          "supported_rate": 0.5,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 0.5,
+          "false_support_rate": 0.5,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 17952.5,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.2631495250071401,
+            "context_precision": null
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": 0.5262990500142802,
+            "context_precision": null
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-06",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-016",
+      "question": "In the inverse parameter inference case study (Case Study 2b), what model architecture is adopted and why?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "In Case Study 2b, the adopted model architecture is conditional normalizing flows. The paper says they were chosen because they provide invertible mappings between parameters and observed distributions, which makes them well suited for likelihood-free inference in this inverse-problem setting",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 18166,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_097a4546d323e4c40069f398eb47448193ac9ad1362d05b963; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-06",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-017",
+      "question": "In the pCO2 upscaling case study (Case Study 3b), how does the transfer learning approach handle the sparsity of in-situ observations?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The transfer learning approach handles sparse in-situ pCO2 observations by first pretraining the model on dense simulated full-field pCO2 data from global ocean biogeochemistry models, then fine-tuning it on the sparse SOCAT observations. During fine-tuning, losses are computed only at observed locations, and only 2\u20135% of parameters are unfrozen with early stopping to reduce overfitting while preserving the learned spatiotemporal structure. This lets the model use model simulations for broad cov",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 18262,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0369c291624837770069f3999625988190b01ad24fdba19dd9; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-06",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-018",
+      "question": "In the development stage of the workflow framework, what does 'iterative refinement' specifically involve according to the paper?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the paper, \u201citerative refinement\u201d in the development stage means using insights from validation to adjust the objective functions, training procedures, or data preprocessing, while incorporating scientific feedback into model revisions",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 19107,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy": 0.8355954680578638,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_06df6e0bfd9b5a960069f39a5ef060819590ea6d8a2ed5b764; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-06",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-019",
+      "question": "Beyond the three integration directions in Figure 1, what 'fourth direction' do the authors describe?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The authors describe a fourth \u201cdirection\u201d as human-in-the-loop: workflows guided by scientific reasoning, modeling practices, and domain expertise, with an emphasis on interpretability, transparency, and physical relevance.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 18316,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy": 0.7034465960344082,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0db35f1063ad44450069f39ae071588193890f154ce24d0d0d; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-06",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-broad_summary-020",
+      "question": "What open challenges in scientific machine learning workflows for climate modeling does the paper highlight in its conclusion?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The conclusion highlights four main open challenges in scientific machine learning workflows for climate modeling: reproducibility, interpretability, uncertainty modeling, and scalability. Specifically, it says reproducibility is still a concern because of inconsistent terminology, fragmented software tools, and ad hoc workflow documentation; interpretability remains open because the field still needs more systematic experiments to understand which components drive performance and how design cho",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 20026,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy": 0.8800337377913244,
+        "context_precision": 0.9999999999
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_091220c75810fc9a0069f39bac03688193b43eb559ec93385d; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-06",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-broad_summary-021",
+      "question": "How does the paper describe the role of reanalysis datasets such as ERA5 in climate modeling and ML?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The paper describes reanalysis datasets like ERA5 as a bridge between observations and physics-based models: they combine historical observations with data assimilation to produce gridded, physically consistent atmospheric and oceanic fields over time. In that sense, they are presented as a response to limitations of traditional modeling and assimilation, because they provide continuous, model-informed climate data that can be used for model evaluation, simulation initialization, and ML training",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 17181,
+      "ragas": {
+        "faithfulness": 0.9333333333333333,
+        "answer_relevancy": 0.8254634616679096,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0cd6e72b5a071c6a0069f39c34d9288195a61f99ef475b930e; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-06",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-broad_summary-022",
+      "question": "Why do the authors say machine learning is not used as a generic plug-in to existing climate models?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The authors say machine learning is not used as a generic plug-in because climate modeling is not just about attaching an ML component to an existing model; it requires careful workflow design to preserve physical relevance, deal with sparse or heterogeneous data, and ensure transparency and reliability. They emphasize that success depends on choices about problem setup, data preparation, training, evaluation, and iteration, not just model architecture \n\nThey also explain that ML in climate mode",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 18056,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9020072109766509,
+        "context_precision": 0.99999999998
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0385a809827631e50069f39ca6a00c8194b40cbf6fc57bc211; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-06",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-broad_summary-023",
+      "question": "How does the paper position its case study summaries relative to model cards and model info sheets?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The paper positions its full case study summaries in the supplement and says they are structured using the same common machine learning workflow framework as the main text, \u201csimilar in spirit to model cards\u201d and \u201cmodel info sheets\u201d . It presents these summaries as a transparent, consistent way to document workflow choices, rather than as a new framework of their own .",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 19337,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0cbee41893c473770069f39d21f1748197b7bca168993a79dc; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-06",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-comparison_synthesis-024",
+      "question": "How does the Fourier Neural Operator differ from the Spherical Fourier Neural Operator in terms of underlying transform and intended use case?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The file describes the difference as follows: the Fourier Neural Operator (FNO) uses the Fast Fourier Transform as its underlying transform and is aimed at learning homogeneous, periodic dynamics such as idealized fluid flows, while the Spherical Fourier Neural Operator (SFNO) uses the Spherical Harmonic Transform and is designed for global weather and climate fields on the sphere, with built-in rotational equivariance",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 16804,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8010135433298681,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_08b8280ece534b910069f39e2eefa881939de1b5c426d2436a; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-06",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-comparison_synthesis-025",
+      "question": "How does the paper distinguish offline evaluation from online evaluation for ML components in climate models?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The paper distinguishes them like this:\n\n- Offline evaluation checks the ML component on held-out samples, using standard predictive metrics to see how well it matches the target data. For example, it says offline model validation compares predicted outputs to ground truth on held-out snapshots using metrics like coefficient of determination, Pearson correlation, weighted RMSE, spatial statistics, and higher-order moments  \n- Online evaluation tests the trained model after it is embedded into th",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 18551,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy": 0.9445589006617611,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_06771c8fa6015fe70069f39ec0fb608193b47ba672068d52fa; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-06",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-comparison_synthesis-026",
+      "question": "How do autoregressive and direct forecasting strategies compare for subseasonal-to-seasonal prediction, according to the paper?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the paper, the two strategies trade off efficiency and long-horizon behavior in different ways. The autoregressive approach trains a one-step-ahead model and rolls it forward repeatedly; it is training-efficient and matches physics-based simulation style, but it suffers from error accumulation over long horizons and higher forecasting cost during sequential rollout . The direct approach trains separate models for each forecast lead time; this avoids propagating recursive errors, but",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 16977,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8160018238379964,
+        "context_precision": 0.999999999975
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0108fa8bcc982ce20069f39f8328388193a67a1b93947f9f69; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-06",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-numeric_procedure-027",
+      "question": "What is the generic form of the kernel integral operator used in neural operators, and what role do T, R_phi, and T-inverse play?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The generic kernel integral operator form used in neural operators is\n\n(K_\u03c6 v)(x) = T^{-1}(R_\u03c6 \u00b7 (T v))(x) \n\nHere:\n- T is a linear transform,\n- R_\u03c6 is a learned multiplier or kernel,\n- T^{-1} is the inverse of that transform \n\nIn words, the input function v is first transformed by T, then modulated by the learned kernel R_\u03c6 in that transformed space, and finally mapped back by T^{-1}. The document also notes that different choices of T define different neural operator architectures, such as Four",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 15289,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8237312969945504,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_06b9b88dda5367070069f3a08627048195bb693da3b12d3d2b; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-06",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-numeric_procedure-028",
+      "question": "What update rule do FNO layers apply to the feature field at each iteration, as written in the paper?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The paper writes the FNO layer update as\n\nv_{t+1}(x) = \u03c3( W v_t(x) + (K(a; \u03d5) v_t)(x) ), for all x \u2208 D, \n\nwhere v_t is the feature field at iteration t.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 14013,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7091302058199296,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0d0525efc46a7dbb0069f3a0dd957c8197babf69bdffafe040; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-06",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-unsupported-029",
+      "question": "Which proprietary cloud platform did the authors use to train and deploy the neural operators discussed in the case studies?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The authors used the Fortran-based E3SM climate model environment, specifically via containerized workflows and PyTorch\u2013Fortran bindings, to deploy the trained models. The paper says ClimSim models were \u201cdeployed directly into DOE\u2019s E3SM model using containerized workflows and PyTorch\u2013Fortran bindings,\u201d and that ClimSim-Online enables deployment \u201cdirectly within the Fortran-based E3SM model\u201d",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 18260,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy": 0.5262990500142802,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0c090891077402760069f3a14b24a08196bef36ee37b967e34; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-06",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-unsupported-030",
+      "question": "How many GPU-hours did the winning team in the ClimSim Kaggle competition use to train their final model?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: The retrieved file mentions that ClimSim was offered as a Kaggle competition and describes its setup, but it does not state how many GPU-hours the winning team used to train their final model.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 17645,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0bccac50535f8e360069f3a286df208194bc719ab14c5df87d; attempts=1"
+    }
+  ]
+}

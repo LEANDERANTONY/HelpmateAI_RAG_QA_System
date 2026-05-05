@@ -253,7 +253,7 @@ class VectaraBenchmark:
                 page_label = f"Page {page}"
             results.append(
                 {
-                    "text": str(output.get("text", ""))[:400],
+                    "text": str(output.get("text", "")),
                     "rank": index,
                     "metadata": {
                         "source": "vectara",
@@ -267,4 +267,72 @@ class VectaraBenchmark:
             "search_profile": self.search_profile.name,
             "search_config": payload["search"],
             "results": results,
+        }
+
+    def answer(
+        self,
+        document_path: str | Path,
+        question: str,
+        *,
+        limit: int = 5,
+        generation_preset_name: str | None = None,
+    ) -> dict:
+        if not self.available:
+            raise RuntimeError("VECTARA_API_KEY is not configured.")
+
+        corpus_key = self.get_or_create_corpus(document_path)
+        preset = generation_preset_name or os.getenv("HELPMATE_VECTARA_GENERATION_PRESET") or "mockingbird-2.0"
+        payload = {
+            "query": question,
+            "search": self.search_profile.search_payload(limit),
+            "generation": {
+                "generation_preset_name": preset,
+                "max_used_search_results": limit,
+                "response_language": "eng",
+                "citations": {"style": "none"},
+                "model_parameters": {
+                    "temperature": 0.0,
+                    "max_tokens": 700,
+                },
+                "enable_factual_consistency_score": True,
+            },
+            "stream_response": False,
+        }
+        response = self._request(
+            f"/corpora/{corpus_key}/query",
+            method="POST",
+            body=json.dumps(payload).encode("utf-8"),
+            headers={"Content-Type": "application/json"},
+            timeout=180,
+        )
+        contexts = []
+        for index, output in enumerate(response.get("search_results", []), start=1):
+            part_metadata = output.get("part_metadata", {})
+            page = part_metadata.get("page")
+            title = part_metadata.get("title")
+            page_label = f"Vectara Result {index}"
+            if page is not None:
+                page_label = f"Page {page}"
+            contexts.append(
+                {
+                    "text": str(output.get("text", "")),
+                    "rank": index,
+                    "metadata": {
+                        "source": "vectara_native",
+                        "page_label": page_label,
+                        "title": title,
+                    },
+                }
+            )
+        summary = str(response.get("summary", "")).strip()
+        supported = bool(summary) and not summary.lower().startswith("no result found")
+        return {
+            "answer": summary,
+            "supported": supported,
+            "contexts": contexts,
+            "corpus_key": corpus_key,
+            "generation_preset_name": preset,
+            "factual_consistency_score": response.get("factual_consistency_score"),
+            "search_profile": self.search_profile.name,
+            "search_config": payload["search"],
         }

@@ -1,0 +1,452 @@
+{
+  "suite": {
+    "suite_id": "heldout-product-fit-2026-04-draft-openai-native-metric-retry-02",
+    "description": "Metric retry batch 2 for OpenAI native corrected run.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\openai_native_metric_retries\\openai_native_metric_retry_02.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "openai_file_search"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      }
+    }
+  },
+  "summary": {
+    "overall": {
+      "openai_file_search": {
+        "dataset_size": 10,
+        "answerable_size": 8,
+        "unsupported_size": 2,
+        "supported_rate": 0.8,
+        "answerable_supported_rate": 0.875,
+        "unsupported_abstention_rate": 0.5,
+        "false_support_rate": 0.5,
+        "false_abstention_rate": 0.125,
+        "avg_context_count": 5.0,
+        "avg_context_chars": 15035.1,
+        "ragas_all": {
+          "faithfulness": 0.9756521739130435,
+          "answer_relevancy": 0.6667312928742883,
+          "context_precision": 0.7754166666402673
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.975,
+          "answer_relevancy": 0.8334141160928604,
+          "context_precision": 0.7401041666413759
+        }
+      }
+    },
+    "by_intent": {
+      "openai_file_search": {
+        "comparison_synthesis": {
+          "dataset_size": 3,
+          "answerable_size": 3,
+          "unsupported_size": 0,
+          "supported_rate": 0.6666666666666666,
+          "answerable_supported_rate": 0.6666666666666666,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.3333333333333333,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 15103.0,
+          "ragas_all": {
+            "faithfulness": 0.918840579710145,
+            "answer_relevancy": 0.6072919425742325,
+            "context_precision": 0.8999999999698148
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.9,
+            "answer_relevancy": 0.9109379138613487,
+            "context_precision": 0.9333333333088889
+          }
+        },
+        "local_scope": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 13221.5,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8921834700459432,
+            "context_precision": 0.7010416666470574
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8921834700459432,
+            "context_precision": 0.7010416666470574
+          }
+        },
+        "lookup": {
+          "dataset_size": 1,
+          "answerable_size": 1,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 18056.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8846837617873325,
+            "context_precision": 0.99999999995
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8846837617873325,
+            "context_precision": 0.99999999995
+          }
+        },
+        "unsupported": {
+          "dataset_size": 2,
+          "answerable_size": 0,
+          "unsupported_size": 2,
+          "supported_rate": 0.5,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 0.5,
+          "false_support_rate": 0.5,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 17050.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.19600972952454035,
+            "context_precision": 0.6249999999775
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.3920194590490807,
+            "context_precision": 0.249999999975
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-metric-retry-02",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-comparison_synthesis-025",
+      "question": "How does the paper distinguish offline evaluation from online evaluation for ML components in climate models?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The paper contrasts them as follows:\n\n- Offline evaluation is done before deployment, on held-out samples or snapshots, using standard predictive metrics. For example, in ClimSim the model\u2019s accuracy is assessed on independent samples with metrics like weighted RMSE, and in the QG case study offline validation compares predicted subgrid forcing against ground truth using coefficient of determination and Pearson correlation  \n- Online evaluation happens after the ML component is embedded in the c",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 18966,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9413269804602292,
+        "context_precision": 0.99999999998
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_09e7b508e3a49ab80069f3bb769db08197987e278655f47f4b; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-metric-retry-02",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-unsupported-029",
+      "question": "Which proprietary cloud platform did the authors use to train and deploy the neural operators discussed in the case studies?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The authors used DOE\u2019s E3SM model environment, with models deployed directly into E3SM using containerized workflows and PyTorch\u2013Fortran bindings",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 16455,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.3920194590490807,
+        "context_precision": 0.249999999975
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_055e90b8ef054aab0069f3bbe8444881969c0ea7ecc6e06cb2; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-metric-retry-02",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-unsupported-030",
+      "question": "How many GPU-hours did the winning team in the ClimSim Kaggle competition use to train their final model?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: The uploaded file mentions that ClimSim was a Kaggle competition and describes its dataset and workflow, but it does not state how many GPU-hours the winning team used to train their final model.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 17645,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.99999999998
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_03e9cfaaa56cdc890069f3bc28733c8193af1866c8df40b8e0; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-metric-retry-02",
+      "system": "openai_file_search",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-lookup-015",
+      "question": "Which two organizations does the author thank for funding support in the acknowledgements?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The author thanks the National Science Foundation and the Horatio Alger Association for funding support in the acknowledgements.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 18056,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8846837617873325,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_07c3535654d1c7d60069f3bc74b94881968e98430947c5dd8a; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-metric-retry-02",
+      "system": "openai_file_search",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-local_scope-016",
+      "question": "In Chapter 3, what type of algorithm is used for the distributed implementation of the low-dimensional model?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "In Chapter 3, the distributed implementation of the low-dimensional model uses gossip algorithms, specifically the push-sum algorithm for distributed computations",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 12579,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8666290214886194,
+        "context_precision": 0.8041666666465626
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0f195f26052fbd7b0069f3bcb01ff88197bc1c2c3589a38535; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-metric-retry-02",
+      "system": "openai_file_search",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-local_scope-017",
+      "question": "In Chapter 5, what type of features does the author use to estimate Koopman operators?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "In Chapter 5, the author uses Random Fourier Features (RFFs) to estimate Koopman operators, learning the RFF feature maps and the Koopman operator jointly within an RKHS framework",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 14674,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.920142831007367,
+        "context_precision": 0.999999999975
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_052e11ec9ac5bcf20069f3bcf1082081959660a7d415f9000b; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-metric-retry-02",
+      "system": "openai_file_search",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-local_scope-018",
+      "question": "In the water tank experiment, what onboard hardware components are listed for each micro-autonomous surface vehicle?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The onboard hardware components listed for each micro-autonomous surface vehicle are a micro-controller board, an XBee radio module, and an inertial measurement unit. The thesis notes that the XBee radio modules are used to communicate the information collected onboard",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 11935,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8694431871003304,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_08dbded25e5e93a20069f3bd3c93fc8190baf997e5121b2e28; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-metric-retry-02",
+      "system": "openai_file_search",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-local_scope-019",
+      "question": "In Chapter 2, how does the thesis distinguish a differential equation from an iterated map (difference equation)?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "In Chapter 2, the thesis distinguishes them by time scale: a differential equation describes evolution in continuous time, written with a time derivative like x\u0307 = f(x), while an iterated map, or difference equation, describes evolution in discrete time, written as x(t + 1) = f(x(t))",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 13698,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9125188405874559,
+        "context_precision": 0.9999999999666667
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_08c1ba9ac36f873c0069f3bd7bf6b08197925ec59a50c559ec; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-metric-retry-02",
+      "system": "openai_file_search",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-comparison_synthesis-025",
+      "question": "How does the role of bioenergy in 2050 differ between the Planned Energy Scenario and the 1.5 degree C Scenario?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "In 2050, bioenergy has a much larger, more system-wide role in the 1.5\u00b0C Scenario than in the Planned Energy Scenario. Under the 1.5\u00b0C Scenario, biomass supply reaches 135 EJ by 2050, and modern bioenergy increases four-fold from 2020 levels; the report also says bioenergy is key to replacing fossil fuels across electricity, industry, buildings, transport, and as a chemical feedstock . It is described as playing an important role in industry heat and feedstock, transport decarbonisation, and avi",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 12862,
+      "ragas": {
+        "faithfulness": 0.9565217391304348,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.8333333332916666
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_03f6c4dd19d2b6aa0069f3bdb335e48197a4d4c571d7de4b40; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-metric-retry-02",
+      "system": "openai_file_search",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-comparison_synthesis-026",
+      "question": "How does the share of renewables in electricity generation in recent years compare with what is needed by 2030 and 2050 under the 1.5 degree C scenario?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "In recent years, renewables have been around 28% of electricity generation. Under the 1.5\u00b0C scenario, that share needs to rise to 68% by 2030 and 91% by 2050. The same source also notes the broader power mix shift, with renewables rising from 28% in 2020 to 91% in 2050.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 13481,
+      "ragas": {
+        "faithfulness": 0.8,
+        "answer_relevancy": 0.8805488472624683,
+        "context_precision": 0.8666666666377778
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_03d25d987530559c0069f3be1878cc8194a7c9278502983da8; attempts=1"
+    }
+  ]
+}

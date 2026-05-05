@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import argparse
 import json
+import os
 from dataclasses import dataclass, replace
 from datetime import datetime
 from pathlib import Path
@@ -32,6 +33,7 @@ ALLOWED_INTENTS = {
 }
 
 DEFAULT_SYSTEMS = ("helpmate", "openai_file_search", "vectara")
+ALLOWED_SYSTEMS = DEFAULT_SYSTEMS + ("openai_retrieval_helpmate_answer",)
 CONTEXT_MODES = ("native", "equalized")
 
 
@@ -267,6 +269,9 @@ def _row_from_answer(
     ragas_scores: dict[str, float | str],
 ) -> dict:
     cleaned_answer = _strip_references(answer.answer)
+    support_status = answer.support_status if answer.support_status in {"supported", "partial", "unsupported"} else (
+        "supported" if answer.supported else "unsupported"
+    )
     return {
         "suite_id": suite.suite_id,
         "system": system_name,
@@ -277,7 +282,9 @@ def _row_from_answer(
         "intent_type": question.intent_type,
         "answerable": question.answerable,
         "supported": bool(answer.supported),
-        "abstained": not bool(answer.supported),
+        "support_status": support_status,
+        "answered": support_status in {"supported", "partial"},
+        "abstained": support_status == "unsupported",
         "answer_preview": cleaned_answer[:500],
         "citations": list(answer.citations),
         "context_count": len(contexts),
@@ -313,7 +320,14 @@ def _summarize_group(rows: list[dict]) -> dict:
     answerable_rows = [row for row in rows if row.get("answerable")]
     unsupported_rows = [row for row in rows if not row.get("answerable")]
     supported_rows = [row for row in rows if row.get("supported")]
+    partial_rows = [row for row in rows if _row_support_status(row) == "partial"]
+    answered_rows = [row for row in rows if _row_support_status(row) in {"supported", "partial"}]
     attempted_answerable_rows = [row for row in answerable_rows if row.get("supported")]
+    covered_answerable_rows = [
+        row
+        for row in answerable_rows
+        if row.get("supported") or _row_support_status(row) == "partial"
+    ]
     ragas = {
         metric: _safe_mean(
             [
@@ -328,7 +342,7 @@ def _summarize_group(rows: list[dict]) -> dict:
         metric: _safe_mean(
             [
                 row.get("ragas", {}).get(metric)
-                for row in supported_rows
+                for row in answered_rows
                 if isinstance(row.get("ragas", {}).get(metric), (int, float))
             ]
         )
@@ -339,15 +353,26 @@ def _summarize_group(rows: list[dict]) -> dict:
         "answerable_size": len(answerable_rows),
         "unsupported_size": len(unsupported_rows),
         "supported_rate": len(supported_rows) / max(total, 1),
+        "partial_rate": len(partial_rows) / max(total, 1),
+        "answered_rate": len(answered_rows) / max(total, 1),
         "answerable_supported_rate": len(attempted_answerable_rows) / max(len(answerable_rows), 1),
-        "unsupported_abstention_rate": sum(1 for row in unsupported_rows if not row.get("supported")) / max(len(unsupported_rows), 1),
-        "false_support_rate": sum(1 for row in unsupported_rows if row.get("supported")) / max(len(unsupported_rows), 1),
-        "false_abstention_rate": sum(1 for row in answerable_rows if not row.get("supported")) / max(len(answerable_rows), 1),
+        "answerable_coverage_rate": len(covered_answerable_rows) / max(len(answerable_rows), 1),
+        "unsupported_abstention_rate": sum(1 for row in unsupported_rows if _row_support_status(row) == "unsupported") / max(len(unsupported_rows), 1),
+        "false_support_rate": sum(1 for row in unsupported_rows if _row_support_status(row) in {"supported", "partial"}) / max(len(unsupported_rows), 1),
+        "false_abstention_rate": sum(1 for row in answerable_rows if _row_support_status(row) == "unsupported") / max(len(answerable_rows), 1),
+        "strict_false_abstention_rate": sum(1 for row in answerable_rows if not row.get("supported")) / max(len(answerable_rows), 1),
         "avg_context_count": _safe_mean([row.get("context_count") for row in rows]),
         "avg_context_chars": _safe_mean([row.get("context_chars") for row in rows]),
         "ragas_all": ragas,
         "ragas_attempted": attempted_ragas,
     }
+
+
+def _row_support_status(row: dict) -> str:
+    status = str(row.get("support_status") or "").strip().lower()
+    if status in {"supported", "partial", "unsupported"}:
+        return status
+    return "supported" if row.get("supported") else "unsupported"
 
 
 def _deltas_vs_helpmate(summaries: dict[str, dict]) -> dict:
@@ -394,7 +419,9 @@ def run_final_eval_suite(
     manifest_path: str | Path,
     *,
     systems: tuple[str, ...] = DEFAULT_SYSTEMS,
+    question_offset: int = 0,
     max_questions: int | None = None,
+    question_ids: tuple[str, ...] = (),
     context_mode: str = "native",
     skip_ragas: bool = False,
     require_files: bool = True,
@@ -411,13 +438,25 @@ def run_final_eval_suite(
     runtime_settings = _final_eval_settings(base_settings, suite.suite_id)
     scorer = RagasScorer(runtime_settings, enabled=not skip_ragas)
     documents = {document.document_id: document for document in suite.documents}
-    questions = list(suite.questions[:max_questions]) if max_questions else list(suite.questions)
+    if question_offset < 0:
+        raise ValueError("question_offset must be non-negative")
+    if question_ids:
+        requested_ids = set(question_ids)
+        selected_questions = [question for question in suite.questions if question.question_id in requested_ids]
+        missing_ids = sorted(requested_ids - {question.question_id for question in selected_questions})
+        if missing_ids:
+            raise ValueError(f"Unknown question_ids: {', '.join(missing_ids)}")
+    else:
+        selected_questions = suite.questions[question_offset:]
+    questions = list(selected_questions[:max_questions]) if max_questions else list(selected_questions)
 
     rows: list[dict] = []
     if "helpmate" in systems:
         rows.extend(_run_helpmate(suite, documents, questions, runtime_settings, scorer, context_mode=context_mode))
     if "openai_file_search" in systems:
         rows.extend(_run_openai_file_search(suite, documents, questions, runtime_settings, scorer))
+    if "openai_retrieval_helpmate_answer" in systems:
+        rows.extend(_run_openai_retrieval_helpmate_answer(suite, documents, questions, runtime_settings, scorer))
     if "vectara" in systems:
         rows.extend(_run_vectara(suite, documents, questions, runtime_settings, scorer))
 
@@ -433,6 +472,9 @@ def run_final_eval_suite(
                 "max_chars_per_context": suite.max_context_chars,
             },
             "context_mode": context_mode,
+            "question_offset": question_offset,
+            "question_ids": list(question_ids),
+            "question_count": len(questions),
         },
         "systems": list(systems),
         "ragas_enabled": scorer.available,
@@ -448,12 +490,15 @@ def run_final_eval_suite(
                 "active": context_mode,
             },
             "openai_file_search": {
+                "mode": "native_responses_file_search_answer",
                 "rewrite_query": True,
                 "max_num_results": suite.context_top_k,
             },
             "vectara": {
                 "search_profile": vectara_profile.name,
                 "search_config": vectara_profile.search_payload(suite.context_top_k),
+                "mode": "native_mockingbird_answer",
+                "generation_preset_name": os.getenv("HELPMATE_VECTARA_GENERATION_PRESET") or "mockingbird-2.0",
             },
         },
         "summary": summarize_rows(rows),
@@ -526,6 +571,57 @@ def _run_openai_file_search(
     provider = OpenAIFileSearchBenchmark()
     for question in questions:
         eval_document = documents[question.document_id]
+        native = provider.answer(
+            eval_document.path,
+            question.question,
+            model=settings.answer_model,
+            max_num_results=suite.context_top_k,
+            max_context_chars=None,
+        )
+        contexts_payload = native["contexts"]
+        contexts = [context["text"] for context in contexts_payload]
+        answer = AnswerResult(
+            question=question.question,
+            answer=native["answer"],
+            citations=[
+                str(context.get("metadata", {}).get("page_label", f"OpenAI File Search Result {index}"))
+                for index, context in enumerate(contexts_payload, start=1)
+            ],
+            evidence=_candidates_from_contexts("openai_file_search", contexts_payload),
+            supported=bool(native["supported"]),
+            support_status="supported" if bool(native["supported"]) else "unsupported",
+            model_name=str(native.get("model", settings.answer_model)),
+            note=(
+                "OpenAI Responses API answered with native file_search. "
+                f"response_id={native.get('response_id')}; attempts={native.get('attempts', 1)}"
+            ),
+        )
+        ragas_scores = scorer.score(question=question.question, answer_text=_strip_references(answer.answer), contexts=contexts)
+        rows.append(
+            _row_from_answer(
+                suite=suite,
+                system_name="openai_file_search",
+                document=eval_document,
+                question=question,
+                answer=answer,
+                contexts=contexts,
+                ragas_scores=ragas_scores,
+            )
+        )
+    return rows
+
+
+def _run_openai_retrieval_helpmate_answer(
+    suite: EvalSuite,
+    documents: dict[str, EvalDocument],
+    questions: list[EvalQuestion],
+    settings: Settings,
+    scorer: RagasScorer,
+) -> list[dict]:
+    rows: list[dict] = []
+    provider = OpenAIFileSearchBenchmark()
+    for question in questions:
+        eval_document = documents[question.document_id]
         search = provider.search(eval_document.path, question.question, max_num_results=suite.context_top_k)
         contexts_payload = _limited_contexts(search["results"], top_k=suite.context_top_k, max_chars=suite.max_context_chars)
         answer = _answer_from_contexts(
@@ -539,7 +635,7 @@ def _run_openai_file_search(
         rows.append(
             _row_from_answer(
                 suite=suite,
-                system_name="openai_file_search",
+                system_name="openai_retrieval_helpmate_answer",
                 document=eval_document,
                 question=question,
                 answer=answer,
@@ -571,6 +667,8 @@ def _run_vectara(
                 "intent_type": question.intent_type,
                 "answerable": question.answerable,
                 "supported": False,
+                "support_status": "unsupported",
+                "answered": False,
                 "abstained": True,
                 "context_count": 0,
                 "context_chars": 0,
@@ -580,15 +678,30 @@ def _run_vectara(
         ]
     for question in questions:
         eval_document = documents[question.document_id]
-        search = provider.search(eval_document.path, question.question, limit=suite.context_top_k)
-        contexts_payload = _limited_contexts(search["results"], top_k=suite.context_top_k, max_chars=suite.max_context_chars)
-        answer = _answer_from_contexts(
-            settings=settings,
-            system_name="vectara",
-            question=question.question,
-            contexts=contexts_payload,
+        native = provider.answer(
+            eval_document.path,
+            question.question,
+            limit=suite.context_top_k,
         )
-        contexts = [context["text"] for context in contexts_payload]
+        contexts_payload = list(native["contexts"])
+        answer = AnswerResult(
+            question=question.question,
+            answer=str(native["answer"]),
+            citations=[
+                str(context.get("metadata", {}).get("page_label") or f"Vectara Result {index}")
+                for index, context in enumerate(contexts_payload, start=1)
+            ],
+            evidence=[],
+            supported=bool(native["supported"]),
+            support_status="supported" if bool(native["supported"]) else "unsupported",
+            model_name=str(native.get("generation_preset_name", "mockingbird-2.0")),
+            note=(
+                "Vectara native generation answered with hybrid retrieval and reranking. "
+                f"preset={native.get('generation_preset_name')}; "
+                f"factual_consistency_score={native.get('factual_consistency_score')}"
+            ),
+        )
+        contexts = [str(context["text"]) for context in contexts_payload if context.get("text")]
         ragas_scores = scorer.score(question=question.question, answer_text=_strip_references(answer.answer), contexts=contexts)
         rows.append(
             _row_from_answer(
@@ -607,8 +720,10 @@ def _run_vectara(
 def main() -> None:
     parser = argparse.ArgumentParser()
     parser.add_argument("--manifest", default="docs/evals/final_eval_manifest.example.json")
-    parser.add_argument("--systems", nargs="*", default=list(DEFAULT_SYSTEMS), choices=list(DEFAULT_SYSTEMS))
+    parser.add_argument("--systems", nargs="*", default=list(DEFAULT_SYSTEMS), choices=list(ALLOWED_SYSTEMS))
+    parser.add_argument("--question-offset", type=int, default=0)
     parser.add_argument("--max-questions", type=int, default=None)
+    parser.add_argument("--question-ids", nargs="*", default=[])
     parser.add_argument("--context-mode", choices=list(CONTEXT_MODES), default="native")
     parser.add_argument("--skip-ragas", action="store_true")
     parser.add_argument("--allow-missing-files", action="store_true")
@@ -625,7 +740,9 @@ def main() -> None:
     result = run_final_eval_suite(
         args.manifest,
         systems=tuple(args.systems),
+        question_offset=args.question_offset,
         max_questions=args.max_questions,
+        question_ids=tuple(args.question_ids),
         context_mode=args.context_mode,
         skip_ragas=args.skip_ragas,
         require_files=not args.allow_missing_files,

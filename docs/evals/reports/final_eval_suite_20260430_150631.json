@@ -1,0 +1,1049 @@
+{
+  "suite": {
+    "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+    "description": "OpenAI File Search chunk 2: fomc-minutes-2026-01-28, same held-out final eval questions.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\openai_eval_chunks\\openai_chunk_02_fomc-minutes-2026-01-28.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "openai_file_search"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      }
+    }
+  },
+  "summary": {
+    "overall": {
+      "openai_file_search": {
+        "dataset_size": 30,
+        "answerable_size": 27,
+        "unsupported_size": 3,
+        "supported_rate": 0.1,
+        "answerable_supported_rate": 0.1111111111111111,
+        "unsupported_abstention_rate": 1.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.8888888888888888,
+        "avg_context_count": 4.833333333333333,
+        "avg_context_chars": 1912.6333333333334,
+        "ragas_all": {
+          "faithfulness": 0.9514705882352941,
+          "answer_relevancy": 0.4324676667824262,
+          "context_precision": 0.718749999948125
+        },
+        "ragas_attempted": {
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.9006316484246986,
+          "context_precision": 0.9999999999
+        }
+      }
+    },
+    "by_intent": {
+      "openai_file_search": {
+        "broad_summary": {
+          "dataset_size": 6,
+          "answerable_size": 6,
+          "unsupported_size": 0,
+          "supported_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 1.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1998.8333333333333,
+          "ragas_all": {
+            "faithfulness": 0.875,
+            "answer_relevancy": 0.9303198945488542,
+            "context_precision": null
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 1.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1999.5,
+          "ragas_all": {
+            "faithfulness": 0.875,
+            "answer_relevancy": 0.31156939351452567,
+            "context_precision": 0.99999999998
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        },
+        "local_scope": {
+          "dataset_size": 6,
+          "answerable_size": 6,
+          "unsupported_size": 0,
+          "supported_rate": 0.16666666666666666,
+          "answerable_supported_rate": 0.16666666666666666,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.8333333333333334,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1999.5,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.33922634435866883,
+            "context_precision": 0.68749999995125
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8012632968493971,
+            "context_precision": 0.9999999999
+          }
+        },
+        "lookup": {
+          "dataset_size": 8,
+          "answerable_size": 8,
+          "unsupported_size": 0,
+          "supported_rate": 0.25,
+          "answerable_supported_rate": 0.25,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.75,
+          "avg_context_count": 4.375,
+          "avg_context_chars": 1674.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.3004764355593788,
+            "context_precision": 0.6666666666
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9999999999999999,
+            "context_precision": 0.9999999999
+          }
+        },
+        "numeric_procedure": {
+          "dataset_size": 3,
+          "answerable_size": 3,
+          "unsupported_size": 0,
+          "supported_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 1.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 2000.0,
+          "ragas_all": {
+            "faithfulness": 0.9,
+            "answer_relevancy": 0.28947345417786347,
+            "context_precision": null
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        },
+        "unsupported": {
+          "dataset_size": 3,
+          "answerable_size": 0,
+          "unsupported_size": 3,
+          "supported_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1999.6666666666667,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9887424405576041,
+            "context_precision": null
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-001",
+      "question": "What target range did the Committee decide to maintain for the federal funds rate at this meeting?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "No substantive answer can be provided from the supplied evidence because no evidence was provided about this meeting or the federal funds rate target range.",
+      "citations": [],
+      "context_count": 0,
+      "context_chars": 0,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.0
+      },
+      "note": "The evidence section is empty, so there are no facts to identify the Committee\u2019s decision for this meeting."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-002",
+      "question": "Which members dissented from the policy decision, and what alternative did they prefer?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not identify any members who dissented, nor does it state any alternative they preferred [Source 4].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2000,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy": 0.802858613356273,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The provided evidence says that members agreed on the policy discussion and then describes the Committee\u2019s policy actions, but it does not name any dissenting members or any alternative policy they preferred [Source 4]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-003",
+      "question": "When is the next FOMC meeting scheduled to take place?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not state when the next FOMC meeting is scheduled. It only shows that a Federal Open Market Committee meeting was held on January 27\u201328, 2026 [Source 2][Source 3] and mentions a policy directive effective January 29, 2026 [Source 4].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1696,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The question asks for the next FOMC meeting date, but the supplied evidence contains only the dates of an already-held meeting (January 27\u201328, 2026) and a policy directive effective January 29, 2026. No source provides the date of any future or next FOMC meeting."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-004",
+      "question": "In the staff's review of foreign developments, which foreign central banks cut their policy rates and which raised them?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence identifies some foreign central banks that cut policy rates and one that raised its key policy rate, but it does not provide a complete list of all such banks beyond those named. Supported cuts: Bank of England and Bank of Mexico [Source 2]. Supported raise: Bank of Japan [Source 2]. The missing fact is whether any other foreign central banks cut or raised rates in the staff's review.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2000,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy": 0.0,
+        "context_precision": 0.49999999995
+      },
+      "note": "The question asks which foreign central banks cut their policy rates and which raised them. The evidence explicitly names only two cutters and one raiser in the staff's review of foreign developments, but it also says 'a few' cut and 'most others' left rates unchanged, without giving a full exhaustive list. That means the evidence supports only a partial answer, not a complete one."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-005",
+      "question": "In the staff's financial stability assessment, which categories of vulnerability were characterized as 'notable' versus 'moderate'?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not identify which vulnerability categories were characterized as \"notable\" versus \"moderate\" in the staff's financial stability assessment. The provided excerpts mention several vulnerabilities and risks, but they do not include the staff\u2019s specific classification of categories into \"notable\" and \"moderate\" [Source 1] [Source 2] [Source 3] [Source 4] [Source 5].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1998,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.99999999998
+      },
+      "note": "To answer this question fully, the evidence would need the staff assessment section that explicitly labels vulnerability categories as \"notable\" or \"moderate.\" The supplied sources mention items like short-term funding market pressures, credit market conditions, delinquency rates, private credit sector vulnerabilities, labor market downside risks, and inflation risks, but none of them provide the requested categorization. Therefore the question cannot be answered from the supplied evidence."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-broad_summary-006",
+      "question": "What were the main reasons cited by participants who supported holding the federal funds rate steady at this meeting?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not fully support the main reasons cited by participants who supported holding the federal funds rate steady at this meeting. It shows that some participants thought it would be appropriate to hold the policy rate steady for some time, but it does not provide the full set of reasons for that view. The evidence does indicate that participants noted inflation expectations and labor market concerns in the broader discussion, but it does not clearly attribute those as the main reas",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness": 0.75,
+        "answer_relevancy": 0.9131314995851154,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The question asks for the main reasons cited by participants who supported holding the federal funds rate steady. The evidence only partially addresses this: Source 2 says some participants thought it would likely be appropriate to hold the policy rate steady for some time, but it does not give the main reasons in that sentence. Source 3 mentions downside risks to the labor market, and Source 2 mentions inflation declining in line with expectations, but the evidence does not clearly connect these as the specific main reasons for supporting a steady rate. Because the required reasons are not fully stated, the question cannot be fully answered from the supplied evidence."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-broad_summary-007",
+      "question": "What financial stability concerns did participants raise specifically about the AI sector?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "Participants specifically raised concerns about the financing of the AI-related infrastructure buildout in opaque private markets, and they also highlighted vulnerabilities in the private credit sector and its provision of credit to riskier borrowers, including interconnections with other nonbank financial institutions such as insurance [Source 2]. The evidence does not provide additional AI-sector financial stability concerns beyond those points.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness": 0.875,
+        "answer_relevancy": 0.9712029739079201,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The question asks what financial stability concerns were raised specifically about the AI sector. Source 2 provides the only AI-specific concern: financing of the AI-related infrastructure buildout in opaque private markets, plus related private credit sector vulnerabilities. No other source addresses AI-sector financial stability concerns."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-comparison_synthesis-008",
+      "question": "How did the views of participants who preferred to lower rates differ from those who preferred to hold them steady?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence supports only part of the comparison. It shows that some participants favored further downward adjustments to the federal funds rate if inflation declined as expected, while some participants favored holding the policy rate steady for some time [Source 1]. However, the evidence does not provide the specific views or reasons that distinguish the two groups beyond that basic policy preference, so a fuller comparison is not supported.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The question asks how the views of the two groups differed. The evidence identifies each group's rate preference, but it does not give enough detail about their underlying views or rationale to compare them fully. One required fact is supported: lower rates if inflation declines as expected versus holding steady for some time. Missing: the substantive differences in their views beyond that preference."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-numeric_procedure-009",
+      "question": "What specific operating parameters did the policy directive set for the standing overnight repo and reverse repo facilities, effective January 29, 2026?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not include the operating parameters for the standing overnight repo and reverse repo facilities. It only shows that the directive was effective January 29, 2026 and directed the Desk to undertake open market operations as necessary, but the specific parameters for those facilities are missing from the supplied text [Source 2].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2000,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy": 0.8684203625335903,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The question asks for specific operating parameters for two facilities. The evidence includes only the start date and a general instruction to undertake open market operations [Source 2]. No text in the supplied evidence states the parameters for the standing overnight repo facility or the standing overnight reverse repo facility, so the answer cannot be fully supported."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-unsupported-010",
+      "question": "What did this meeting's updated dot plot show about participants' median federal funds rate projection for year-end 2026?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The supplied evidence does not include the updated dot plot or any statement about participants\u2019 median federal funds rate projection for year-end 2026.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "None of the provided sources mention the dot plot or the median federal funds rate projection for year-end 2026, so the question cannot be answered from the evidence."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-011",
+      "question": "Where physically was this two-day FOMC meeting held?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The two-day FOMC meeting was held in the offices of the Board of Governors of the Federal Reserve System [Source 1].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1696,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence states the meeting was held 'in the offices of the Board of Governors' on January 27 and 28, 2026 [Source 1]. This directly answers the physical location question."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-012",
+      "question": "Who was selected as Vice Chair of the Committee for the term beginning January 27, 2026?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "John C. Williams was selected as Vice Chair of the Committee for the term beginning January 27, 2026 [Source 1].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2000,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy": 0.9999999999999999,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence explicitly states the officers selected to serve beginning January 27, 2026, including \"John C. Williams Vice Chair\" [Source 1]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-013",
+      "question": "Who was selected to serve as Manager of the System Open Market Account?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not identify who was selected to serve as Manager of the System Open Market Account. [Source 1] lists officers such as Chair, Vice Chair, Secretary, Deputy Secretary, Assistant Secretary, and Assistant S..., but the Manager of the System Open Market Account is not named in the provided evidence. [Source 5] mentions the Desk executing transactions in the SOMA, but does not state who was selected as Manager.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2000,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The question asks for the person selected to serve as Manager of the System Open Market Account. The provided evidence does not explicitly name that person. Source 1 lists several Committee officers, but not the SOMA Manager. Source 5 references SOMA operations and the Desk, but gives no selection or name. Therefore the required fact is missing."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-014",
+      "question": "What was the unemployment rate in December as cited in the staff review?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not state the unemployment rate in December. It only says the unemployment rate had shown some signs of stabilization [Source 5].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2000,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The question asks for a specific December unemployment rate cited in the staff review, but none of the provided sources give that numeric rate. The evidence only includes a general statement about stabilization [Source 5], so the required fact is missing."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-015",
+      "question": "What rate is paid on reserve balances effective January 29, 2026?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not state the rate paid on reserve balances effective January 29, 2026. It only says the effective federal funds rate remained just below the interest rate on reserve balances [Source 5], and that a directive was effective January 29, 2026 [Source 2], but the actual reserve-balance rate is not given.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2000,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy": 0.0,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The question asks for a specific numeric rate paid on reserve balances effective January 29, 2026. The evidence includes the effective date [Source 2] and a relative statement about the effective federal funds rate being just below the interest rate on reserve balances [Source 5], but it does not provide the actual rate."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-016",
+      "question": "In the Annual Organizational Matters section, who was selected as Secretary of the Committee?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Joshua Gallin was selected as Secretary of the Committee [Source 1].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2000,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8012632968493971,
+        "context_precision": 0.9999999999
+      },
+      "note": "The Annual Organizational Matters section states that Joshua Gallin was selected to serve as Secretary of the Committee [Source 1]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-017",
+      "question": "In the discussion of money markets, what factors did contacts attribute to the better-than-expected year-end repo outcome?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "Contacts attributed the better-than-expected year-end repo outcome to additional liquidity from RMPs and a smaller TGA, increased take-up of standing repo operations, and some dealers locking in financing ahead of year-end [Source 4].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy": 0.8948684249439469,
+        "context_precision": 0.249999999975
+      },
+      "note": "The evidence identifies the factors discussed for subdued year-end pressures in short-term funding markets, which includes repo, but it does not explicitly say these were attributed by contacts to a \"better-than-expected year-end repo outcome\". The question wording asks for attribution in the discussion of money markets; the supplied text supports the factors but not that exact attribution context."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-018",
+      "question": "Among the elected FOMC members, who were the presidents of the Federal Reserve Banks of New York and Philadelphia?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not provide the names of the elected FOMC members who were presidents of the Federal Reserve Banks of New York and Philadelphia.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2000,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The supplied evidence shows only part of the FOMC attendance list and does not identify which elected members were the presidents of the Federal Reserve Banks of New York and Philadelphia. The required facts are: (1) the elected FOMC member who was president of the New York Fed, and (2) the elected FOMC member who was president of the Philadelphia Fed. Those facts are missing from the evidence."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-019",
+      "question": "By approximately how much did the staff estimate the government shutdown reduced fourth-quarter real GDP growth?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not state by how much the staff estimated the government shutdown reduced fourth-quarter real GDP growth. It only says the shutdown likely pushed down CPI and PCE price index levels in November and December [Source 1]. The needed estimate for fourth-quarter real GDP growth is missing.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2000,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The question asks for a specific estimated reduction in fourth-quarter real GDP growth due to the government shutdown. None of the provided sources gives that quantitative estimate or even a direct statement about GDP growth being reduced by the shutdown. The only shutdown-related effect mentioned is on CPI and PCE price index levels [Source 1]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-broad_summary-020",
+      "question": "How does the staff describe credit performance in domestic markets at the time of the meeting?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not fully support a substantive answer about how staff described credit performance in domestic markets at the time of the meeting. It shows that in domestic credit markets, borrowing costs for businesses, households, and municipalities remained significantly lower than prior highs [Source 1], and it also reports delinquency rates for several loan categories [Source 3]. However, it does not explicitly state the staff\u2019s overall description of \"credit performance\" in domestic mar",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1998,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The question asks for the staff\u2019s description of credit performance in domestic markets at the time of the meeting. The evidence provides partial related facts: borrowing costs were significantly lower than the highs [Source 1], and some delinquency rates were near historical lows or remained elevated [Source 3]. But it does not explicitly summarize credit performance in domestic markets as a whole, so a complete supported answer is not possible."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-broad_summary-021",
+      "question": "How does the staff's January economic outlook compare with the projection prepared for the December meeting?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence supports only part of the comparison: the staff projection for economic activity in January was stronger than the one prepared for the December meeting [Source 2]. The evidence does not provide the specific details of the December projection beyond that comparison, so a fuller comparison cannot be given.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2000,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The question asks how the January economic outlook compares with the December meeting projection. Source 2 states that the January staff projection for economic activity was stronger than the December one, but it does not provide any additional comparative details. This is enough to answer the direction of the comparison, but not a fuller characterization beyond that."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-broad_summary-022",
+      "question": "How does the staff characterize the U.S. financial system's overall vulnerabilities, and what categories does it use?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not provide a complete characterization of the U.S. financial system's overall vulnerabilities or a defined set of categories for them. It mentions several specific vulnerabilities or risks in parts of the system: elevated delinquency rates in small business and CMBS loans [Source 1], continued vulnerabilities in labor market conditions [Source 3], vulnerabilities in private credit and related nonbank interconnections [Source 4], and stablecoins that may be vulnerable to runs [",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1998,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The question asks for an overall characterization and the categories used. The supplied evidence only contains isolated mentions of particular vulnerabilities in specific sectors, not an explicit staff assessment of overall system vulnerabilities or a complete category scheme. Missing required facts: the staff's overall characterization and the full categories used."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-broad_summary-023",
+      "question": "What were participants' general views on consumer spending and business fixed investment?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not include participants' general views on consumer spending or business fixed investment.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy": 0.906625210153527,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The question asks for participants' views on two specific topics: consumer spending and business fixed investment. None of the supplied evidence states those views. The evidence only mentions inflation expectations, labor market risks, policy support, stablecoins, and committee officers [Source 1]-[Source 5]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-comparison_synthesis-024",
+      "question": "How does the staff describe the change over the past year in core services price inflation versus core goods price inflation?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not fully answer the comparison. It supports that overall inflation eased significantly from its highs in 2022 and that elevated readings largely reflected inflation in core goods [Source 4]. However, it does not provide the staff\u2019s description of how core services price inflation changed over the past year, so the comparison between core services and core goods is incomplete.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2000,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy": 0.0,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "Required facts: (1) the staff\u2019s description of the change over the past year in core services price inflation, and (2) the staff\u2019s description of the change over the past year in core goods price inflation, in order to compare them. The evidence only states that elevated readings largely reflected inflation in core goods [Source 4] and gives no explicit staff description of the change in core services price inflation over the past year."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-comparison_synthesis-025",
+      "question": "How did the equity performance of the largest technology companies compare with the rest of the S&P 500 over the intermeeting period?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not include information about equity performance of the largest technology companies or the rest of the S&P 500 over the intermeeting period.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.99999999998
+      },
+      "note": "The required facts are: (1) performance of the largest technology companies\u2019 equities, and (2) performance of the rest of the S&P 500 over the intermeeting period. None of the supplied sources provide either fact."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-comparison_synthesis-026",
+      "question": "How did the staff's January inflation projection compare with the projection prepared for the December meeting, and why?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not provide the staff\u2019s January inflation projection, the December meeting projection for inflation, or the reason for any change between them. It only states that the staff projection for economic activity was stronger than the one prepared for the December meeting, reflecting incoming data and greater expected support from financial conditions [Source 1], and separately gives January inflation estimates of 2.9 percent total PCE and 3.0 percent core PCE [Source 3].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2000,
+      "ragas": {
+        "faithfulness": 0.75,
+        "answer_relevancy": 0.9347081805435771,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The question asks for a comparison of the staff's January inflation projection versus the projection prepared for the December meeting, and the reason for the difference. The supplied evidence does not identify the December inflation projection or explicitly compare the January and December inflation projections. Source 1 discusses economic activity, not inflation. Source 3 provides January inflation estimates only, without a December comparison or explanation."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-numeric_procedure-027",
+      "question": "According to the staff, what were the 12-month CPI and core CPI inflation rates in December?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not provide the 12-month CPI and core CPI inflation rates in December. It only states that, based on the CPI, staff estimated total PCE price inflation was 2.9 percent in December and core PCE price inflation was 3.0 percent [Source 2].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2000,
+      "ragas": {
+        "faithfulness": 0.8,
+        "answer_relevancy": 0.0,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The question asks for two specific facts: the 12-month CPI inflation rate in December and the 12-month core CPI inflation rate in December. The provided evidence does not state either of those CPI rates. Source 2 mentions PCE inflation rates instead, so it does not fully answer the question."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-numeric_procedure-028",
+      "question": "What size rate change did the FOMC make at the December meeting and how did it pass through to money market rates?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not provide the FOMC\u2019s December rate change size or how it passed through to money market rates. The supplied excerpts mention policy discussions and a directive, but they do not state the December meeting\u2019s rate change or describe its effect on money market rates [Source 3][Source 4][Source 5].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2000,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "To answer fully, the evidence would need (1) the size of the FOMC\u2019s December rate change and (2) a description of how that change affected money market rates. The provided sources do not contain those facts."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-unsupported-029",
+      "question": "What numeric estimate of the natural rate of unemployment did the staff present in this meeting's projections?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence provided does not include the numeric estimate of the natural rate of unemployment from this meeting\u2019s projections. It only mentions staff economic outlook and labor market discussion, but no specific natural-rate number is given in the supplied excerpts [Source 2][Source 5].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2000,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The question asks for a specific numeric estimate. The supplied evidence does not state any number for the natural rate of unemployment, so the required fact is missing."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-02-fomc-minutes-2026-01-28",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-unsupported-030",
+      "question": "What were the results of the FOMC's vote at this meeting on amending the standing repo facility's aggregate limit?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not state the results of any FOMC vote on amending the standing repo facility's aggregate limit. It only shows a vote to direct the Desk to execute transactions in the SOMA and general discussion of money markets, but not the specific vote outcome or any amendment to the standing repo facility's aggregate limit [Source 1].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2000,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9887424405576041,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "Required facts: (1) whether the FOMC voted on amending the standing repo facility's aggregate limit, and (2) the vote result. The evidence does not provide either fact; none of the sources mention the amendment vote or its outcome. [Source 1] only includes a different directive, and the other sources are unrelated discussion excerpts."
+    }
+  ]
+}

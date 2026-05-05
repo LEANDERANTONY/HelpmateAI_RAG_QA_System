@@ -1,0 +1,616 @@
+{
+  "suite": {
+    "suite_id": "vectara_native_150_batch_09_20260501",
+    "description": "Draft held-out product-fit final evaluation manifest. Documents are fixed; questions must be generated and frozen before any system run.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\vectara_native_batches\\batch_09.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "vectara"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      },
+      "mode": "native_mockingbird_answer",
+      "generation_preset_name": "mockingbird-2.0"
+    }
+  },
+  "summary": {
+    "overall": {
+      "vectara": {
+        "dataset_size": 15,
+        "answerable_size": 13,
+        "unsupported_size": 2,
+        "supported_rate": 0.9333333333333333,
+        "answerable_supported_rate": 1.0,
+        "unsupported_abstention_rate": 0.5,
+        "false_support_rate": 0.5,
+        "false_abstention_rate": 0.0,
+        "avg_context_count": 5.0,
+        "avg_context_chars": 929.5333333333333,
+        "ragas_all": {
+          "faithfulness": 0.6611063011063011,
+          "answer_relevancy": 0.7990620595711515,
+          "context_precision": 0.9285185184552716
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.7083281797567512,
+          "answer_relevancy": 0.8432424708215366,
+          "context_precision": 0.9234126983463624
+        }
+      }
+    },
+    "by_intent": {
+      "vectara": {
+        "broad_summary": {
+          "dataset_size": 3,
+          "answerable_size": 3,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 740.3333333333334,
+          "ragas_all": {
+            "faithfulness": 0.9393939393939394,
+            "answer_relevancy": 0.8998544490615267,
+            "context_precision": 0.8351851851617901
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.9393939393939394,
+            "answer_relevancy": 0.8998544490615267,
+            "context_precision": 0.8351851851617901
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 3,
+          "answerable_size": 3,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 836.6666666666666,
+          "ragas_all": {
+            "faithfulness": 0.9629629629629629,
+            "answer_relevancy": 0.8876344561230135,
+            "context_precision": 0.9185185184601234
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.9629629629629629,
+            "answer_relevancy": 0.8876344561230135,
+            "context_precision": 0.9185185184601234
+          }
+        },
+        "lookup": {
+          "dataset_size": 5,
+          "answerable_size": 5,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1138.4,
+          "ragas_all": {
+            "faithfulness": 0.6095238095238096,
+            "answer_relevancy": 0.8533048634660052,
+            "context_precision": 0.9666666665783333
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.6095238095238096,
+            "answer_relevancy": 0.8533048634660052,
+            "context_precision": 0.9666666665783333
+          }
+        },
+        "numeric_procedure": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1006.0,
+          "ragas_all": {
+            "faithfulness": 0.36666666666666664,
+            "answer_relevancy": 0.781846152973555,
+            "context_precision": 0.9166666665958333
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.36666666666666664,
+            "answer_relevancy": 0.781846152973555,
+            "context_precision": 0.9166666665958333
+          }
+        },
+        "unsupported": {
+          "dataset_size": 2,
+          "answerable_size": 0,
+          "unsupported_size": 2,
+          "supported_rate": 0.5,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 0.5,
+          "false_support_rate": 0.5,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 754.0,
+          "ragas_all": {
+            "faithfulness": 0.21428571428571427,
+            "answer_relevancy": 0.39662377736825793,
+            "context_precision": 0.99999999994
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.42857142857142855,
+            "answer_relevancy": 0.6127112526707561,
+            "context_precision": 0.9999999999
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "vectara_native_150_batch_09_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-broad_summary-021",
+      "question": "How does the staff's January economic outlook compare with the projection prepared for the December meeting?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The staff's January economic outlook was stronger than the projection prepared for the December meeting, reflecting incoming data, greater expected support from financial conditions, and a small upward revision to the projected path of potential output [1]. Additionally, the staff's inflation forecast was slightly higher than the one prepared for the December meeting, reflecting the expectation that resource utilization would be tighter and the path of core import prices would be higher than pre",
+      "citations": [
+        "Page 9",
+        "Page 9",
+        "Page 9",
+        "Page 14",
+        "Page 10"
+      ],
+      "context_count": 5,
+      "context_chars": 831,
+      "ragas": {
+        "faithfulness": 0.8181818181818182,
+        "answer_relevancy": 0.8397544435832797,
+        "context_precision": 0.8666666666377778
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.59765625"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_09_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-broad_summary-022",
+      "question": "How does the staff characterize the U.S. financial system's overall vulnerabilities, and what categories does it use?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The staff characterizes the U.S. financial system's overall vulnerabilities as notable, with specific categories of vulnerabilities identified. These categories include funding risks, leverage in the financial sector, and nonfinancial business and household debt [1]. The staff characterizes vulnerabilities associated with funding risks as moderate [2], while those associated with leverage in the financial sector are characterized as notable [3]. Additionally, vulnerabilities related to nonfinanc",
+      "citations": [
+        "Page 9",
+        "Page 9",
+        "Page 9",
+        "Page 9",
+        "Page 7"
+      ],
+      "context_count": 5,
+      "context_chars": 495,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9332731591205748,
+        "context_precision": 0.6388888888675925
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.64453125"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_09_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-broad_summary-023",
+      "question": "What were participants' general views on consumer spending and business fixed investment?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Based on the provided sources, participants generally had a positive view of consumer spending and business fixed investment. They noted that consumer spending had been resilient, supported by gains in household wealth [1]. Additionally, business fixed investment remained robust, particularly in the technology sector [2]. However, there were some concerns about disparities in sales between higher- and lower-income consumers [3], as well as signs of weakness in the financial positions of low- and",
+      "citations": [
+        "Page 11",
+        "Page 11",
+        "Page 11",
+        "Page 12",
+        "Page 12"
+      ],
+      "context_count": 5,
+      "context_chars": 895,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9265357444807254,
+        "context_precision": 0.99999999998
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.7734375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_09_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-comparison_synthesis-024",
+      "question": "How does the staff describe the change over the past year in core services price inflation versus core goods price inflation?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the staff, core services price inflation had declined relative to a year earlier, led by a deceleration in housing services prices [3]. On the other hand, core goods price inflation had picked up over the period, largely attributed to the effects of higher tariffs [1]. The staff estimated that total PCE price inflation was 2.9 percent in December and core PCE price inflation was 3.0 percent [2]. Core PCE price inflation, which excludes changes in consumer energy prices and many cons",
+      "citations": [
+        "Page 6",
+        "Page 6",
+        "Page 6",
+        "Page 6",
+        "Page 6"
+      ],
+      "context_count": 5,
+      "context_chars": 765,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7455735889612777,
+        "context_precision": 0.7555555555303703
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.9609375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_09_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-comparison_synthesis-025",
+      "question": "How did the equity performance of the largest technology companies compare with the rest of the S&P 500 over the intermeeting period?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The equity performance of the largest technology companies was lower than the rest of the S&P 500 over the intermeeting period. While the S&P 500 was up nearly 3 percent, excluding those companies, and cyclical sectors and indexes of firms with smaller market capitalizations performed even better [1][2]. This suggests that investors were focused on elevated valuations and large capital expenditures of the largest technology companies, leading to underperformance [1].",
+      "citations": [
+        "Page 5",
+        "Page 5",
+        "Page 8",
+        "Page 4",
+        "Page 7"
+      ],
+      "context_count": 5,
+      "context_chars": 611,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9995993600071267,
+        "context_precision": 0.99999999995
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.93359375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_09_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-comparison_synthesis-026",
+      "question": "How did the staff's January inflation projection compare with the projection prepared for the December meeting, and why?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The staff's January inflation projection was slightly higher than the one prepared for the December meeting, reflecting the expectation that resource utilization would be tighter and the path of core import prices would be higher than previously projected [1]. This increase in inflation projection is consistent with the overall stronger economic activity forecast, which was also revised upwards compared to the December meeting [2]. The staff estimated that total PCE price inflation was 2.9 perce",
+      "citations": [
+        "Page 9",
+        "Page 9",
+        "Page 6",
+        "Page 10",
+        "Page 13"
+      ],
+      "context_count": 5,
+      "context_chars": 1134,
+      "ragas": {
+        "faithfulness": 0.8888888888888888,
+        "answer_relevancy": 0.9177304194006363,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.48632812"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_09_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-numeric_procedure-027",
+      "question": "According to the staff, what were the 12-month CPI and core CPI inflation rates in December?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the staff, the 12-month CPI inflation rate in December was 2.7 percent [1], and the core CPI inflation rate was 2.6 percent [1].",
+      "citations": [
+        "Page 6",
+        "Page 6",
+        "Page 6",
+        "Page 6",
+        "Page 6"
+      ],
+      "context_count": 5,
+      "context_chars": 817,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.9404318455798055,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.93359375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_09_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-numeric_procedure-028",
+      "question": "What size rate change did the FOMC make at the December meeting and how did it pass through to money market rates?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The FOMC made a 25 basis point decrease in the target range for the federal funds rate at the December meeting, which quickly passed through to secured and unsecured money market rates [1]. This decision was supported by all participants, who agreed to abide by the FOMC Policy on Investment and Trading for Committee Participants and Federal Reserve System Staff, among other policies [4]. The 12-month change in the CPI was 2.7 percent and core CPI inflation was 2.6 percent, both below their year-",
+      "citations": [
+        "Page 8",
+        "Page 15",
+        "Page 6",
+        "Page 4",
+        "Page 4"
+      ],
+      "context_count": 5,
+      "context_chars": 1195,
+      "ragas": {
+        "faithfulness": 0.7333333333333333,
+        "answer_relevancy": 0.6232604603673044,
+        "context_precision": 0.8333333332916666
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.79296875"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_09_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-unsupported-029",
+      "question": "What numeric estimate of the natural rate of unemployment did the staff present in this meeting's projections?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "No result found.",
+      "citations": [
+        "Page 9",
+        "Page 6",
+        "Page 6",
+        "Page 9",
+        "Page 12"
+      ],
+      "context_count": 5,
+      "context_chars": 638,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.18053630206575977,
+        "context_precision": 0.99999999998
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.46484375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_09_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-unsupported-030",
+      "question": "What were the results of the FOMC's vote at this meeting on amending the standing repo facility's aggregate limit?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The FOMC's vote at this meeting resulted in the removal of the aggregate limit for the standing repo facility. [1] The Committee approved the FOMC Authorizations and Continuing Directives for Open Market Operations, with a few minor changes to ensure consistency with the Committee's direction on conducting standing repo operations. [3] The Committee also conducted standing overnight repurchase agreement operations at a rate of 3.75 percent and standing overnight reverse repurchase agreement oper",
+      "citations": [
+        "Page 5",
+        "Page 14",
+        "Page 4",
+        "Page 14",
+        "Page 15"
+      ],
+      "context_count": 5,
+      "context_chars": 870,
+      "ragas": {
+        "faithfulness": 0.42857142857142855,
+        "answer_relevancy": 0.6127112526707561,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.9921875"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_09_20260501",
+      "system": "vectara",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-011",
+      "question": "What ISBN is listed for the publication?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The ISBN listed for the publication is 978-92-9260-527-8. This information can be found in source [1], which mentions the ISBN number in the citation section.",
+      "citations": [
+        "Page 2",
+        "Page 246",
+        "Page 241",
+        "Page 2",
+        "Page 96"
+      ],
+      "context_count": 5,
+      "context_chars": 1003,
+      "ragas": {
+        "faithfulness": 0.3333333333333333,
+        "answer_relevancy": 0.9452598814340378,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.96875"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_09_20260501",
+      "system": "vectara",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-012",
+      "question": "Where does the report indicate IRENA is headquartered?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the sources, the International Renewable Energy Agency (IRENA) is headquartered in Abu Dhabi [1].",
+      "citations": [
+        "Page 245",
+        "Page 153",
+        "Page 88",
+        "Page 94",
+        "Page 53"
+      ],
+      "context_count": 5,
+      "context_chars": 745,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8058668121915563,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.9609375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_09_20260501",
+      "system": "vectara",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-013",
+      "question": "When was IRENA established as a global intergovernmental organization?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the sources, IRENA (International Renewable Energy Agency) was established as a global intergovernmental organization in 2011 [1]. This is supported by the fact that IRENA has been active since 2014, as evidenced by the publication of \"Global Bioenergy Supply and Demand Projections: A working paper for REmap 2030\" in 2014 [3]. Additionally, IRENA has been conducting socio-economic studies since 2016, which further confirms its establishment as an organization in 2011 [5].\n\nNote that",
+      "citations": [
+        "Page 2",
+        "Page 249",
+        "Page 243",
+        "Page 122",
+        "Page 44"
+      ],
+      "context_count": 5,
+      "context_chars": 2333,
+      "ragas": {
+        "faithfulness": 0.7142857142857143,
+        "answer_relevancy": 0.8638692008553579,
+        "context_precision": 0.8333333332916666
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.66015625"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_09_20260501",
+      "system": "vectara",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-014",
+      "question": "Which national government is acknowledged for providing generous support for the report?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The German Federal Ministry for Economic Affairs and Climate Action is acknowledged for providing generous support for the report. [1]",
+      "citations": [
+        "Page 3",
+        "Page 138",
+        "Page 116",
+        "Page 60",
+        "Page 193"
+      ],
+      "context_count": 5,
+      "context_chars": 635,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.8082514132304607,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.048339844"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_09_20260501",
+      "system": "vectara",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-015",
+      "question": "Who is credited with copy-editing the report?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the sources, Steven B. Kennedy is credited with copy-editing the report [1]. Additionally, Paul Komor provided a technical review for the report [1].",
+      "citations": [
+        "Page 3",
+        "Page 3",
+        "Page 242",
+        "Page 195",
+        "Page 85"
+      ],
+      "context_count": 5,
+      "context_chars": 976,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8432770096186135,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.93359375"
+    }
+  ]
+}

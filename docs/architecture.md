@@ -25,28 +25,36 @@ Recommended deployment shape:
 2. infer lightweight document structure and document style
 3. repair low-confidence section maps at indexing time when journal-style layout noise is detected
 4. enrich sections with generic document profiles such as chapter, role, page range, and scope labels
-5. create metadata-rich chunks, sections, and deterministic section synopses
-6. build or reuse persisted chunk, section, and synopsis indexes plus lightweight topology artifacts
-7. analyze the question and produce a retrieval plan, with bounded LLM orchestration for explicit local scope
-8. retrieve evidence through chunk-first, synopsis-first, dedicated global-summary retrieval, legacy section-first fallback, or hybrid retrieval
-9. grade evidence as `strong`, `weak`, or `unsupported`
-10. adapt retrieval through structural guidance and global fallback instead of query rewriting
-11. optionally run a reorder-only post-rerank evidence selector over the top candidates when the spread-trigger policy fires
-12. generate a grounded answer with explicit support status
-13. write an ephemeral workflow trace for uncached QA runs
-14. cache safe answer results for repeated questions
+5. create metadata-rich chunks, sections, typed artifact candidates, and deterministic section synopses
+6. build compact document landmarks for front matter, correspondence, executive summary, definitions, glossary, and volume boundaries when enabled
+7. classify suspicious chunks and artifact candidates with the indexing-time chunk semantics layer when enabled
+8. build or reuse persisted chunk, section, and synopsis indexes plus lightweight topology artifacts
+9. analyze the question and produce a retrieval plan, with bounded LLM orchestration for explicit local scope
+10. retrieve evidence through chunk-first, synopsis-first, dedicated global-summary retrieval, legacy section-first fallback, or hybrid retrieval
+11. grade evidence as `strong`, `weak`, or `unsupported`
+12. adapt retrieval through structural guidance and global fallback instead of query rewriting
+13. optionally run a reorder-only post-rerank evidence selector over the top candidates when the spread-trigger policy fires
+14. generate a grounded answer with explicit support status
+15. write an ephemeral workflow trace for uncached QA runs
+16. cache safe answer results for repeated questions
 
 ## Ingestion And Structure Layer
 
-The ingestion path captures more than raw text. PDF and DOCX extraction run through configurable backends:
+The ingestion path captures more than raw text. PDF and DOCX extraction run through predictable local backends, with a selective table-enrichment pass for PDFs:
 
 - `HELPMATE_PDF_EXTRACTOR=pypdf` is the default for PDFs and uses the lightweight local text extractor
 - `HELPMATE_DOCX_EXTRACTOR=python-docx` is the default for DOCX files
-- `HELPMATE_PDF_EXTRACTOR=docling` or `HELPMATE_DOCX_EXTRACTOR=docling` uses the local Docling path explicitly
+- `HELPMATE_TABLE_EXTRACTOR=pdfplumber` is the default table-enrichment path for likely table-heavy PDF pages
+- `HELPMATE_TABLE_EXTRACTOR=off` disables table enrichment
+- `HELPMATE_TABLE_EXTRACTOR_MAX_PAGES=40` caps how many candidate pages are reviewed by pdfplumber
 
-`pypdf` and `python-docx` stay as the production defaults because they are fast, local, and fail predictably on large reports. Managed cloud layout parsers were tested as candidates for table and heading extraction, but they added too much latency and operational complexity for the current product path. Docling remains available for local experiments but is not the default after large-PDF memory failures in local testing. The selected backend is recorded in document and page metadata so extraction behavior is visible in traces and eval reports.
+`pypdf` and `python-docx` stay as the production defaults because they are fast, local, and fail predictably on large reports. Full-text extraction with pdfplumber was tested on policy, thesis, FOMC, and technical-report PDFs, but it was generally slower and sometimes worse for prose and front matter. Instead, pdfplumber is used only where it helps most: extracting table artifacts from pages that already look numeric, tabular, or captioned.
 
-Docling OCR is disabled by default through `HELPMATE_DOCLING_OCR=false`. This keeps ingestion safe for large born-digital PDFs where OCR can add significant memory pressure. Set `HELPMATE_DOCLING_OCR=true` only when scanned-image PDFs are part of the target workload and the runtime has enough memory. When Docling is enabled, expanded Markdown table output and OCR state are recorded in document and page metadata.
+Managed cloud layout parsers and Docling were tested as candidates for table and heading extraction, but they added too much latency, operational complexity, or install/runtime weight for the current product path. The selected text backend and table-enrichment backend are recorded in document and page metadata so extraction behavior is visible in traces and eval reports.
+
+The important boundary is that deterministic extraction proposes artifact candidates; it does not decide that they are answer-worthy. The chunk semantics layer reviews suspicious chunks and artifact candidates at indexing time and can label them as `metadata_evidence`, `definition_evidence`, `table_evidence`, normal evidence, or noise. Retrieval then consumes those semantic labels instead of relying on document-specific artifact score thresholds.
+
+The document landmark layer handles regions that are easy to under-rank in ordinary chunk retrieval: title pages, forewords, prefaces, author/correspondence blocks, abstracts, executive summaries, definition/glossary regions, and volume boundaries. It reviews only a bounded set of likely structural pages and emits compact page-linked landmark chunks with key facts and source snippets. These landmarks remain ordinary retrieval candidates; no query-specific fact or document-specific page is hardcoded.
 
 After extraction, the ingestion path captures:
 
@@ -55,6 +63,7 @@ After extraction, the ingestion path captures:
 - clause ids where detectable
 - section paths
 - section kinds
+- page-linked table artifacts from pdfplumber when available
 - document-style hints such as:
   - `policy_document`
   - `thesis_document`
@@ -122,14 +131,7 @@ The current retrieval upgrade adds a lightweight topology layer on top of these 
 
 These topology artifacts are stored locally alongside the existing schema-versioned Chroma index rather than in a separate graph database.
 
-The indexing layer also preserves noisy but important document artifacts as typed retrieval entries instead of letting them pollute normal prose retrieval:
-
-- `table` artifacts preserve the complete detected table-like text block from extraction and are favored for numeric, comparison, table, row, column, rate, value, and parameter questions.
-- `footnote` artifacts are tied to their parent page and are favored only for note/footnote-style or front-matter lookup questions.
-- `front_matter` artifacts preserve title-page, foreword, version, author, funding, review, and similar metadata pages for targeted lookup.
-- `bibliography` artifacts are indexed as explicit-only citation backmatter, so references do not dominate ordinary semantic retrieval.
-
-Normal chunks receive `page_artifact_counts` and `page_artifact_ids` metadata so retrieval traces can show that a page had related tables, footnotes, or front-matter artifacts available. This keeps the previous noise controls for contents/references/table fragments, while still making those regions recoverable when the question actually asks for them.
+The indexing layer also preserves noisy but important document artifacts as typed retrieval candidates instead of letting them pollute normal prose retrieval. Tables, footnotes, front matter, definition/acronym snippets, document landmarks, and bibliography blocks are retained with page-linked metadata. The semantic chunk classifier decides whether each candidate is useful evidence, metadata evidence, definition evidence, table evidence, or noise. Normal chunks receive `page_artifact_counts` and `page_artifact_ids` metadata so retrieval traces can show that related artifacts were available without forcing those artifacts into every query.
 
 For noisy academic and journal PDFs, the indexing path now includes a low-confidence structure-repair step:
 
@@ -149,7 +151,7 @@ HelpmateAI now uses a planned hybrid retrieval design:
 - reciprocal-rank style fusion
 - optional reranking
 - metadata-aware ranking preferences
-- typed artifact gating for tables, footnotes, front matter, and bibliographies
+- semantic artifact labels for tables, footnotes, front matter, definitions, and bibliographies
 - deterministic `RetrievalPlan` generation before retrieval
 - chunk-first retrieval for exact factual grounding
 - synopsis-first hierarchical retrieval for section-level and global questions
@@ -167,7 +169,7 @@ Validated orchestration can add:
 - `answer_focus`
 - `orchestrator_reason`
 
-Hard local scope disables global fallback and filters final evidence after reranking. Broad questions still remain broad unless the orchestrator gives a valid, high-confidence local boundary.
+Hard local scope disables global fallback and filters final evidence after reranking. Broad questions still remain broad unless the orchestrator gives a valid, high-confidence local boundary. A named section/chapter hint is treated as hard only when the selected section labels, aliases, chapter metadata, or explicit page/clause filters actually match the user's local boundary. If the local hint is real but the match is too coarse, the same sections are kept as soft guidance so retrieval can still recover stronger evidence elsewhere.
 
 The structured plan predicts:
 
@@ -263,10 +265,15 @@ Answer generation is grounded on retrieved evidence and uses a structured output
 
 Important properties:
 
-- explicit `supported` versus unsupported answer state
+- explicit `support_status` values: `supported`, `partial`, and `unsupported`
+- strict `supported=true` only when every required fact is directly covered by evidence
+- `partial` answers only when evidence supports a substantive part of the question and the answer itself names or acknowledges the missing required fact
+- a bounded support-status verifier for non-supported first-pass answers; it can recover `partial` but cannot upgrade a refused answer to full support
 - citations and citation details
 - retrieval notes visible to the UI
 - conservative abstention when evidence is weak or unsupported
+
+This keeps faithfulness guardrails intact while avoiding a false binary between a complete answer and total refusal. Partial answers remain `supported=false` in the strict boolean field so older metrics continue to mean "fully supported"; eval reports additionally track answerable coverage and partial rate.
 
 ## Caching And Index Versioning
 

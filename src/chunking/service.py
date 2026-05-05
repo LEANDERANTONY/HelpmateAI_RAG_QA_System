@@ -172,6 +172,57 @@ def _extract_footnote_block(text: str) -> str:
     return "\n".join(footnote_lines).strip()
 
 
+def _definition_artifact_text(label: str, definition: str, source_line: str) -> str:
+    label = " ".join(label.strip(" .:-").split())
+    definition = " ".join(definition.strip(" .:-").split())
+    source_line = " ".join(source_line.strip().split())
+    if not label or not definition:
+        return ""
+    return f"Definition: {label} = {definition}\nSource text: {source_line}"
+
+
+def _extract_definition_blocks(text: str) -> list[tuple[str, dict]]:
+    blocks: list[tuple[str, dict]] = []
+    seen: set[str] = set()
+    lines = _normalized_lines(text)
+    for line in lines:
+        if len(line) > 360:
+            continue
+        candidates: list[tuple[str, str, str]] = []
+        for term, acronym in re.findall(r"\b([A-Z][A-Za-z][A-Za-z0-9 /,+-]{4,90}?)\s*\(([A-Z][A-Z0-9-]{1,12})\)", line):
+            candidates.append((acronym, term, "long_form_parenthetical"))
+        for acronym, term in re.findall(r"\b([A-Z][A-Z0-9-]{1,12})\s*\(([A-Z][A-Za-z][A-Za-z0-9 /,+-]{4,90}?)\)", line):
+            candidates.append((acronym, term, "acronym_parenthetical"))
+        match = re.search(
+            r"\b([A-Z][A-Za-z0-9-]{1,16})\s+(?:stands for|means|refers to|is short for)\s+([^.;:]{4,120})",
+            line,
+            flags=re.IGNORECASE,
+        )
+        if match:
+            candidates.append((match.group(1), match.group(2), "definition_phrase"))
+        for label, definition, source_kind in candidates:
+            label = label.strip()
+            definition = definition.strip()
+            if len(label) < 2 or len(definition.split()) < 2:
+                continue
+            key = f"{label.lower()}={definition.lower()}"
+            if key in seen:
+                continue
+            seen.add(key)
+            artifact_text = _definition_artifact_text(label, definition, line)
+            if artifact_text:
+                blocks.append(
+                    (
+                        artifact_text,
+                        {
+                            "definition_label": label,
+                            "definition_source": source_kind,
+                        },
+                    )
+                )
+    return blocks[:8]
+
+
 def _artifact_chunk(
     *,
     document: DocumentRecord,
@@ -185,68 +236,105 @@ def _artifact_chunk(
     section_id: str,
     clause_ids: list,
     document_style: str,
+    extra_metadata: dict | None = None,
 ) -> ChunkRecord:
     page_label = page.get("page_label", "Document")
     artifact_id = f"{document.document_id}-{artifact_type}-{page_label.lower().replace(' ', '-')}-{artifact_index}"
     visibility = {
         "table": "targeted_or_numeric",
+        "definition": "targeted_only",
         "footnote": "targeted_only",
         "front_matter": "targeted_only",
         "bibliography": "explicit_only",
     }.get(artifact_type, "targeted_only")
     body_score = {
         "table": 0.72,
+        "definition": 0.68,
         "footnote": 0.56,
         "front_matter": 0.48,
         "bibliography": 0.12,
     }.get(artifact_type, 0.4)
+    metadata = {
+        "source_file": document.file_name,
+        "page_label": page_label,
+        "document_id": document.document_id,
+        "section_heading": section_heading,
+        "section_path": section_path,
+        "section_id": section_id,
+        "clause_ids": clause_ids,
+        "primary_clause_id": clause_ids[0] if clause_ids else "",
+        "content_type": artifact_type,
+        "artifact_entry": True,
+        "artifact_type": artifact_type,
+        "artifact_id": artifact_id,
+        "artifact_index": artifact_index,
+        "artifact_parent_page": page_label,
+        "retrieval_visibility": visibility,
+        "document_style": document_style,
+        "chunk_role_prior": f"{artifact_type}_artifact",
+        "body_evidence_score": body_score,
+        "heading_only_flag": False,
+        "low_value_prior": 0.88 if artifact_type == "bibliography" else 0.18 if artifact_type == "definition" else 0.35,
+        "table_complete": artifact_type == "table",
+    }
+    if extra_metadata:
+        metadata.update(extra_metadata)
     return ChunkRecord(
         chunk_id=f"{document.document_id}-artifact-{chunk_index:04d}",
         document_id=document.document_id,
         text=text.strip(),
         chunk_index=chunk_index,
         page_label=str(page_label),
-        metadata={
-            "source_file": document.file_name,
-            "page_label": page_label,
-            "document_id": document.document_id,
-            "section_heading": section_heading,
-            "section_path": section_path,
-            "section_id": section_id,
-            "clause_ids": clause_ids,
-            "primary_clause_id": clause_ids[0] if clause_ids else "",
-            "content_type": artifact_type,
-            "artifact_entry": True,
-            "artifact_type": artifact_type,
-            "artifact_id": artifact_id,
-            "artifact_index": artifact_index,
-            "artifact_parent_page": page_label,
-            "retrieval_visibility": visibility,
-            "document_style": document_style,
-            "chunk_role_prior": f"{artifact_type}_artifact",
-            "body_evidence_score": body_score,
-            "heading_only_flag": False,
-            "low_value_prior": 0.88 if artifact_type == "bibliography" else 0.35,
-            "table_complete": artifact_type == "table",
-        },
+        metadata=metadata,
     )
 
 
-def _artifact_specs(page: dict, *, front_matter_kind: str, front_matter_score: float, low_value_section_flag: bool) -> list[tuple[str, str]]:
+def _artifact_specs(page: dict, *, front_matter_kind: str, front_matter_score: float, low_value_section_flag: bool) -> list[tuple[str, str, dict]]:
     text = str(page.get("text", ""))
     section_heading = str(page.get("section_heading", ""))
     section_kind = str(page.get("section_kind", section_heading)).lower()
-    specs: list[tuple[str, str]] = []
+    specs: list[tuple[str, str, dict]] = []
+    for artifact in page.get("table_artifacts", []) or []:
+        if not isinstance(artifact, dict):
+            continue
+        artifact_text = str(artifact.get("text", "")).strip()
+        if not artifact_text:
+            continue
+        specs.append(
+            (
+                "table",
+                artifact_text,
+                {
+                    "table_extraction_backend": artifact.get("source_backend", ""),
+                    "table_original_page_number": artifact.get("original_page_number"),
+                    "table_original_page_label": artifact.get("original_page_label", page.get("page_label", "Document")),
+                    "table_index_on_page": artifact.get("table_index_on_page"),
+                    "table_row_count": artifact.get("row_count"),
+                    "table_column_count": artifact.get("column_count"),
+                },
+            )
+        )
     for table_block in _extract_table_blocks(text):
-        specs.append(("table", table_block))
+        specs.append(
+            (
+                "table",
+                table_block,
+                {
+                    "table_extraction_backend": "pypdf_text_heuristic",
+                    "table_complete": False,
+                },
+            )
+        )
     footnote_block = _extract_footnote_block(text)
     if footnote_block:
-        specs.append(("footnote", footnote_block))
+        specs.append(("footnote", footnote_block, {}))
+    for definition_text, definition_metadata in _extract_definition_blocks(text):
+        specs.append(("definition", definition_text, definition_metadata))
     if front_matter_score >= 0.5 and front_matter_kind and text.strip():
-        specs.append(("front_matter", text.strip()))
+        specs.append(("front_matter", text.strip(), {"front_matter_kind": front_matter_kind}))
     if section_kind in {"references", "bibliography"} or section_heading.strip().lower() in {"references", "bibliography"}:
-        specs.append(("bibliography", text.strip()))
-    return [(artifact_type, artifact_text) for artifact_type, artifact_text in specs if artifact_text.strip()]
+        specs.append(("bibliography", text.strip(), {}))
+    return [(artifact_type, artifact_text, metadata) for artifact_type, artifact_text, metadata in specs if artifact_text.strip()]
 
 
 def chunk_document(document: DocumentRecord, chunk_size: int, chunk_overlap: int) -> list[ChunkRecord]:
@@ -275,7 +363,7 @@ def chunk_document(document: DocumentRecord, chunk_size: int, chunk_overlap: int
             low_value_section_flag=low_value_section_flag,
         )
         artifact_ids_by_type: dict[str, list[str]] = {}
-        for artifact_type, artifact_text in specs:
+        for artifact_type, artifact_text, artifact_metadata in specs:
             artifact = _artifact_chunk(
                 document=document,
                 page=page,
@@ -288,6 +376,7 @@ def chunk_document(document: DocumentRecord, chunk_size: int, chunk_overlap: int
                 section_id=section_id,
                 clause_ids=clause_ids,
                 document_style=document_style,
+                extra_metadata=artifact_metadata,
             )
             records.append(artifact)
             artifact_ids_by_type.setdefault(artifact_type, []).append(str(artifact.metadata["artifact_id"]))

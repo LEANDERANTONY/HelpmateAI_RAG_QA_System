@@ -1,0 +1,614 @@
+{
+  "suite": {
+    "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-05",
+    "description": "OpenAI native File Search corrected rerun chunk 5/10, questions 61-75.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\openai_native_15_chunks\\openai_native_15_chunk_05.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "openai_file_search"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      }
+    }
+  },
+  "summary": {
+    "overall": {
+      "openai_file_search": {
+        "dataset_size": 15,
+        "answerable_size": 13,
+        "unsupported_size": 2,
+        "supported_rate": 0.8666666666666667,
+        "answerable_supported_rate": 1.0,
+        "unsupported_abstention_rate": 1.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.0,
+        "avg_context_count": 5.0,
+        "avg_context_chars": 16505.0,
+        "ragas_all": {
+          "faithfulness": 0.9857142857142858,
+          "answer_relevancy": 0.7276674599238172,
+          "context_precision": 0.9015873015414947
+        },
+        "ragas_attempted": {
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.8489453699111201,
+          "context_precision": 0.9305555555061574
+        }
+      }
+    },
+    "by_intent": {
+      "openai_file_search": {
+        "broad_summary": {
+          "dataset_size": 3,
+          "answerable_size": 3,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 18789.666666666668,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8925445509376049,
+            "context_precision": 0.9166666666259259
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8925445509376049,
+            "context_precision": 0.9166666666259259
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 3,
+          "answerable_size": 3,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 18320.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.811790952928705,
+            "context_precision": 0.9999999999433333
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.811790952928705,
+            "context_precision": 0.9999999999433333
+          }
+        },
+        "lookup": {
+          "dataset_size": 5,
+          "answerable_size": 5,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 14836.2,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8651462715836713,
+            "context_precision": 0.899999999946
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8651462715836713,
+            "context_precision": 0.899999999946
+          }
+        },
+        "numeric_procedure": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 17878.5,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7486065694161549,
+            "context_precision": 0.9166666666361111
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7486065694161549,
+            "context_precision": 0.9166666666361111
+          }
+        },
+        "unsupported": {
+          "dataset_size": 2,
+          "answerable_size": 0,
+          "unsupported_size": 2,
+          "supported_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 13154.0,
+          "ragas_all": {
+            "faithfulness": 0.9,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.7277777777535186
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-05",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-021",
+      "question": "How does the framework describe its overall stance on risk tolerance for organizations using it?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework takes a flexible, non-prescriptive stance on risk tolerance. It says it does not prescribe a single risk tolerance level; instead, risk tolerance is contextual, use-case specific, and can vary by organization, industry, and changing circumstances . It also states that organizations should follow existing laws, regulations, and established risk criteria, and where those do not exist, they should define a reasonable risk tolerance themselves .",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 19386,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9161731363756425,
+        "context_precision": 0.9166666666361111
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_01f7e89e8fcf2a2e0069f391f200f881969a6b2ab45a9f4055; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-05",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-022",
+      "question": "What outcomes does the framework say organizations and users should expect to gain from applying it?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework says organizations and users should expect to gain several outcomes from applying it, including enhanced processes for governing, mapping, measuring, and managing AI risk; better documentation of outcomes; improved awareness of tradeoffs among trustworthiness characteristics and AI risks; explicit go/no-go commissioning and deployment decisions; stronger accountability practices; a culture that prioritizes identifying and managing AI risks; better information sharing within and acr",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 17644,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9228606836956109,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_01a168b3659113dc0069f392616ecc8197a0b30288da730e0a; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-05",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-023",
+      "question": "How does the framework characterize residual risk, and what does it say organizations should do about it?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework says residual risk is the risk remaining after risk treatment, and that it directly affects end users or affected individuals and communities . It also says organizations should document residual risks, because doing so forces the system provider to fully consider the risks of deploying the AI product and helps inform end users about potential negative impacts of interacting with the system .",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 19339,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8385998327415614,
+        "context_precision": 0.8333333332916666
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_065cc27a8d164cff0069f392c1a6148195870f5242a08beff9; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-05",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-comparison_synthesis-024",
+      "question": "How does the framework distinguish between security and resilience for AI systems?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework says security and resilience are related but distinct. Resilience means the AI system can withstand unexpected adverse events or changes, maintain its functions and structure, and degrade safely and gracefully when needed. Security is broader: it includes resilience, but also covers protocols to avoid, protect against, respond to, or recover from attacks. It also defines secure systems as those that preserve confidentiality, integrity, and availability through protection mechanisms",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 18440,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9705341129547213,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0cfb4d32a4ad1ec50069f393017ef081978dd04d5cd4c121a6; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-05",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-comparison_synthesis-025",
+      "question": "How does the framework distinguish reliability from robustness?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework treats reliability as a system\u2019s ability to perform as required, without failure, for a given time interval and under given conditions, emphasizing overall correctness over the expected lifetime of the AI system . Robustness, by contrast, is the ability to maintain performance under a variety of circumstances, including unexpected or unanticipated uses and settings, and to minimize harm when operating outside expected conditions .\n\nIn short: reliability is about consistent correct ",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 18174,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6968774141916264,
+        "context_precision": 0.9999999999
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_05ae750070048e7c0069f3937f5e648195bbacd8b98d5cea05; attempts=2"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-05",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-comparison_synthesis-026",
+      "question": "How is the Govern function related to the Manage function in the framework?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The Govern function is the cross-cutting foundation for the framework: it establishes the policies, processes, procedures, roles, and organizational structures that support AI risk management across the organization, and it \u201cenables the other functions\u201d of the process. The document says GOVERN is \u201cinfused throughout AI risk management\u201d and that aspects of GOVERN should be integrated into the other functions, including Manage  \n\nSo, in relation to Manage, Govern provides the organizational oversi",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 18346,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7679613316397672,
+        "context_precision": 0.99999999998
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0dfcca170e74d3c80069f393e093ac8190b078298502f9a7d4; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-05",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-numeric_procedure-027",
+      "question": "How does the framework define risk in terms of harm and likelihood when considering negative impacts?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework defines risk, when considering negative impacts, as a function of two things: the magnitude of harm if the event occurs and the likelihood that it will occur. In other words, risk combines how severe the negative impact would be with how probable it is.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 18813,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision": 0.9166666666361111
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0840955b76b437a80069f394429b588197aeb34cd0d30a08b1; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-05",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-numeric_procedure-028",
+      "question": "How does the framework describe its versioning scheme for the AI RMF?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework says the AI RMF uses a two-number versioning system to track major and minor changes. The first number indicates the generation of the AI RMF and its companion documents and changes only for major revisions, while minor revisions are shown as \u201c.n\u201d after the generation number, such as 1.1. It also says all changes are recorded in a Version Control Table with the version number, date, and description of the change",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 16944,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7486065694161549,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0e71cde99fbeb1b50069f394ee2c108194973fe3a9c72c1b4c; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-05",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-unsupported-029",
+      "question": "What specific quantitative bias threshold does the framework recommend for face recognition systems used in law enforcement?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: The retrieved framework text says organizations should use human judgment to choose \u201cthe precise threshold values\u201d for trustworthiness metrics, but it does not provide a specific quantitative bias threshold for face recognition systems used in law enforcement in the excerpts found.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 17890,
+      "ragas": {
+        "faithfulness": 0.8,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.7555555555303703
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_01491db1faddbd9c0069f3959a8c348194ad1838f8df7d61ec; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-05",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-unsupported-030",
+      "question": "What fee does NIST charge organizations to be officially certified as compliant with the AI RMF?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: The uploaded NIST AI RMF document says the publication is \u201cavailable free of charge\u201d and describes the AI RMF as voluntary, but it does not mention any certification program or fee for official compliance certification by NIST",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 8418,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.6999999999766667
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0557918df65cc93b0069f3960779dc8190a3ae20855b30f04a; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-05",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-011",
+      "question": "What arXiv identifier and submission date are listed for this paper?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The paper is listed as arXiv:2510.03305v1, with a submission date of 30 Sep 2025",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 13947,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9093239274091814,
+        "context_precision": 0.9999999999
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_06bc782bb647b4510069f39678fab08193b69b6259c1a87ccd; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-05",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-012",
+      "question": "Who is the corresponding author for this paper?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The corresponding author is Tian Zheng, indicated by the \u201c\u2020 Correspondence: tian.zheng@columbia.edu\u201d note in the paper\u2019s author block",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 13969,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9056497823924575,
+        "context_precision": 0.49999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_09658ca28b2567570069f396ba07248196bea89b3ac94af9e6; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-05",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-013",
+      "question": "What does the abbreviation PINO stand for in the paper?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "PINO stands for Physics-Informed Neural Operator in the paper, which is described as using a combined data-loss and PDE residual loss.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 13571,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8847576207681475,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_00540fce7acf8e280069f396e7db3881958cdd1ed395c8d889; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-05",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-014",
+      "question": "What does GNO refer to in the discussion of neural operator variants?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "GNO refers to Graph Neural Operator. The document explains that, unlike spectral-basis variants, GNO \u201cconstructs a spatial proximity graph over the discretization and approximates the integral operator via message-passing updates with learned kernels,\u201d making it mesh-independent and suited to unstructured grids.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 16804,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7533331410564328,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0e560ca7df2e82e50069f3972b95a881938f716360aa9458d2; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-05",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-015",
+      "question": "Which prior work do the authors cite for introducing 'Model Cards' as a way to document key modeling decisions?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The authors cite Mitchell et al. (2019) for introducing \u201cModel Cards\u201d as a way to document key modeling decisions",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 15890,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8726668862921375,
+        "context_precision": 0.99999999998
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_030b5c9f0c90df2d0069f3975c21748190a0870113dc3f2583; attempts=1"
+    }
+  ]
+}

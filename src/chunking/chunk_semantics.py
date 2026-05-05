@@ -9,10 +9,13 @@ from src.schemas import ChunkRecord, DocumentRecord
 
 _ALLOWED_CHUNK_ROLES = {
     "body_evidence",
+    "definition_evidence",
     "heading_stub",
+    "metadata_evidence",
     "navigation_noise",
     "reference_noise",
     "summary_evidence",
+    "table_evidence",
     "table_fragment",
 }
 
@@ -39,8 +42,14 @@ class ChunkSemanticsService:
         front_matter_kind = str(metadata.get("front_matter_kind", "")).lower()
         body_score = float(metadata.get("body_evidence_score", 0.5) or 0.5)
         text = chunk.text.strip()
+        artifact_type = str(metadata.get("artifact_type", "")).lower()
+        artifact_entry = bool(metadata.get("artifact_entry"))
 
         priority = 0.0
+        if artifact_entry:
+            priority += 1.4
+        if artifact_type in {"front_matter", "footnote", "definition", "table"}:
+            priority += 0.5
         if role in {"heading_stub", "navigation_like", "reference_like", "table_fragment"}:
             priority += 1.2
         if front_matter_kind and front_matter_kind != "body":
@@ -71,6 +80,11 @@ class ChunkSemanticsService:
             "deterministic_role": chunk.metadata.get("chunk_role_prior", ""),
             "deterministic_body_evidence_score": chunk.metadata.get("body_evidence_score", 0.5),
             "front_matter_kind": chunk.metadata.get("front_matter_kind", "body"),
+            "artifact_entry": bool(chunk.metadata.get("artifact_entry")),
+            "artifact_type": chunk.metadata.get("artifact_type", ""),
+            "retrieval_visibility": chunk.metadata.get("retrieval_visibility", ""),
+            "definition_label": chunk.metadata.get("definition_label", ""),
+            "table_complete": chunk.metadata.get("table_complete", ""),
             "text": chunk.text[:700],
             "previous_excerpt": previous_excerpt,
             "next_excerpt": next_excerpt,
@@ -82,16 +96,20 @@ class ChunkSemanticsService:
             "You classify suspicious document chunks for indexing-time retrieval quality.\n"
             "Return JSON with top-level key 'chunks'. Each item must include:\n"
             "- chunk_id\n"
-            "- role: one of body_evidence, heading_stub, navigation_noise, reference_noise, summary_evidence, table_fragment\n"
+            "- role: one of body_evidence, definition_evidence, metadata_evidence, heading_stub, navigation_noise, reference_noise, summary_evidence, table_evidence, table_fragment\n"
             "- confidence: number between 0 and 1\n"
             "- body_evidence_score: number between 0 and 1\n"
             "Rules:\n"
             "- body_evidence means substantive explanatory/supporting text\n"
+            "- metadata_evidence means useful title-page, author, funding, foreword, version, or contact metadata\n"
+            "- definition_evidence means an acronym, term definition, glossary item, or named concept expansion that can answer definition questions\n"
             "- summary_evidence means substantive overview/findings text useful for synthesis questions\n"
+            "- table_evidence means a complete or mostly complete table with meaningful row/column values\n"
             "- heading_stub means mostly a heading/title with little standalone evidence\n"
             "- navigation_noise means table-of-contents/listing/front-matter navigation text\n"
             "- reference_noise means bibliography, citation, publisher, or author-reference text\n"
             "- table_fragment means mostly tabular or metric fragments with little prose explanation\n"
+            "- For artifact chunks, classify semantic usefulness rather than trusting the deterministic artifact_type.\n"
             "- Prefer conservative labels. If a chunk is ambiguous but informative, choose body_evidence or summary_evidence rather than noise.\n"
             f"Document: {document.file_name}\n"
             f"Document style: {document.metadata.get('document_style', 'generic_longform')}\n"

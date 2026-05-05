@@ -1,0 +1,616 @@
+{
+  "suite": {
+    "suite_id": "vectara_native_150_batch_01_20260501",
+    "description": "Draft held-out product-fit final evaluation manifest. Documents are fixed; questions must be generated and frozen before any system run.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\vectara_native_batches\\batch_01.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "vectara"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      },
+      "mode": "native_mockingbird_answer",
+      "generation_preset_name": "mockingbird-2.0"
+    }
+  },
+  "summary": {
+    "overall": {
+      "vectara": {
+        "dataset_size": 15,
+        "answerable_size": 14,
+        "unsupported_size": 1,
+        "supported_rate": 0.9333333333333333,
+        "answerable_supported_rate": 1.0,
+        "unsupported_abstention_rate": 1.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.0,
+        "avg_context_count": 5.0,
+        "avg_context_chars": 1033.4666666666667,
+        "ragas_all": {
+          "faithfulness": 0.8096549730462774,
+          "answer_relevancy": 0.7224280983557045,
+          "context_precision": 0.7519444444015625
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.8674874711210115,
+          "answer_relevancy": 0.7690042480233646,
+          "context_precision": 0.7422619047175446
+        }
+      }
+    },
+    "by_intent": {
+      "vectara": {
+        "broad_summary": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 845.0,
+          "ragas_all": {
+            "faithfulness": 0.8846153846153846,
+            "answer_relevancy": 0.9618402938522507,
+            "context_precision": 0.6965277777579109
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.8846153846153846,
+            "answer_relevancy": 0.9618402938522507,
+            "context_precision": 0.6965277777579109
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 771.5,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8018318117397236,
+            "context_precision": 0.7666666666452777
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8018318117397236,
+            "context_precision": 0.7666666666452777
+          }
+        },
+        "local_scope": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1180.5,
+          "ragas_all": {
+            "faithfulness": 0.9666666666666667,
+            "answer_relevancy": 0.9217140389145688,
+            "context_precision": 0.5930555555116899
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.9666666666666667,
+            "answer_relevancy": 0.9217140389145688,
+            "context_precision": 0.5930555555116899
+          }
+        },
+        "lookup": {
+          "dataset_size": 6,
+          "answerable_size": 6,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1120.8333333333333,
+          "ragas_all": {
+            "faithfulness": 0.7514878599661209,
+            "answer_relevancy": 0.5919765175808136,
+            "context_precision": 0.8488425925320814
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.7514878599661209,
+            "answer_relevancy": 0.5919765175808136,
+            "context_precision": 0.8488425925320814
+          }
+        },
+        "unsupported": {
+          "dataset_size": 1,
+          "answerable_size": 0,
+          "unsupported_size": 1,
+          "supported_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 822.0,
+          "ragas_all": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.07036200300846242,
+            "context_precision": 0.8874999999778125
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "vectara_native_150_batch_01_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-001",
+      "question": "What are the four core functions described in this framework for managing AI risks?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The four core functions described in this framework for managing AI risks are:\n\n1. Governance: This function prioritizes workforce diversity, equity, inclusion, and accessibility processes in the mapping, measuring, and managing of AI risks throughout the lifecycle. [3]\n2. Risk Management: This function requires diverse perspectives, disciplines, professions, and experiences to be carried out in a way that reflects diverse and multidisciplinary perspectives. [4][5]\n\nNote that the other two core ",
+      "citations": [
+        "Page 1",
+        "Page 25",
+        "Page 26",
+        "Page 14",
+        "Page 25"
+      ],
+      "context_count": 5,
+      "context_chars": 707,
+      "ragas": {
+        "faithfulness": 0.42857142857142855,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.7555555555303703
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.7265625"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_01_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-002",
+      "question": "By when does NIST plan to conduct the next formal review of the framework with input from the AI community?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the sources, NIST plans to conduct the next formal review of the framework with input from the AI community no later than 2028. [1] This review will be conducted regularly to determine if an update is appropriate, and it is expected that this will take place no later than 2028. [1]\n\nAdditionally, NIST will engage with the AI community during this Framework's development through various means such as responses to a formal Request for Information, workshops, public comments on a conce",
+      "citations": [
+        "Page 1",
+        "Page 1",
+        "Page 1",
+        "Page 1",
+        "Page 24"
+      ],
+      "context_count": 5,
+      "context_chars": 1256,
+      "ragas": {
+        "faithfulness": 0.6521739130434783,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.97265625"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_01_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-003",
+      "question": "How does this framework define an AI system?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the provided sources, this framework defines an AI system as a system that can be designed, developed, deployed, and used in a responsible manner to increase trustworthiness. [2] The framework aims to equip organizations and individuals (AI actors) with approaches to address the characteristics of trustworthy AI systems. [2] It suggests opportunities for defining and documenting processes for operator and practitioner proficiency with AI system performance and trustworthiness concep",
+      "citations": [
+        "Page 17",
+        "Page 1",
+        "Page 29",
+        "Page 46",
+        "Page 9"
+      ],
+      "context_count": 5,
+      "context_chars": 1044,
+      "ragas": {
+        "faithfulness": 0.76,
+        "answer_relevancy": 0.8572276915867123,
+        "context_precision": 0.5333333333155555
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=1.0"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_01_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-004",
+      "question": "In the discussion of fairness and harmful bias, what three major categories of AI bias does NIST say organizations should consider?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to NIST, organizations should consider three major categories of AI bias when discussing fairness and harmful bias: systemic, computational and statistical, and human-cognitive [2]. These categories are part of the broader concept of fairness in AI, which aims to address issues such as harmful bias and discrimination [1]. Understanding these biases is crucial for ensuring the trustworthiness of AI systems, which includes characteristics such as validity, reliability, safety, security, ",
+      "citations": [
+        "Page 22",
+        "Page 22",
+        "Page 22",
+        "Page 17",
+        "Page 38"
+      ],
+      "context_count": 5,
+      "context_chars": 839,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9171756410451583,
+        "context_precision": 0.4499999999775
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.984375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_01_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-005",
+      "question": "In the Govern function, what subcategory specifically addresses safely retiring or phasing out AI systems?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The subcategory specifically addressing safely retiring or phasing out AI systems in the Govern function is \"Processes and procedures are in place for decommissioning and phasing out AI systems safely and in a manner that does not increase risks or decrease the organization\u2019s trustworthiness.\" [1]\n\nThis subcategory is part of the GOVERN function, which outlines processes, documents, and organizational schemes that anticipate, identify, and manage the risks a system can pose. [4] The GOVERN funct",
+      "citations": [
+        "Page 26",
+        "Page 26",
+        "Page 36",
+        "Page 26",
+        "Page 26"
+      ],
+      "context_count": 5,
+      "context_chars": 1682,
+      "ragas": {
+        "faithfulness": 0.8666666666666667,
+        "answer_relevancy": 0.9373579109732267,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=1.0"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_01_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-006",
+      "question": "What attributes does the framework say should be evaluated to consider an AI system trustworthy?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the framework, an AI system should be evaluated for the following attributes to consider it trustworthy:\n\n1. Risk management: The risk management process should be continuous, timely, and performed throughout the AI system's lifecycle dimensions [2].\n2. Safety: The AI system should be demonstrated to be safe, with its residual negative risk not exceeding the risk tolerance and capable of failing safely if operated beyond its knowledge limits [3].\n3. Transparency: Human-AI interactio",
+      "citations": [
+        "Page 17",
+        "Page 25",
+        "Page 33",
+        "Page 20",
+        "Page 33"
+      ],
+      "context_count": 5,
+      "context_chars": 798,
+      "ragas": {
+        "faithfulness": 0.7692307692307693,
+        "answer_relevancy": 0.9325059463815294,
+        "context_precision": 0.5888888888692593
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.98828125"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_01_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-007",
+      "question": "Why does the framework treat AI risks as different from risks in traditional software systems?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework treats AI risks as different from risks in traditional software systems because AI-based technology can have bigger impacts, span organizations, and lead to societal impacts [1]. Additionally, the risks posed by AI systems are unique compared to traditional software or information-based systems [3]. The lifecycle of an AI system also plays a role in risk assessment, as some risks may be latent at a given point in time and increase as the system adapts and evolves [4]. Furthermore, ",
+      "citations": [
+        "Page 38",
+        "Page 38",
+        "Page 1",
+        "Page 10",
+        "Page 38"
+      ],
+      "context_count": 5,
+      "context_chars": 892,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.991174641322972,
+        "context_precision": 0.8041666666465626
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.98828125"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_01_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-comparison_synthesis-008",
+      "question": "How does the framework distinguish transparency, explainability, and interpretability?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework distinguishes transparency, explainability, and interpretability as distinct characteristics that support each other [1]. Transparency refers to the availability of information about an AI system and its outputs to individuals interacting with such a system, regardless of their awareness [4]. Explainability refers to a representation of the mechanisms underlying AI systems' operation, which can answer the question of \"how\" a decision was made in the system [5]. Interpretability, on",
+      "citations": [
+        "Page 21",
+        "Page 21",
+        "Page 21",
+        "Page 20",
+        "Page 21"
+      ],
+      "context_count": 5,
+      "context_chars": 896,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8592747781364132,
+        "context_precision": 0.5333333333155555
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.99609375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_01_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-comparison_synthesis-009",
+      "question": "What is the difference between a Current Profile and a Target Profile, and why would an organization compare the two?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "A Current Profile and a Target Profile are two distinct descriptions of AI risk management activities within a specific context. A Current Profile describes how AI is currently being managed and the related risks in terms of current outcomes [4]. On the other hand, a Target Profile indicates the outcomes needed to achieve the desired or target AI risk management goals [2]. By comparing these two profiles, an organization can identify gaps that need to be addressed to meet their AI risk managemen",
+      "citations": [
+        "Page 38",
+        "Page 38",
+        "Page 38",
+        "Page 38",
+        "Page 38"
+      ],
+      "context_count": 5,
+      "context_chars": 647,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.744388845343034,
+        "context_precision": 0.999999999975
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.9921875"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_01_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-unsupported-010",
+      "question": "What is the maximum allowable false positive rate that the framework recommends for an AI system used in clinical diagnosis?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "No result found.",
+      "citations": [
+        "Page 18",
+        "Page 1",
+        "Page 1",
+        "Page 33",
+        "Page 38"
+      ],
+      "context_count": 5,
+      "context_chars": 822,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.07036200300846242,
+        "context_precision": 0.8874999999778125
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.028686523"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_01_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-001",
+      "question": "What three phases does the paper use to organize a machine learning workflow for climate modeling?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The paper uses three phases to organize a machine learning workflow for climate modeling: design, development, and deployment [1]. The design stage establishes the foundations of the workflow by connecting a scientific climate modeling or data analysis question to a machine learning task [2]. In this paper, they focus on what data are used and how they are produced, how models are constructed, trained, and validated, and what compromises are made and why [3]. Additionally, there is a fourth \"dir",
+      "citations": [
+        "Page 6",
+        "Page 6",
+        "Page 1",
+        "Page 6",
+        "Page 6"
+      ],
+      "context_count": 5,
+      "context_chars": 990,
+      "ragas": {
+        "faithfulness": 0.85,
+        "answer_relevancy": 0.8866149727312255,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.9765625"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_01_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-002",
+      "question": "What three integration directions do the authors describe for combining machine learning with climate modeling?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The authors describe three integration directions for combining machine learning with climate modeling, which are:\n\n1. Physics-based ESMs and observational data: When integrated with physics-based Earth System Models (ESMs) and observational data, machine learning has the potential to transform climate modeling workflows [4].\n2. Physical theory, data, and machine learning: As machine learning becomes increasingly embedded in climate modeling, it is clear that predictive performance and scientifi",
+      "citations": [
+        "Page 6",
+        "Page 3",
+        "Page 3",
+        "Page 3",
+        "Page 3"
+      ],
+      "context_count": 5,
+      "context_chars": 1218,
+      "ragas": {
+        "faithfulness": 0.8181818181818182,
+        "answer_relevancy": 0.9587028574821647,
+        "context_precision": 0.8041666666465626
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.07324219"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_01_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-003",
+      "question": "Which agency and program funded the research described in this paper?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The research described in this paper was funded by the National Science Foundation of the U.S.A. through the Learning the Earth with Artificial Intelligence and Physics (LEAP) Science and Technology Center (STC) [1].",
+      "citations": [
+        "Page 1",
+        "Page 12",
+        "Page 12",
+        "Page 12",
+        "Page 12"
+      ],
+      "context_count": 5,
+      "context_chars": 1510,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8493135836847788,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=1.0"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_01_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-004",
+      "question": "In the ClimSim case study, what spatial resolution and temporal cadence does the dataset use, and how many years does it cover?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "In the ClimSim case study, the dataset uses a spatial resolution of approximately 1.5\u00b0 horizontal resolution and a temporal cadence of 20-minute intervals [3]. The dataset covers ten years of globally distributed input-output pairs [3].",
+      "citations": [
+        "Page 6",
+        "Page 6",
+        "Page 12",
+        "Page 12",
+        "Page 12"
+      ],
+      "context_count": 5,
+      "context_chars": 892,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9119384290787513,
+        "context_precision": 0.3333333333
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.7265625"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_01_20260501",
+      "system": "vectara",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-005",
+      "question": "In the equation discovery case study, how is the search for subgrid closure models translated into a machine learning task?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "In the equation discovery case study, the search for subgrid closure models is translated into a machine learning task by framing it as a sparse regression problem [2]. This approach involves using an algorithm to identify functional relationships between grid-level variables and meaningful physically meaningful composite terms [2]. To guide the model towards compact, interpretable equations rather than overfitting high-dimensional regressors, sparsity penalties are incorporated into the loss fu",
+      "citations": [
+        "Page 6",
+        "Page 6",
+        "Page 6",
+        "Page 6",
+        "Page 12"
+      ],
+      "context_count": 5,
+      "context_chars": 1309,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9203841745611389,
+        "context_precision": 0.5888888888692593
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.73828125"
+    }
+  ]
+}

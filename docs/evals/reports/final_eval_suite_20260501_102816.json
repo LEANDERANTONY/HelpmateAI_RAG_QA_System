@@ -1,0 +1,594 @@
+{
+  "suite": {
+    "suite_id": "vectara_native_150_batch_07_20260501",
+    "description": "Draft held-out product-fit final evaluation manifest. Documents are fixed; questions must be generated and frozen before any system run.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\vectara_native_batches\\batch_07.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "vectara"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      },
+      "mode": "native_mockingbird_answer",
+      "generation_preset_name": "mockingbird-2.0"
+    }
+  },
+  "summary": {
+    "overall": {
+      "vectara": {
+        "dataset_size": 15,
+        "answerable_size": 15,
+        "unsupported_size": 0,
+        "supported_rate": 0.8666666666666667,
+        "answerable_supported_rate": 0.8666666666666667,
+        "unsupported_abstention_rate": 0.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.13333333333333333,
+        "avg_context_count": 5.0,
+        "avg_context_chars": 1158.9333333333334,
+        "ragas_all": {
+          "faithfulness": 0.5263936172759702,
+          "answer_relevancy": 0.6755416697671454,
+          "context_precision": 0.9174074073530216
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.6073772507030426,
+          "answer_relevancy": 0.7594413008982746,
+          "context_precision": 0.908547008487621
+        }
+      }
+    },
+    "by_intent": {
+      "vectara": {
+        "broad_summary": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 725.5,
+          "ragas_all": {
+            "faithfulness": 0.6104166666666666,
+            "answer_relevancy": 0.6686669515178325,
+            "context_precision": 0.9583333332679167
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.6104166666666666,
+            "answer_relevancy": 0.6686669515178325,
+            "context_precision": 0.9583333332679167
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 918.0,
+          "ragas_all": {
+            "faithfulness": 0.45940170940170943,
+            "answer_relevancy": 0.4280537501708738,
+            "context_precision": 0.6972222221989814
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.45940170940170943,
+            "answer_relevancy": 0.4280537501708738,
+            "context_precision": 0.6972222221989814
+          }
+        },
+        "local_scope": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 0.75,
+          "answerable_supported_rate": 0.75,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.25,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1176.0,
+          "ragas_all": {
+            "faithfulness": 0.4642156862745098,
+            "answer_relevancy": 0.6900829222227204,
+            "context_precision": 0.9374999999644444
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.6189542483660131,
+            "answer_relevancy": 0.8845170022454932,
+            "context_precision": 0.9166666666259259
+          }
+        },
+        "lookup": {
+          "dataset_size": 5,
+          "answerable_size": 5,
+          "unsupported_size": 0,
+          "supported_rate": 0.8,
+          "answerable_supported_rate": 0.8,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.2,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1588.4,
+          "ragas_all": {
+            "faithfulness": 0.5357142857142857,
+            "answer_relevancy": 0.7684036102406441,
+            "context_precision": 0.9566666665935833
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.6696428571428571,
+            "answer_relevancy": 0.9221026496320028,
+            "context_precision": 0.9583333332479167
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "vectara_native_150_batch_07_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-lookup-011",
+      "question": "At which university was this dissertation submitted?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the sources, the dissertation was submitted at the University of Pennsylvania [1, 3]. This is evident from the title page of the dissertation, which states \"Presented to the Faculties of the University of Pennsylvania\" [1], and also mentioned in source [3] as \"Learning Environmental Models With Multi-Robot Teams Using A Dynamical Systems Approach\" by Tahiya Salam, University of Pennsylvania.",
+      "citations": [
+        "Page 2",
+        "Page 73",
+        "Page 1",
+        "Page 74",
+        "Page 151"
+      ],
+      "context_count": 5,
+      "context_chars": 2303,
+      "ragas": {
+        "faithfulness": 0.42857142857142855,
+        "answer_relevancy": 0.9281672916456066,
+        "context_precision": 0.8333333332916666
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.86328125"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_07_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-lookup-012",
+      "question": "Who is identified as the chairperson of the graduate group?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the provided sources, Alejandro Ribeiro is identified as the chairperson of the graduate group. This information is mentioned in source [1], where it states \"Graduate Group Chairperson: Alejandro Ribeiro, Professor of Electrical and Systems Engineering\".",
+      "citations": [
+        "Page 2",
+        "Page 6",
+        "Page 21",
+        "Page 2",
+        "Page 2"
+      ],
+      "context_count": 5,
+      "context_chars": 1936,
+      "ragas": {
+        "faithfulness": 0.25,
+        "answer_relevancy": 0.9560580236062183,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.734375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_07_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-lookup-013",
+      "question": "What computer hardware did the author use to run the online DMD timing experiments?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "No result found.",
+      "citations": [
+        "Page 101",
+        "Page 101",
+        "Page 101",
+        "Page 90",
+        "Page 101"
+      ],
+      "context_count": 5,
+      "context_chars": 732,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.15360745267520926,
+        "context_precision": 0.94999999997625
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.0018081665"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_07_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-lookup-014",
+      "question": "To whom is the dissertation dedicated?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The dissertation is dedicated to Ma, the most tenacious person the author knows. [1]",
+      "citations": [
+        "Page 2",
+        "Page 146",
+        "Page 146",
+        "Page 55",
+        "Page 74"
+      ],
+      "context_count": 5,
+      "context_chars": 2226,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9172238173074332,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.33789062"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_07_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-lookup-015",
+      "question": "Which two organizations does the author thank for funding support in the acknowledgements?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The author thanks the National Science Foundation and the Horatio Alger Association for funding support in the acknowledgements. [1]",
+      "citations": [
+        "Page 6",
+        "Page 101",
+        "Page 21",
+        "Page 6",
+        "Page 21"
+      ],
+      "context_count": 5,
+      "context_chars": 745,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8869614659687532,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.6796875"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_07_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-local_scope-016",
+      "question": "In Chapter 3, what type of algorithm is used for the distributed implementation of the low-dimensional model?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "In Chapter 3, the type of algorithm used for the distributed implementation of the low-dimensional model is gossip algorithms. [1, 2] This technique involves using mobile robots to construct a low-dimensional model of a dynamical system by employing distributed dimensionality reduction techniques and collaboratively deriving optimal sensing locations. [3] The full procedure for distributed computation of eigenvectors and eigenvalues is shown in Algorithm 3. [5]",
+      "citations": [
+        "Page 57",
+        "Page 58",
+        "Page 14",
+        "Page 146",
+        "Page 58"
+      ],
+      "context_count": 5,
+      "context_chars": 813,
+      "ragas": {
+        "faithfulness": 0.2,
+        "answer_relevancy": 0.9575344383162537,
+        "context_precision": 0.99999999995
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.16699219"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_07_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-local_scope-017",
+      "question": "In Chapter 5, what type of features does the author use to estimate Koopman operators?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "In Chapter 5, the author uses Fourier features to estimate Koopman operators [1, 2]. This is achieved by leveraging the kernel expression of the Koopman operator and using Random Fourier Features (RFFs) to capture a dictionary of observables [4]. The chapter also presents kernel methods to construct global representations of dynamical systems, known as kernel transfer operators, from sensor data and establishes its associated uncertainty quantification [5].",
+      "citations": [
+        "Page 115",
+        "Page 115",
+        "Page 33",
+        "Page 117",
+        "Page 14"
+      ],
+      "context_count": 5,
+      "context_chars": 598,
+      "ragas": {
+        "faithfulness": 0.8333333333333334,
+        "answer_relevancy": 0.7754007373319034,
+        "context_precision": 0.9166666666361111
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.12695312"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_07_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-local_scope-018",
+      "question": "In the water tank experiment, what onboard hardware components are listed for each micro-autonomous surface vehicle?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "No result found.",
+      "citations": [
+        "Page 106",
+        "Page 141",
+        "Page 106",
+        "Page 141",
+        "Page 79"
+      ],
+      "context_count": 5,
+      "context_chars": 900,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.10678068215440191,
+        "context_precision": 0.99999999998
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.010437012"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_07_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-local_scope-019",
+      "question": "In Chapter 2, how does the thesis distinguish a differential equation from an iterated map (difference equation)?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "In Chapter 2, the thesis distinguishes a differential equation from an iterated map (difference equation) by their representation and the type of systems they study. Differential equations are used to study systems in continuous time, while iterated maps are used to study systems in discrete time [1]. The thesis also provides a mathematical representation of both types of equations. Differential equations are represented as x\u02d9 = f(x), where x is a vector and f is a function [3]. On the other han",
+      "citations": [
+        "Page 21",
+        "Page 21",
+        "Page 21",
+        "Page 63",
+        "Page 21"
+      ],
+      "context_count": 5,
+      "context_chars": 2393,
+      "ragas": {
+        "faithfulness": 0.8235294117647058,
+        "answer_relevancy": 0.9206158310883227,
+        "context_precision": 0.8333333332916666
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.59765625"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_07_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-broad_summary-020",
+      "question": "How does the thesis describe the limitations of Gaussian Process modeling for spatiotemporal environmental processes?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The thesis describes the limitations of Gaussian Process (GP) modeling for spatiotemporal environmental processes as follows:\n\nGaussian Process (GP) modeling, a non-parametric model that can be derived using data, is widely used in environmental modeling [2]. However, there are limitations to its use for modeling dynamical systems and spatiotemporal processes [1]. Specifically, GP models may struggle with quickly time-varying processes with lower dimensionality [3]. This suggests that GP models ",
+      "citations": [
+        "Page 14",
+        "Page 48",
+        "Page 81",
+        "Page 151",
+        "Page 151"
+      ],
+      "context_count": 5,
+      "context_chars": 658,
+      "ragas": {
+        "faithfulness": 0.5555555555555556,
+        "answer_relevancy": 0.8772900650607586,
+        "context_precision": 0.8333333332916666
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.39257812"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_07_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-broad_summary-021",
+      "question": "How does the thesis define the goal of adaptive sampling for multi-robot teams?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The thesis defines the goal of adaptive sampling for multi-robot teams as optimizing their behaviors to improve state prediction, where states represent the environmental process of interest [1]. This is achieved through dynamic Voronoi partitioning for informative adaptive sampling in communication-constrained environments [2]. The central task in the multi-robot domain is mapping and modeling from collected sensor measurements [4], which is also a key aspect of adaptive sampling. The goals and",
+      "citations": [
+        "Page 14",
+        "Page 151",
+        "Page 151",
+        "Page 48",
+        "Page 48"
+      ],
+      "context_count": 5,
+      "context_chars": 677,
+      "ragas": {
+        "faithfulness": 0.5416666666666666,
+        "answer_relevancy": 0.9153453244851315,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.59375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_07_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-broad_summary-022",
+      "question": "What does the thesis identify as the main weakness of using neural networks to model dynamical systems for robotics?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The thesis identifies the main weakness of using neural networks to model dynamical systems for robotics as the unique challenges associated with representing dynamical systems using deep neural networks [1]. These challenges may include difficulties in analyzing high-dimensional, complex time series data related to dynamical systems [4]. Additionally, there is a need for further research and exploration of different variants of neural networks, such as link weight algorithms and recurrent neura",
+      "citations": [
+        "Page 33",
+        "Page 151",
+        "Page 33",
+        "Page 33",
+        "Page 33"
+      ],
+      "context_count": 5,
+      "context_chars": 910,
+      "ragas": {
+        "faithfulness": 0.4444444444444444,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.94140625"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_07_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-broad_summary-023",
+      "question": "How does the thesis describe the role of transfer operator theory for analyzing dynamical systems?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The thesis describes the role of transfer operator theory in analyzing dynamical systems as providing a systematic framework for reasoning about global dynamics [1]. It studies the action of a dynamical system on mass densities of initial conditions [2], which is useful for understanding the statistical transition properties of a process [3]. Transfer operators can be used to extract patterns in dynamical systems for high-level decision making, as illustrated in Chapter 6 [4]. Additionally, the ",
+      "citations": [
+        "Page 141",
+        "Page 14",
+        "Page 33",
+        "Page 14",
+        "Page 21"
+      ],
+      "context_count": 5,
+      "context_chars": 657,
+      "ragas": {
+        "faithfulness": 0.9,
+        "answer_relevancy": 0.88203241652544,
+        "context_precision": 0.99999999998
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.7734375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_07_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-comparison_synthesis-024",
+      "question": "How does the long-term online DMD method compare with the general adaptation method in terms of accuracy, storage, and computational performance?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The long-term online DMD method and the general adaptation method are compared in terms of accuracy, storage, and computational performance. According to [4], for larger environments with longer durations, such as 20 \u00d7 20 with 1000 time steps, the general adaptation method outperforms the long-term adaptation method both with and without SVD computation. This suggests that the general adaptation method is more accurate and computationally efficient for these types of environments.\n\nIn terms of s",
+      "citations": [
+        "Page 101",
+        "Page 101",
+        "Page 101",
+        "Page 101",
+        "Page 101"
+      ],
+      "context_count": 5,
+      "context_chars": 1199,
+      "ragas": {
+        "faithfulness": 0.3076923076923077,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.9166666666361111
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.10058594"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_07_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-comparison_synthesis-025",
+      "question": "How does the thesis compare coverage control with optimal design as approaches to sensor placement?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The thesis compares coverage control with optimal design as approaches to sensor placement by examining their similarities and differences. Coverage control is a type of optimal sensor allocation problem [1], which can be used to determine the optimal sensor placement within an environment specified by a density function [2]. In contrast, optimal sensor placement methods focus on sensing at a fixed number of disjoint points [4]. The distributed algorithm used in coverage control may fail in simi",
+      "citations": [
+        "Page 48",
+        "Page 14",
+        "Page 74",
+        "Page 90",
+        "Page 90"
+      ],
+      "context_count": 5,
+      "context_chars": 637,
+      "ragas": {
+        "faithfulness": 0.6111111111111112,
+        "answer_relevancy": 0.8561075003417477,
+        "context_precision": 0.47777777776185176
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.79296875"
+    }
+  ]
+}

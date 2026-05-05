@@ -1,0 +1,638 @@
+{
+  "suite": {
+    "suite_id": "vectara_native_150_batch_03_20260501",
+    "description": "Draft held-out product-fit final evaluation manifest. Documents are fixed; questions must be generated and frozen before any system run.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\vectara_native_batches\\batch_03.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "vectara"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      },
+      "mode": "native_mockingbird_answer",
+      "generation_preset_name": "mockingbird-2.0"
+    }
+  },
+  "summary": {
+    "overall": {
+      "vectara": {
+        "dataset_size": 15,
+        "answerable_size": 14,
+        "unsupported_size": 1,
+        "supported_rate": 0.9333333333333333,
+        "answerable_supported_rate": 1.0,
+        "unsupported_abstention_rate": 1.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.0,
+        "avg_context_count": 5.0,
+        "avg_context_chars": 936.9333333333333,
+        "ragas_all": {
+          "faithfulness": 0.7783838383838384,
+          "answer_relevancy": 0.7121789478161128,
+          "context_precision": 0.7039814814383696
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.8339826839826839,
+          "answer_relevancy": 0.7515155924076213,
+          "context_precision": 0.6967261904319172
+        }
+      }
+    },
+    "by_intent": {
+      "vectara": {
+        "broad_summary": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1074.5,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8963004146559226,
+            "context_precision": 0.699999999976875
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8963004146559226,
+            "context_precision": 0.699999999976875
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 1,
+          "answerable_size": 1,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1159.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7150010657844245,
+            "context_precision": 0.8041666666465626
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7150010657844245,
+            "context_precision": 0.8041666666465626
+          }
+        },
+        "local_scope": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 980.5,
+          "ragas_all": {
+            "faithfulness": 0.8666666666666667,
+            "answer_relevancy": 0.7981965274602681,
+            "context_precision": 0.47499999995812503
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.8666666666666667,
+            "answer_relevancy": 0.7981965274602681,
+            "context_precision": 0.47499999995812503
+          }
+        },
+        "lookup": {
+          "dataset_size": 6,
+          "answerable_size": 6,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 839.0,
+          "ragas_all": {
+            "faithfulness": 0.8126262626262626,
+            "answer_relevancy": 0.6444666898475506,
+            "context_precision": 0.7749999999440046
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.8126262626262626,
+            "answer_relevancy": 0.6444666898475506,
+            "context_precision": 0.7749999999440046
+          }
+        },
+        "numeric_procedure": {
+          "dataset_size": 1,
+          "answerable_size": 1,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 798.0,
+          "ragas_all": {
+            "faithfulness": 0.3333333333333333,
+            "answer_relevancy": 0.9540301496840532,
+            "context_precision": 0.99999999995
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.3333333333333333,
+            "answer_relevancy": 0.9540301496840532,
+            "context_precision": 0.99999999995
+          }
+        },
+        "unsupported": {
+          "dataset_size": 1,
+          "answerable_size": 0,
+          "unsupported_size": 1,
+          "supported_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 992.0,
+          "ragas_all": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.16146592353499403,
+            "context_precision": 0.8055555555287036
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "vectara_native_150_batch_03_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-001",
+      "question": "What target range did the Committee decide to maintain for the federal funds rate at this meeting?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The Committee decided to maintain the target range for the federal funds rate at 3\u00bd to 3\u00be percent. [1, 2, 4, 5]",
+      "citations": [
+        "Page 15",
+        "Page 13",
+        "Page 15",
+        "Page 12",
+        "Page 14"
+      ],
+      "context_count": 5,
+      "context_chars": 1237,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8208243110801717,
+        "context_precision": 0.8666666666377778
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.9609375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_03_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-002",
+      "question": "Which members dissented from the policy decision, and what alternative did they prefer?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the sources, two members dissented from the policy decision and preferred to lower the target range by \u00bc percentage point [1]. The alternative they preferred was not explicitly stated in the provided sources. However, it can be inferred that their dissent was related to the policy decision made by other members.\n\nNo other information about dissenting members or their alternative preferences is provided in the remaining sources [2-5]. These sources discuss various economic indicators",
+      "citations": [
+        "Page 13",
+        "Page 8",
+        "Page 13",
+        "Page 10",
+        "Page 7"
+      ],
+      "context_count": 5,
+      "context_chars": 1244,
+      "ragas": {
+        "faithfulness": 0.9090909090909091,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.9453125"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_03_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-003",
+      "question": "When is the next FOMC meeting scheduled to take place?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The next FOMC meeting is scheduled to take place on Tuesday-Wednesday, March 17-18, 2026. [3]",
+      "citations": [
+        "Page 2",
+        "Vectara Result 2",
+        "Page 15",
+        "Page 2",
+        "Page 1"
+      ],
+      "context_count": 5,
+      "context_chars": 732,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9946018481545282,
+        "context_precision": 0.3333333333
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.31445312"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_03_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-004",
+      "question": "In the staff's review of foreign developments, which foreign central banks cut their policy rates and which raised them?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the staff's review of foreign developments, some foreign central banks cut their policy rates, including the Bank of England and the Bank of Mexico [5]. However, most other foreign central banks left their policy rates unchanged [5]. No specific information is provided about which foreign central banks raised their policy rates.",
+      "citations": [
+        "Page 7",
+        "Page 6",
+        "Page 10",
+        "Page 5",
+        "Page 7"
+      ],
+      "context_count": 5,
+      "context_chars": 697,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.837391779926539,
+        "context_precision": 0.19999999998
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.27539062"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_03_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-005",
+      "question": "In the staff's financial stability assessment, which categories of vulnerability were characterized as 'notable' versus 'moderate'?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "In the staff's financial stability assessment, the categories of vulnerability characterized as 'notable' versus 'moderate' are as follows:\n\n* Notable: Vulnerabilities associated with funding risks [2] and leverage in the financial sector [4].\n* Moderate: Vulnerabilities associated with nonfinancial business and household debt [5] and funding risks [2].\n\nNote that the first source [1] does not provide specific information about which vulnerabilities were characterized as notable or moderate.",
+      "citations": [
+        "Page 9",
+        "Page 9",
+        "Page 7",
+        "Page 9",
+        "Page 9"
+      ],
+      "context_count": 5,
+      "context_chars": 495,
+      "ragas": {
+        "faithfulness": 0.6666666666666666,
+        "answer_relevancy": 0.9651563601404559,
+        "context_precision": 0.4499999999775
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.47460938"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_03_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-broad_summary-006",
+      "question": "What were the main reasons cited by participants who supported holding the federal funds rate steady at this meeting?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The main reasons cited by participants who supported holding the federal funds rate steady at this meeting were that maintaining the current target range would leave policymakers well positioned to determine the extent and timing of additional adjustments to the policy rate, with these judgments being based on incoming data, evolving outlook, and the balance of risks [2]. Additionally, those who preferred to lower the target range expressed concerns that the current stance of the policy rate was",
+      "citations": [
+        "Page 12",
+        "Page 12",
+        "Page 15",
+        "Page 7",
+        "Page 12"
+      ],
+      "context_count": 5,
+      "context_chars": 1154,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8678295963960232,
+        "context_precision": 0.4499999999775
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.98828125"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_03_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-broad_summary-007",
+      "question": "What financial stability concerns did participants raise specifically about the AI sector?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Participants raised concerns about financial stability in the AI sector, specifically regarding potential vulnerabilities associated with recent developments, such as elevated equity market valuations and high concentration of market values and activities in a small number of firms [1]. Additionally, there is a need to monitor the financing of AI-related infrastructure buildout in opaque private markets [2]. While some participants noted that ongoing gains in productivity would be supportive of ",
+      "citations": [
+        "Page 12",
+        "Page 12",
+        "Page 12",
+        "Page 12",
+        "Page 9"
+      ],
+      "context_count": 5,
+      "context_chars": 995,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.924771232915822,
+        "context_precision": 0.94999999997625
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.9609375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_03_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-comparison_synthesis-008",
+      "question": "How did the views of participants who preferred to lower rates differ from those who preferred to hold them steady?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The views of participants who preferred to lower rates differed from those who preferred to hold them steady in several ways. Those who preferred to lower the target range expressed concerns that the current stance of the policy rate was still meaningfully restrictive and viewed downside risks to the labor market as a more prominent policy concern than the risk of persistently elevated inflation [1]. On the other hand, those who favored maintaining the target range generally viewed that, after t",
+      "citations": [
+        "Page 12",
+        "Page 12",
+        "Page 12",
+        "Page 13",
+        "Page 15"
+      ],
+      "context_count": 5,
+      "context_chars": 1159,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7150010657844245,
+        "context_precision": 0.8041666666465626
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.9453125"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_03_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-numeric_procedure-009",
+      "question": "What specific operating parameters did the policy directive set for the standing overnight repo and reverse repo facilities, effective January 29, 2026?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The policy directive set specific operating parameters for the standing overnight repo and reverse repo facilities, effective January 29, 2026. The directive states that the Federal Open Market Committee directs the Desk to undertake open market operations as necessary to maintain the federal funds rate in a target range of 3\u00bd to 3\u00be percent [3]. Additionally, it sets a rate of 3.75 percent for conducting standing overnight repurchase agreement operations [1]. For standing overnight reverse repur",
+      "citations": [
+        "Page 14",
+        "Page 14",
+        "Page 14",
+        "Page 1",
+        "Page 2"
+      ],
+      "context_count": 5,
+      "context_chars": 798,
+      "ragas": {
+        "faithfulness": 0.3333333333333333,
+        "answer_relevancy": 0.9540301496840532,
+        "context_precision": 0.99999999995
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.9921875"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_03_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-unsupported-010",
+      "question": "What did this meeting's updated dot plot show about participants' median federal funds rate projection for year-end 2026?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "No result found.",
+      "citations": [
+        "Page 10",
+        "Page 13",
+        "Page 4",
+        "Page 12",
+        "Page 11"
+      ],
+      "context_count": 5,
+      "context_chars": 992,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.16146592353499403,
+        "context_precision": 0.8055555555287036
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.114746094"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_03_20260501",
+      "system": "vectara",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-001",
+      "question": "What two scenarios does this report use as its primary comparison?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The report uses two primary scenarios for comparison: the Planned Energy Scenario (PES) and the 1.5\u00b0C Scenario. The PES is a business-as-usual policy basket, while the 1.5\u00b0C Scenario forecasts socio-economic impacts on welfare, employment, and gross domestic product [2]. These scenarios are used to quantify socio-economic impacts and allow for direct comparison [3].",
+      "citations": [
+        "Page 17",
+        "Page 236",
+        "Page 217",
+        "Page 168",
+        "Page 141"
+      ],
+      "context_count": 5,
+      "context_chars": 660,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8821174486876494,
+        "context_precision": 0.49999999995
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.5703125"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_03_20260501",
+      "system": "vectara",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-002",
+      "question": "Who is identified as the Director-General of IRENA in the foreword?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the provided sources, Francesco La Camera is identified as the Director-General of IRENA in the foreword [1]. This information is not explicitly stated in the foreword itself, but it can be inferred from source [1] which mentions Francesco La Camera as the Director-General of IRENA.",
+      "citations": [
+        "Page 5",
+        "Page 3",
+        "Page 3",
+        "Page 4",
+        "Page 4"
+      ],
+      "context_count": 5,
+      "context_chars": 687,
+      "ragas": {
+        "faithfulness": 0.16666666666666666,
+        "answer_relevancy": 0.4155406629716918,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.41015625"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_03_20260501",
+      "system": "vectara",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-003",
+      "question": "What level of annual renewable power capacity additions does the report say is needed to stay on a 1.5\u00b0C pathway, and how much was actually added globally in 2022?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the sources, to stay on a 1.5\u00b0C pathway, an annual deployment of 1,000 GW of renewable power is needed [1][2]. This means that each year, 1,000 GW of renewable power capacity additions are required to achieve this target. However, globally in 2022, the actual amount added was not specified in the provided sources.\n\nIn addition to this, it is mentioned that under the 1.5\u00b0C scenario, globally annual renewable power capacity additions would need to reach an average of 1,066 GW per year",
+      "citations": [
+        "Page 21",
+        "Page 186",
+        "Page 25",
+        "Page 54",
+        "Page 147"
+      ],
+      "context_count": 5,
+      "context_chars": 474,
+      "ragas": {
+        "faithfulness": 0.8,
+        "answer_relevancy": 0.7537158681912622,
+        "context_precision": 0.94999999997625
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.17578125"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_03_20260501",
+      "system": "vectara",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-local_scope-004",
+      "question": "In the welfare impacts chapter of Volume 2, how many dimensions and how many indicators make up IRENA's welfare index?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the provided sources, IRENA's welfare index consists of five dimensions and ten indicators. This information is mentioned in Figure 6.1, which shows \"Five dimensions and 10 indicators of IRENA\u2019s welfare index\" [4].",
+      "citations": [
+        "Page 33",
+        "Page 218",
+        "Page 9",
+        "Page 14",
+        "Page 224"
+      ],
+      "context_count": 5,
+      "context_chars": 1941,
+      "ragas": {
+        "faithfulness": 0.8,
+        "answer_relevancy": 0.7709066643025301,
+        "context_precision": 0.249999999975
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.8203125"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_03_20260501",
+      "system": "vectara",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-local_scope-005",
+      "question": "In the foreword's vision for overcoming barriers, what three pillars does the report propose as the foundations for a way forward?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The report proposes three pillars as the foundations for a way forward in overcoming barriers to energy transitions. These pillars are:\n\n1. Building the necessary infrastructure and investing at scale in grids, and both land and sea routes, to accommodate new production locations, trade patterns, and demand centers [1].\n2. Advancing an evolved policy and regulatory architecture that can facilitate targeted investments [1].\n3. Strategically realigning institutional capacities to help ensure that ",
+      "citations": [
+        "Page 4",
+        "Page 4",
+        "Page 26",
+        "Page 34",
+        "Page 198"
+      ],
+      "context_count": 5,
+      "context_chars": 789,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6193313054715475,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.92578125"
+    }
+  ]
+}

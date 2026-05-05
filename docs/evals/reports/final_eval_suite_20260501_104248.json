@@ -1,0 +1,638 @@
+{
+  "suite": {
+    "suite_id": "vectara_native_150_batch_08_20260501",
+    "description": "Draft held-out product-fit final evaluation manifest. Documents are fixed; questions must be generated and frozen before any system run.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\vectara_native_batches\\batch_08.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "vectara"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      },
+      "mode": "native_mockingbird_answer",
+      "generation_preset_name": "mockingbird-2.0"
+    }
+  },
+  "summary": {
+    "overall": {
+      "vectara": {
+        "dataset_size": 15,
+        "answerable_size": 13,
+        "unsupported_size": 2,
+        "supported_rate": 0.8666666666666667,
+        "answerable_supported_rate": 1.0,
+        "unsupported_abstention_rate": 1.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.0,
+        "avg_context_count": 5.0,
+        "avg_context_chars": 1805.8,
+        "ragas_all": {
+          "faithfulness": 0.5227674975714192,
+          "answer_relevancy": 0.7753658053508624,
+          "context_precision": 0.7747222221692708
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.6031932664285605,
+          "answer_relevancy": 0.8793149035167006,
+          "context_precision": 0.7525641025065385
+        }
+      }
+    },
+    "by_intent": {
+      "vectara": {
+        "broad_summary": {
+          "dataset_size": 1,
+          "answerable_size": 1,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 715.0,
+          "ragas_all": {
+            "faithfulness": 0.9,
+            "answer_relevancy": 0.6811880943394258,
+            "context_precision": 0.999999999975
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.9,
+            "answer_relevancy": 0.6811880943394258,
+            "context_precision": 0.999999999975
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 1,
+          "answerable_size": 1,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1258.0,
+          "ragas_all": {
+            "faithfulness": 0.37037037037037035,
+            "answer_relevancy": 0.8943755366214591,
+            "context_precision": 0.249999999975
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.37037037037037035,
+            "answer_relevancy": 0.8943755366214591,
+            "context_precision": 0.249999999975
+          }
+        },
+        "local_scope": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 3424.75,
+          "ragas_all": {
+            "faithfulness": 0.44791666666666663,
+            "answer_relevancy": 0.8568514706942312,
+            "context_precision": 0.9249999999358334
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.44791666666666663,
+            "answer_relevancy": 0.8568514706942312,
+            "context_precision": 0.9249999999358334
+          }
+        },
+        "lookup": {
+          "dataset_size": 5,
+          "answerable_size": 5,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1608.2,
+          "ragas_all": {
+            "faithfulness": 0.7238095238095238,
+            "answer_relevancy": 0.9136658229051636,
+            "context_precision": 0.7666666665983333
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.7238095238095238,
+            "answer_relevancy": 0.9136658229051636,
+            "context_precision": 0.7666666665983333
+          }
+        },
+        "numeric_procedure": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 947.5,
+          "ragas_all": {
+            "faithfulness": 0.5802139037433155,
+            "answer_relevancy": 0.9298975587267397,
+            "context_precision": 0.49999999995
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.5802139037433155,
+            "answer_relevancy": 0.9298975587267397,
+            "context_precision": 0.49999999995
+          }
+        },
+        "unsupported": {
+          "dataset_size": 2,
+          "answerable_size": 0,
+          "unsupported_size": 2,
+          "supported_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 739.5,
+          "ragas_all": {
+            "faithfulness": 0.0,
+            "answer_relevancy": 0.09969666727291432,
+            "context_precision": 0.9187499999770312
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "vectara_native_150_batch_08_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-comparison_synthesis-026",
+      "question": "How does the thesis distinguish the Perron-Frobenius operator from the Koopman operator, and which one does it focus on?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The thesis distinguishes the Perron-Frobenius operator from the Koopman operator by defining them separately and highlighting their differences. The Perron-Frobenius operator, denoted as P, is defined for a probability density f \u2208 L1(X) as Pf (x) = \u222b p\u03c4 (y, x)f (y)dy [2]. On the other hand, the Koopman operator is not explicitly defined in terms of an integral equation like the Perron-Frobenius operator. However, it is mentioned that A is an analogue of the reweighted Perron-Frobenius operator o",
+      "citations": [
+        "Page 14",
+        "Page 33",
+        "Page 133",
+        "Page 14",
+        "Page 33"
+      ],
+      "context_count": 5,
+      "context_chars": 1258,
+      "ragas": {
+        "faithfulness": 0.37037037037037035,
+        "answer_relevancy": 0.8943755366214591,
+        "context_precision": 0.249999999975
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.96484375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_08_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-numeric_procedure-027",
+      "question": "In the long-term online DMD update, how is the matrix S' computed and which matrix identity is invoked?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "In the long-term online DMD update, the matrix S' is computed using previously computed matrices Q and S, along with newly acquired data [1]. This computation does not require explicit eigendecomposition of the estimated A' matrix, unlike the batch and long-term algorithms that perform eigenvalue decompositions [2][3]. The general algorithm merges eigenvectors into a DMD basis, while the long-term algorithm avoids repeated SVD computations required by the general algorithm [2][3].\n\nNo specific m",
+      "citations": [
+        "Page 90",
+        "Page 101",
+        "Page 101",
+        "Page 101",
+        "Page 101"
+      ],
+      "context_count": 5,
+      "context_chars": 1178,
+      "ragas": {
+        "faithfulness": 0.45454545454545453,
+        "answer_relevancy": 0.8988737070071638,
+        "context_precision": 0.49999999995
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.42382812"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_08_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-numeric_procedure-028",
+      "question": "How is the forgetting factor gamma incorporated into the online DMD update equations for Q' and S'?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The forgetting factor \u03b3 is incorporated into the online DMD update equations for Q' and S' by applying it to past training data, resulting in new expressions for Q' and S'. Specifically, the updated equation for Q' is given by:\n\nQ\u2032 = \u03b3Q + YnewX\u22a4new\n\nwhere \u03b3 is the forgetting factor, Q is the previous estimate of Q, Ynew is the new data matrix, and X\u22a4new is the transpose of the new data matrix. The updated equation for (S')\u22121 is given by:\n\n(S\u2032)\u22121 = \u03b3S\u22121 + X\u22a4newXnew\n\nwhere (S')\u22121 is the inverse of",
+      "citations": [
+        "Page 101",
+        "Page 90",
+        "Page 90",
+        "Page 90",
+        "Page 33"
+      ],
+      "context_count": 5,
+      "context_chars": 717,
+      "ragas": {
+        "faithfulness": 0.7058823529411765,
+        "answer_relevancy": 0.9609214104463156,
+        "context_precision": 0.49999999995
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.015075684"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_08_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-unsupported-029",
+      "question": "What battery life specification do the micro-autonomous surface vehicles report under continuous operation?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "No result found.",
+      "citations": [
+        "Page 106",
+        "Page 141",
+        "Page 106",
+        "Page 151",
+        "Page 151"
+      ],
+      "context_count": 5,
+      "context_chars": 666,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.16340694333263972,
+        "context_precision": 0.94999999997625
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.008850098"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_08_20260501",
+      "system": "vectara",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-unsupported-030",
+      "question": "What classification accuracy does the thesis report when applying Koopman operators to the ImageNet benchmark?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "No result found.",
+      "citations": [
+        "Page 33",
+        "Page 151",
+        "Page 151",
+        "Page 122",
+        "Page 151"
+      ],
+      "context_count": 5,
+      "context_chars": 813,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.035986391213188924,
+        "context_precision": 0.8874999999778125
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.010070801"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_08_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-011",
+      "question": "Where physically was this two-day FOMC meeting held?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The two-day FOMC meeting was held in the offices of the Board of Governors on Tuesday, January 27, 2026, at 10:00 a.m. and continued on Wednesday, January 28, 2026, at 9:00 a.m. [1]",
+      "citations": [
+        "Page 2",
+        "Page 1",
+        "Page 15",
+        "Page 12",
+        "Page 9"
+      ],
+      "context_count": 5,
+      "context_chars": 909,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.91946230844502,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.484375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_08_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-012",
+      "question": "Who was selected as Vice Chair of the Committee for the term beginning January 27, 2026?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the provided sources, John C. Williams was selected as Vice Chair of the Committee for the term beginning January 27, 2026 [1]. This information is mentioned in source [1], which lists the officers of the Committee and their terms of service.\n\nNo other sources provide additional information about this selection. Therefore, based on the available information, John C. Williams was selected as Vice Chair of the Committee for the term beginning January 27, 2026.",
+      "citations": [
+        "Page 3",
+        "Page 2",
+        "Page 15",
+        "Page 3",
+        "Page 15"
+      ],
+      "context_count": 5,
+      "context_chars": 1465,
+      "ragas": {
+        "faithfulness": 0.2857142857142857,
+        "answer_relevancy": 0.9999999999999999,
+        "context_precision": 0.0
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.83203125"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_08_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-013",
+      "question": "Who was selected to serve as Manager of the System Open Market Account?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the provided sources, Roberto Perli was selected to serve as Manager of the System Open Market Account [3]. This selection was made by unanimous vote of the Committee and was subject to being satisfactory to the Federal Reserve Bank of New York.",
+      "citations": [
+        "Page 16",
+        "Page 3",
+        "Page 3",
+        "Page 14",
+        "Page 14"
+      ],
+      "context_count": 5,
+      "context_chars": 4144,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7663646731992474,
+        "context_precision": 0.8333333332916666
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.97265625"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_08_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-014",
+      "question": "What was the unemployment rate in December as cited in the staff review?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the staff review, the unemployment rate in December was 4.4 percent, unchanged from its level in September [1].",
+      "citations": [
+        "Page 6",
+        "Page 6",
+        "Page 6",
+        "Page 7",
+        "Page 9"
+      ],
+      "context_count": 5,
+      "context_chars": 524,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9174850170439303,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.9609375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_08_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-015",
+      "question": "What rate is paid on reserve balances effective January 29, 2026?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The rate paid on reserve balances effective January 29, 2026, is 3.65 percent. This information is found in source [1], which states that the Board of Governors of the Federal Reserve System voted to maintain the interest rate paid on reserve balances at 3.65 percent, effective January 29, 2026.",
+      "citations": [
+        "Page 15",
+        "Page 14",
+        "Page 5",
+        "Page 1",
+        "Page 2"
+      ],
+      "context_count": 5,
+      "context_chars": 999,
+      "ragas": {
+        "faithfulness": 0.3333333333333333,
+        "answer_relevancy": 0.9650171158376207,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.99609375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_08_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-016",
+      "question": "In the Annual Organizational Matters section, who was selected as Secretary of the Committee?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the provided sources, Joshua Gallin was selected as Secretary of the Committee. This information is mentioned in source [1] and [2], where it is stated that Joshua Gallin was selected as Secretary by unanimous vote. Additionally, source [3] also confirms this information by listing Joshua Gallin as the Secretary.\n\nSources: [1], [2], [3]",
+      "citations": [
+        "Page 3",
+        "Page 16",
+        "Page 18",
+        "Page 3",
+        "Page 18"
+      ],
+      "context_count": 5,
+      "context_chars": 4879,
+      "ragas": {
+        "faithfulness": 0.125,
+        "answer_relevancy": 0.7340450543143126,
+        "context_precision": 0.9999999999666667
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.96875"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_08_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-017",
+      "question": "In the discussion of money markets, what factors did contacts attribute to the better-than-expected year-end repo outcome?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the sources, contacts attributed the better-than-expected year-end repo outcome to several factors. These include an increase in available liquidity due to the start of reserve management purchases (RMPs) and a lower Treasury General Account (TGA) [1], recent changes to standing repo operations' design and communications [1], increased adoption of centrally cleared repo [1], and overall preparedness of investors for year-end tightness [1]. Additionally, year-end pressures in short-t",
+      "citations": [
+        "Page 5",
+        "Page 5",
+        "Page 5",
+        "Page 8",
+        "Page 6"
+      ],
+      "context_count": 5,
+      "context_chars": 954,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8948684249439469,
+        "context_precision": 0.6999999999766667
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.9140625"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_08_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-018",
+      "question": "Among the elected FOMC members, who were the presidents of the Federal Reserve Banks of New York and Philadelphia?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the sources, the presidents of the Federal Reserve Banks of New York and Philadelphia who were elected FOMC members are:\n\n* John C. Williams, President of the Federal Reserve Bank of New York [1]\n* Anna Paulson, President of the Federal Reserve Bank of Philadelphia [1]\n\nNo other information about FOMC members or their respective banks is provided in the given sources.",
+      "citations": [
+        "Page 2",
+        "Page 16",
+        "Page 17",
+        "Page 18",
+        "Page 2"
+      ],
+      "context_count": 5,
+      "context_chars": 6962,
+      "ragas": {
+        "faithfulness": 0.6666666666666666,
+        "answer_relevancy": 0.910124057040652,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.69140625"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_08_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-019",
+      "question": "By approximately how much did the staff estimate the government shutdown reduced fourth-quarter real GDP growth?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the sources, the staff estimated that the government shutdown reduced fourth-quarter real GDP growth by about 1 percentage point [1]. This information is not explicitly stated in sources [2], [3], and [4], but it is mentioned in source [5] that the unemployment rate was expected to decline gradually starting this year, which could be related to the impact of the government shutdown on economic growth.",
+      "citations": [
+        "Page 7",
+        "Page 7",
+        "Page 9",
+        "Page 7",
+        "Page 9"
+      ],
+      "context_count": 5,
+      "context_chars": 904,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.8883683464780133,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.12988281"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_08_20260501",
+      "system": "vectara",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-broad_summary-020",
+      "question": "How does the staff describe credit performance in domestic markets at the time of the meeting?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the staff, credit performance in domestic markets was stable but generally weaker than average pre-pandemic performance levels [2]. This is supported by the fact that borrowing costs for businesses, households, and municipalities remained significantly lower than the highs observed in 2023 but elevated relative to their average post-Global Financial Crisis levels [1]. Additionally, there were signs of weakness in the financial positions of low- and medium-income households [4], whic",
+      "citations": [
+        "Page 8",
+        "Page 8",
+        "Page 8",
+        "Page 12",
+        "Page 6"
+      ],
+      "context_count": 5,
+      "context_chars": 715,
+      "ragas": {
+        "faithfulness": 0.9,
+        "answer_relevancy": 0.6811880943394258,
+        "context_precision": 0.999999999975
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.72265625"
+    }
+  ]
+}

@@ -1,0 +1,424 @@
+{
+  "suite": {
+    "suite_id": "helpmate_abstention_recovery_smoke_half_20260501",
+    "description": "Draft held-out product-fit final evaluation manifest. Documents are fixed; questions must be generated and frozen before any system run.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\helpmate_abstention_smoke\\half_abstained_11.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "helpmate"
+  ],
+  "ragas_enabled": false,
+  "ragas_judge": {
+    "reason": "RAGAS scoring disabled."
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-abstention-recovery-smoke-20260501-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      },
+      "mode": "native_mockingbird_answer",
+      "generation_preset_name": "mockingbird-2.0"
+    }
+  },
+  "summary": {
+    "overall": {
+      "helpmate": {
+        "dataset_size": 11,
+        "answerable_size": 11,
+        "unsupported_size": 0,
+        "supported_rate": 0.45454545454545453,
+        "answerable_supported_rate": 0.45454545454545453,
+        "unsupported_abstention_rate": 0.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.5454545454545454,
+        "avg_context_count": 4.0,
+        "avg_context_chars": 4536.454545454545,
+        "ragas_all": {
+          "faithfulness": null,
+          "answer_relevancy": null,
+          "context_precision": null
+        },
+        "ragas_attempted": {
+          "faithfulness": null,
+          "answer_relevancy": null,
+          "context_precision": null
+        }
+      }
+    },
+    "by_intent": {
+      "helpmate": {
+        "broad_summary": {
+          "dataset_size": 1,
+          "answerable_size": 1,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 4797.0,
+          "ragas_all": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        },
+        "local_scope": {
+          "dataset_size": 3,
+          "answerable_size": 3,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 4200.666666666667,
+          "ragas_all": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        },
+        "lookup": {
+          "dataset_size": 6,
+          "answerable_size": 6,
+          "unsupported_size": 0,
+          "supported_rate": 0.16666666666666666,
+          "answerable_supported_rate": 0.16666666666666666,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.8333333333333334,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 4740.833333333333,
+          "ragas_all": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        },
+        "numeric_procedure": {
+          "dataset_size": 1,
+          "answerable_size": 1,
+          "unsupported_size": 0,
+          "supported_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 1.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 4057.0,
+          "ragas_all": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "helpmate_abstention_recovery_smoke_half_20260501",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-003",
+      "question": "How does this framework define an AI system?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The supplied evidence does not define what an AI system is. It only refers to AI systems, their lifecycle, and their risks, but does not provide a definition of an AI system itself [Source 1][Source 2][Source 4].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 5",
+        "nist-ai-rmf-1-0.pdf - Page 5",
+        "nist-ai-rmf-1-0.pdf - Page 46",
+        "nist-ai-rmf-1-0.pdf - Page 44"
+      ],
+      "context_count": 4,
+      "context_chars": 5145,
+      "ragas": {},
+      "note": "The question asks for the framework\u2019s definition of an AI system, but the evidence contains only references to AI systems and related figures/functions, not a definitional statement. The required fact\u2014an explicit definition\u2014is missing."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_smoke_half_20260501",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-001",
+      "question": "What two scenarios does this report use as its primary comparison?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The report uses the Planned Energy Scenario and the 1.5\u00b0C Scenario as its primary comparison [Source 1][Source 2].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 17",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 17",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 59",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 18"
+      ],
+      "context_count": 4,
+      "context_chars": 1583,
+      "ragas": {},
+      "note": "The evidence states that the Planned Energy Scenario is the primary reference case for the study [Source 1] and also identifies the 1.5\u00b0C Scenario / 1.5\u00b0C climate goal as the other scenario [Source 1][Source 2]."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_smoke_half_20260501",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-002",
+      "question": "Who is identified as the Director-General of IRENA in the foreword?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not identify the Director-General of IRENA in the foreword. [Source 2] lists acknowledgements and IRENA staff roles, and [Source 3] describes IRENA, but neither names the Director-General in the foreword.",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 137",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 3",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 2",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 136"
+      ],
+      "context_count": 4,
+      "context_chars": 8777,
+      "ragas": {},
+      "note": "The question asks for a specific person identified as Director-General in the foreword. The supplied evidence includes acknowledgements, report metadata, and body text, but no foreword page and no mention of a Director-General by name. Therefore the required fact is missing."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_smoke_half_20260501",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-numeric_procedure-009",
+      "question": "How much cumulative investment does the 1.5\u00b0C Scenario require by 2050, how does that compare with the Planned Energy Scenario, and how much annual investment must be redirected away from fossil-fuel technologies?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence provides conflicting figures for the total cumulative investment required under the 1.5\u00b0C Scenario and the Planned Energy Scenario. One source says USD 61 trillion is needed under the 1.5\u00b0C Scenario, compared with USD 28.5 trillion under the Planned Energy Scenario, and that about USD 1 trillion per year of fossil-fuel investments must be redirected [Source 2]. Another source says the 1.5\u00b0C Scenario requires an additional USD 47 trillion compared with the Planned Energy Scenario, wh",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 25",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 150",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 151",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 147"
+      ],
+      "context_count": 4,
+      "context_chars": 4057,
+      "ragas": {},
+      "note": "The question requires three facts: total cumulative investment for the 1.5\u00b0C Scenario by 2050, the comparison with the Planned Energy Scenario, and the annual amount redirected away from fossil-fuel technologies. The evidence contains contradictory cumulative investment figures across sources (USD 61 trillion vs. USD 103 trillion for Planned Energy Scenario with an additional USD 47 trillion needed) while the annual redirected amount is consistently about USD 1 trillion per year. Since the cumulative investment comparison is inconsistent, the question cannot be fully answered from the supplied evidence."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_smoke_half_20260501",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-016",
+      "question": "In the section on AI safety, which kinds of safety risks does the framework say require the most urgent prioritization?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework says the most urgent prioritization is required for safety risks that pose a potential risk of serious injury or death [Source 2]. It also says that risks the organization determines to be highest for the AI systems in a given context of use call for the most urgent prioritization [Source 1].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 13",
+        "nist-ai-rmf-1-0.pdf - Page 19",
+        "nist-ai-rmf-1-0.pdf - Page 4",
+        "nist-ai-rmf-1-0.pdf - Page 5"
+      ],
+      "context_count": 4,
+      "context_chars": 4882,
+      "ragas": {},
+      "note": "The question asks which kinds of safety risks require the most urgent prioritization. Source 2 directly states that safety risks posing a potential risk of serious injury or death require the most urgent prioritization. Source 1 adds that the highest risks in a given context of use receive the most urgent prioritization, but Source 2 is the specific safety-risk statement asked for."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_smoke_half_20260501",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-020",
+      "question": "Who does the framework say it is intended for, and why does it use the term 'AI actors'?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework says it is intended for organizations and individuals across the AI lifecycle, including organizations designing, developing, deploying, or using AI systems, with flexibility for organizations of all sizes and in all sectors throughout society [Source 1]. It uses the term \"AI actors\" to refer to those organizations and individuals; the framework says they are the people and organizations playing an active role in the AI system lifecycle, including those that deploy or operate AI [S",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 7",
+        "nist-ai-rmf-1-0.pdf - Page 42",
+        "nist-ai-rmf-1-0.pdf - Page 14",
+        "nist-ai-rmf-1-0.pdf - Page 3"
+      ],
+      "context_count": 4,
+      "context_chars": 4797,
+      "ragas": {},
+      "note": "The evidence directly states the intended audience and defines \"AI actors\". Source 1 says the AI RMF is for organizations designing, developing, deploying, or using AI systems and is flexible for organizations of all sizes and sectors. It also says organizations and individuals are referred to as AI actors and defines them as those who play an active role in the AI system lifecycle, including deployers/operators."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_smoke_half_20260501",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-012",
+      "question": "Who is the corresponding author for this paper?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not identify the corresponding author for the paper. [Source 1]-[Source 4] contain figure text and reference entries, but no author list or corresponding-author designation is given.",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 24",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 25",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 41",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 25"
+      ],
+      "context_count": 4,
+      "context_chars": 4658,
+      "ragas": {},
+      "note": "To answer this question, the evidence would need the paper\u2019s author information and an explicit corresponding author designation. The supplied pages do not include either, so the question cannot be answered from the evidence."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_smoke_half_20260501",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-013",
+      "question": "What does the abbreviation PINO stand for in the paper?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not define what the abbreviation PINO stands for. It contains discussion of climate modeling workflows and the ClimSim project, but no expansion of PINO is given in the supplied sources [Source 1], [Source 2], [Source 3], [Source 4].",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 11",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 2",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 16",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 17"
+      ],
+      "context_count": 4,
+      "context_chars": 3831,
+      "ragas": {},
+      "note": "The question asks for the full form of the abbreviation PINO. None of the supplied evidence explicitly mentions PINO or provides its expansion, so the required fact is missing."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_smoke_half_20260501",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-014",
+      "question": "What does GNO refer to in the discussion of neural operator variants?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not define what GNO refers to in the discussion of neural operator variants. The relevant pages mention neural operators and cite a neural operator paper, but no expansion or explanation of the acronym GNO is given [Source 3], [Source 1].",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 41",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 39",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 10",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 41"
+      ],
+      "context_count": 4,
+      "context_chars": 4451,
+      "ragas": {},
+      "note": "The evidence includes a general discussion of neural operators [Source 3] and bibliographic entries related to neural operator work [Source 1], but it does not state what the acronym GNO stands for. A substantive answer would require that explicit definition, which is missing."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_smoke_half_20260501",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-019",
+      "question": "Beyond the three integration directions in Figure 1, what 'fourth direction' do the authors describe?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The fourth direction is human-in-the-loop: workflows guided by scientific reasoning, modeling practices, and domain expertise [Source 1].",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 6",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 5",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 4",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 24"
+      ],
+      "context_count": 4,
+      "context_chars": 4047,
+      "ragas": {},
+      "note": "The evidence explicitly states that, in addition to the three directions in Figure 1, a fourth direction is human-in-the-loop and defines it as workflow design guided by scientific reasoning, modeling practices, and domain expertise [Source 1]."
+    },
+    {
+      "suite_id": "helpmate_abstention_recovery_smoke_half_20260501",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-local_scope-018",
+      "question": "In the water tank experiment, what onboard hardware components are listed for each micro-autonomous surface vehicle?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Each micro-autonomous surface vehicle (mASV) is listed as having a micro-controller board, an XBee radio module, and an inertial measurement unit [Source 1][Source 2].",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 111",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 112",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 12",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 141"
+      ],
+      "context_count": 4,
+      "context_chars": 3673,
+      "ragas": {},
+      "note": "The evidence explicitly states that the mASVs are differential drive and include these onboard hardware components: a micro-controller board, an XBee radio module, and an inertial measurement unit. This fully answers the question."
+    }
+  ]
+}

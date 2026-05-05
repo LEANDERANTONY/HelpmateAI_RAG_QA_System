@@ -40,6 +40,7 @@ export type AnswerResult = {
   citations: string[];
   evidence: RetrievalCandidate[];
   supported: boolean;
+  support_status: "supported" | "partial" | "unsupported";
   cache_status: {
     index_reused: boolean;
     answer_cache_hit: boolean;

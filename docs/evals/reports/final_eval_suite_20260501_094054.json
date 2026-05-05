@@ -1,0 +1,638 @@
+{
+  "suite": {
+    "suite_id": "vectara_native_150_batch_04_20260501",
+    "description": "Draft held-out product-fit final evaluation manifest. Documents are fixed; questions must be generated and frozen before any system run.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\vectara_native_batches\\batch_04.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "vectara"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      },
+      "mode": "native_mockingbird_answer",
+      "generation_preset_name": "mockingbird-2.0"
+    }
+  },
+  "summary": {
+    "overall": {
+      "vectara": {
+        "dataset_size": 15,
+        "answerable_size": 14,
+        "unsupported_size": 1,
+        "supported_rate": 1.0,
+        "answerable_supported_rate": 1.0,
+        "unsupported_abstention_rate": 0.0,
+        "false_support_rate": 1.0,
+        "false_abstention_rate": 0.0,
+        "avg_context_count": 5.0,
+        "avg_context_chars": 947.9333333333333,
+        "ragas_all": {
+          "faithfulness": 0.8095495862162528,
+          "answer_relevancy": 0.7962072558785133,
+          "context_precision": 0.7399999999609445
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.8095495862162528,
+          "answer_relevancy": 0.7962072558785133,
+          "context_precision": 0.7399999999609445
+        }
+      }
+    },
+    "by_intent": {
+      "vectara": {
+        "broad_summary": {
+          "dataset_size": 3,
+          "answerable_size": 3,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 680.0,
+          "ragas_all": {
+            "faithfulness": 0.6388888888888888,
+            "answer_relevancy": 0.5520978058028475,
+            "context_precision": 0.538888888867037
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.6388888888888888,
+            "answer_relevancy": 0.5520978058028475,
+            "context_precision": 0.538888888867037
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 1,
+          "answerable_size": 1,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 848.0,
+          "ragas_all": {
+            "faithfulness": 0.8461538461538461,
+            "answer_relevancy": 0.8137568273036834,
+            "context_precision": 0.999999999975
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.8461538461538461,
+            "answer_relevancy": 0.8137568273036834,
+            "context_precision": 0.999999999975
+          }
+        },
+        "local_scope": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 886.0,
+          "ragas_all": {
+            "faithfulness": 0.962962962962963,
+            "answer_relevancy": 0.8525657617746576,
+            "context_precision": 0.674999999969861
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.962962962962963,
+            "answer_relevancy": 0.8525657617746576,
+            "context_precision": 0.674999999969861
+          }
+        },
+        "lookup": {
+          "dataset_size": 5,
+          "answerable_size": 5,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1232.2,
+          "ragas_all": {
+            "faithfulness": 0.9,
+            "answer_relevancy": 0.8609782558663027,
+            "context_precision": 0.899999999935
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.9,
+            "answer_relevancy": 0.8609782558663027,
+            "context_precision": 0.899999999935
+          }
+        },
+        "numeric_procedure": {
+          "dataset_size": 1,
+          "answerable_size": 1,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1035.0,
+          "ragas_all": {
+            "faithfulness": 0.9285714285714286,
+            "answer_relevancy": 0.8810493739113955,
+            "context_precision": 0.8666666666377778
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.9285714285714286,
+            "answer_relevancy": 0.8810493739113955,
+            "context_precision": 0.8666666666377778
+          }
+        },
+        "unsupported": {
+          "dataset_size": 1,
+          "answerable_size": 0,
+          "unsupported_size": 1,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 1.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 591.0,
+          "ragas_all": {
+            "faithfulness": 0.1,
+            "answer_relevancy": 0.8768548931239334,
+            "context_precision": 0.4166666666458333
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.1,
+            "answer_relevancy": 0.8768548931239334,
+            "context_precision": 0.4166666666458333
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "vectara_native_150_batch_04_20260501",
+      "system": "vectara",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-broad_summary-006",
+      "question": "What does the report say about the geographic distribution of renewable energy investment, and why is that a problem?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The report indicates that the geographic distribution of renewable energy investment is highly concentrated, with deployments limited to a few countries and regions [1]. This concentration is a problem because it suggests that the benefits of renewable energy are not being evenly distributed across the globe. Additionally, the report highlights that there is a growing gap between what is achieved and what is required in terms of renewable energy deployment [5]. This gap could be exacerbated by t",
+      "citations": [
+        "Page 4",
+        "Page 187",
+        "Page 150",
+        "Page 213",
+        "Page 21"
+      ],
+      "context_count": 5,
+      "context_chars": 496,
+      "ragas": {
+        "faithfulness": 0.5833333333333334,
+        "answer_relevancy": 0.8593133641688876,
+        "context_precision": 0.699999999965
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.81640625"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_04_20260501",
+      "system": "vectara",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-broad_summary-007",
+      "question": "What is the report's overall assessment of progress on the energy transition through 2022, and where does it say the gap is largest?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The report's overall assessment of progress on the energy transition through 2022 is that it is not on track, with a growing gap between what is being done and what is required to stay on the 1.5\u00b0C pathway [2]. The progress achieved so far has been mainly in the power sector, where technology, policy, and innovation have made significant strides [1]. However, the scale and extent of implementation fall short of what is required to reach the 1.5\u00b0C target [1][4]. The largest gap identified by IREN",
+      "citations": [
+        "Page 4",
+        "Page 38",
+        "Page 56",
+        "Page 54",
+        "Page 88"
+      ],
+      "context_count": 5,
+      "context_chars": 767,
+      "ragas": {
+        "faithfulness": 0.6666666666666666,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.9166666666361111
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.37109375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_04_20260501",
+      "system": "vectara",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-comparison_synthesis-008",
+      "question": "Under the 1.5\u00b0C Scenario, how does the share of renewables in the global energy mix and the role of electricity change between 2020 and 2050?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Under the 1.5\u00b0C Scenario, the share of renewables in the global energy mix would increase from 4% in 2020 to approximately 55% by 2050, dominated by bioenergy [1]. The share of renewable energy in the global energy mix would also increase from 16% in 2020 to 77% by 2050 [3]. Additionally, renewables' share in the power generation mix would grow from 28% to around 91%, with a significant increase from approximately 7,468 TWh to around 82,148 TWh between 2020 and 2050 [2].\n\nIt's worth noting that ",
+      "citations": [
+        "Page 108",
+        "Page 65",
+        "Page 25",
+        "Page 25",
+        "Page 48"
+      ],
+      "context_count": 5,
+      "context_chars": 848,
+      "ragas": {
+        "faithfulness": 0.8461538461538461,
+        "answer_relevancy": 0.8137568273036834,
+        "context_precision": 0.999999999975
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.77734375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_04_20260501",
+      "system": "vectara",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-numeric_procedure-009",
+      "question": "How much cumulative investment does the 1.5\u00b0C Scenario require by 2050, how does that compare with the Planned Energy Scenario, and how much annual investment must be redirected away from fossil-fuel technologies?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The 1.5\u00b0C Scenario requires a cumulative investment of USD 150 trillion by 2050, which is an additional USD 47 trillion compared to the Planned Energy Scenario [1][2]. This additional investment is needed to redirect about USD 26 trillion in coal- and oil-based fossil fuel technologies towards transition technologies and infrastructure over the period to 2050 [2]. The total costs of energy supply can be reduced by as much as USD 160 billion cumulatively by 2050, with an additional cumulative inv",
+      "citations": [
+        "Page 25",
+        "Page 143",
+        "Page 175",
+        "Page 53",
+        "Page 175"
+      ],
+      "context_count": 5,
+      "context_chars": 1035,
+      "ragas": {
+        "faithfulness": 0.9285714285714286,
+        "answer_relevancy": 0.8810493739113955,
+        "context_precision": 0.8666666666377778
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.6328125"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_04_20260501",
+      "system": "vectara",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-unsupported-010",
+      "question": "What does the report recommend as the price floor for an internationally harmonized carbon tax through 2050?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Based on the provided sources, the report recommends a price floor for an internationally harmonized carbon tax through 2050. According to [4], in PB-A, the 2030 carbon price for high-income countries was USD 300/tonne of carbon dioxide (tCO2), compared with USD 150 /tCO2 in PB-B (both in 2019 USD). This suggests that the report recommends a price floor of at least USD 150/tonne of CO2 for high-income countries.\n\nNote that no specific year or time frame is mentioned in [4] beyond \"through 2050\",",
+      "citations": [
+        "Page 61",
+        "Page 93",
+        "Page 194",
+        "Page 194",
+        "Page 21"
+      ],
+      "context_count": 5,
+      "context_chars": 591,
+      "ragas": {
+        "faithfulness": 0.1,
+        "answer_relevancy": 0.8768548931239334,
+        "context_precision": 0.4166666666458333
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.9296875"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_04_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-011",
+      "question": "What is the publication identifier assigned to this NIST AI Risk Management Framework document?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The publication identifier assigned to the NIST AI Risk Management Framework document is 10.6028/NIST.AI.100-1 [1, 2].",
+      "citations": [
+        "Page 1",
+        "Page 1",
+        "Vectara Result 3",
+        "Page 1",
+        "Page 38"
+      ],
+      "context_count": 5,
+      "context_chars": 1146,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9891145998159971,
+        "context_precision": 0.99999999995
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.828125"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_04_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-012",
+      "question": "What does the abbreviation TEVV stand for in this framework?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The abbreviation TEVV stands for Test, Evaluation, Verification, and Validation in the context of this framework. This is evident from the provided sources, which describe TEVV as a set of tasks performed throughout the AI lifecycle [2]. These tasks include model validation and assessment for development [1], system validation and integration in production with testing and recalibration for deployment [3], and objective, repeatable, or scalable test, evaluation, verification, and validation proc",
+      "citations": [
+        "Page 38",
+        "Page 38",
+        "Page 38",
+        "Page 33",
+        "Page 14"
+      ],
+      "context_count": 5,
+      "context_chars": 811,
+      "ragas": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.9877017922403245,
+        "context_precision": 0.499999999975
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.95703125"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_04_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-013",
+      "question": "Who is named in the front matter as the U.S. Secretary of Commerce?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the front matter of the publication, Gina M. Raimondo is named as the U.S. Secretary of Commerce [1].",
+      "citations": [
+        "Page 1",
+        "Page 10",
+        "Page 33",
+        "Page 1",
+        "Page 33"
+      ],
+      "context_count": 5,
+      "context_chars": 1411,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8534790442553195,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.99609375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_04_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-014",
+      "question": "Which email address is given for sending comments on the AI RMF Playbook?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The email address given for sending comments on the AI RMF Playbook is AIframework@nist.gov. [1]",
+      "citations": [
+        "Page 1",
+        "Page 25",
+        "Page 1",
+        "Page 25",
+        "Page 1"
+      ],
+      "context_count": 5,
+      "context_chars": 1242,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9628313888499141,
+        "context_precision": 0.9999999999
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.99609375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_04_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-015",
+      "question": "Which act of Congress directed the development of this framework?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The National Artificial Intelligence Initiative Act of 2020 (P.L. 116-283) directed the development of the Artificial Intelligence Risk Management Framework (AI RMF) [1]. This act called for NIST to develop a resource to help organizations manage the risks of AI and promote trustworthy and responsible development and use of AI systems [1]. The AI RMF is intended to be a living document, with updates and revisions based on engagement with the AI community [3][4].",
+      "citations": [
+        "Page 1",
+        "Page 1",
+        "Page 1",
+        "Page 1",
+        "Page 1"
+      ],
+      "context_count": 5,
+      "context_chars": 1551,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.5117644541699581,
+        "context_precision": 0.99999999995
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=1.0"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_04_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-016",
+      "question": "In the section on AI safety, which kinds of safety risks does the framework say require the most urgent prioritization?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the provided sources, the framework prioritizes risks that are determined to be highest for AI systems within a given context of use as requiring the most urgent prioritization and thorough risk management process [1]. Additionally, different types of safety risks may require tailored AI risk management approaches based on context and the severity of potential risks presented [2]. The framework also emphasizes regular evaluation of AI systems for safety risks identified in the MAP f",
+      "citations": [
+        "Page 12",
+        "Page 19",
+        "Page 38",
+        "Page 33",
+        "Page 14"
+      ],
+      "context_count": 5,
+      "context_chars": 726,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8279615878345888,
+        "context_precision": 0.9166666666361111
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.99609375"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_04_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-017",
+      "question": "In the privacy section, what privacy values does the framework say should generally guide AI system design, development, and deployment?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the provided sources, the framework suggests that privacy values such as anonymity, confidentiality, and control should generally guide AI system design, development, and deployment [1]. Additionally, organizations may consider leveraging available standards and guidance that provide broad guidance to reduce security and privacy risks, such as the NIST Cybersecurity Framework and the NIST Privacy Framework [4]. The AI RMF also emphasizes the importance of considering human factors t",
+      "citations": [
+        "Page 22",
+        "Page 38",
+        "Page 29",
+        "Page 38",
+        "Page 46"
+      ],
+      "context_count": 5,
+      "context_chars": 1232,
+      "ragas": {
+        "faithfulness": 0.8518518518518519,
+        "answer_relevancy": 0.766534504418746,
+        "context_precision": 0.8333333332916666
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=1.0"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_04_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-018",
+      "question": "In the Map function table, which subcategory is about eliciting system requirements while taking socio-technical implications into account?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The subcategory in the Map function table that is about eliciting system requirements while taking socio-technical implications into account is \"System requirements\" [4]. This subcategory is part of the MAP function, which suggests opportunities to define and document processes for operator and practitioner proficiency with AI system performance and trustworthiness concepts, as well as to define relevant technical standards and certifications [5].",
+      "citations": [
+        "Page 29",
+        "Page 1",
+        "Page 29",
+        "Page 29",
+        "Page 46"
+      ],
+      "context_count": 5,
+      "context_chars": 671,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9610738464971919,
+        "context_precision": 0.249999999975
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=0.98828125"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_04_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-019",
+      "question": "In its discussion of risk prioritization, what does the framework say should happen with AI systems that present unacceptable negative risk levels?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the framework, when an AI system presents unacceptable negative risk levels, development and deployment should cease in a safe manner until risks can be sufficiently managed [4]. This is because significant negative impacts, severe harms, or catastrophic risks are present. The framework emphasizes the importance of prioritizing the minimization of potential negative impacts and may require human intervention in cases where the AI system cannot detect or correct errors [5]. Additiona",
+      "citations": [
+        "Page 12",
+        "Page 12",
+        "Page 12",
+        "Page 12",
+        "Page 18"
+      ],
+      "context_count": 5,
+      "context_chars": 915,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8546931083481039,
+        "context_precision": 0.6999999999766667
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=1.0"
+    },
+    {
+      "suite_id": "vectara_native_150_batch_04_20260501",
+      "system": "vectara",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-020",
+      "question": "Who does the framework say it is intended for, and why does it use the term 'AI actors'?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework is intended for AI actors across the AI lifecycle and dimensions [1]. The term \"AI actors\" refers to organizations of all sizes and in all sectors, as well as throughout society [2]. This is because the framework provides flexibility to implement approaches that are voluntary, rights-preserving, non-sector-specific, and use-case agnostic [2]. The framework's users are responsible for continuing to execute the GOVERN function and applying the MAP function to AI systems as context, c",
+      "citations": [
+        "Page 14",
+        "Page 1",
+        "Page 26",
+        "Page 29",
+        "Page 12"
+      ],
+      "context_count": 5,
+      "context_chars": 777,
+      "ragas": {
+        "faithfulness": 0.6666666666666666,
+        "answer_relevancy": 0.796980053239655,
+        "context_precision": 0.0
+      },
+      "note": "Vectara native generation answered with hybrid retrieval and reranking. preset=mockingbird-2.0; factual_consistency_score=1.0"
+    }
+  ]
+}

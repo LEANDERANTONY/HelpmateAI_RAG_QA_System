@@ -203,6 +203,7 @@ class AnswerResult:
     citations: list[str]
     evidence: list[RetrievalCandidate]
     supported: bool = True
+    support_status: str = "supported"
     cache_status: CacheStatus = field(default_factory=CacheStatus)
     model_name: str = ""
     note: str | None = None
@@ -219,6 +220,7 @@ class AnswerResult:
             "citations": list(self.citations),
             "evidence": [candidate.to_dict() for candidate in self.evidence],
             "supported": self.supported,
+            "support_status": self.support_status,
             "cache_status": self.cache_status.to_dict(),
             "model_name": self.model_name,
             "note": self.note,

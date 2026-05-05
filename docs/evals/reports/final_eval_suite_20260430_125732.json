@@ -1,0 +1,1049 @@
+{
+  "suite": {
+    "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+    "description": "OpenAI File Search chunk 1: arxiv-2510-03305, same held-out final eval questions.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\openai_eval_chunks\\openai_chunk_01_arxiv-2510-03305.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "openai_file_search"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      }
+    }
+  },
+  "summary": {
+    "overall": {
+      "openai_file_search": {
+        "dataset_size": 30,
+        "answerable_size": 27,
+        "unsupported_size": 3,
+        "supported_rate": 0.13333333333333333,
+        "answerable_supported_rate": 0.14814814814814814,
+        "unsupported_abstention_rate": 1.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.8518518518518519,
+        "avg_context_count": 4.833333333333333,
+        "avg_context_chars": 1932.3,
+        "ragas_all": {
+          "faithfulness": 0.8841486291486291,
+          "answer_relevancy": 0.22456180247088978,
+          "context_precision": 0.7795555555205926
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.9090909090909091,
+          "answer_relevancy": 0.8286915937628009,
+          "context_precision": 0.8541666666090277
+        }
+      }
+    },
+    "by_intent": {
+      "openai_file_search": {
+        "broad_summary": {
+          "dataset_size": 6,
+          "answerable_size": 6,
+          "unsupported_size": 0,
+          "supported_rate": 0.16666666666666666,
+          "answerable_supported_rate": 0.16666666666666666,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.8333333333333334,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1999.1666666666667,
+          "ragas_all": {
+            "faithfulness": 0.8255050505050505,
+            "answer_relevancy": 0.3008554336528153,
+            "context_precision": 0.8733333333076111
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.6363636363636364,
+            "answer_relevancy": 0.9788851098162402,
+            "context_precision": 0.9166666666361111
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 0.25,
+          "answerable_supported_rate": 0.25,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.75,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1998.5,
+          "ragas_all": {
+            "faithfulness": 0.9642857142857143,
+            "answer_relevancy": 0.1989917256084047,
+            "context_precision": 0.6874999999364583
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7959669024336188,
+            "context_precision": 0.9999999999
+          }
+        },
+        "local_scope": {
+          "dataset_size": 6,
+          "answerable_size": 6,
+          "unsupported_size": 0,
+          "supported_rate": 0.16666666666666666,
+          "answerable_supported_rate": 0.16666666666666666,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.8333333333333334,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1998.8333333333333,
+          "ragas_all": {
+            "faithfulness": 0.9166666666666666,
+            "answer_relevancy": 0.13455116631258157,
+            "context_precision": 0.8611111110677407
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8073069978754894,
+            "context_precision": 0.49999999995
+          }
+        },
+        "lookup": {
+          "dataset_size": 8,
+          "answerable_size": 8,
+          "unsupported_size": 0,
+          "supported_rate": 0.125,
+          "answerable_supported_rate": 0.125,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.875,
+          "avg_context_count": 4.375,
+          "avg_context_chars": 1749.25,
+          "ragas_all": {
+            "faithfulness": 0.875,
+            "answer_relevancy": 0.09157592061573189,
+            "context_precision": 0.6399999999713334
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7326073649258551,
+            "context_precision": 0.99999999995
+          }
+        },
+        "numeric_procedure": {
+          "dataset_size": 3,
+          "answerable_size": 3,
+          "unsupported_size": 0,
+          "supported_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 1.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1998.6666666666667,
+          "ragas_all": {
+            "faithfulness": 0.8333333333333334,
+            "answer_relevancy": 0.5436221454761728,
+            "context_precision": 0.6222222221985185
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        },
+        "unsupported": {
+          "dataset_size": 3,
+          "answerable_size": 0,
+          "unsupported_size": 3,
+          "supported_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 1999.0,
+          "ragas_all": {
+            "faithfulness": 0.9047619047619048,
+            "answer_relevancy": 0.3216579235154397,
+            "context_precision": 0.99999999998
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-001",
+      "question": "What three phases does the paper use to organize a machine learning workflow for climate modeling?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "No evidence was provided, so the paper\u2019s three phases for organizing a machine learning workflow for climate modeling cannot be determined.",
+      "citations": [],
+      "context_count": 0,
+      "context_chars": 0,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.0
+      },
+      "note": "The evidence section is empty, so there is no source support for any part of the question."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-002",
+      "question": "What three integration directions do the authors describe for combining machine learning with climate modeling?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not provide the three integration directions explicitly. It mentions that machine learning may offer opportunities to combine empirical pattern recognition with theory-based simulation [Source 1], and it describes integrating ML-trained surrogate models into climate models via Docker/Ftorch [Source 2], but it does not list all three directions required to answer the question.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1998,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.49999999995
+      },
+      "note": "The question asks for three specific integration directions. The supplied evidence only supports one general statement about combining machine learning with climate modeling [Source 1] and one example of integrating surrogate models into climate models [Source 2]. The third direction, and a complete three-part list, are not present in the evidence."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-003",
+      "question": "Which agency and program funded the research described in this paper?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The research was funded by the National Science Foundation of the U.S.A. through the Learning the Earth with Artificial Intelligence and Physics (LEAP) Science and Technology Center (STC) [Source 1].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2000,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7326073649258551,
+        "context_precision": 0.99999999995
+      },
+      "note": "Source 1 explicitly states the funding agency and program: the National Science Foundation of the U.S.A. through the LEAP Science and Technology Center (STC). Source 2 also identifies LEAP as an NSF STC, consistent with Source 1."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-004",
+      "question": "In the ClimSim case study, what spatial resolution and temporal cadence does the dataset use, and how many years does it cover?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not provide the ClimSim dataset\u2019s spatial resolution, temporal cadence, or the number of years it covers. The only ClimSim-related evidence says it uses cloud-resolving model simulations to generate high-resolution data, but it does not state the exact resolution, cadence, or time span [Source 2].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The question requires three facts: spatial resolution, temporal cadence, and coverage in years. The supplied evidence mentions ClimSim only in general terms and does not include those specific dataset details. Therefore the question cannot be fully answered from the evidence."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-005",
+      "question": "In the equation discovery case study, how is the search for subgrid closure models translated into a machine learning task?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The search for subgrid closure models is translated into a sparse regression machine learning problem: the equation discovery process is formulated using a Relevance Vector Machine (RVM) to identify a minimal subset of basis functions that best reproduce the subgrid forcing [Source 2].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8073069978754894,
+        "context_precision": 0.49999999995
+      },
+      "note": "The question asks how the search is translated into a machine learning task. Source 2 directly states that equation discovery in Zanna and Bolton [2020] is formulated as a sparse regression problem using an RVM to select a minimal subset of basis functions that reproduce the subgrid forcing. This fully answers the question."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-broad_summary-006",
+      "question": "What recurring design patterns do the authors highlight as common across the case studies they reviewed?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The authors highlight these recurring design patterns across the case studies they reviewed: modular design, which lets models, diagnostics, and inference components be reused or swapped with minimal friction; integration of physical relevance into the modeling process, including physics-informed architectures; systematic evaluation under multiple metrics, including physically meaningful diagnostics such as energy spectra and decorrelation times; and attention to predictability, reproducibility,",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness": 0.6363636363636364,
+        "answer_relevancy": 0.9788851098162402,
+        "context_precision": 0.9166666666361111
+      },
+      "note": "The evidence directly states that recurring patterns emerged across the case studies, and it names the patterns: modular design, physical relevance in modeling, systematic multi-metric evaluation with physically meaningful diagnostics, and emphasis on predictability, reproducibility, and stability [Source 1][Source 2][Source 4]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-broad_summary-007",
+      "question": "Why do the authors argue that transparent, structured documentation of ML workflows matters for climate modeling?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not state why transparent, structured documentation of ML workflows matters for climate modeling. It only says the paper is about ML workflows in climate modeling, that transparent and reproducible data science practices enable cross-study and cross-workflow analyses [Source 2], and that ML design choices are driven by scientific problems, workflows, data, and computational constraints [Source 5]. The specific reason for the importance of transparent, structured documentation i",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2000,
+      "ragas": {
+        "faithfulness": 0.4,
+        "answer_relevancy": 0.0,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The question asks for the authors' argument about why transparent, structured documentation matters. The supplied evidence mentions transparent and reproducible practices enabling cross-study and cross-workflow analyses [Source 2], but does not connect this directly to climate modeling documentation in a complete way. No source explicitly explains the authors' rationale for documentation in climate modeling, so the question cannot be fully answered from the evidence."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-comparison_synthesis-008",
+      "question": "How do physics-first workflows differ from ML-first workflows in their use of physical equations and their priorities?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The supplied evidence does not explicitly describe how physics-first workflows differ from ML-first workflows in their use of physical equations and their priorities. It mentions combining theory-based simulation with machine learning [Source 1], integrating physical relevance into modeling [Source 3], and bridging ML workflows with Fortran-based simulations [Source 2], but it does not define \u201cphysics-first\u201d versus \u201cML-first\u201d workflows or state their respective priorities.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.9999999999
+      },
+      "note": "Required facts: (1) how physics-first workflows use physical equations, (2) how ML-first workflows use physical equations, and (3) how their priorities differ. The evidence only provides general statements about combining theory-based simulation and ML [Source 1], integrating physical relevance [Source 3], and bridging ML workflows with simulations [Source 2]. It does not clearly identify or contrast physics-first and ML-first workflows, so the question cannot be fully answered from the provided sources."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-numeric_procedure-009",
+      "question": "What loss function does the Physics-Informed Neural Operator approach use, and how does it differ from the canonical neural operator loss?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not state the Physics-Informed Neural Operator (PINO) loss function or compare it to the canonical neural operator loss.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1998,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7571353083512117,
+        "context_precision": 0.5333333333155555
+      },
+      "note": "The evidence only describes neural operators in general and mentions FNO/SFNO architectures and datasets [Source 1], [Source 2], [Source 5]. It does not mention Physics-Informed Neural Operator, its loss function, or the canonical neural operator loss, so the question cannot be answered from the supplied sources."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-unsupported-010",
+      "question": "What benchmark accuracy did the authors achieve when they ran their own neural operator implementation against FourCastNet on the test set?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not provide the benchmark accuracy for the authors' own neural operator implementation against FourCastNet on the test set.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9649737705463192,
+        "context_precision": 0.99999999998
+      },
+      "note": "The supplied sources mention evaluation on test data and metrics such as MSE, bias, ACC, and MS-SSIM [Source 4], but they do not state any benchmark accuracy value or a direct comparison result for the authors' neural operator implementation versus FourCastNet. The required fact missing is the actual test-set accuracy number or metric outcome for that comparison."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-011",
+      "question": "What arXiv identifier and submission date are listed for this paper?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not list an arXiv identifier or a submission date for the paper title shown in Source 1. No substantive answer can be supported from the supplied sources.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.6999999999766667
+      },
+      "note": "Source 1 contains the paper title and authors only. The other sources list unrelated arXiv URLs or references, but none identify the same paper or provide its submission date. The required facts\u2014arXiv identifier and submission date\u2014are missing."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-012",
+      "question": "Who is the corresponding author for this paper?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not identify the corresponding author for this paper. The paper title and author list are shown, but no corresponding-author designation or email is provided [Source 1].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "To answer this question fully, the evidence must explicitly state the corresponding author. Source 1 lists authors for the paper but does not mark any author as corresponding author or provide a corresponding-author email. Therefore the question cannot be answered from the supplied evidence."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-013",
+      "question": "What does the abbreviation PINO stand for in the paper?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not state what PINO stands for in the paper.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2000,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "None of the supplied sources mention the abbreviation PINO or expand it. The evidence only discusses FNO and SFNO and general paper context, so the required fact is missing."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-014",
+      "question": "What does GNO refer to in the discussion of neural operator variants?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not define what \"GNO\" refers to in the discussion of neural operator variants. The evidence mentions variants such as Fourier Neural Operator (FNO) and Spherical FNO (SFNO) [Source 2], but it does not expand or explain \"GNO\".",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1998,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The question asks for the meaning of the abbreviation GNO, but none of the supplied sources define GNO or connect that acronym to a named neural operator variant. Source 2 only defines FNO and SFNO, and Source 1 discusses neural operators generally without mentioning GNO."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-015",
+      "question": "Which prior work do the authors cite for introducing 'Model Cards' as a way to document key modeling decisions?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not identify which prior work the authors cite for introducing \"Model Cards.\"",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2000,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.99999999998
+      },
+      "note": "The evidence includes a citation to \"Margaret Mitchell, Simone Wu, Andrew Z\" [Source 3], but it does not provide the surrounding text that states what prior work was cited for introducing Model Cards. None of the supplied excerpts explicitly mention \"Model Cards\" or name the cited work associated with that concept."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-016",
+      "question": "In the inverse parameter inference case study (Case Study 2b), what model architecture is adopted and why?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The supplied evidence does not provide the model architecture adopted in Case Study 2b or the reason for adopting it. It only states that Li et al. (2025) propose a probabilistic programming framework for data-distribution-driven parameter inference, but no architecture details are given [Source 1].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1998,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.99999999998
+      },
+      "note": "The question asks for two required facts: the adopted model architecture and why it was adopted. The evidence mentions Case Study 2b only in the context of a probabilistic programming framework for parameter inference, but it does not specify any model architecture or rationale for choosing one [Source 1]. Therefore the question cannot be fully answered from the provided evidence."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-017",
+      "question": "In the pCO2 upscaling case study (Case Study 3b), how does the transfer learning approach handle the sparsity of in-situ observations?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The supplied evidence does not include any information about Case Study 3b or a transfer learning approach for pCO2 upscaling, so I cannot answer how sparsity of in-situ observations is handled.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2000,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.8055555555287036
+      },
+      "note": "None of the provided sources mention pCO2 upscaling, Case Study 3b, transfer learning, or sparsity of in-situ observations. The question cannot be answered from the evidence."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-018",
+      "question": "In the development stage of the workflow framework, what does 'iterative refinement' specifically involve according to the paper?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence says the development stage involves models being instantiated, trained, and systematically evaluated, with an iterative process of algorithmic refinement and scientific validation using controlled experiments and diagnostic tools [Source 1]. However, it does not specify what \u2018iterative refinement\u2019 specifically involves beyond that high-level description.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.9999999999
+      },
+      "note": "The question asks for the specific contents of \u2018iterative refinement,\u2019 but the evidence only provides a general description of the development stage and names algorithmic refinement and scientific validation. It does not break down the steps or components of iterative refinement in enough detail to fully answer the question."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-019",
+      "question": "Beyond the three integration directions in Figure 1, what 'fourth direction' do the authors describe?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not identify the authors\u2019 \u201cfourth direction\u201d beyond the three integration directions in Figure 1. The available excerpts mention that they structure ML-enabled work following Figure 1 [Source 3], but none of the supplied sources names or describes a fourth direction.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1998,
+      "ragas": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.99999999998
+      },
+      "note": "The question requires the specific content of a \u201cfourth direction\u201d beyond the three integration directions in Figure 1. The supplied evidence does not include the figure or any excerpt that names an additional direction, so this cannot be answered from the provided sources."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-broad_summary-020",
+      "question": "What open challenges in scientific machine learning workflows for climate modeling does the paper highlight in its conclusion?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not include the paper\u2019s conclusion or a list of its open challenges, so I cannot answer which open challenges in scientific machine learning workflows for climate modeling the paper highlights. The evidence only mentions related themes such as benchmarking across multiple metrics, predictability/reproducibility/stability, deployment and evaluation, workflow integration, and data preparation [Source 1][Source 2][Source 4][Source 5].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness": 0.9166666666666666,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.8666666666377778
+      },
+      "note": "The question asks for the open challenges highlighted in the paper\u2019s conclusion, but none of the supplied excerpts contain the conclusion or an explicit statement of open challenges. The evidence is therefore insufficient to fully answer the question."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-broad_summary-021",
+      "question": "How does the paper describe the role of reanalysis datasets such as ERA5 in climate modeling and ML?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not mention reanalysis datasets such as ERA5 or describe their role in climate modeling and ML. It only discusses climate modeling, machine learning, simulated and observed datasets, and a few model training strategies, but not ERA5 specifically [Source 1][Source 4][Source 5].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8262474921006517,
+        "context_precision": 0.99999999998
+      },
+      "note": "The question asks specifically about the role of reanalysis datasets such as ERA5. None of the supplied sources mention ERA5 or reanalysis datasets, so the evidence cannot answer the question at all."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-broad_summary-022",
+      "question": "Why do the authors say machine learning is not used as a generic plug-in to existing climate models?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not state why the authors say machine learning is not used as a generic plug-in to existing climate models. It only says that climate models interact with physics, data, and machine learning [Source 3], and describes conventional Earth system models and their limitations [Source 3], but it does not explain the specific reason for that claim.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.5833333333041666
+      },
+      "note": "The question asks for the authors' stated reason. The supplied evidence does not contain that explanation. Source 3 mentions interactions among climate models, physics, data, and machine learning, and Source 4 describes how models work, but neither answers why ML is not used as a generic plug-in to existing climate models."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-broad_summary-023",
+      "question": "How does the paper position its case study summaries relative to model cards and model info sheets?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not mention model cards or model info sheets, so the paper\u2019s positioning of its case study summaries relative to those documents cannot be determined from the supplied sources.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.99999999998
+      },
+      "note": "The question asks for a comparison/positioning relative to model cards and model info sheets. None of the evidence states anything about either document type or how the paper relates its case study summaries to them."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-comparison_synthesis-024",
+      "question": "How does the Fourier Neural Operator differ from the Spherical Fourier Neural Operator in terms of underlying transform and intended use case?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The Fourier Neural Operator (FNO) uses the Fast Fourier Transform (FFT) as its underlying transform and is described as excelling at learning homogeneous, periodic dynamics such as idealized fluid flows [Source 1]. The Spherical Fourier Neural Operator (SFNO) uses the Spherical Harmonic Transform (SHT) and is designed for global weather and climate fields on the sphere [Source 1].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1997,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7959669024336188,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence explicitly states both the transform choice and the intended use case for each model, so all required facts are covered [Source 1]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-comparison_synthesis-025",
+      "question": "How does the paper distinguish offline evaluation from online evaluation for ML components in climate models?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not provide a clear distinction between offline evaluation and online evaluation for ML components in climate models. It mentions that developed models are systematically evaluated during the development stage using controlled experiments and diagnostic tools [Source 4], and that trained models can replace the CRM in online simulations [Source 3], but it does not define offline evaluation versus online evaluation or explain how the paper distinguishes them.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2000,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.4166666666458333
+      },
+      "note": "The question asks for the paper\u2019s distinction between offline and online evaluation. The supplied evidence only supports that model development includes systematic evaluation with controlled experiments and diagnostic tools [Source 4], and that trained models may replace the CRM in online simulations [Source 3]. It does not explicitly define offline evaluation, online evaluation, or the contrast between them, so the required facts are missing."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-comparison_synthesis-026",
+      "question": "How do autoregressive and direct forecasting strategies compare for subseasonal-to-seasonal prediction, according to the paper?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence only explains the autoregressive strategy: it trains a one-step-ahead model and applies it repeatedly, and this mimics physics-based dynamical models but suffers from error accumulation over long horizons [Source 3]. The evidence does not provide any description of the direct forecasting strategy or a comparison between the two for subseasonal-to-seasonal prediction.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1998,
+      "ragas": {
+        "faithfulness": 0.8571428571428571,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.3333333333
+      },
+      "note": "To fully answer the question, the evidence would need facts about both autoregressive and direct forecasting strategies and how they compare for S2S prediction. Source 3 covers autoregressive forecasting only and does not mention direct forecasting or any head-to-head comparison, so the question can only be answered partially."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-numeric_procedure-027",
+      "question": "What is the generic form of the kernel integral operator used in neural operators, and what role do T, R_phi, and T-inverse play?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not give the generic form of the kernel integral operator itself, nor does it explain the roles of T, R_phi, and T-inverse in one complete statement. It does say that different choices of T yield different operator architectures, with examples including T = F for the Fourier Neural Operator and T = FSHT for the Spherical FNO [Source 3].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8737311280773069,
+        "context_precision": 0.3333333333
+      },
+      "note": "The evidence only supports the role of T as a transform choice that differs across operator architectures [Source 3]. It does not provide the generic kernel integral operator formula, and it does not define R_phi or T-inverse. Therefore the question cannot be fully answered from the supplied evidence."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-numeric_procedure-028",
+      "question": "What update rule do FNO layers apply to the feature field at each iteration, as written in the paper?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not include the paper\u2019s written update rule for FNO layers, so I cannot answer the question from the supplied sources.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.99999999998
+      },
+      "note": "The evidence mentions FNO as a Fourier Neural Operator and describes its transform choice [Source 3], but it does not state the per-iteration feature-field update rule. The required fact is missing."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-unsupported-029",
+      "question": "Which proprietary cloud platform did the authors use to train and deploy the neural operators discussed in the case studies?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not identify the proprietary cloud platform used to train and deploy the neural operators in the case studies. It mentions training data, deployment, and evaluation of neural operators, but no cloud platform name is provided in the supplied sources [Source 1][Source 2][Source 3][Source 4][Source 5].",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness": 0.7142857142857143,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.99999999998
+      },
+      "note": "Required fact: the specific proprietary cloud platform used for training and deployment. None of the supplied evidence names any cloud platform, so the question cannot be answered from the provided sources."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-01-arxiv-2510-03305",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-unsupported-030",
+      "question": "How many GPU-hours did the winning team in the ClimSim Kaggle competition use to train their final model?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not provide the number of GPU-hours used by the winning team in the ClimSim Kaggle competition to train its final model.",
+      "citations": [
+        "OpenAI Result 1",
+        "OpenAI Result 2",
+        "OpenAI Result 3",
+        "OpenAI Result 4",
+        "OpenAI Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 1999,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.99999999998
+      },
+      "note": "The supplied evidence discusses climate-model and machine-learning background, but it does not mention the ClimSim Kaggle competition, the winning team, their final model, or any GPU-hour training total. Therefore the question cannot be answered from the provided sources."
+    }
+  ]
+}

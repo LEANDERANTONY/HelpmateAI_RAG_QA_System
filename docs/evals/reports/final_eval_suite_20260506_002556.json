@@ -1,0 +1,1113 @@
+{
+  "suite": {
+    "suite_id": "heldout-product-fit-2026-04-draft",
+    "description": "Draft held-out product-fit final evaluation manifest. Documents are fixed; questions must be generated and frozen before any system run.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\final_eval_manifest.draft.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native",
+    "question_offset": 0,
+    "question_count": 30
+  },
+  "systems": [
+    "helpmate"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      },
+      "mode": "native_mockingbird_answer",
+      "generation_preset_name": "mockingbird-2.0"
+    }
+  },
+  "summary": {
+    "overall": {
+      "helpmate": {
+        "dataset_size": 30,
+        "answerable_size": 27,
+        "unsupported_size": 3,
+        "supported_rate": 0.7666666666666667,
+        "partial_rate": 0.0,
+        "answered_rate": 0.7666666666666667,
+        "answerable_supported_rate": 0.8518518518518519,
+        "answerable_coverage_rate": 0.8518518518518519,
+        "unsupported_abstention_rate": 1.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.14814814814814814,
+        "strict_false_abstention_rate": 0.14814814814814814,
+        "avg_context_count": 4.0,
+        "avg_context_chars": 4117.5,
+        "ragas_all": {
+          "faithfulness": 0.9003846153846153,
+          "answer_relevancy": 0.7591861120797955,
+          "context_precision": 0.8821839079971264
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.9570234113712375,
+          "answer_relevancy": 0.7964038255792425,
+          "context_precision": 0.8787878787325757
+        }
+      }
+    },
+    "by_intent": {
+      "helpmate": {
+        "broad_summary": {
+          "dataset_size": 6,
+          "answerable_size": 6,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "partial_rate": 0.0,
+          "answered_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "answerable_coverage_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 4364.833333333333,
+          "ragas_all": {
+            "faithfulness": 0.9583333333333334,
+            "answer_relevancy": 0.8399778182392247,
+            "context_precision": 0.9999999999444444
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.9583333333333334,
+            "answer_relevancy": 0.8399778182392247,
+            "context_precision": 0.9999999999444444
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "partial_rate": 0.0,
+          "answered_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "answerable_coverage_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 3912.25,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8024939328894451,
+            "context_precision": 0.7916666666208333
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8024939328894451,
+            "context_precision": 0.7916666666208333
+          }
+        },
+        "local_scope": {
+          "dataset_size": 6,
+          "answerable_size": 6,
+          "unsupported_size": 0,
+          "supported_rate": 0.8333333333333334,
+          "partial_rate": 0.0,
+          "answered_rate": 0.8333333333333334,
+          "answerable_supported_rate": 0.8333333333333334,
+          "answerable_coverage_rate": 0.8333333333333334,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.16666666666666666,
+          "strict_false_abstention_rate": 0.16666666666666666,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 3935.1666666666665,
+          "ragas_all": {
+            "faithfulness": 0.8,
+            "answer_relevancy": 0.7087840881922911,
+            "context_precision": 0.999999999925
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.96,
+            "answer_relevancy": 0.8208104106279182,
+            "context_precision": 0.9999999999125
+          }
+        },
+        "lookup": {
+          "dataset_size": 9,
+          "answerable_size": 9,
+          "unsupported_size": 0,
+          "supported_rate": 0.7777777777777778,
+          "partial_rate": 0.0,
+          "answered_rate": 0.7777777777777778,
+          "answerable_supported_rate": 0.7777777777777778,
+          "answerable_coverage_rate": 0.7777777777777778,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.2222222222222222,
+          "strict_false_abstention_rate": 0.2222222222222222,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 4347.444444444444,
+          "ragas_all": {
+            "faithfulness": 0.8290598290598291,
+            "answer_relevancy": 0.6597297530918391,
+            "context_precision": 0.7962962962537037
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.9230769230769231,
+            "answer_relevancy": 0.7441951483658554,
+            "context_precision": 0.7380952380488095
+          }
+        },
+        "numeric_procedure": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 0.5,
+          "partial_rate": 0.0,
+          "answered_rate": 0.5,
+          "answerable_supported_rate": 0.5,
+          "answerable_coverage_rate": 0.5,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.5,
+          "strict_false_abstention_rate": 0.5,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 3484.5,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7315221273391753,
+            "context_precision": 0.624999999975
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7540272556288697,
+            "context_precision": 0.999999999975
+          }
+        },
+        "unsupported": {
+          "dataset_size": 3,
+          "answerable_size": 0,
+          "unsupported_size": 3,
+          "supported_rate": 0.0,
+          "partial_rate": 0.0,
+          "answered_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "answerable_coverage_rate": 0.0,
+          "unsupported_abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 3993.3333333333335,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9574747199140283,
+            "context_precision": 0.9999999999694444
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-001",
+      "question": "What are the four core functions described in this framework for managing AI risks?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The four core functions are GOVERN, MAP, MEASURE, and MANAGE [Source 1][Source 2].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 25",
+        "nist-ai-rmf-1-0.pdf - Page 8",
+        "nist-ai-rmf-1-0.pdf - Page 23",
+        "nist-ai-rmf-1-0.pdf - Page 23"
+      ],
+      "context_count": 4,
+      "context_chars": 4317,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.661030207161001,
+        "context_precision": 0.99999999995
+      },
+      "note": "The evidence explicitly states that the AI RMF Core is composed of four functions and names them: GOVERN, MAP, MEASURE, and MANAGE. Recovery support verifier: The evidence explicitly states that the AI RMF Core is composed of four functions: GOVERN, MAP, MEASURE, and MANAGE. The proposed answer matches these four functions exactly and does not add unsupported information."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-002",
+      "question": "By when does NIST plan to conduct the next formal review of the framework with input from the AI community?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "NIST plans to conduct the next formal review with input from the AI community no later than 2028 [Source 1].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 3",
+        "nist-ai-rmf-1-0.pdf - Page 8",
+        "nist-ai-rmf-1-0.pdf - Page 3",
+        "nist-ai-rmf-1-0.pdf - Page 2"
+      ],
+      "context_count": 4,
+      "context_chars": 3441,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8892040909210946,
+        "context_precision": 0.8333333332916666
+      },
+      "note": "The evidence explicitly states that \u201ca review with formal input from the AI community is expected to take place no later than 2028\u201d [Source 3], which directly answers the question."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-003",
+      "question": "How does this framework define an AI system?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not define what an AI system is. It discusses AI systems in terms of human-AI interaction, roles, responsibilities, and risks, but it does not give a formal definition of an AI system [Source 1][Source 2][Source 3][Source 4].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 45",
+        "nist-ai-rmf-1-0.pdf - Page 45",
+        "nist-ai-rmf-1-0.pdf - Page 45",
+        "nist-ai-rmf-1-0.pdf - Page 44"
+      ],
+      "context_count": 4,
+      "context_chars": 4289,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7282017392655643,
+        "context_precision": 0.999999999975
+      },
+      "note": "The question asks for the framework\u2019s definition of an AI system, but the evidence only describes how AI systems may operate and the risks around them. No source provides a direct definition. Support-status verifier classified the answer as unsupported. Supported facts: The evidence discusses AI systems in terms of human-AI interaction, roles, responsibilities, and risks. Missing or ambiguous facts: A direct definition of what an AI system is in this framework is not provided in the evidence.; The proposed answer does not identify any actual definition from the framework. The answer correctly notes that the supplied evidence does not provide a formal definition of an AI system, and this gap is explicitly acknowledged. However, the question asks how the framework defines an AI system, and the evidence does not contain that definition. Because the answer does not supply a grounded definition and instead states the absence of one, it is not a supported answer to the question."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-004",
+      "question": "In the discussion of fairness and harmful bias, what three major categories of AI bias does NIST say organizations should consider?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "NIST says organizations should consider three major categories of AI bias: systemic bias, computational and statistical bias, and human-cognitive bias [Source 1].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 23",
+        "nist-ai-rmf-1-0.pdf - Page 23",
+        "nist-ai-rmf-1-0.pdf - Page 22",
+        "nist-ai-rmf-1-0.pdf - Page 17"
+      ],
+      "context_count": 4,
+      "context_chars": 3859,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9126367691346345,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence explicitly names the three major categories of AI bias to be considered and managed."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-005",
+      "question": "In the Govern function, what subcategory specifically addresses safely retiring or phasing out AI systems?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "Unsupported by the recovered evidence. The recovered evidence did not fully support every required fact in the question.",
+      "citations": [],
+      "context_count": 4,
+      "context_chars": 3378,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.14865247601415582,
+        "context_precision": 0.999999999975
+      },
+      "note": "The evidence provided includes the GOVERN function\u2019s categories and subcategories, and the relevant subcategory for safely retiring or phasing out AI systems is GOV 3.3. [Source 1] Recovery support verifier: The evidence shows only that Table 1 on page 27 lists the GOVERN function\u2019s categories and subcategories, but it does not include the specific subcategory text. The proposed answer names GOV 3.3 and says it addresses safe retirement or decommissioning of AI systems, which is not directly supported by the supplied evidence."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-006",
+      "question": "What attributes does the framework say should be evaluated to consider an AI system trustworthy?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The framework says trustworthy AI systems should be evaluated for these characteristics: valid and reliable, safe, secure and resilient, accountable and transparent, explainable and interpretable, privacy-enhanced, and fair with harmful bias managed [Source 1].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 17",
+        "nist-ai-rmf-1-0.pdf - Page 17",
+        "nist-ai-rmf-1-0.pdf - Page 47",
+        "nist-ai-rmf-1-0.pdf - Page 3"
+      ],
+      "context_count": 4,
+      "context_chars": 4800,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.890382470245218,
+        "context_precision": 0.9999999999
+      },
+      "note": "Source 1 explicitly lists the characteristics of trustworthy AI systems, which directly answers what attributes should be evaluated."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-007",
+      "question": "Why does the framework treat AI risks as different from risks in traditional software systems?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The framework treats AI risks as different because AI systems have risks that are not comprehensively addressed by traditional software risk frameworks, and those risks can be new or increased compared with traditional software. The evidence says AI systems may use data that is not a true or appropriate representation of the intended context, may lack ground truth, and may be affected by harmful bias and other data quality issues. It also says existing frameworks cannot adequately manage harmful",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 43",
+        "nist-ai-rmf-1-0.pdf - Page 44",
+        "nist-ai-rmf-1-0.pdf - Page 43",
+        "nist-ai-rmf-1-0.pdf - Page 6"
+      ],
+      "context_count": 4,
+      "context_chars": 4104,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9896405098398647,
+        "context_precision": 0.999999999975
+      },
+      "note": "The evidence directly explains why AI risks differ from traditional software risks and lists the specific categories of AI-specific or increased risks."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-comparison_synthesis-008",
+      "question": "How does the framework distinguish transparency, explainability, and interpretability?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The framework distinguishes them as distinct but related characteristics: transparency answers \u201cwhat happened\u201d in the system, explainability answers \u201chow\u201d a decision was made, and interpretability answers \u201cwhy\u201d a decision was made and its meaning or context to the user [Source 2]. The document also says transparency, explainability, and interpretability support each other [Source 2].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 21",
+        "nist-ai-rmf-1-0.pdf - Page 22",
+        "nist-ai-rmf-1-0.pdf - Page 3",
+        "nist-ai-rmf-1-0.pdf - Page 3"
+      ],
+      "context_count": 4,
+      "context_chars": 4017,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9766077732350699,
+        "context_precision": 0.49999999995
+      },
+      "note": "Source 2 explicitly defines each term and states that they are distinct characteristics that support each other."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-comparison_synthesis-009",
+      "question": "What is the difference between a Current Profile and a Target Profile, and why would an organization compare the two?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "A Current Profile describes how AI is currently being managed and the related risks in terms of current outcomes, while a Target Profile describes the outcomes needed to achieve the desired or target AI risk management goals [Source 2]. An organization compares the two to identify gaps that need to be addressed to meet AI risk management objectives, develop action plans to close those gaps, and gauge the resources needed to achieve its goals in a cost-effective, prioritized manner [Source 1].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 38",
+        "nist-ai-rmf-1-0.pdf - Page 38",
+        "nist-ai-rmf-1-0.pdf - Page 12",
+        "nist-ai-rmf-1-0.pdf - Page 39"
+      ],
+      "context_count": 4,
+      "context_chars": 2610,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7871765990090283,
+        "context_precision": 0.99999999995
+      },
+      "note": "The evidence directly defines both profile types and explains the purpose of comparing them: to reveal gaps, support action planning, and estimate resources for achieving AI risk management goals."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-unsupported-010",
+      "question": "What is the maximum allowable false positive rate that the framework recommends for an AI system used in clinical diagnosis?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not provide a maximum allowable false positive rate for an AI system used in clinical diagnosis. It states that the AI RMF does not prescribe risk tolerance and that acceptable risk is highly contextual and use-case specific [Source 1].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 12",
+        "nist-ai-rmf-1-0.pdf - Page 18",
+        "nist-ai-rmf-1-0.pdf - Page 31",
+        "nist-ai-rmf-1-0.pdf - Page 34"
+      ],
+      "context_count": 4,
+      "context_chars": 4922,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9361943496617752,
+        "context_precision": 0.9999999999666667
+      },
+      "note": "The question asks for a specific maximum false positive rate for clinical diagnosis, but the supplied evidence contains only general statements that the framework does not prescribe risk tolerance and that risk tolerances are context-specific [Source 1], plus general guidance on documenting organizational risk tolerances and selecting metrics [Source 3][Source 4]. No numeric false positive rate or clinical-diagnosis-specific threshold is given. Support-status verifier classified the answer as unsupported. Supported facts: The AI RMF does not prescribe risk tolerance.; Risk tolerance is highly contextual and use-case specific. Missing or ambiguous facts: The maximum allowable false positive rate for an AI system used in clinical diagnosis is not provided in the evidence.; No clinical-diagnosis-specific false positive rate threshold is stated. The proposed answer correctly notes that the framework does not provide a maximum false positive rate and that risk tolerance is context-specific, which is supported by the evidence. However, the question asks for a specific maximum allowable false positive rate for clinical diagnosis, and the evidence contains no such numeric or clinical-specific threshold. Because the answer does not supply the requested value and only explains its absence, it is not a supported direct answer."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-001",
+      "question": "What three phases does the paper use to organize a machine learning workflow for climate modeling?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The paper organizes the machine learning workflow for climate modeling into three phases: design, development, and deployment [Source 1].",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 7",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 3",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 6",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 4"
+      ],
+      "context_count": 4,
+      "context_chars": 4798,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8831936689519452,
+        "context_precision": 0.9999999999
+      },
+      "note": "Source 1 explicitly states that applying machine learning to Earth system modeling and climate data analysis spans three phases: design, development, and deployment."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-002",
+      "question": "What three integration directions do the authors describe for combining machine learning with climate modeling?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The authors describe three integration directions: (1) physics-first and ML-augmented simulation-based modeling, which keeps physics-based models at the core and uses ML to accelerate components, discover structure, or improve parameterizations [Source 1]; (2) data-first and physics-augmented ML modeling, which starts from machine learning models and incorporates physics to improve them [Source 3]; and (3) ML-first and data-augmented physics-based modeling, which starts from physics-based models",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 5",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 4",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 6",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 7"
+      ],
+      "context_count": 4,
+      "context_chars": 4798,
+      "ragas": {
+        "faithfulness": 0.46153846153846156,
+        "answer_relevancy": 0.6606501526593025,
+        "context_precision": 0.0
+      },
+      "note": "The evidence explicitly states there are three integration styles/directions and names the first direction in Source 1, the second direction in Source 3, and the third direction in Source 2. Together these sources cover all three requested directions."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-003",
+      "question": "Which agency and program funded the research described in this paper?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not state which agency and program funded the research.",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 40",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 40",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 41",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 1"
+      ],
+      "context_count": 4,
+      "context_chars": 4477,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.9999999999666667
+      },
+      "note": "The supplied sources show the paper title, authors, affiliations, and bibliography entries, but none of the provided evidence includes a funding or acknowledgments statement naming an agency or program. Support-status verifier classified the answer as unsupported. Supported facts: The evidence provided does not include a funding or acknowledgments statement naming an agency or program. Missing or ambiguous facts: Which agency funded the research.; Which program funded the research. The proposed answer explicitly says the evidence does not state which agency and program funded the research, which acknowledges the gap. However, it does not provide the requested funding agency/program, and the supplied evidence contains no funding statement to support that information."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-004",
+      "question": "In the ClimSim case study, what spatial resolution and temporal cadence does the dataset use, and how many years does it cover?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The ClimSim dataset uses approximately 1.5\u00b0 horizontal resolution and 20-minute temporal intervals, and it covers ten years [Source 1].",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 17",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 18",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 8",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 16"
+      ],
+      "context_count": 4,
+      "context_chars": 4649,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7939922005291701,
+        "context_precision": 0.9999999999
+      },
+      "note": "Source 1 explicitly states both the spatial resolution, temporal cadence, and coverage of the ClimSim dataset."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-005",
+      "question": "In the equation discovery case study, how is the search for subgrid closure models translated into a machine learning task?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The search for subgrid closure models is translated into a machine learning task by framing it as a sparse regression problem: the goal is to learn a closure model as an explicit function of resolved variables and their derivatives, and to identify a minimal subset of basis functions that best reproduce the subgrid forcing using a Relevance Vector Machine (RVM) [Source 1].",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 19",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 18",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 7",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 20"
+      ],
+      "context_count": 4,
+      "context_chars": 4730,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8835847120253812,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence states that Zanna and Bolton (2020) translated the scientific problem into a machine learning task by framing the search for closure models as sparse regression, using an RVM to identify a minimal subset of basis functions that reproduce the subgrid forcing [Source 1], and that machine learning learns functional relationships between resolved variables and subgrid effects [Source 3]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-broad_summary-006",
+      "question": "What recurring design patterns do the authors highlight as common across the case studies they reviewed?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The authors highlight three recurring design patterns across the case studies: (1) modular workflow design, where models, diagnostics, and inference components can be reused or swapped with minimal friction; (2) integration of physical relevance into the modeling process, including physics-informed architectures, conservation-based constraints, or domain-guided research designs; and (3) the finding that offline skill is not an adequate indicator of online deployment performance [Source 1].",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 12",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 6",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 1",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 1"
+      ],
+      "context_count": 4,
+      "context_chars": 4476,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.92265068490495,
+        "context_precision": 0.9999999999
+      },
+      "note": "Source 1 explicitly states that across the diverse case studies, several recurring patterns emerged and lists the three patterns. Source 2 also frames the paper as identifying recurring patterns in case studies, but Source 1 provides the specific patterns requested."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-broad_summary-007",
+      "question": "Why do the authors argue that transparent, structured documentation of ML workflows matters for climate modeling?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The authors argue that transparent, structured documentation matters because it records what data are used and how they are produced, how models are constructed, trained, and validated, and what compromises are made and why [Source 1][Source 2]. They say this transparency is critical for ensuring reproducibility, enabling critical evaluation, driving further methodological research, supporting interdisciplinary collaboration, and making it easier to compare papers, reproduce results, evaluate ML",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 2",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 2",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 1",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 3"
+      ],
+      "context_count": 4,
+      "context_chars": 4799,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6372053000366077,
+        "context_precision": 0.9999999999666667
+      },
+      "note": "The evidence directly states the reasons for transparent documentation and links them to reproducibility, evaluation, research progress, collaboration, and comparison across studies."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-comparison_synthesis-008",
+      "question": "How do physics-first workflows differ from ML-first workflows in their use of physical equations and their priorities?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "Physics-first workflows retain physics-based models at the core and use machine learning to accelerate components, discover new structure, or improve parameterizations, while seeking to preserve theoretical grounding [Source 3]. ML-first workflows aim to build ML-based models with minimal reliance on explicit physical equations and prioritize predictive accuracy over theoretical interpretability [Source 1].",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 6",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 14",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 5",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 1"
+      ],
+      "context_count": 4,
+      "context_chars": 4799,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8718106442658979,
+        "context_precision": 0.8333333332916666
+      },
+      "note": "The evidence directly states both workflow types and their priorities: physics-first keeps physics-based models central and preserves theoretical grounding, whereas ML-first minimizes explicit physical equations and emphasizes predictive accuracy over interpretability."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-numeric_procedure-009",
+      "question": "What loss function does the Physics-Informed Neural Operator approach use, and how does it differ from the canonical neural operator loss?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The Physics-Informed Neural Operator (PINO) uses a combined loss with two terms: a data loss term and a PDE residual loss term [Source 1][Source 4]. The evidence says PINO minimizes this combined loss and uses coarse-resolution data for the first term while enforcing the PDE residual at higher resolution, without an explicit weighting parameter between the two terms [Source 4]. In contrast, the canonical neural operator loss is just the L2 loss, written as L(\u03b8)=\\|G_\u03b8(u0)\u2212u\\|_2^2 [Source 2], and ",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 16",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 16",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 10",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 16"
+      ],
+      "context_count": 4,
+      "context_chars": 3017,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7540272556288697,
+        "context_precision": 0.999999999975
+      },
+      "note": "The evidence explicitly states both the PINO loss components and the canonical neural operator loss. PINO adds a PDE residual term to the data loss and does so without an explicit weighting parameter, whereas the canonical loss is the plain L2 data loss."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-unsupported-010",
+      "question": "What benchmark accuracy did the authors achieve when they ran their own neural operator implementation against FourCastNet on the test set?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not state what benchmark accuracy the authors achieved when running their own neural operator implementation against FourCastNet on the test set.",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 10",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 10",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 41",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 15"
+      ],
+      "context_count": 4,
+      "context_chars": 3733,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9986037869940172,
+        "context_precision": 0.999999999975
+      },
+      "note": "The sources mention neural operators, Fourier Neural Operator (FNO), and general benchmarking context, but none provide the specific test-set benchmark accuracy for the authors' implementation against FourCastNet. Support-status verifier classified the answer as unsupported. Missing or ambiguous facts: The benchmark accuracy achieved by the authors when running their own neural operator implementation against FourCastNet on the test set is not provided in the evidence. The proposed answer only states that the evidence does not specify the requested benchmark accuracy. That is an acknowledged gap, but it does not supply the benchmark accuracy itself. The supplied evidence mentions neural operators and FNO generally, but contains no test-set result against FourCastNet."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-lookup-001",
+      "question": "Who wrote this dissertation and who supervised it?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The dissertation was written by Tahiya Salam, and it was supervised by Ani Hsieh (listed as the first advisor/advisor). [Source 3] [Source 2]",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 6",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 2",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 4",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 6"
+      ],
+      "context_count": 4,
+      "context_chars": 4286,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7952956600746658,
+        "context_precision": 0.3333333333
+      },
+      "note": "Source 3 gives the author name as Tahiya Salam. Source 2 lists the First Advisor as M. Ani Hsieh, and Source 4/1 also refer to Ani Hsieh as the advisor. Recovery support verifier: The question asks for two facts: who wrote the dissertation and who supervised it. The evidence directly states the author as Tahiya Salam (copyright page) and the first advisor as M. Ani Hsieh, with the acknowledgement also referring to Ani Hsieh as the advisor. The proposed answer matches both facts without contradiction."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-lookup-002",
+      "question": "Which graduate group at Penn awarded this PhD?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The PhD was awarded by the Graduate Group in Electrical & Systems Engineering [Source 2].",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 3",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 2",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 1",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 6"
+      ],
+      "context_count": 4,
+      "context_chars": 4435,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6760422324097671,
+        "context_precision": 0.99999999995
+      },
+      "note": "Source 2 explicitly lists the Graduate Group as Electrical & Systems Engineering for the Doctor of Philosophy (PhD)."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-lookup-003",
+      "question": "Which Python libraries does the author use to implement the online DMD algorithms?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The author says they used the eigendecomposition algorithms from the SciPy Python library and modified the DMD functions from the PyDMD library [Source 1].",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 105",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 105",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 102",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 103"
+      ],
+      "context_count": 4,
+      "context_chars": 4286,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6439500263832117,
+        "context_precision": 0.99999999995
+      },
+      "note": "The evidence explicitly names both Python libraries used for the online adaptation algorithms: SciPy for eigendecomposition and PyDMD for DMD functions [Source 1]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-local_scope-004",
+      "question": "In the mixed-reality experiment with marine vehicles, what are the dimensions of the indoor water tank used as the test bed?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The indoor water tank used as the test bed measures 4.5 m \u00d7 3.0 m \u00d7 1.2 m [Source 1] [Source 2].",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 111",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 112",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 106",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 143"
+      ],
+      "context_count": 4,
+      "context_chars": 2933,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8009761640916698,
+        "context_precision": 0.99999999995
+      },
+      "note": "The evidence explicitly states the tank dimensions in two places, including the figure caption and the testbed description."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-local_scope-005",
+      "question": "In the chapter on coherent sets, what does the author use kernel transfer operators for?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The author uses kernel transfer operators to apply them as an online environmental feature generator, specifically to compute coherent sets online and use those coherent set features to improve robot awareness and decision-making in flow-like environments [Source 1].",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 131",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 132",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 132",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 132"
+      ],
+      "context_count": 4,
+      "context_chars": 4062,
+      "ragas": {
+        "faithfulness": 0.8,
+        "answer_relevancy": 0.7128622073587353,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The evidence states that Chapter 6 demonstrates how to apply the kernel transfer operator for an online environmental feature generator and that the chapter investigates coherent sets, computing them online and using them in robot behavior frameworks for awareness and decision-making [Source 1]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-broad_summary-006",
+      "question": "What does the author claim are the main contributions of this thesis?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The thesis claims its main contributions are methods for representing the environment as a dynamical system using machine learning, with specific contributions including distributed algorithms, online adaptation, uncertainty quantification, and feature extraction [Source 1]. It also says these methods were verified in complex, spatiotemporal environments and on experimental robots [Source 1].",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 8",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 2",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 79",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 10"
+      ],
+      "context_count": 4,
+      "context_chars": 3355,
+      "ragas": {
+        "faithfulness": 0.75,
+        "answer_relevancy": 0.8479331107642878,
+        "context_precision": 0.99999999995
+      },
+      "note": "The evidence explicitly lists the thesis contributions in the abstract/overview and states the validation setting. No additional facts are needed to answer the question."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-broad_summary-007",
+      "question": "What gap between dynamical systems theory, machine learning, and multi-robot systems does the introduction argue this thesis addresses?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The introduction argues that the thesis addresses the disconnect between dynamical systems theory and the operational challenges of multi-robot systems, while also bridging machine learning-based modeling with multi-robot team coordination. Specifically, it says dynamical systems theory has \"largely been disconnected from the operational challenges of multi-robot systems\" such as distributed computations, uncertainty in sensing data, and computational complexity of high-dimensional data, and tha",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 8",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 14",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 2",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 21"
+      ],
+      "context_count": 4,
+      "context_chars": 4655,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.75205483364442,
+        "context_precision": 0.999999999975
+      },
+      "note": "The evidence explicitly identifies the gap as the disconnect between dynamical systems theory and multi-robot operational challenges, and it states the thesis unifies dynamical systems modeling with machine learning techniques for multi-robot teams."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-comparison_synthesis-008",
+      "question": "How does Dynamic Mode Decomposition compare with Principal Component Analysis for representing spatiotemporal environmental processes, according to the thesis?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "According to the thesis, PCA is used to reduce dimensionality by finding orthogonal principal components that maximize variance and can represent key spatial characteristics of time series data [Source 4]. In contrast, DMD decomposes time-series data into modes with fixed oscillation frequency and decay or growth rate, giving it an explicit, physically meaningful interpretation of temporal characteristics and making it useful for studying spatiotemporal settings [Source 3][Source 1].",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 42",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 2",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 18",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 41"
+      ],
+      "context_count": 4,
+      "context_chars": 4223,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.5743807150477843,
+        "context_precision": 0.8333333332916666
+      },
+      "note": "The evidence covers both methods and their comparison: PCA is described as variance-maximizing and mainly capturing spatial characteristics, while DMD is described as mode-based with explicit temporal dynamics (frequency and growth/decay rate) and better suited to spatiotemporal interpretation."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-numeric_procedure-009",
+      "question": "In the mixed-reality plasma cloud experiment, how many vehicles of each type were used, and at what grid resolutions did the aerial and marine vehicles sense the workspace?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "Two aerial vehicles and five marine vehicles were used. The aerial vehicles were assumed to have full coverage, and the marine vehicles each had a sensing radius of 15 units [Source 4]. The evidence does not state the grid resolution at which either the aerial or marine vehicles sensed the workspace.",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 108",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 107",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 109",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 109"
+      ],
+      "context_count": 4,
+      "context_chars": 3952,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7090169990494809,
+        "context_precision": 0.249999999975
+      },
+      "note": "The evidence explicitly gives the vehicle counts and sensing radius in the mixed-reality plasma cloud experiment [Source 4]. It does not provide any grid resolution for the aerial or marine sensing workspace, so that required fact is missing. The strict supported flag was downgraded because the model's own support reason identified a missing, partial, or inconsistent required fact. Support-status verifier classified the answer as unsupported. Supported facts: Two aerial vehicles and five marine vehicles were used.; The aerial vehicles have full coverage.; The marine vehicles each had a sensing radius of 15 units. Missing or ambiguous facts: The grid resolution at which the aerial vehicles sensed the workspace.; The grid resolution at which the marine vehicles sensed the workspace. The evidence supports the vehicle counts and sensing radius/full-coverage description, but it does not state any grid resolution for either aerial or marine sensing. The proposed answer explicitly says the evidence does not state the grid resolution, which acknowledges the gap, but because the question requires those grid resolutions and they are missing, the answer is not fully supported."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-unsupported-010",
+      "question": "How does the thesis evaluate its proposed methods on a swarm of more than fifty aerial drones in an outdoor wildfire monitoring deployment?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not describe an outdoor wildfire monitoring deployment with a swarm of more than fifty aerial drones, so it does not support how the thesis evaluated its proposed methods in that setting.",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 110",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 111",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 111",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 53"
+      ],
+      "context_count": 4,
+      "context_chars": 3325,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9376260230862927,
+        "context_precision": 0.9999999999666667
+      },
+      "note": "The evidence only mentions simulations, a water tank test bed, and a small fleet of robots including three real mASVs, one simulated mASV, and two simulated aerial vehicles [Source 3], plus simulation results [Sources 1-2]. It does not mention an outdoor wildfire monitoring deployment or a swarm of more than fifty aerial drones. Support-status verifier classified the answer as unsupported. Supported facts: The evidence does not describe an outdoor wildfire monitoring deployment with a swarm of more than fifty aerial drones. Missing or ambiguous facts: How the thesis evaluated its proposed methods in that specific deployment setting. The proposed answer explicitly states that the evidence does not describe the requested deployment, which is an acknowledged gap. However, it does not provide a grounded answer to how the thesis evaluated its methods in an outdoor wildfire monitoring deployment with more than fifty aerial drones. The supplied evidence only covers simulations and a water tank test bed with a small heterogeneous robot team, not the asked-for scenario."
+    }
+  ]
+}

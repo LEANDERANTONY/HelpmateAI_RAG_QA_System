@@ -109,3 +109,61 @@ def test_chunk_semantics_service_annotates_suspicious_chunks_only():
     assert annotated[0].metadata["semantic_chunk_confidence"] == 0.88
     assert annotated[0].metadata["semantic_body_evidence_score"] == 0.1
     assert "semantic_chunk_role" not in annotated[1].metadata
+
+
+def test_chunk_semantics_service_classifies_artifact_candidates():
+    document = DocumentRecord(
+        document_id="doc2",
+        file_name="paper.pdf",
+        file_type="pdf",
+        source_path="paper.pdf",
+        fingerprint="def",
+        char_count=400,
+        page_count=1,
+        metadata={"document_style": "research_paper"},
+        extracted_text="",
+    )
+    chunks = [
+        ChunkRecord(
+            chunk_id="artifact-definition",
+            document_id="doc2",
+            text="Definition: PINO = Physics-Informed Neural Operator\nSource text: Physics-Informed Neural Operator (PINO) adds a PDE residual term.",
+            chunk_index=0,
+            page_label="Page 16",
+            metadata={
+                "page_label": "Page 16",
+                "section_heading": "Neural operators",
+                "section_kind": "body",
+                "artifact_entry": True,
+                "artifact_type": "definition",
+                "content_type": "definition",
+                "body_evidence_score": 0.68,
+            },
+        )
+    ]
+    payload = json.dumps(
+        {
+            "chunks": [
+                {
+                    "chunk_id": "artifact-definition",
+                    "role": "definition_evidence",
+                    "confidence": 0.91,
+                    "body_evidence_score": 0.9,
+                }
+            ]
+        }
+    )
+    service = ChunkSemanticsService(
+        Settings(
+            chunk_semantics_enabled=True,
+            openai_api_key="test-key",
+            chunk_semantics_max_review_chunks=4,
+        )
+    )
+    service.client = _FakeClient(payload)
+
+    annotated = service.annotate_chunks(document, chunks)
+
+    assert annotated[0].metadata["semantic_chunk_role"] == "definition_evidence"
+    assert annotated[0].metadata["semantic_chunk_confidence"] == 0.91
+    assert annotated[0].metadata["semantic_body_evidence_score"] == 0.9

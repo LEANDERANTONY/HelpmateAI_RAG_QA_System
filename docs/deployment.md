@@ -234,6 +234,46 @@ Recommended host cron entry for local-disk cleanup:
 */10 * * * * docker exec helpmate-api python -m backend.maintenance >> /var/log/helpmate-workspace-sweeper.log 2>&1
 ```
 
+### Docker Image And Build-Cache Cleanup
+
+Repeated backend rebuilds or image pulls can leave old untagged image layers and BuildKit cache on the VPS. Keep the current running backend image and named data volumes, but prune unused image/build artifacts after deploys.
+
+The GitHub Actions deploy workflow copies `cleanup-docker.sh` to the VPS and runs it automatically after the `helpmate-api` health check passes. For manual deploys, use the wrapper script from `deploy/vps/`:
+
+```sh
+sh ./deploy-api.sh
+```
+
+If you build on the VPS instead of pulling from GHCR:
+
+```sh
+sh ./deploy-api-build.sh
+```
+
+The cleanup script runs:
+
+- `docker image prune -a -f --filter "until=72h"`
+- `docker builder prune -a -f --filter "until=72h"`
+
+It deliberately does not run `docker system prune --volumes`, because the compose stack uses named volumes for uploads, indexes, cache, and Caddy state.
+
+Do not keep a separate weekly Docker prune cron on the shared VPS. The GitHub Actions deploy workflow already runs this cleanup after a successful backend health check, and the 72-hour retention window leaves recently replaced images available for short rollback windows.
+
+Remove the old weekly cron entry with:
+
+```sh
+crontab -l | grep -v 'helpmate-docker-cleanup.log' | crontab -
+```
+
+Use `docker system df` before and after cleanup if you want to inspect how much disk was recovered.
+
+Important:
+
+- Docker does not run cleanup hooks by itself just because an image is built or pulled.
+- The GitHub Actions deploy workflow runs age-filtered cleanup after successful backend health checks.
+- Use `deploy-api.sh` or `deploy-api-build.sh` as the standard manual deployment command so cleanup runs immediately after manual backend updates.
+- If disk pressure returns, inspect `docker system df` before adding any host-level cleanup schedule back.
+
 Recommended low-memory production default on smaller VPS plans:
 
 - `HELPMATE_RERANKER_ENABLED=false`

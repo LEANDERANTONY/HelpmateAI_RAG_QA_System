@@ -1,0 +1,1113 @@
+{
+  "suite": {
+    "suite_id": "heldout-product-fit-2026-04-draft",
+    "description": "Draft held-out product-fit final evaluation manifest. Documents are fixed; questions must be generated and frozen before any system run.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\final_eval_manifest.draft.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native",
+    "question_offset": 120,
+    "question_count": 30
+  },
+  "systems": [
+    "helpmate"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      },
+      "mode": "native_mockingbird_answer",
+      "generation_preset_name": "mockingbird-2.0"
+    }
+  },
+  "summary": {
+    "overall": {
+      "helpmate": {
+        "dataset_size": 30,
+        "answerable_size": 26,
+        "unsupported_size": 4,
+        "supported_rate": 0.7,
+        "partial_rate": 0.06666666666666667,
+        "answered_rate": 0.7666666666666667,
+        "answerable_supported_rate": 0.8076923076923077,
+        "answerable_coverage_rate": 0.8846153846153846,
+        "unsupported_abstention_rate": 1.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.11538461538461539,
+        "strict_false_abstention_rate": 0.19230769230769232,
+        "avg_context_count": 4.0,
+        "avg_context_chars": 3785.4333333333334,
+        "ragas_all": {
+          "faithfulness": 0.8074712643678161,
+          "answer_relevancy": 0.6277938623329882,
+          "context_precision": 0.865942028935628
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.7916666666666666,
+          "answer_relevancy": 0.7765734275859065,
+          "context_precision": 0.8235294117078431
+        }
+      }
+    },
+    "by_intent": {
+      "helpmate": {
+        "broad_summary": {
+          "dataset_size": 7,
+          "answerable_size": 7,
+          "unsupported_size": 0,
+          "supported_rate": 0.8571428571428571,
+          "partial_rate": 0.0,
+          "answered_rate": 0.8571428571428571,
+          "answerable_supported_rate": 0.8571428571428571,
+          "answerable_coverage_rate": 0.8571428571428571,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.14285714285714285,
+          "strict_false_abstention_rate": 0.14285714285714285,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 4096.714285714285,
+          "ragas_all": {
+            "faithfulness": 0.9285714285714286,
+            "answer_relevancy": 0.7501021409153418,
+            "context_precision": 0.8666666666
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.9166666666666666,
+            "answer_relevancy": 0.875119164401232,
+            "context_precision": 0.8666666666
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 6,
+          "answerable_size": 6,
+          "unsupported_size": 0,
+          "supported_rate": 0.6666666666666666,
+          "partial_rate": 0.3333333333333333,
+          "answered_rate": 1.0,
+          "answerable_supported_rate": 0.6666666666666666,
+          "answerable_coverage_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 0.3333333333333333,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 3410.3333333333335,
+          "ragas_all": {
+            "faithfulness": 0.7916666666666666,
+            "answer_relevancy": 0.48899082474740363,
+            "context_precision": 0.7999999999499999
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.7916666666666666,
+            "answer_relevancy": 0.48899082474740363,
+            "context_precision": 0.7999999999499999
+          }
+        },
+        "local_scope": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "partial_rate": 0.0,
+          "answered_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "answerable_coverage_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 3523.75,
+          "ragas_all": {
+            "faithfulness": 0.5,
+            "answer_relevancy": 0.9528891810861814,
+            "context_precision": null
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.5,
+            "answer_relevancy": 0.9528891810861814,
+            "context_precision": null
+          }
+        },
+        "lookup": {
+          "dataset_size": 5,
+          "answerable_size": 5,
+          "unsupported_size": 0,
+          "supported_rate": 0.8,
+          "partial_rate": 0.0,
+          "answered_rate": 0.8,
+          "answerable_supported_rate": 0.8,
+          "answerable_coverage_rate": 0.8,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.2,
+          "strict_false_abstention_rate": 0.2,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 3938.8,
+          "ragas_all": {
+            "faithfulness": 0.6,
+            "answer_relevancy": 0.7135800667540906,
+            "context_precision": 0.7166666666305556
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.75,
+            "answer_relevancy": 0.9399427288800235,
+            "context_precision": 0.6666666666291666
+          }
+        },
+        "numeric_procedure": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 0.75,
+          "partial_rate": 0.0,
+          "answered_rate": 0.75,
+          "answerable_supported_rate": 0.75,
+          "answerable_coverage_rate": 0.75,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.25,
+          "strict_false_abstention_rate": 0.25,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 3877.25,
+          "ragas_all": {
+            "faithfulness": 0.9166666666666666,
+            "answer_relevancy": 0.8312162558531677,
+            "context_precision": 0.9999999999291667
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.8888888888888888,
+            "answer_relevancy": 0.8323295888231655,
+            "context_precision": 0.9999999999222222
+          }
+        },
+        "unsupported": {
+          "dataset_size": 4,
+          "answerable_size": 0,
+          "unsupported_size": 4,
+          "supported_rate": 0.0,
+          "partial_rate": 0.0,
+          "answered_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "answerable_coverage_rate": 0.0,
+          "unsupported_abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 3781.5,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.999999999975
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-broad_summary-021",
+      "question": "How does the staff's January economic outlook compare with the projection prepared for the December meeting?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The staff\u2019s January economic outlook was stronger than the projection prepared for the December meeting. It reflected incoming data, greater expected support from financial conditions, and a small upward revision to the projected path of potential output [Source 1].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 9",
+        "fomc-minutes-2026-01-28.pdf - Page 9",
+        "fomc-minutes-2026-01-28.pdf - Page 6",
+        "fomc-minutes-2026-01-28.pdf - Page 10"
+      ],
+      "context_count": 4,
+      "context_chars": 4506,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8339912318025228,
+        "context_precision": 0.99999999995
+      },
+      "note": "The evidence directly compares the January staff projection with the December meeting projection and states that the January outlook was stronger, with the listed reasons."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-broad_summary-022",
+      "question": "How does the staff characterize the U.S. financial system's overall vulnerabilities, and what categories does it use?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The staff characterizes the U.S. financial system\u2019s overall vulnerabilities as notable. It organizes them into four categories: asset valuation pressures, nonfinancial business and household debt, leverage in the financial sector, and funding risks [Source 1][Source 2].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 9",
+        "fomc-minutes-2026-01-28.pdf - Page 9",
+        "fomc-minutes-2026-01-28.pdf - Page 7",
+        "fomc-minutes-2026-01-28.pdf - Page 12"
+      ],
+      "context_count": 4,
+      "context_chars": 4658,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9308669476562041,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence explicitly states that the system\u2019s financial vulnerabilities were \u201cnotable\u201d and lists the four categories used in the assessment: asset valuation pressures, nonfinancial business and household debt, leverage in the financial sector, and funding risks."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-broad_summary-023",
+      "question": "What were participants' general views on consumer spending and business fixed investment?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "Participants generally said consumer spending had been resilient, supported by gains in household wealth, and that business fixed investment remained robust, particularly in the technology sector [Source 3].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 10",
+        "fomc-minutes-2026-01-28.pdf - Page 10",
+        "fomc-minutes-2026-01-28.pdf - Page 11",
+        "fomc-minutes-2026-01-28.pdf - Page 12"
+      ],
+      "context_count": 4,
+      "context_chars": 4799,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9033976814179362,
+        "context_precision": 0.3333333333
+      },
+      "note": "The evidence directly states the general view on both consumer spending and business fixed investment in Source 3. Recovery support verifier: The question asks for participants' general views on two items: consumer spending and business fixed investment. The evidence directly states that consumer spending had been resilient, importantly supported by gains in household wealth, and that business fixed investment remained robust, particularly in the technology sector. The proposed answer matches both facts without contradiction or unsupported additions."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-comparison_synthesis-024",
+      "question": "How does the staff describe the change over the past year in core services price inflation versus core goods price inflation?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The staff says core services price inflation had declined relative to a year earlier, while core goods price inflation had picked up over the same period, largely because of higher tariffs [Source 1].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 6",
+        "fomc-minutes-2026-01-28.pdf - Page 10",
+        "fomc-minutes-2026-01-28.pdf - Page 6",
+        "fomc-minutes-2026-01-28.pdf - Page 9"
+      ],
+      "context_count": 4,
+      "context_chars": 3123,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8640819134762836,
+        "context_precision": 0.99999999995
+      },
+      "note": "The evidence directly compares the two categories over the past year and states the direction of change for each."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-comparison_synthesis-025",
+      "question": "How did the equity performance of the largest technology companies compare with the rest of the S&P 500 over the intermeeting period?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The largest technology companies underperformed the market over the intermeeting period, while the rest of the S&P 500 (excluding those companies) was up nearly 3 percent. Cyclical sectors and smaller-cap indexes performed even better [Source 4].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 5",
+        "fomc-minutes-2026-01-28.pdf - Page 7",
+        "fomc-minutes-2026-01-28.pdf - Page 8",
+        "fomc-minutes-2026-01-28.pdf - Page 5"
+      ],
+      "context_count": 4,
+      "context_chars": 4657,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7485518504875884,
+        "context_precision": 0.7499999999625
+      },
+      "note": "The evidence directly states both parts of the comparison: the largest technology companies underperformed the market, and excluding them the S&P 500 rose nearly 3 percent, with cyclical and smaller-cap indexes doing even better [Source 4]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-comparison_synthesis-026",
+      "question": "How did the staff's January inflation projection compare with the projection prepared for the December meeting, and why?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The staff\u2019s January inflation projection was slightly higher than the projection prepared for the December meeting. The reason given was that resource utilization was expected to be tighter and the path of core import prices was expected to be higher than previously projected [Source 1].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 9",
+        "fomc-minutes-2026-01-28.pdf - Page 6",
+        "fomc-minutes-2026-01-28.pdf - Page 6",
+        "fomc-minutes-2026-01-28.pdf - Page 10"
+      ],
+      "context_count": 4,
+      "context_chars": 3919,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence directly states both the comparison and the explanation for the change in the inflation forecast."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-numeric_procedure-027",
+      "question": "According to the staff, what were the 12-month CPI and core CPI inflation rates in December?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "According to the staff, in December the 12-month change in the CPI was 2.7 percent and core CPI inflation was 2.6 percent [Source 1].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 6",
+        "fomc-minutes-2026-01-28.pdf - Page 9",
+        "fomc-minutes-2026-01-28.pdf - Page 6",
+        "fomc-minutes-2026-01-28.pdf - Page 6"
+      ],
+      "context_count": 4,
+      "context_chars": 2911,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9078707151515331,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence directly states both requested December inflation rates."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-numeric_procedure-028",
+      "question": "What size rate change did the FOMC make at the December meeting and how did it pass through to money market rates?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The FOMC made a 25 basis point decrease in the target range for the federal funds rate at the December meeting, and it quickly passed through to secured and unsecured money market rates [Source 1].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 8",
+        "fomc-minutes-2026-01-28.pdf - Page 5",
+        "fomc-minutes-2026-01-28.pdf - Page 4",
+        "fomc-minutes-2026-01-28.pdf - Page 6"
+      ],
+      "context_count": 4,
+      "context_chars": 3777,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.712329288058091,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence directly states both required facts: the size of the December rate change and its transmission to money market rates."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-unsupported-029",
+      "question": "What numeric estimate of the natural rate of unemployment did the staff present in this meeting's projections?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not state a numeric estimate of the staff\u2019s natural rate of unemployment in this meeting\u2019s projections.",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 10",
+        "fomc-minutes-2026-01-28.pdf - Page 10",
+        "fomc-minutes-2026-01-28.pdf - Page 8",
+        "fomc-minutes-2026-01-28.pdf - Page 8"
+      ],
+      "context_count": 4,
+      "context_chars": 4631,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision": 0.999999999975
+      },
+      "note": "The excerpts discuss inflation, uncertainty, credit conditions, and participants\u2019 views, but they do not include the staff\u2019s projected natural rate of unemployment or any numeric estimate for it. Support-status verifier classified the answer as unsupported. Missing or ambiguous facts: The question asks for the numeric estimate of the staff\u2019s natural rate of unemployment in the meeting\u2019s projections, but the evidence does not provide any numeric estimate.; The proposed answer does not supply the requested number. The proposed answer explicitly says the evidence does not state a numeric estimate, which acknowledges the gap. However, it does not answer the question with the requested numeric estimate, and the supplied evidence contains no such number."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-unsupported-030",
+      "question": "What were the results of the FOMC's vote at this meeting on amending the standing repo facility's aggregate limit?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not mention any FOMC vote on amending the standing repo facility's aggregate limit, so the result of that vote cannot be determined from these sources.",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 3",
+        "fomc-minutes-2026-01-28.pdf - Page 14",
+        "fomc-minutes-2026-01-28.pdf - Page 14",
+        "fomc-minutes-2026-01-28.pdf - Page 3"
+      ],
+      "context_count": 4,
+      "context_chars": 3257,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.999999999975
+      },
+      "note": "The evidence shows votes on officer selections, SOMA execution, and the domestic policy directive, including standing overnight repo and reverse repo rates and a per-counterparty limit, but it does not mention an amendment to the standing repo facility's aggregate limit or the vote result on such an amendment [Source 1] [Source 2]. Support-status verifier classified the answer as unsupported. Missing or ambiguous facts: The question asks for the results of the FOMC's vote on amending the standing repo facility's aggregate limit, but the evidence does not mention any such amendment or vote result.; The proposed answer states that the evidence does not mention this vote, which is an acknowledged gap, but it does not provide the requested result. The answer does not supply the vote result; it only says the evidence does not mention it. The evidence includes votes on officer selections, SOMA execution, and a domestic policy directive with standing repo/reverse repo rates and a per-counterparty limit, but nothing about amending the standing repo facility's aggregate limit."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-011",
+      "question": "What ISBN is listed for the publication?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The ISBN listed for the publication is 978-92-9260-527-8 [Source 3].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 2",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 2",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 2",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 57"
+      ],
+      "context_count": 4,
+      "context_chars": 4918,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9452598814340378,
+        "context_precision": 0.3333333333
+      },
+      "note": "The evidence explicitly states \u201cISBN: 978-92-9260-527-8\u201d on the publication\u2019s front matter [Source 3]. Recovery support verifier: The evidence explicitly states the ISBN as 978-92-9260-527-8, which directly answers the question."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-012",
+      "question": "Where does the report indicate IRENA is headquartered?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The report indicates that IRENA is headquartered in Abu Dhabi [Source 1].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 245",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 245",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 243",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 243"
+      ],
+      "context_count": 4,
+      "context_chars": 6378,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision": 0.999999999975
+      },
+      "note": "The evidence repeatedly lists IRENA publications as being from the International Renewable Energy Agency, Abu Dhabi [Source 1]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-013",
+      "question": "When was IRENA established as a global intergovernmental organization?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "IRENA was established in 2011 as a global intergovernmental organisation [Source 1].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 2",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 1",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 2",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 2"
+      ],
+      "context_count": 4,
+      "context_chars": 3513,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9346255763260092,
+        "context_precision": 0.8333333332916666
+      },
+      "note": "The evidence directly states that IRENA is 'a global intergovernmental organisation established in 2011' [Source 1]. Recovery support verifier: The evidence explicitly states that IRENA is 'a global intergovernmental organisation established in 2011,' which directly supports the proposed answer."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-014",
+      "question": "Which national government is acknowledged for providing generous support for the report?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The German Federal Ministry for Economic Affairs and Climate Action is acknowledged for providing generous support for the report [Source 2].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 3",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 3",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 137",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 161"
+      ],
+      "context_count": 4,
+      "context_chars": 2393,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision": 0.49999999995
+      },
+      "note": "The evidence explicitly states: \u201cIRENA is grateful for the generous support of the German Federal Ministry for Economic Affairs and Climate Action.\u201d [Source 2] Recovery support verifier: The evidence directly states: \u201cIRENA is grateful for the generous support of the German Federal Ministry for Economic Affairs and Climate Action.\u201d This exactly matches the proposed answer and identifies the national government acknowledged for providing generous support."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-015",
+      "question": "Who is credited with copy-editing the report?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "Unsupported by the recovered evidence. The recovered evidence did not fully support every required fact in the question.",
+      "citations": [],
+      "context_count": 4,
+      "context_chars": 2492,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.2608547425022248,
+        "context_precision": 0.9166666666361111
+      },
+      "note": "The evidence explicitly states: \u201cThe report was copy-edited by Steven B. Kennedy\u201d [Source 3]. Recovery support verifier: The evidence explicitly states: 'The report was copy-edited by Steven B. Kennedy.' This directly answers who is credited with copy-editing the report, with no contradiction or missing required fact. The verifier reason identified a missing, partial, or inconsistent required fact, so the recovered answer was downgraded."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-local_scope-016",
+      "question": "According to the executive summary, how much was invested in off-grid renewable energy solutions in 2021, and how does that compare with what is needed annually to 2030?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "According to the executive summary, investments in off-grid renewable energy solutions in 2021 amounted to USD 0.5 billion, and this was far below the USD 15 billion needed annually to 2030 [Source 1].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 25",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 171",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 157",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 155"
+      ],
+      "context_count": 4,
+      "context_chars": 4230,
+      "ragas": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.9493797101011819,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The evidence directly states both required facts: the 2021 investment amount and the annual amount needed to 2030."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-local_scope-017",
+      "question": "According to the executive summary, what share of global renewable energy investment in 2022 went to solar PV and wind power?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "According to the executive summary, solar PV and wind power received 97% of total renewable energy investment in 2022 [Source 4].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 150",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 151",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 159",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 159"
+      ],
+      "context_count": 4,
+      "context_chars": 3814,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The evidence explicitly states that in 2022 the combined share of total renewable energy investment for solar and wind technologies was 97% [Source 4]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-local_scope-018",
+      "question": "Under the 1.5 degree C Scenario, what shares of total final energy consumption do hydrogen and modern biomass meet by 2050?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "Under the 1.5\u00b0C Scenario, hydrogen meets 14% of total final energy consumption by 2050, and modern biomass meets 16% [Source 1].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 48",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 48",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 25",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 97"
+      ],
+      "context_count": 4,
+      "context_chars": 4800,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9563986520711808,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The evidence explicitly states that modern biomass and hydrogen are projected to play more significant roles, with 16% and 14% of TFEC by 2050, respectively [Source 1]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-local_scope-019",
+      "question": "In the executive summary's tracking-progress table, what average annual investment is required in power grids and flexibility through 2030 and through 2050 under the 1.5 degree C scenario?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "In the executive summary's tracking-progress table, the average annual investment required in power grids and flexibility is 1.1 USD billion/yr through 2030 and 100 USD billion/yr through 2050 under the 1.5 degree C scenario [Source 1].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 23",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 23",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 24",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 23"
+      ],
+      "context_count": 4,
+      "context_chars": 1251,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The table on page 23 provides the investment figures for power grids and flexibility as 1.1 USD billion/yr and 100 USD billion/yr, corresponding to the 2030 and 2050 columns in the tracking-progress table [Source 1]. Recovery support verifier: The question asks for the average annual investment required in power grids and flexibility through 2030 and through 2050 under the 1.5\u00b0C scenario. The evidence on page 23 directly shows the values 1.1 USD billion/yr and 100 USD billion/yr in the tracking-progress table, matching the proposed answer exactly with no contradiction."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-broad_summary-020",
+      "question": "What does the report say multilateral financing institutions and concessional finance should do to support the energy transition?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The report says multilateral financing institutions should direct more funds, at better terms, toward large-scale energy transition projects, and that they are uniquely placed to support large-scale and cross-border projects that can accelerate the global energy transition [Source 1]. It also says concessional finance is scarce and should be increased through grants and concessional loans to help developing nations and less mature markets [Source 2][Source 3].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 165",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 162",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 176",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 177"
+      ],
+      "context_count": 4,
+      "context_chars": 4217,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9057532853577185,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The evidence directly states what multilateral DFIs should do and what concessional finance should do to support the energy transition."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-broad_summary-021",
+      "question": "How does Volume 2 differ from Volume 1 in scope and approach?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not contain any information about Volume 2 or Volume 1, so I cannot compare their scope or approach.",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 223",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 224",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 222",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 170"
+      ],
+      "context_count": 4,
+      "context_chars": 899,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The sources only show isolated page excerpts about scenarios, health damages, and distributional topics. None mention Volume 1 or Volume 2, nor describe differences in scope or approach. Support-status verifier classified the answer as unsupported. Missing or ambiguous facts: The question asks how Volume 2 differs from Volume 1 in scope and approach, but the evidence does not identify Volume 1 or Volume 2 or describe any comparison between them. The proposed answer explicitly says the evidence does not contain information about Volume 2 or Volume 1 and that it cannot compare them. However, the supplied evidence only contains unrelated excerpts about scenarios, health damages, and distributional topics, with no mention of either volume. Because the answer does not provide a grounded comparison and instead acknowledges the gap, it is not supported by the evidence."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-broad_summary-022",
+      "question": "What does the executive summary say about the consequences of continued delays in scaling the energy transition?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The executive summary says the energy transition is off-track and that continued delays will worsen the problem: the gap between what is being done and what is required will keep growing, and slow progress will increase future investment needs both to produce the energy needed and to cope with worsening climate change effects [Source 2][Source 1].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 38",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 21",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 31",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 33"
+      ],
+      "context_count": 4,
+      "context_chars": 4799,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8308938494787798,
+        "context_precision": 0.99999999995
+      },
+      "note": "The evidence directly states the transition is off-track, that each year the gap grows between current action and what is required, and that slow progress will increase future investment needs and worsen climate-change-related costs [Source 2][Source 1]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-broad_summary-023",
+      "question": "What does the executive summary say about the relationship between the energy crisis and the transition?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The executive summary says the energy crisis/Ukraine crisis has further compounded the challenges facing the energy transition, and that the transition is off-track [Source 1].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 21",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 33",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 31",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 35"
+      ],
+      "context_count": 4,
+      "context_chars": 4799,
+      "ragas": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.845811990694231,
+        "context_precision": 0.9999999999
+      },
+      "note": "The question asks about the relationship between the energy crisis and the transition. Source 1 explicitly states that the aftermath of the COVID-19 pandemic and the ripple effects of the Ukraine crisis have further compounded the challenges facing the transition, and that the energy transition is off-track."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-comparison_synthesis-024",
+      "question": "How do the cumulative and per-year investment requirements differ between the Planned Energy Scenario and the 1.5 degree C Scenario?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": false,
+      "support_status": "partial",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The evidence supports the 1.5\u00b0C Scenario investment requirement: a cumulative USD 150 trillion is required by 2050, averaging over USD 5 trillion per year [Source 1]. It also supports that in the Planned Energy Scenario, annual average investment in renewable power generation capacity and power grids and flexibility is estimated at more than USD 1 trillion over the period to 2050 [Source 3]. However, the evidence does not provide the cumulative investment requirement for the Planned Energy Scena",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 25",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 150",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 150",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 25"
+      ],
+      "context_count": 4,
+      "context_chars": 2681,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.8333333332916666
+      },
+      "note": "The question asks for both cumulative and per-year investment requirements for two scenarios. The evidence gives both cumulative and annual figures only for the 1.5\u00b0C Scenario, and only an annual average figure for the Planned Energy Scenario. The Planned Energy Scenario cumulative requirement is missing. Support-status verifier classified the answer as partial. Supported facts: The 1.5\u00b0C Scenario requires a cumulative USD 150 trillion by 2050, averaging over USD 5 trillion per year.; In the Planned Energy Scenario, annual average investment in renewable power generation capacity and power grids and flexibility is estimated at more than USD 1 trillion over the period to 2050.; The answer states that the cumulative investment requirement for the Planned Energy Scenario is not provided in the supplied evidence. Missing or ambiguous facts: The cumulative investment requirement for the Planned Energy Scenario is missing, so the direct cumulative-vs-per-year comparison between the two scenarios is incomplete. The proposed answer includes grounded figures for both scenarios where available and explicitly acknowledges that the Planned Energy Scenario cumulative requirement is not stated in the evidence. Because one required fact is missing, the answer is only partially supported."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-comparison_synthesis-025",
+      "question": "How does the role of bioenergy in 2050 differ between the Planned Energy Scenario and the 1.5 degree C Scenario?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": false,
+      "support_status": "partial",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The evidence supports the 1.5\u00b0C Scenario only: bioenergy consumption in transport grows to 12 EJ by 2050, and bioenergy feedstocks for chemical production grow to 10.9 EJ by 2050 [Source 1]. The evidence does not provide the Planned Energy Scenario 2050 value or description, so the difference between the two scenarios cannot be fully stated from the supplied text [Source 4].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 99",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 99",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 98",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 100"
+      ],
+      "context_count": 4,
+      "context_chars": 1939,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The question asks for a comparison between the Planned Energy Scenario and the 1.5\u00b0C Scenario in 2050. The supplied evidence gives 2050 bioenergy figures for the 1.5\u00b0C Scenario, but the Planned Energy Scenario 2050 data are not shown in the provided excerpt. Therefore only part of the required comparison is supported. Support-status verifier classified the answer as partial. Supported facts: Under the 1.5\u00b0C Scenario, bioenergy feedstocks for chemical production grow to 10.9 EJ by 2050.; Under the 1.5\u00b0C Scenario, bioenergy consumption in transport grows to 12 EJ by 2050.; The supplied evidence includes a table comparing Planned Energy Scenario and 1.5\u00b0C Scenario bioenergy indicators for 2030 and 2050. Missing or ambiguous facts: The Planned Energy Scenario 2050 bioenergy value/role is not provided in the visible evidence.; The exact difference between the Planned Energy Scenario and the 1.5\u00b0C Scenario in 2050 cannot be determined from the supplied excerpt. The proposed answer grounds the 1.5\u00b0C Scenario with figures directly stated in the evidence and explicitly acknowledges that the Planned Energy Scenario 2050 value is missing, so the comparison cannot be fully completed from the excerpt. Because the question asks for a difference between both scenarios, the missing PES 2050 information prevents a fully supported answer."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-comparison_synthesis-026",
+      "question": "How does the share of renewables in electricity generation in recent years compare with what is needed by 2030 and 2050 under the 1.5 degree C scenario?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "In recent years, renewables accounted for 28% of electricity generation in 2020. Under the 1.5\u00b0C scenario, the share needed is 68% by 2030 and 91% by 2050 [Source 3]. Another source states 91% by 2050 compared with 28% in 2020 [Source 4].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 74",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 25",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 76",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 47"
+      ],
+      "context_count": 4,
+      "context_chars": 4143,
+      "ragas": {
+        "faithfulness": 0.75,
+        "answer_relevancy": 0.8323203597731461,
+        "context_precision": 0.4166666666458333
+      },
+      "note": "The evidence gives the recent share (28% in 2020) and the required shares under the 1.5\u00b0C scenario for both 2030 and 2050 (68% and 91%, respectively)."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-numeric_procedure-027",
+      "question": "How much does the report say global CO2 emissions need to be cut from 2022 levels by 2050 to limit warming to 1.5 degree C, and what end-state for the energy sector does that imply?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The report says global CO2 emissions need to be cut by around 37 gigatonnes from 2022 levels by 2050, and this implies achieving net-zero emissions in the energy sector by 2050 [Source 1].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 21",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 41",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 21",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 188"
+      ],
+      "context_count": 4,
+      "context_chars": 4021,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8278762569431741,
+        "context_precision": 0.99999999995
+      },
+      "note": "Source 1 explicitly states both required facts: the reduction amount from 2022 levels and the end-state for the energy sector. The answer used inferential wording, so it was downgraded because the evidence did not directly support a grounded claim. Support-status verifier classified the answer as unsupported. Supported facts: Global CO2 emissions need to be cut by around 37 gigatonnes from 2022 levels by 2050 to limit warming to 1.5\u00b0C.; This implies achieving net-zero emissions in the energy sector by 2050. The evidence directly states both required facts in Source 1 and Source 2. The proposed answer matches the evidence without any missing or ambiguous required fact."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-numeric_procedure-028",
+      "question": "According to the executive summary, what size emissions gap remains in 2050 between fully implemented current pledges and the 1.5 degree C pathway, and how much do those pledges actually reduce emissions by 2030 and 2050?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "According to the executive summary, the emissions gap in 2050 between fully implemented current pledges and the 1.5\u00b0C pathway is 16 Gt [Source 2]. Those pledges, if fully implemented, would reduce CO2 emissions by 6% by 2030 and 56% by 2050, compared to 2022 levels [Source 2].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 21",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 21",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 54",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 25"
+      ],
+      "context_count": 4,
+      "context_chars": 4800,
+      "ragas": {
+        "faithfulness": 0.6666666666666666,
+        "answer_relevancy": 0.8767887632598726,
+        "context_precision": 0.9999999999666667
+      },
+      "note": "The executive summary explicitly states both the 2050 emissions gap and the reductions from fully implemented pledges by 2030 and 2050."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-unsupported-029",
+      "question": "What does the report list as the levelized cost of nuclear power in 2050 under the 1.5 degree C Scenario?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not list the levelized cost of nuclear power in 2050 under the 1.5\u00b0C Scenario.",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 146",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 82",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 146",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 186"
+      ],
+      "context_count": 4,
+      "context_chars": 3932,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.999999999975
+      },
+      "note": "The evidence includes investment totals and mentions fossil fuels and nuclear in power-generation capacity, but it does not provide any levelized cost value for nuclear power in 2050. Support-status verifier classified the answer as unsupported. Missing or ambiguous facts: The report's levelized cost of nuclear power in 2050 under the 1.5\u00b0C Scenario is not provided in the evidence, so the answer cannot be verified as a direct factual response. The proposed answer only states that the evidence does not list the requested value. While this acknowledges a gap, it does not provide a grounded answer to the question. The supplied evidence contains investment and capacity information, but no levelized cost figure for nuclear power in 2050 under the 1.5\u00b0C Scenario."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-unsupported-030",
+      "question": "What is the report's projected per-kilogram price of green hydrogen produced via PEM electrolysis in the European Union by 2030?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not state a projected per-kilogram price of green hydrogen produced via PEM electrolysis in the European Union by 2030.",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 89",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 92",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 90",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 92"
+      ],
+      "context_count": 4,
+      "context_chars": 3306,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.999999999975
+      },
+      "note": "The evidence mentions that green hydrogen could become cost-competitive by 2030 or earlier and that green hydrogen today may cost between two and three times more than blue hydrogen, but it does not give a specific per-kilogram price, does not mention PEM electrolysis, and does not specify the European Union. Support-status verifier classified the answer as unsupported. Supported facts: The evidence says green hydrogen may cost between two and three times more than blue hydrogen today.; The evidence says green hydrogen could become cost-competitive by 2030 or earlier. Missing or ambiguous facts: A projected per-kilogram price for green hydrogen by 2030 is not given in the evidence.; PEM electrolysis is not mentioned in the evidence.; The European Union is not specified in the evidence. The proposed answer explicitly says the evidence does not state the requested projected per-kilogram price, which acknowledges a gap. However, the answer does not provide the requested price and the evidence does not directly cover the PEM electrolysis or EU-specific parts of the question."
+    }
+  ]
+}

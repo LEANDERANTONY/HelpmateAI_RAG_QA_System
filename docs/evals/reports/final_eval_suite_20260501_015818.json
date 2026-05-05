@@ -1,0 +1,480 @@
+{
+  "suite": {
+    "suite_id": "heldout-product-fit-2026-04-draft-openai-native-metric-retry-01",
+    "description": "Metric retry batch 1 for OpenAI native corrected run.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\openai_native_metric_retries\\openai_native_metric_retry_01.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "openai_file_search"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      }
+    }
+  },
+  "summary": {
+    "overall": {
+      "openai_file_search": {
+        "dataset_size": 11,
+        "answerable_size": 11,
+        "unsupported_size": 0,
+        "supported_rate": 0.9090909090909091,
+        "answerable_supported_rate": 0.9090909090909091,
+        "unsupported_abstention_rate": 0.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.09090909090909091,
+        "avg_context_count": 5.0,
+        "avg_context_chars": 18623.636363636364,
+        "ragas_all": {
+          "faithfulness": 0.9813186813186813,
+          "answer_relevancy": 0.8076008918937115,
+          "context_precision": 0.9481481480915432
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.9827838827838828,
+          "answer_relevancy": 0.7995000141636067,
+          "context_precision": 0.9791666666059028
+        }
+      }
+    },
+    "by_intent": {
+      "openai_file_search": {
+        "broad_summary": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 0.75,
+          "answerable_supported_rate": 0.75,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.25,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 19763.25,
+          "ragas_all": {
+            "faithfulness": 0.9678571428571429,
+            "answer_relevancy": 0.8707473855436505,
+            "context_precision": 0.9249999999379167
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.9682539682539683,
+            "answer_relevancy": 0.8647932909932808,
+            "context_precision": 0.999999999925
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 1,
+          "answerable_size": 1,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 15565.0,
+          "ragas_all": {
+            "faithfulness": 0.9230769230769231,
+            "answer_relevancy": 0.8157061173361656,
+            "context_precision": 0.99999999995
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.9230769230769231,
+            "answer_relevancy": 0.8157061173361656,
+            "context_precision": 0.99999999995
+          }
+        },
+        "local_scope": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 18322.5,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7757035589994118,
+            "context_precision": 0.9583333332930555
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7757035589994118,
+            "context_precision": 0.9583333332930555
+          }
+        },
+        "numeric_procedure": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 18476.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7410499576612062,
+            "context_precision": 0.9583333332680555
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7410499576612062,
+            "context_precision": 0.9583333332680555
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-metric-retry-01",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-007",
+      "question": "Why does the framework treat AI risks as different from risks in traditional software systems?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The framework says AI risks are different because AI systems have several risk sources that traditional software risk frameworks don\u2019t fully cover. In particular, AI can be trained on data that may be unrepresentative, stale, or biased; training changes can fundamentally alter performance; and AI systems can have large scale, complexity, opacity, and emergent failure modes that make them harder to predict, test, and explain than traditional code. The document also notes that existing guidance do",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 19601,
+      "ragas": {
+        "faithfulness": 0.9666666666666667,
+        "answer_relevancy": 0.8886096691947594,
+        "context_precision": 0.6999999999766667
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0499ac4f92681eba0069f3b7a52b9081948ce90e4040c9eb35; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-metric-retry-01",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-broad_summary-007",
+      "question": "Why do the authors argue that transparent, structured documentation of ML workflows matters for climate modeling?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The authors argue that transparent, structured documentation matters because ML workflows in climate modeling involve many human design decisions\u2014problem setup, data preparation, training, validation, and evaluation\u2014that strongly affect the scientific meaning of the results. Without clear documentation, it becomes hard to compare studies, reproduce results, assess which ML components actually helped, or scrutinize assumptions. They say transparent documentation is therefore critical for reproduc",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 19791,
+      "ragas": {
+        "faithfulness": 0.9047619047619048,
+        "answer_relevancy": 0.9657104345484422,
+        "context_precision": 0.999999999975
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0ea61268ffbb1b0a0069f3b838c0d88190b9bf61c194adf82b; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-metric-retry-01",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-numeric_procedure-027",
+      "question": "How does the framework define risk in terms of harm and likelihood when considering negative impacts?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework says risk, when considering negative impacts, is a function of two things: the magnitude of harm that would occur if the event happens, and the likelihood of that event occurring. It also describes risk more generally as the composite measure of an event\u2019s probability and the magnitude of its consequences.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 18813,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7759092371525286,
+        "context_precision": 0.9166666666361111
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_06a9ab2677c7ce080069f3b8ab47908196a4f6874dd1c8c1b2; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-metric-retry-01",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-numeric_procedure-028",
+      "question": "How does the framework describe its versioning scheme for the AI RMF?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The AI RMF says it uses a two-number versioning system to track major and minor changes. The first number indicates the generation of the AI RMF and companion documents and changes only for major revisions, while minor revisions are shown as \u201c.n\u201d after the generation number, such as 1.1. It also says all changes are recorded in a Version Control Table with the version number, date, and description of change.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 18139,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7061906781698837,
+        "context_precision": 0.9999999999
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_014aac16cec337190069f3b8f592788197a7aeeb066bff439c; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-metric-retry-01",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-016",
+      "question": "In the inverse parameter inference case study (Case Study 2b), what model architecture is adopted and why?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "In Case Study 2b, the adopted architecture is conditional normalizing flows. The file says they were chosen because they provide invertible mappings between physical parameters and data distributions, which makes likelihood-free inference possible in this complex dynamical setting.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 17605,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6513723074730499,
+        "context_precision": 0.9166666666361111
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0c531da82eeec85d0069f3b92facf08197afeea411fd17c29b; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-metric-retry-01",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-017",
+      "question": "In the pCO2 upscaling case study (Case Study 3b), how does the transfer learning approach handle the sparsity of in-situ observations?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The transfer learning approach handles the sparsity of in-situ observations by first pretraining the model on dense simulated pCO2 fields from ocean biogeochemical models, then fine-tuning it on the sparse SOCAT observations. During fine-tuning, the loss is computed only at observed locations, and only 2\u20135% of the parameters are unfrozen, with early stopping used to reduce overfitting. This lets the model learn from the limited measurements while retaining the broader spatiotemporal structure le",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 18262,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8059091080184103,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_059b8d8536d881b40069f3b96e6f2c8193a8a60783eea16208; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-metric-retry-01",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-018",
+      "question": "In the development stage of the workflow framework, what does 'iterative refinement' specifically involve according to the paper?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "According to the paper, \u201citerative refinement\u201d in the development stage means using insights from validation to adjust the objective functions, training procedures, or data preprocessing, while incorporating scientific feedback into model revisions",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 19107,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8344627073805772,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_00d822fd85ab9f500069f3b9e0420481958abe286c9b015a30; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-metric-retry-01",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-019",
+      "question": "Beyond the three integration directions in Figure 1, what 'fourth direction' do the authors describe?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The authors describe the \u201cfourth direction\u201d as human-in-the-loop: workflows guided by scientific reasoning, modeling practices, and domain expertise, with an emphasis on interpretability, transparency, and physical understanding",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 18316,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8110701131256097,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_05987a9dad474f040069f3ba458f6c8195a8a0f9635dff88f9; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-metric-retry-01",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-broad_summary-020",
+      "question": "What open challenges in scientific machine learning workflows for climate modeling does the paper highlight in its conclusion?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The paper\u2019s conclusion highlights several open challenges in scientific machine learning workflows for climate modeling: reproducibility, interpretability, uncertainty modeling, scalability, and better integration of ML workflows with scientific reasoning. It says reproducibility is still a concern because of inconsistent terminology, fragmented software tools, and ad hoc documentation, and calls for greater standardization. It also notes that interpretability remains unresolved, since more syst",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 20324,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9794492745879558,
+        "context_precision": 0.9999999999
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0ae6c06ba5c36a080069f3ba87d97c8195a2c2668968e986dc; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-metric-retry-01",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-broad_summary-023",
+      "question": "How does the paper position its case study summaries relative to model cards and model info sheets?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The paper positions its full case study summaries in the Supplement and says they are structured using the same common machine learning workflow framework used to organize the main discussion, \u201csimilar in spirit to model cards\u201d and model info sheets. It also says these summaries demonstrate the value of structured ML workflow descriptions with consistent terminology \n\nMore specifically, the introduction notes that the paper \u201cuses a common machine learning workflow framework to thread our discuss",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 19337,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6492201638434444,
+        "context_precision": 0.9999999999
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0d3c87d5a99212590069f3bae24a7481968a0a2d857667f9bf; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-metric-retry-01",
+      "system": "openai_file_search",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-comparison_synthesis-024",
+      "question": "How does the Fourier Neural Operator differ from the Spherical Fourier Neural Operator in terms of underlying transform and intended use case?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The Fourier Neural Operator (FNO) uses the Fast Fourier Transform as its underlying transform, and the file describes it as especially suited for learning homogeneous, periodic dynamics such as idealized fluid flows .\n\nThe Spherical Fourier Neural Operator (SFNO) instead uses the Spherical Harmonic Transform, and it is designed for global weather and climate fields on the sphere, with built-in rotational equivariance .\n\nIn short:\n- FNO: FFT-based; best for periodic Cartesian domains and idealize",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 15565,
+      "ragas": {
+        "faithfulness": 0.9230769230769231,
+        "answer_relevancy": 0.8157061173361656,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_02670f9fa92122550069f3bb27c3e8819784cff00e713f0edf; attempts=1"
+    }
+  ]
+}

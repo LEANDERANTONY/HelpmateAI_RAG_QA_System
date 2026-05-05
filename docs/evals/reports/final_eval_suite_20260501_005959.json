@@ -1,0 +1,636 @@
+{
+  "suite": {
+    "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-08",
+    "description": "OpenAI native File Search corrected rerun chunk 8/10, questions 106-120.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\openai_native_15_chunks\\openai_native_15_chunk_08.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "openai_file_search"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      }
+    }
+  },
+  "summary": {
+    "overall": {
+      "openai_file_search": {
+        "dataset_size": 15,
+        "answerable_size": 13,
+        "unsupported_size": 2,
+        "supported_rate": 0.8666666666666667,
+        "answerable_supported_rate": 1.0,
+        "unsupported_abstention_rate": 1.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.0,
+        "avg_context_count": 5.0,
+        "avg_context_chars": 15842.2,
+        "ragas_all": {
+          "faithfulness": 0.8278388278388278,
+          "answer_relevancy": 0.844510155436514,
+          "context_precision": 0.9302777777292616
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.834319526627219,
+          "answer_relevancy": 0.8401471814940451,
+          "context_precision": 0.9195512819983788
+        }
+      }
+    },
+    "by_intent": {
+      "openai_file_search": {
+        "broad_summary": {
+          "dataset_size": 1,
+          "answerable_size": 1,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 19984.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8046113062242547,
+            "context_precision": 0.9999999999
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8046113062242547,
+            "context_precision": 0.9999999999
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 1,
+          "answerable_size": 1,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 15618.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9023458368413718,
+            "context_precision": 0.19999999998
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9023458368413718,
+            "context_precision": 0.19999999998
+          }
+        },
+        "local_scope": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 17891.5,
+          "ragas_all": {
+            "faithfulness": 0.75,
+            "answer_relevancy": 0.9036664828033645,
+            "context_precision": 0.9718749999486198
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.75,
+            "answer_relevancy": 0.9036664828033645,
+            "context_precision": 0.9718749999486198
+          }
+        },
+        "lookup": {
+          "dataset_size": 5,
+          "answerable_size": 5,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 16942.2,
+          "ragas_all": {
+            "faithfulness": 0.8,
+            "answer_relevancy": 0.7723374271301593,
+            "context_precision": 0.9999999999433333
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.8,
+            "answer_relevancy": 0.7723374271301593,
+            "context_precision": 0.9999999999433333
+          }
+        },
+        "numeric_procedure": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 10912.0,
+          "ragas_all": {
+            "faithfulness": 0.9230769230769231,
+            "answer_relevancy": 0.8693015747463524,
+            "context_precision": 0.9333333332938889
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.9230769230769231,
+            "answer_relevancy": 0.8693015747463524,
+            "context_precision": 0.9333333332938889
+          }
+        },
+        "unsupported": {
+          "dataset_size": 2,
+          "answerable_size": 0,
+          "unsupported_size": 2,
+          "supported_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 11965.0,
+          "ragas_all": {
+            "faithfulness": 0.7857142857142857,
+            "answer_relevancy": 0.8728694860625621,
+            "context_precision": 0.99999999998
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-08",
+      "system": "openai_file_search",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-comparison_synthesis-026",
+      "question": "How does the thesis distinguish the Perron-Frobenius operator from the Koopman operator, and which one does it focus on?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The thesis says the Perron-Frobenius and Koopman operators are both transfer operators and are adjoint to one another: the Perron-Frobenius operator acts on probability densities, while the Koopman operator acts on observables . It also states that, although both are discussed, the manuscript focuses mainly on the Koopman operator because of its direct connection to sensor measurements from robots  .",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 15618,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9023458368413718,
+        "context_precision": 0.19999999998
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_00e56e4a3293304d0069f3aa29562081968afb30c912428104; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-08",
+      "system": "openai_file_search",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-numeric_procedure-027",
+      "question": "In the long-term online DMD update, how is the matrix S' computed and which matrix identity is invoked?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "In the long-term online DMD update, the matrix S\u2032 is computed from the updated inverse relation\n(S\u2032)\u22121 = \u03b3S\u22121 + Xnew\u22a4Xnew,\nand then rewritten using the Woodbury matrix identity. Specifically, the thesis states that\nS\u2032 = (S\u22121 + XnewXnew\u22a4)\u22121 = S \u2212 SXnew(I + Xnew\u22a4SXnew)\u22121Xnew\u22a4S, and with the forgetting factor \u03b3, this becomes S\u2032 = 1/\u03b3 \u00b7 (S \u2212 SXnew\u0393Xnew\u22a4S), where \u0393 = (I + Xnew\u22a4SXnew)\u22121. The matrix identity invoked is the Woodbury matrix identity.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 10760,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9060099770170646,
+        "context_precision": 0.8666666666377778
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_02865dd7b12064d80069f3aa82883881948c22d9a65b318888; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-08",
+      "system": "openai_file_search",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-numeric_procedure-028",
+      "question": "How is the forgetting factor gamma incorporated into the online DMD update equations for Q' and S'?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The forgetting factor \u03b3 is applied by scaling the previous quantities before adding the new data. In the long-term online DMD update, the thesis states that the new equations are\n\nQ\u2032 = \u03b3Q + YnewXnew\u22a4 and (S\u2032)\u22121 = \u03b3S\u22121 + Xnew\u22a4Xnew \n\nSo, \u03b3 downweights the old Q and S terms, giving more weight to recently collected data. The same source then notes that S\u2032 can be rewritten with the Woodbury-based form as S\u2032 = (1/\u03b3) \u2217 (S \u2212 SXnew\u0393Xnew\u22a4S), with \u0393 = (I + Xnew\u22a4SXnew)\u22121 \n\nIf you want, I can also restate h",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 11064,
+      "ragas": {
+        "faithfulness": 0.8461538461538461,
+        "answer_relevancy": 0.8325931724756402,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0de843f1118dc5be0069f3aadac22c81948f1c85834d82f1e8; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-08",
+      "system": "openai_file_search",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-unsupported-029",
+      "question": "What battery life specification do the micro-autonomous surface vehicles report under continuous operation?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The file does not state a battery life specification for the micro-autonomous surface vehicles under continuous operation. The relevant passages only describe the mASVs\u2019 role in the test bed, their hardware, and operational context, but I did not find any battery-duration figure or continuous-operation runtime in the retrieved text  \n\nINSUFFICIENT_EVIDENCE: the uploaded file excerpts do not include a battery life specification for continuous operation.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 12877,
+      "ragas": {
+        "faithfulness": 0.5714285714285714,
+        "answer_relevancy": 0.9681805910808721,
+        "context_precision": 0.99999999998
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_05306fa41d5256690069f3ab336c588197868a640b32f28162; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-08",
+      "system": "openai_file_search",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-unsupported-030",
+      "question": "What classification accuracy does the thesis report when applying Koopman operators to the ImageNet benchmark?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: The uploaded thesis excerpts I found discuss Koopman operator reconstruction and eigenfunction approximation, but they do not mention any classification accuracy on ImageNet. The available results only show trajectory reconstruction errors for dynamical systems, not ImageNet classification performance",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 11053,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7775583810442521,
+        "context_precision": 0.99999999998
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0d65d9f52177065b0069f3ab72033c81968ad6d573174f4dcd; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-08",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-011",
+      "question": "Where physically was this two-day FOMC meeting held?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "It was held in the offices of the Board of Governors of the Federal Reserve System in Washington, D.C.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 12387,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.44289247874609233,
+        "context_precision": 0.9999999999
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_02425b1a991416e40069f3abb26c98819788023c3de19c3f5a; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-08",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-012",
+      "question": "Who was selected as Vice Chair of the Committee for the term beginning January 27, 2026?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "John C. Williams was selected as Vice Chair of the Committee for the term beginning January 27, 2026.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 15904,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8908246394420883,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_02a2de01d2c9b20a0069f3abdf44348196966481cf6be05223; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-08",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-013",
+      "question": "Who was selected to serve as Manager of the System Open Market Account?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Roberto Perli was selected to serve as Manager of the System Open Market Account, with Julie Ann Remache selected as Deputy Manager.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 17614,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9238953600452082,
+        "context_precision": 0.9999999999666667
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_048c1ee07bc934aa0069f3ac126f48819098df8e8aef765b6f; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-08",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-014",
+      "question": "What was the unemployment rate in December as cited in the staff review?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The unemployment rate in December was 4.4 percent, as cited in the staff review",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 19934,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8166950637914295,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_06becef923e6d2980069f3ac3ec04481949d6e3384be25d357; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-08",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-015",
+      "question": "What rate is paid on reserve balances effective January 29, 2026?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The interest rate paid on reserve balances is 3.65 percent, effective January 29, 2026.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 18872,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7873795936259782,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0745ea2ae162acb90069f3ac67c24c8196afd659a7d278566d; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-08",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-016",
+      "question": "In the Annual Organizational Matters section, who was selected as Secretary of the Committee?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Joshua Gallin was selected as Secretary of the Committee in the Annual Organizational Matters section.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 15796,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.9409171101220327,
+        "context_precision": 0.8874999999778125
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_09df7119a00f9a610069f3ac948d1c8197ba731b17e9276a67; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-08",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-017",
+      "question": "In the discussion of money markets, what factors did contacts attribute to the better-than-expected year-end repo outcome?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Contacts attributed the better-than-expected year-end repo outcome to several factors: increased available liquidity from the start of reserve management purchases (RMPs) and a lower Treasury General Account (TGA), changes to standing repo operations\u2019 design and communications, increased adoption of centrally cleared repo, and overall investor preparedness for year-end tightness. The minutes also note that the December changes to standing repo operations may have made participants more willing t",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 20020,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8680064309993809,
+        "context_precision": 0.9999999999666667
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_090b22015c57fcc00069f3acc0b35c8197b7e64db04cf3ce7f; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-08",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-018",
+      "question": "Among the elected FOMC members, who were the presidents of the Federal Reserve Banks of New York and Philadelphia?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Among the elected FOMC members, John C. Williams was the President of the Federal Reserve Bank of New York, and Anna Paulson was the President of the Federal Reserve Bank of Philadelphia",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 15672,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8328761341575822,
+        "context_precision": 0.9999999999
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0b2e457611d154f20069f3ad15ab84819483e0dc0e80836c5b; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-08",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-019",
+      "question": "By approximately how much did the staff estimate the government shutdown reduced fourth-quarter real GDP growth?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The staff estimated the government shutdown reduced fourth-quarter real GDP growth by about 1 percentage point",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 20078,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.972866255934462,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_09ff8621716046db0069f3ad4361ec8194a0663450252a5a0c; attempts=1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-08",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-broad_summary-020",
+      "question": "How does the staff describe credit performance in domestic markets at the time of the meeting?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The staff describes credit performance in domestic markets as stable but generally weaker than average pre-pandemic performance levels. It notes that default rates on corporate bonds and leveraged loans fell in November and December, while direct private lending default rates stayed low, though payment-in-kind continued to defer interest on many loans. Delinquency rates on small business and CMBS loans were little changed and remained elevated relative to pre-pandemic levels, while household mor",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 19984,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8046113062242547,
+        "context_precision": 0.9999999999
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_042e9c75877b47270069f3ad6a8dec8197abb3177afb2319fa; attempts=1"
+    }
+  ]
+}

@@ -462,6 +462,45 @@ def test_orchestrator_rejects_hard_scope_for_broad_document_question():
     assert plan.constraint_mode != "hard_region"
 
 
+def test_orchestrator_downgrades_vague_hard_scope_to_soft_when_section_label_does_not_match():
+    planner = RetrievalPlanner(
+        Settings(
+            openai_api_key="test-key",
+            planner_llm_enabled=True,
+            router_llm_enabled=False,
+            retrieval_orchestrator_enabled=True,
+        )
+    )
+    planner.client = _FakeClient(
+        (
+            '{"intent_type":"lookup","query_type":"general_lookup","evidence_spread":"sectional",'
+            '"preferred_route":"chunk_first","scope_strictness":"hard",'
+            '"resolved_scope_ids":["nist-root"],"scope_query":"AI safety section",'
+            '"confidence":0.91}'
+        )
+    )
+
+    _, plan = planner.analyze_and_plan(
+        question="In the section on AI safety, what risks does the framework say should be prioritized?",
+        metadata_filters={"page_labels": [], "section_terms": [], "clause_terms": []},
+        synopses=[
+            _synopsis(
+                "nist-root",
+                "NIST AI 100-1",
+                "general",
+                {"section_path": ["NIST AI 100-1"], "document_scope_labels": ["NIST AI 100-1"]},
+            ),
+            _synopsis("safety", "Safe", "rules", {"section_path": ["Trustworthy AI", "Safe"]}),
+        ],
+    )
+
+    assert plan.planner_source == "llm_orchestrator"
+    assert plan.scope_strictness == "soft"
+    assert plan.constraint_mode == "soft_local"
+    assert plan.allowed_section_ids == ["nist-root"]
+    assert plan.use_global_fallback is False
+
+
 def test_likely_scope_items_prioritizes_profile_labels():
     planner = RetrievalPlanner(Settings(router_llm_enabled=False))
     items = planner._likely_scope_items(

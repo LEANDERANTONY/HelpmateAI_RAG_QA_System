@@ -1,0 +1,494 @@
+{
+  "suite": {
+    "suite_id": "heldout-product-fit-2026-04-draft",
+    "description": "Draft held-out product-fit final evaluation manifest. Documents are fixed; questions must be generated and frozen before any system run.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\final_eval_manifest.draft.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native",
+    "question_offset": 0,
+    "question_ids": [
+      "fomc-minutes-2026-01-28-lookup-012",
+      "fomc-minutes-2026-01-28-lookup-015",
+      "fomc-minutes-2026-01-28-local_scope-016",
+      "fomc-minutes-2026-01-28-local_scope-017",
+      "fomc-minutes-2026-01-28-local_scope-018",
+      "fomc-minutes-2026-01-28-local_scope-019",
+      "fomc-minutes-2026-01-28-broad_summary-020",
+      "fomc-minutes-2026-01-28-comparison_synthesis-026",
+      "fomc-minutes-2026-01-28-unsupported-029"
+    ],
+    "question_count": 9
+  },
+  "systems": [
+    "helpmate"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      },
+      "mode": "native_mockingbird_answer",
+      "generation_preset_name": "mockingbird-2.0"
+    }
+  },
+  "summary": {
+    "overall": {
+      "helpmate": {
+        "dataset_size": 9,
+        "answerable_size": 8,
+        "unsupported_size": 1,
+        "supported_rate": 0.8888888888888888,
+        "partial_rate": 0.0,
+        "answered_rate": 0.8888888888888888,
+        "answerable_supported_rate": 1.0,
+        "answerable_coverage_rate": 1.0,
+        "unsupported_abstention_rate": 1.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.0,
+        "strict_false_abstention_rate": 0.0,
+        "avg_context_count": 4.0,
+        "avg_context_chars": 4116.0,
+        "ragas_all": {
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.875148580683869,
+          "context_precision": 0.620370370324537
+        },
+        "ragas_attempted": {
+          "faithfulness": 1.0,
+          "answer_relevancy": 0.8672570566437048,
+          "context_precision": 0.5729166666182292
+        }
+      }
+    },
+    "by_intent": {
+      "helpmate": {
+        "broad_summary": {
+          "dataset_size": 1,
+          "answerable_size": 1,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "partial_rate": 0.0,
+          "answered_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "answerable_coverage_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 4574.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.6089215697589377,
+            "context_precision": 0.249999999975
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.6089215697589377,
+            "context_precision": 0.249999999975
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 1,
+          "answerable_size": 1,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "partial_rate": 0.0,
+          "answered_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "answerable_coverage_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 3919.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9210266126935945,
+            "context_precision": 0.9999999999
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9210266126935945,
+            "context_precision": 0.9999999999
+          }
+        },
+        "local_scope": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "partial_rate": 0.0,
+          "answered_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "answerable_coverage_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 3842.5,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8963672282229221,
+            "context_precision": 0.5416666666197917
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8963672282229221,
+            "context_precision": 0.5416666666197917
+          }
+        },
+        "lookup": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "partial_rate": 0.0,
+          "answered_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "answerable_coverage_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 4275.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9113196789027087,
+            "context_precision": 0.5833333332958333
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9113196789027087,
+            "context_precision": 0.5833333332958333
+          }
+        },
+        "unsupported": {
+          "dataset_size": 1,
+          "answerable_size": 0,
+          "unsupported_size": 1,
+          "supported_rate": 0.0,
+          "partial_rate": 0.0,
+          "answered_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "answerable_coverage_rate": 0.0,
+          "unsupported_abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 4631.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9382807730051831,
+            "context_precision": 0.999999999975
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-012",
+      "question": "Who was selected as Vice Chair of the Committee for the term beginning January 27, 2026?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "John C. Williams was selected as Vice Chair of the Committee for the term beginning January 27, 2026 [Source 1].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 3",
+        "fomc-minutes-2026-01-28.pdf - Page 2",
+        "fomc-minutes-2026-01-28.pdf - Page 3",
+        "fomc-minutes-2026-01-28.pdf - Page 2"
+      ],
+      "context_count": 4,
+      "context_chars": 4153,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9999999999999999,
+        "context_precision": 0.8333333332916666
+      },
+      "note": "The evidence explicitly states that by unanimous vote, John C. Williams was selected as Vice Chair, and the term began January 27, 2026 [Source 1][Source 2]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-015",
+      "question": "What rate is paid on reserve balances effective January 29, 2026?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The interest rate paid on reserve balances was maintained at 3.65 percent, effective January 29, 2026 [Source 3].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 14",
+        "fomc-minutes-2026-01-28.pdf - Page 14",
+        "fomc-minutes-2026-01-28.pdf - Page 15",
+        "fomc-minutes-2026-01-28.pdf - Page 14"
+      ],
+      "context_count": 4,
+      "context_chars": 4397,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8226393578054175,
+        "context_precision": 0.3333333333
+      },
+      "note": "The evidence explicitly states the rate paid on reserve balances and its effective date."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-016",
+      "question": "In the Annual Organizational Matters section, who was selected as Secretary of the Committee?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "Joshua Gallin was selected as Secretary of the Committee [Source 4].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 4",
+        "fomc-minutes-2026-01-28.pdf - Page 4",
+        "fomc-minutes-2026-01-28.pdf - Page 2",
+        "fomc-minutes-2026-01-28.pdf - Page 3"
+      ],
+      "context_count": 4,
+      "context_chars": 4800,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8012632968493971,
+        "context_precision": 0.249999999975
+      },
+      "note": "The Annual Organizational Matters section lists the officers selected by unanimous vote, including Joshua Gallin as Secretary [Source 4]. Recovery support verifier: The question asks who was selected as Secretary of the Committee in the Annual Organizational Matters section. The evidence explicitly states that Joshua Gallin was selected as Secretary."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-017",
+      "question": "In the discussion of money markets, what factors did contacts attribute to the better-than-expected year-end repo outcome?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "Money market contacts attributed the better-than-expected year-end repo outcome to several factors: increased available liquidity from the start of reserve management purchases (RMPs) and a lower Treasury General Account (TGA), recent changes to standing repo operations\u2019 design and communications, increased adoption of centrally cleared repo, and overall preparedness for year-end tightness [Source 3].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 4",
+        "fomc-minutes-2026-01-28.pdf - Page 5",
+        "fomc-minutes-2026-01-28.pdf - Page 5",
+        "fomc-minutes-2026-01-28.pdf - Page 10"
+      ],
+      "context_count": 4,
+      "context_chars": 3524,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9584082065266678,
+        "context_precision": 0.5833333333041666
+      },
+      "note": "The evidence directly lists the factors contacts cited for the better-than-expected year-end repo outcome in the money markets discussion [Source 3]. Recovery support verifier: The question asks what factors contacts attributed to the better-than-expected year-end repo outcome. The evidence directly lists those factors: increased available liquidity due to the start of reserve management purchases (RMPs) and a lower Treasury General Account (TGA), recent changes to standing repo operations\u2019 design and communications, increased adoption of centrally cleared repo, and overall preparedness of investors for year-end tightness. The proposed answer matches this list without contradiction or omission."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-018",
+      "question": "Among the elected FOMC members, who were the presidents of the Federal Reserve Banks of New York and Philadelphia?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The presidents were John C. Williams of the Federal Reserve Bank of New York and Anna Paulson of the Federal Reserve Bank of Philadelphia [Source 3].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 16",
+        "fomc-minutes-2026-01-28.pdf - Page 2",
+        "fomc-minutes-2026-01-28.pdf - Page 2",
+        "fomc-minutes-2026-01-28.pdf - Page 15"
+      ],
+      "context_count": 4,
+      "context_chars": 3548,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8982218355893345,
+        "context_precision": 0.3333333333
+      },
+      "note": "Source 3 explicitly lists the elected members and alternate members of the FOMC and names John C. Williams as President of the Federal Reserve Bank of New York and Anna Paulson as President of the Federal Reserve Bank of Philadelphia. Recovery support verifier: The question asks which elected FOMC members were the presidents of the Federal Reserve Banks of New York and Philadelphia. The evidence explicitly lists John C. Williams as President of the Federal Reserve Bank of New York and Anna Paulson as President of the Federal Reserve Bank of Philadelphia among the elected members. The proposed answer matches this exactly and adds no unsupported or contradictory information."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-019",
+      "question": "By approximately how much did the staff estimate the government shutdown reduced fourth-quarter real GDP growth?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The staff estimated the government shutdown reduced fourth-quarter real GDP growth by about 1 percentage point [Source 1].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 7",
+        "fomc-minutes-2026-01-28.pdf - Page 9",
+        "fomc-minutes-2026-01-28.pdf - Page 6",
+        "fomc-minutes-2026-01-28.pdf - Page 6"
+      ],
+      "context_count": 4,
+      "context_chars": 3498,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9275755739262891,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence directly states that the government shutdown was estimated to have reduced fourth-quarter real GDP growth about 1 percentage point [Source 1]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-broad_summary-020",
+      "question": "How does the staff describe credit performance in domestic markets at the time of the meeting?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The staff said that in domestic credit markets, borrowing costs for businesses, households, and municipalities remained significantly lower than the highs seen in 2023 but still elevated relative to their average post\u2013Global Financial Crisis levels. They also noted that yields on corporate bonds, leveraged loans, and commercial mortgage-backed securities declined somewhat over the intermeeting period [Source 4].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 7",
+        "fomc-minutes-2026-01-28.pdf - Page 6",
+        "fomc-minutes-2026-01-28.pdf - Page 9",
+        "fomc-minutes-2026-01-28.pdf - Page 8"
+      ],
+      "context_count": 4,
+      "context_chars": 4574,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6089215697589377,
+        "context_precision": 0.249999999975
+      },
+      "note": "The evidence directly describes domestic credit market conditions and performance at the time of the meeting, including borrowing costs and the direction of several yields [Source 4]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-comparison_synthesis-026",
+      "question": "How did the staff's January inflation projection compare with the projection prepared for the December meeting, and why?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The staff\u2019s January inflation projection was slightly higher than the projection prepared for the December meeting. The reason given was that resource utilization was expected to be tighter and the path of core import prices was expected to be higher than previously projected [Source 1].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 9",
+        "fomc-minutes-2026-01-28.pdf - Page 6",
+        "fomc-minutes-2026-01-28.pdf - Page 6",
+        "fomc-minutes-2026-01-28.pdf - Page 10"
+      ],
+      "context_count": 4,
+      "context_chars": 3919,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9210266126935945,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence directly states both the comparison and the explanation for the change in the inflation forecast."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-unsupported-029",
+      "question": "What numeric estimate of the natural rate of unemployment did the staff present in this meeting's projections?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not state a numeric estimate of the staff\u2019s natural rate of unemployment in this meeting\u2019s projections.",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 10",
+        "fomc-minutes-2026-01-28.pdf - Page 10",
+        "fomc-minutes-2026-01-28.pdf - Page 8",
+        "fomc-minutes-2026-01-28.pdf - Page 8"
+      ],
+      "context_count": 4,
+      "context_chars": 4631,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9382807730051831,
+        "context_precision": 0.999999999975
+      },
+      "note": "The excerpts discuss inflation, uncertainty, credit conditions, and participants\u2019 views, but they do not include the staff\u2019s projected natural rate of unemployment or any numeric estimate for it. Support-status verifier classified the answer as unsupported. Missing or ambiguous facts: The question asks for the numeric estimate of the staff\u2019s natural rate of unemployment in the meeting\u2019s projections, but the evidence does not provide any numeric estimate.; The proposed answer does not supply the requested number. The proposed answer explicitly says the evidence does not state a numeric estimate, which acknowledges the gap. However, it does not answer the question with the requested numeric estimate, and the supplied evidence contains no such number."
+    }
+  ]
+}

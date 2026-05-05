@@ -71,7 +71,7 @@ jobs:
           username: ${{ secrets.VPS_USER }}
           key: ${{ secrets.VPS_SSH_KEY }}
           port: ${{ secrets.VPS_PORT }}
-          source: deploy/vps/docker-compose.yml,deploy/vps/Caddyfile
+          source: deploy/vps/docker-compose.yml,deploy/vps/Caddyfile,deploy/vps/cleanup-docker.sh,deploy/vps/deploy-api.sh,deploy/vps/deploy-api-build.sh
           target: ${{ env.VPS_APP_DIR }}/deploy/vps
           strip_components: 2
 
@@ -115,3 +115,15 @@ jobs:
             echo "Container did not become healthy in time"
             docker logs helpmate-api --tail 30
             exit 1
+
+      - name: Cleanup old Docker images and build cache
+        uses: appleboy/ssh-action@v1
+        with:
+          host: ${{ secrets.VPS_HOST }}
+          username: ${{ secrets.VPS_USER }}
+          key: ${{ secrets.VPS_SSH_KEY }}
+          port: ${{ secrets.VPS_PORT }}
+          script: |
+            cd "${{ env.VPS_APP_DIR }}/deploy/vps"
+            chmod +x ./cleanup-docker.sh
+            sh ./cleanup-docker.sh

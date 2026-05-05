@@ -1,0 +1,587 @@
+{
+  "created_at": "2026-05-05T19:29:26.362941",
+  "dataset_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\reports\\abstention_22_current_check_20260501.json",
+  "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\final_eval_manifest.draft.json",
+  "settings": {
+    "retrieval_version": "v18-abstention-22-rerun",
+    "generation_version": "v7-abstention-22-rerun",
+    "answer_model": "gpt-5.4-mini",
+    "weak_evidence_score_threshold": 0.03,
+    "unsupported_evidence_score_threshold": 0.012,
+    "evidence_selector_enabled": true,
+    "evidence_selector_gap_threshold": 0.08
+  },
+  "summary": {
+    "total": 22,
+    "now_supported": 10,
+    "now_abstained": 12,
+    "previously_supported": 8,
+    "previously_abstained": 14,
+    "transitions": {
+      "stayed_supported": 5,
+      "newly_supported": 5,
+      "regressed": 3,
+      "still_abstaining": 9
+    },
+    "by_intent": {
+      "lookup": {
+        "total": 6,
+        "now_supported": 2,
+        "prev_supported": 0
+      },
+      "numeric_procedure": {
+        "total": 2,
+        "now_supported": 2,
+        "prev_supported": 1
+      },
+      "local_scope": {
+        "total": 6,
+        "now_supported": 3,
+        "prev_supported": 5
+      },
+      "broad_summary": {
+        "total": 4,
+        "now_supported": 1,
+        "prev_supported": 2
+      },
+      "comparison_synthesis": {
+        "total": 4,
+        "now_supported": 2,
+        "prev_supported": 0
+      }
+    },
+    "by_doc": {
+      "nist-ai-rmf-1-0": {
+        "total": 3,
+        "now_supported": 0,
+        "prev_supported": 2
+      },
+      "irena-world-energy-transitions-outlook-2023": {
+        "total": 9,
+        "now_supported": 4,
+        "prev_supported": 2
+      },
+      "arxiv-2510-03305": {
+        "total": 4,
+        "now_supported": 2,
+        "prev_supported": 1
+      },
+      "upenn-learning-environmental-models-thesis-2022": {
+        "total": 5,
+        "now_supported": 3,
+        "prev_supported": 2
+      },
+      "fomc-minutes-2026-01-28": {
+        "total": 1,
+        "now_supported": 1,
+        "prev_supported": 1
+      }
+    }
+  },
+  "results": [
+    {
+      "question_id": "nist-ai-rmf-1-0-lookup-003",
+      "document_id": "nist-ai-rmf-1-0",
+      "intent_type": "lookup",
+      "question": "How does this framework define an AI system?",
+      "previously_supported": false,
+      "previously_abstained": true,
+      "now_supported": false,
+      "now_abstained": true,
+      "support_status": "unsupported",
+      "evidence_status": "strong",
+      "route_used": "synopsis_first",
+      "best_score": 0.26919344262295086,
+      "selector_triggered": true,
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 5",
+        "nist-ai-rmf-1-0.pdf - Page 7",
+        "nist-ai-rmf-1-0.pdf - Page 46",
+        "nist-ai-rmf-1-0.pdf - Page 2"
+      ],
+      "note": "The question asks for the definition of an AI system, but the evidence only states the framework\u2019s purpose and scope. No source provides a substantive definition of AI system. Support-status verifier classified the answer as unsupported. Supported facts: The evidence describes the AI RMF as a framework/resource for organizations designing, developing, deploying, or using AI systems. Missing or ambiguous facts: A direct definition of what an AI system is is not provided in the evidence.; The proposed answer does not answer the question of how the framework defines an AI system; it only says the evidence does not define it. The answer is grounded in Source 2 about the framework\u2019s purpose and scope, and it explicitly acknowledges that the evidence does not define an AI system. However, the question asks for the framework\u2019s definition of an AI system, and no supplied source provides that definition. Because the answer does not supply the required definition, it is not fully supported.",
+      "answer": "The provided evidence does not define an AI system. It describes the AI RMF as a framework for organizations designing, developing, deploying, or using AI systems, but it does not give a definition of what an AI system is [Source 2]."
+    },
+    {
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-001",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "intent_type": "lookup",
+      "question": "What two scenarios does this report use as its primary comparison?",
+      "previously_supported": false,
+      "previously_abstained": true,
+      "now_supported": true,
+      "now_abstained": false,
+      "support_status": "supported",
+      "evidence_status": "strong",
+      "route_used": "chunk_first",
+      "best_score": 0.42886377229328054,
+      "selector_triggered": true,
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 17",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 58",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 58",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 223"
+      ],
+      "note": "Source 1 says the report builds on two key scenarios and names the 1.5\u00b0C Scenario; Source 4 references the PES alongside the 1.5\u00b0C Scenario, confirming the pair used for comparison.",
+      "answer": "The report uses the 1.5\u00b0C Scenario and the Planned Energy Scenario (PES) as its primary comparison [Source 1].\n\nReferences:\n- [1] irena-world-energy-transitions-outlook-2023.pdf - Page 17\n- [2] irena-world-energy-transitions-outlook-2023.pdf - Page 58\n- [3] irena-world-energy-transitions-outlook-2023.pdf - Page 58\n- [4] irena-world-energy-transitions-outlook-2023.pdf - Page 223"
+    },
+    {
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-002",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "intent_type": "lookup",
+      "question": "Who is identified as the Director-General of IRENA in the foreword?",
+      "previously_supported": false,
+      "previously_abstained": true,
+      "now_supported": false,
+      "now_abstained": true,
+      "support_status": "unsupported",
+      "evidence_status": "strong",
+      "route_used": "chunk_first",
+      "best_score": 0.3786730158730159,
+      "selector_triggered": false,
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 135",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 17",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 131",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 131"
+      ],
+      "note": "The supplied excerpts do not include the foreword or any statement naming IRENA\u2019s Director-General. Therefore, the question cannot be answered from the evidence provided. Support-status verifier classified the answer as unsupported. Missing or ambiguous facts: The identity of the Director-General of IRENA in the foreword is not provided in the supplied evidence. The proposed answer explicitly says the evidence does not identify the Director-General, which acknowledges the gap. However, the supplied evidence does not contain the foreword or any name for IRENA\u2019s Director-General, so there is no grounded factual answer to support the question.",
+      "answer": "The provided evidence does not identify the Director-General of IRENA in the foreword."
+    },
+    {
+      "question_id": "irena-world-energy-transitions-outlook-2023-numeric_procedure-009",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "intent_type": "numeric_procedure",
+      "question": "How much cumulative investment does the 1.5\u00b0C Scenario require by 2050, how does that compare with the Planned Energy Scenario, and how much annual investment must be redirected away from fossil-fuel technologies?",
+      "previously_supported": false,
+      "previously_abstained": true,
+      "now_supported": true,
+      "now_abstained": false,
+      "support_status": "supported",
+      "evidence_status": "strong",
+      "route_used": "hybrid_both",
+      "best_score": 0.32581364764267995,
+      "selector_triggered": false,
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 150",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 25",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 143",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 147"
+      ],
+      "note": "The evidence fully supports the cumulative investment comparison and the redirection amount. Source 3 and Source 4 state the 1.5\u00b0C Scenario total as USD 150 trillion and the Planned Energy Scenario total as USD 103 trillion, with an additional USD 47 trillion required. Source 2 states that around USD 1 trillion of annual investments in fossil fuel-based technologies must be redirected. Source 4 also provides a narrower power-sector cumulative figure of USD 61 trillion, but the broader scenario total is USD 150 trillion.",
+      "answer": "The evidence gives two related figures for the 1.5\u00b0C Scenario by 2050: total cumulative investment of USD 150 trillion in transition technologies and infrastructure [Source 3][Source 4], and USD 61 trillion specifically for power-sector renewable generation capacity plus enabling infrastructure [Source 4]. Compared with the Planned Energy Scenario, this is USD 47 trillion more in cumulative investment, since the Planned Energy Scenario requires USD 103 trillion [Source 2][Source 3]. The annual investment that must be redirected away from fossil-fuel technologies is about USD 1 trillion per year [Source 2].\n\nReferences:\n- [1] irena-world-energy-transitions-outlook-2023.pdf - Page 150\n- [2] irena-world-energy-transitions-outlook-2023.pdf - Page 25\n- [3] irena-world-energy-transitions-outlook-2023.pdf - Page 143\n- [4] irena-world-energy-transitions-outlook-2023.pdf - Page 147"
+    },
+    {
+      "question_id": "nist-ai-rmf-1-0-local_scope-016",
+      "document_id": "nist-ai-rmf-1-0",
+      "intent_type": "local_scope",
+      "question": "In the section on AI safety, which kinds of safety risks does the framework say require the most urgent prioritization?",
+      "previously_supported": true,
+      "previously_abstained": false,
+      "now_supported": false,
+      "now_abstained": true,
+      "support_status": "unsupported",
+      "evidence_status": "strong",
+      "route_used": "chunk_first",
+      "best_score": 0.3025653958944282,
+      "selector_triggered": false,
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 1",
+        "nist-ai-rmf-1-0.pdf - Page 1"
+      ],
+      "note": "The evidence only identifies the document as the NIST AI Risk Management Framework (AI RMF 1.0) and does not contain the requested AI safety section or any risk-prioritization details. Support-status verifier classified the answer as unsupported. Missing or ambiguous facts: The evidence does not include the AI safety section.; The evidence does not state which kinds of safety risks require the most urgent prioritization. The proposed answer explicitly says the evidence does not include the requested AI safety section or any prioritization details, which is an acknowledged gap rather than a grounded answer. The supplied evidence only identifies the document title and framework name, so it does not support the requested content.",
+      "answer": "The provided evidence does not include any section on AI safety or any statement about which safety risks require the most urgent prioritization."
+    },
+    {
+      "question_id": "nist-ai-rmf-1-0-broad_summary-020",
+      "document_id": "nist-ai-rmf-1-0",
+      "intent_type": "broad_summary",
+      "question": "Who does the framework say it is intended for, and why does it use the term 'AI actors'?",
+      "previously_supported": true,
+      "previously_abstained": false,
+      "now_supported": false,
+      "now_abstained": true,
+      "support_status": "unsupported",
+      "evidence_status": "strong",
+      "route_used": "chunk_first",
+      "best_score": 0.13067301587301586,
+      "selector_triggered": false,
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 2",
+        "nist-ai-rmf-1-0.pdf - Page 1",
+        "nist-ai-rmf-1-0.pdf - Page 2",
+        "nist-ai-rmf-1-0.pdf - Page 1"
+      ],
+      "note": "The evidence only identifies the document as the Artificial Intelligence Risk Management Framework (AI RMF 1.0) and provides publication/leadership details [Source 1][Source 2][Source 3][Source 4]. It does not include the framework's intended audience or any explanation of the term \"AI actors.\" Support-status verifier classified the answer as unsupported. Supported facts: The answer states that the provided evidence does not state who the framework is intended for.; The answer states that the provided evidence does not explain why the term \"AI actors\" is used. Missing or ambiguous facts: Who the framework is intended for.; Why the term \"AI actors\" is used. The proposed answer is only a gap statement and does not provide any substantive grounded answer to the question. The supplied evidence identifies the document as the AI RMF 1.0 but does not cover the intended audience or explain the term \"AI actors.\"",
+      "answer": "The provided evidence does not state who the framework is intended for, and it does not explain why the term \"AI actors\" is used."
+    },
+    {
+      "question_id": "arxiv-2510-03305-lookup-012",
+      "document_id": "arxiv-2510-03305",
+      "intent_type": "lookup",
+      "question": "Who is the corresponding author for this paper?",
+      "previously_supported": false,
+      "previously_abstained": true,
+      "now_supported": true,
+      "now_abstained": false,
+      "support_status": "supported",
+      "evidence_status": "strong",
+      "route_used": "chunk_first",
+      "best_score": 0.3805868852459017,
+      "selector_triggered": true,
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 1",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 1",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 2",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 2"
+      ],
+      "note": "Source 1 explicitly gives the correspondence email tian.zheng@columbia.edu, which identifies Tian Zheng as the corresponding author. Source 2 confirms Tian Zheng is among the listed authors.",
+      "answer": "The corresponding author is Tian Zheng [Source 1]. The author list on the title page also includes Tian Zheng as the first author [Source 2].\n\nReferences:\n- [1] arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 1\n- [2] arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 1\n- [3] arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 2\n- [4] arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 2"
+    },
+    {
+      "question_id": "arxiv-2510-03305-lookup-013",
+      "document_id": "arxiv-2510-03305",
+      "intent_type": "lookup",
+      "question": "What does the abbreviation PINO stand for in the paper?",
+      "previously_supported": false,
+      "previously_abstained": true,
+      "now_supported": false,
+      "now_abstained": true,
+      "support_status": "unsupported",
+      "evidence_status": "strong",
+      "route_used": "chunk_first",
+      "best_score": 0.5047054426229509,
+      "selector_triggered": true,
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 15",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 15",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 2",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 2"
+      ],
+      "note": "The question asks for the expansion of the abbreviation PINO. The evidence only explicitly defines GINO and contains no substantive reference to PINO, so the requested fact is not supported. Support-status verifier classified the answer as unsupported. Supported facts: The evidence defines GINO as \"Geometry-Informed Neural Operators\". Missing or ambiguous facts: What PINO stands for in the paper. The proposed answer does not provide the requested expansion of PINO. It only states that GINO is defined in the evidence and explicitly notes that PINO is not mentioned, so the question remains unanswered.",
+      "answer": "The provided evidence defines GINO as \"Geometry-Informed Neural Operators\" [Source 1], but it does not mention PINO or define what PINO stands for."
+    },
+    {
+      "question_id": "arxiv-2510-03305-lookup-014",
+      "document_id": "arxiv-2510-03305",
+      "intent_type": "lookup",
+      "question": "What does GNO refer to in the discussion of neural operator variants?",
+      "previously_supported": false,
+      "previously_abstained": true,
+      "now_supported": false,
+      "now_abstained": true,
+      "support_status": "unsupported",
+      "evidence_status": "strong",
+      "route_used": "chunk_first",
+      "best_score": 0.3920505854800937,
+      "selector_triggered": false,
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 39",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 42",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 14",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 14"
+      ],
+      "note": "The evidence lists several neural operator variants, including Graph kernel network, Fourier neural operator, Geometry-informed neural operator, and Physics-informed neural operator [Source 1], but it does not explicitly expand or define the abbreviation \"GNO\". Support-status verifier classified the answer as unsupported. Missing or ambiguous facts: What 'GNO' stands for in the discussion of neural operator variants is not directly stated in the evidence. The proposed answer only says the evidence does not define 'GNO,' which is an acknowledged gap, but it does not provide the requested referent. The evidence lists several neural operator variants, including Graph kernel network, Fourier neural operator, Geometry-informed neural operator, and Physics-informed neural operator, yet none explicitly identifies 'GNO' as an abbreviation or expansion.",
+      "answer": "The provided evidence does not define what \"GNO\" refers to in the discussion of neural operator variants."
+    },
+    {
+      "question_id": "arxiv-2510-03305-local_scope-019",
+      "document_id": "arxiv-2510-03305",
+      "intent_type": "local_scope",
+      "question": "Beyond the three integration directions in Figure 1, what 'fourth direction' do the authors describe?",
+      "previously_supported": true,
+      "previously_abstained": false,
+      "now_supported": true,
+      "now_abstained": false,
+      "support_status": "supported",
+      "evidence_status": "strong",
+      "route_used": "section_first",
+      "best_score": 0.0665780580075662,
+      "selector_triggered": true,
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 6",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 5",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 5",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 6"
+      ],
+      "note": "The evidence explicitly states that, in addition to the three directions in Figure 1, the fourth direction is human-in-the-loop and defines it as workflow design guided by scientific reasoning, modeling practices, and domain expertise [Source 1].",
+      "answer": "The authors describe a fourth direction as a human-in-the-loop approach: workflows guided by scientific reasoning, modeling practices, and domain expertise [Source 1].\n\nReferences:\n- [1] arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 6\n- [2] arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 5\n- [3] arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 5\n- [4] arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 6"
+    },
+    {
+      "question_id": "upenn-learning-environmental-models-thesis-2022-local_scope-018",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "intent_type": "local_scope",
+      "question": "In the water tank experiment, what onboard hardware components are listed for each micro-autonomous surface vehicle?",
+      "previously_supported": true,
+      "previously_abstained": false,
+      "now_supported": false,
+      "now_abstained": true,
+      "support_status": "partial",
+      "evidence_status": "strong",
+      "route_used": "hybrid_both",
+      "best_score": 0.5032791929382093,
+      "selector_triggered": true,
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 112",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 111",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 142",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 143"
+      ],
+      "note": "Source 2 explicitly states that the mASVs \"include a micro-controller board, an\" but the sentence is truncated. Source 1 adds that there is an XBee radio module and an inertial measurement unit, and that the XBee radio modules are used to communicate onboard information. Because the full onboard hardware list is not completely visible in the provided evidence, the question is only partially supported. Support-status verifier classified the answer as partial. Supported facts: Each micro-autonomous surface vehicle (mASV) includes a micro-controller board.; Each mASV includes an inertial measurement unit.; XBee radio modules are used to communicate the information collected onboard. Missing or ambiguous facts: The complete onboard hardware component list for each mASV is not fully visible in the evidence.; The Source 2 sentence is truncated after 'an', so the full set of components is ambiguous. The answer states several facts directly grounded in the evidence and explicitly acknowledges that the full onboard hardware list is incomplete because the Source 2 excerpt is truncated. Since the question asks for the onboard hardware components listed for each mASV, and the evidence does not fully show the complete list, the response is only partially supported.",
+      "answer": "The evidence supports that each micro-autonomous surface vehicle (mASV) includes a micro-controller board and an inertial measurement unit, and that XBee radio modules are used to communicate information collected onboard [Source 2][Source 1]. However, the evidence does not fully list every onboard hardware component for each mASV, because the Source 2 excerpt is cut off after \"an\" and does not show the complete component list.\n\nReferences:\n- [1] upenn-learning-environmental-models-thesis-2022.pdf - Page 112\n- [2] upenn-learning-environmental-models-thesis-2022.pdf - Page 111\n- [3] upenn-learning-environmental-models-thesis-2022.pdf - Page 142\n- [4] upenn-learning-environmental-models-thesis-2022.pdf - Page 143"
+    },
+    {
+      "question_id": "upenn-learning-environmental-models-thesis-2022-local_scope-019",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "intent_type": "local_scope",
+      "question": "In Chapter 2, how does the thesis distinguish a differential equation from an iterated map (difference equation)?",
+      "previously_supported": true,
+      "previously_abstained": false,
+      "now_supported": true,
+      "now_abstained": false,
+      "support_status": "supported",
+      "evidence_status": "strong",
+      "route_used": "section_first",
+      "best_score": 0.2844757741347905,
+      "selector_triggered": true,
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 23",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 22",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 10",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 24"
+      ],
+      "note": "The evidence fully supports the distinction asked for: continuous-time derivative form versus discrete-time step-update form, with iterated maps explicitly identified as difference equations.",
+      "answer": "Chapter 2 distinguishes them by time domain and notation: differential equations are used for continuous-time systems and are written with time derivatives, e.g. \\u02d9x = f(x) [Source 1], while iterated maps (difference equations) are used for discrete-time systems and are written as updates from one time step to the next, e.g. x(t+1) = f(x(t)) [Source 1]. The thesis also states directly that differential equations study continuous time, whereas iterated maps/difference equations study discrete time [Source 2].\n\nReferences:\n- [1] upenn-learning-environmental-models-thesis-2022.pdf - Page 23\n- [2] upenn-learning-environmental-models-thesis-2022.pdf - Page 22\n- [3] upenn-learning-environmental-models-thesis-2022.pdf - Page 10\n- [4] upenn-learning-environmental-models-thesis-2022.pdf - Page 24"
+    },
+    {
+      "question_id": "upenn-learning-environmental-models-thesis-2022-broad_summary-020",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "intent_type": "broad_summary",
+      "question": "How does the thesis describe the limitations of Gaussian Process modeling for spatiotemporal environmental processes?",
+      "previously_supported": false,
+      "previously_abstained": true,
+      "now_supported": false,
+      "now_abstained": true,
+      "support_status": "partial",
+      "evidence_status": "strong",
+      "route_used": "synopsis_first",
+      "best_score": 0.08219344262295084,
+      "selector_triggered": true,
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 52",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 146",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 2",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 8"
+      ],
+      "note": "Source 1 directly states the limitations of Gaussian processes. However, the question asks specifically about spatiotemporal environmental processes, and the evidence does not explicitly connect those limitations to spatiotemporal processes as such. It supports general GP limitations but not a fuller spatiotemporal-specific description. Support-status verifier classified the answer as partial. Supported facts: Gaussian Process modeling can provide continuous environmental representations, be sampled at arbitrary resolutions, incorporate uncertainty, and capture spatial dependencies.; Gaussian process regression scales cubically with the number of data points, making it computationally expensive for high-dimensional systems.; The choice of kernel covariance functions and hyperparameters remains largely unaddressed. Missing or ambiguous facts: The question asks specifically about limitations of Gaussian Process modeling for spatiotemporal environmental processes, but the evidence does not explicitly state any spatiotemporal-specific limitation beyond the general GP limitations.; Whether the thesis describes additional limitations unique to spatiotemporal environmental processes is not directly covered. The proposed answer is grounded in Source 1 for the general GP limitations and explicitly acknowledges that the evidence does not specifically describe spatiotemporal-specific limitations. However, the evidence only supports general Gaussian process limitations, not a fuller description tied specifically to spatiotemporal environmental processes.",
+      "answer": "The thesis says Gaussian Process modeling can provide continuous environmental representations, be sampled at arbitrary resolutions, incorporate uncertainty, and capture spatial dependencies, but it has two stated limitations: GP regression scales cubically with the number of data points, making it computationally expensive for high-dimensional systems, and the choice of kernel covariance functions and hyperparameters remains largely unaddressed [Source 1]. The evidence does not specifically describe limitations unique to spatiotemporal environmental processes beyond these general GP modeling limits.\n\nReferences:\n- [1] upenn-learning-environmental-models-thesis-2022.pdf - Page 52\n- [2] upenn-learning-environmental-models-thesis-2022.pdf - Page 146\n- [3] upenn-learning-environmental-models-thesis-2022.pdf - Page 2\n- [4] upenn-learning-environmental-models-thesis-2022.pdf - Page 8"
+    },
+    {
+      "question_id": "upenn-learning-environmental-models-thesis-2022-comparison_synthesis-024",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "intent_type": "comparison_synthesis",
+      "question": "How does the long-term online DMD method compare with the general adaptation method in terms of accuracy, storage, and computational performance?",
+      "previously_supported": false,
+      "previously_abstained": true,
+      "now_supported": true,
+      "now_abstained": false,
+      "support_status": "supported",
+      "evidence_status": "strong",
+      "route_used": "hybrid_both",
+      "best_score": 0.47545924348875174,
+      "selector_triggered": false,
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 105",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 106",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 105",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 103"
+      ],
+      "note": "The sources directly compare the two methods on accuracy, storage, and runtime. Source 4 states the general method provides closer estimates, while Source 2 states the long-term method uses less storage and gives the runtime comparison across different environment sizes.",
+      "answer": "The evidence supports that the long-term online DMD method and the general adaptation method differ in three ways:\n\n- Accuracy: both online methods provide close approximations, but the general method provides closer estimates than the long-term method in the comparison shown [Source 4].\n- Storage: the long-term algorithm does not require storage of past snapshots, while the general algorithm does; for high-dimensional monitoring this can be up to 3MB for the general algorithm versus several hundred kilobytes for the long-term algorithm [Source 2].\n- Computational performance: the general adaptation method outperforms the long-term method for a 20\u00d720 environment with 1000 time steps, both with and without SVD computation; however, for smaller environments monitored over a long duration, the long-term algorithm is faster than the general algorithm without eigendecomposition [Source 2].\n\nReferences:\n- [1] upenn-learning-environmental-models-thesis-2022.pdf - Page 105\n- [2] upenn-learning-environmental-models-thesis-2022.pdf - Page 106\n- [3] upenn-learning-environmental-models-thesis-2022.pdf - Page 105\n- [4] upenn-learning-environmental-models-thesis-2022.pdf - Page 103"
+    },
+    {
+      "question_id": "upenn-learning-environmental-models-thesis-2022-comparison_synthesis-025",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "intent_type": "comparison_synthesis",
+      "question": "How does the thesis compare coverage control with optimal design as approaches to sensor placement?",
+      "previously_supported": false,
+      "previously_abstained": true,
+      "now_supported": true,
+      "now_abstained": false,
+      "support_status": "supported",
+      "evidence_status": "strong",
+      "route_used": "hybrid_both",
+      "best_score": 0.1252398826979472,
+      "selector_triggered": false,
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 15",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 50",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 16",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 96"
+      ],
+      "note": "The evidence explicitly defines coverage control as an optimal sensor allocation problem for placing robots to maximize coverage of a density function, and it explicitly defines optimal design as a statistics-community framework for reducing experimentation costs and estimating models with fewer experiments. This supports a direct comparison between the two approaches.",
+      "answer": "The thesis presents coverage control as a method for determining optimal sensor placement in an environment specified by a density function, where the goal is to find static robot positions that best cover the area [Source 1][Source 2]. It describes coverage control as a type of optimal sensor allocation problem and notes that centroidal Voronoi partitions can be used to determine the optimal locations [Source 2][Source 4]. It then contrasts this with optimal design, which is described as a statistics-based framework whose purpose is to reduce experimentation costs by estimating statistical models with fewer experiments [Source 3]. In short, coverage control is framed as a direct sensor-placement/coverage method, while optimal design is framed as a model-estimation and experiment-reduction approach [Source 2][Source 3].\n\nReferences:\n- [1] upenn-learning-environmental-models-thesis-2022.pdf - Page 15\n- [2] upenn-learning-environmental-models-thesis-2022.pdf - Page 50\n- [3] upenn-learning-environmental-models-thesis-2022.pdf - Page 16\n- [4] upenn-learning-environmental-models-thesis-2022.pdf - Page 96"
+    },
+    {
+      "question_id": "fomc-minutes-2026-01-28-local_scope-016",
+      "document_id": "fomc-minutes-2026-01-28",
+      "intent_type": "local_scope",
+      "question": "In the Annual Organizational Matters section, who was selected as Secretary of the Committee?",
+      "previously_supported": true,
+      "previously_abstained": false,
+      "now_supported": true,
+      "now_abstained": false,
+      "support_status": "supported",
+      "evidence_status": "strong",
+      "route_used": "section_first",
+      "best_score": 0.2093019034524439,
+      "selector_triggered": true,
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 3",
+        "fomc-minutes-2026-01-28.pdf - Page 3",
+        "fomc-minutes-2026-01-28.pdf - Page 2",
+        "fomc-minutes-2026-01-28.pdf - Page 2"
+      ],
+      "note": "The Annual Organizational Matters section lists the officers selected by unanimous vote, including Joshua Gallin as Secretary [Source 1].",
+      "answer": "Joshua Gallin was selected as Secretary of the Committee [Source 1].\n\nReferences:\n- [1] fomc-minutes-2026-01-28.pdf - Page 3\n- [2] fomc-minutes-2026-01-28.pdf - Page 3\n- [3] fomc-minutes-2026-01-28.pdf - Page 2\n- [4] fomc-minutes-2026-01-28.pdf - Page 2"
+    },
+    {
+      "question_id": "irena-world-energy-transitions-outlook-2023-local_scope-019",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "intent_type": "local_scope",
+      "question": "In the executive summary's tracking-progress table, what average annual investment is required in power grids and flexibility through 2030 and through 2050 under the 1.5 degree C scenario?",
+      "previously_supported": false,
+      "previously_abstained": true,
+      "now_supported": false,
+      "now_abstained": true,
+      "support_status": "unsupported",
+      "evidence_status": "strong",
+      "route_used": "synopsis_first",
+      "best_score": 0.4884027164685909,
+      "selector_triggered": true,
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 24",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 24",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 150",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 23"
+      ],
+      "note": "The question asks for two numeric facts: the average annual investment required in power grids and flexibility through 2030 and through 2050 under the 1.5\u00b0C scenario. The provided evidence identifies the relevant table and describes that the investment would be directed toward grid extension, resiliency, and flexibility measures, but the actual 2030 and 2050 investment values are not shown in the supplied excerpts. Therefore only partial support is available. Support-status verifier classified the answer as unsupported. Supported facts: The executive summary\u2019s tracking-progress table includes an investment row for renewable power generation capacity and power grids and flexibility.; The supplied evidence does not show the specific average annual investment amounts for 2030 and 2050. Missing or ambiguous facts: The actual average annual investment required in power grids and flexibility through 2030 under the 1.5\u00b0C scenario.; The actual average annual investment required in power grids and flexibility through 2050 under the 1.5\u00b0C scenario. The proposed answer does not provide the requested numeric values. It only states that the evidence does not provide them, which is an acknowledged gap but not a substantive answer to the question. The evidence does identify the relevant table and topic, but not the specific 2030 and 2050 amounts.",
+      "answer": "The evidence supports that the executive summary\u2019s tracking-progress table includes an investment row for renewable power generation capacity and power grids and flexibility, but it does not provide the specific average annual investment amounts for 2030 and 2050 in the supplied evidence. [Source 4] [Source 3]"
+    },
+    {
+      "question_id": "irena-world-energy-transitions-outlook-2023-broad_summary-021",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "intent_type": "broad_summary",
+      "question": "How does Volume 2 differ from Volume 1 in scope and approach?",
+      "previously_supported": false,
+      "previously_abstained": true,
+      "now_supported": false,
+      "now_abstained": true,
+      "support_status": "unsupported",
+      "evidence_status": "strong",
+      "route_used": "hybrid_both",
+      "best_score": 0.23803809523809527,
+      "selector_triggered": false,
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 240",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 223",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 179",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 225"
+      ],
+      "note": "The evidence contains excerpts from Volume 2, including a chapter heading and discussion of welfare dimensions, but no information about Volume 1 or any explicit comparison of scope or approach between the two volumes. Support-status verifier classified the answer as unsupported. Supported facts: The evidence identifies Volume 2 content, including Chapter 6 and the welfare index dimensions. Missing or ambiguous facts: How Volume 2 differs from Volume 1 in scope.; How Volume 2 differs from Volume 1 in approach.; Any direct comparison between Volume 1 and Volume 2. The proposed answer correctly notes that the supplied evidence shows Volume 2 material and does not describe Volume 1 or a comparison, but it does not actually answer the question about differences in scope and approach. Because the required comparison is missing, the response is not supported as an answer to the question.",
+      "answer": "The provided evidence does not state how Volume 2 differs from Volume 1 in scope and approach. It only identifies content from Volume 2 (for example, Chapter 6 and the welfare index dimensions) and does not describe Volume 1 or compare the two volumes [Source 2][Source 4]."
+    },
+    {
+      "question_id": "irena-world-energy-transitions-outlook-2023-broad_summary-023",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "intent_type": "broad_summary",
+      "question": "What does the executive summary say about the relationship between the energy crisis and the transition?",
+      "previously_supported": true,
+      "previously_abstained": false,
+      "now_supported": true,
+      "now_abstained": false,
+      "support_status": "supported",
+      "evidence_status": "strong",
+      "route_used": "synopsis_first",
+      "best_score": 0.5632927536231884,
+      "selector_triggered": true,
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 21",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 38",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 33",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 7"
+      ],
+      "note": "The evidence directly states the relationship: the aftermath of the Ukraine crisis further compounded the challenges facing the transition, and responses to the energy crisis have often been incompatible with the longer-term transition needs.",
+      "answer": "The executive summary says the energy crisis has further compounded the challenges facing the energy transition, and that many decision makers have been addressing the crisis in ways that are incompatible with the longer-term need for profound transformation of the energy sector and society [Source 1][Source 2].\n\nReferences:\n- [1] irena-world-energy-transitions-outlook-2023.pdf - Page 21\n- [2] irena-world-energy-transitions-outlook-2023.pdf - Page 38\n- [3] irena-world-energy-transitions-outlook-2023.pdf - Page 33\n- [4] irena-world-energy-transitions-outlook-2023.pdf - Page 7"
+    },
+    {
+      "question_id": "irena-world-energy-transitions-outlook-2023-comparison_synthesis-024",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "intent_type": "comparison_synthesis",
+      "question": "How do the cumulative and per-year investment requirements differ between the Planned Energy Scenario and the 1.5 degree C Scenario?",
+      "previously_supported": false,
+      "previously_abstained": true,
+      "now_supported": false,
+      "now_abstained": true,
+      "support_status": "partial",
+      "evidence_status": "strong",
+      "route_used": "hybrid_both",
+      "best_score": 0.30595151515151514,
+      "selector_triggered": false,
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 150",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 25",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 12",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 98"
+      ],
+      "note": "The evidence states both cumulative totals and the 1.5\u00b0C annual average, but it does not provide the Planned Energy Scenario annual average. Therefore the cumulative comparison is fully supported, while the per-year comparison is only partially supported. The strict supported flag was downgraded because the model's own support reason identified a missing, partial, or inconsistent required fact. Support-status verifier classified the answer as partial. Supported facts: The Planned Energy Scenario requires lower cumulative investment than the 1.5\u00b0C Scenario.; Under the Planned Energy Scenario, cumulative investment is USD 28.5 trillion until 2050.; Under the 1.5\u00b0C Scenario, cumulative investment is USD 61 trillion until 2050. Missing or ambiguous facts: A direct per-year comparison between the Planned Energy Scenario and the 1.5\u00b0C Scenario is not fully supported because the Planned Energy Scenario annual figure is missing. The evidence directly supports the cumulative investment figures for both scenarios and the 1.5\u00b0C annual average. The proposed answer also explicitly acknowledges that the Planned Energy Scenario per-year figure is not provided, leaving that part of the comparison incomplete. Because at least one required fact is missing while the gap is acknowledged, the status is partial.",
+      "answer": "The Planned Energy Scenario requires lower cumulative investment than the 1.5\u00b0C Scenario. Under the Planned Energy Scenario, cumulative investment is USD 28.5 trillion until 2050 [Source 1], while under the 1.5\u00b0C Scenario it is USD 61 trillion, which is more than double [Source 1]. For per-year investment, the 1.5\u00b0C Scenario requires an average of more than USD 2.2 trillion per year through 2050 [Source 1]. The evidence provided does not give a per-year investment figure for the Planned Energy Scenario, so that part of the comparison is missing [Source 1].\n\nReferences:\n- [1] irena-world-energy-transitions-outlook-2023.pdf - Page 150\n- [2] irena-world-energy-transitions-outlook-2023.pdf - Page 25\n- [3] irena-world-energy-transitions-outlook-2023.pdf - Page 12\n- [4] irena-world-energy-transitions-outlook-2023.pdf - Page 98"
+    },
+    {
+      "question_id": "irena-world-energy-transitions-outlook-2023-comparison_synthesis-025",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "intent_type": "comparison_synthesis",
+      "question": "How does the role of bioenergy in 2050 differ between the Planned Energy Scenario and the 1.5 degree C Scenario?",
+      "previously_supported": false,
+      "previously_abstained": true,
+      "now_supported": false,
+      "now_abstained": true,
+      "support_status": "unsupported",
+      "evidence_status": "strong",
+      "route_used": "hybrid_both",
+      "best_score": 0.4159515151515152,
+      "selector_triggered": false,
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 99",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 10",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 100",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 100"
+      ],
+      "note": "The question asks for a comparison between the Planned Energy Scenario and the 1.5\u00b0C Scenario in 2050. The evidence includes 2050 values for the 1.5\u00b0C Scenario, but it does not provide the corresponding Planned Energy Scenario 2050 bioenergy role or values. Therefore the comparison is not fully supported. Support-status verifier classified the answer as unsupported. Supported facts: The evidence states that under the 1.5\u00b0C Scenario, modern use of bioenergy in buildings would be 9.4 EJ by 2050.; The evidence states that under the 1.5\u00b0C Scenario, global bioenergy demand in the industry sector would be 27.6 EJ by 2050.; The answer acknowledges that the Planned Energy Scenario\u2019s 2050 role for bioenergy is not provided in the evidence. Missing or ambiguous facts: The Planned Energy Scenario\u2019s 2050 role for bioenergy is not stated in the evidence.; The question asks for a difference between the Planned Energy Scenario and the 1.5\u00b0C Scenario in 2050, but the answer does not provide the Planned Energy Scenario side of the comparison. The response includes grounded facts for the 1.5\u00b0C Scenario and explicitly notes that the Planned Energy Scenario 2050 bioenergy role is missing. However, it does not answer the comparison requested because the Planned Energy Scenario fact is absent, so the proposed answer is not fully supported.",
+      "answer": "The provided evidence does not give the Planned Energy Scenario\u2019s 2050 role for bioenergy, so a direct comparison with the 1.5\u00b0C Scenario cannot be fully answered from the sources. The evidence does state that under the 1.5\u00b0C Scenario, modern use of bioenergy in buildings would be 9.4 EJ by 2050 and industry bioenergy demand would be 27.6 EJ by 2050 [Source 1]."
+    },
+    {
+      "question_id": "irena-world-energy-transitions-outlook-2023-numeric_procedure-028",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "intent_type": "numeric_procedure",
+      "question": "According to the executive summary, what size emissions gap remains in 2050 between fully implemented current pledges and the 1.5 degree C pathway, and how much do those pledges actually reduce emissions by 2030 and 2050?",
+      "previously_supported": true,
+      "previously_abstained": false,
+      "now_supported": true,
+      "now_abstained": false,
+      "support_status": "supported",
+      "evidence_status": "strong",
+      "route_used": "synopsis_first",
+      "best_score": 0.5435868852459017,
+      "selector_triggered": true,
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 21",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 21",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 54",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 74"
+      ],
+      "note": "The executive summary states the 2050 emissions gap is 16 Gt [Source 2]. The detailed pledge impact figures in the provided evidence are 6% by 2030 and 56% by 2050 [Source 1].",
+      "answer": "According to the executive summary, the emissions gap in 2050 is 16 Gt between fully implemented current pledges and the 1.5\u00b0C pathway [Source 2]. Those pledges could reduce CO2 emissions by 6% by 2030 and 56% by 2050, compared to 2022 levels [Source 1].\n\nReferences:\n- [1] irena-world-energy-transitions-outlook-2023.pdf - Page 21\n- [2] irena-world-energy-transitions-outlook-2023.pdf - Page 21\n- [3] irena-world-energy-transitions-outlook-2023.pdf - Page 54\n- [4] irena-world-energy-transitions-outlook-2023.pdf - Page 74"
+    }
+  ]
+}

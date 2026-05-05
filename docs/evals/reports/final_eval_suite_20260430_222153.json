@@ -1,0 +1,588 @@
+{
+  "suite": {
+    "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-04",
+    "description": "OpenAI native File Search corrected rerun chunk 4/10, questions 46-60.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\openai_native_15_chunks\\openai_native_15_chunk_04.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "openai_file_search"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      }
+    }
+  },
+  "summary": {
+    "overall": {
+      "openai_file_search": {
+        "dataset_size": 15,
+        "answerable_size": 14,
+        "unsupported_size": 1,
+        "supported_rate": 0.4,
+        "answerable_supported_rate": 0.42857142857142855,
+        "unsupported_abstention_rate": 1.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.5714285714285714,
+        "avg_context_count": 2.3333333333333335,
+        "avg_context_chars": 7019.6,
+        "ragas_all": {
+          "faithfulness": 0.5230769230769231,
+          "answer_relevancy": 0.37663084682161385,
+          "context_precision": 0.3447222222094745
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.9743589743589743,
+          "answer_relevancy": 0.808006061421666,
+          "context_precision": 0.7277777777492592
+        }
+      }
+    },
+    "by_intent": {
+      "openai_file_search": {
+        "broad_summary": {
+          "dataset_size": 3,
+          "answerable_size": 3,
+          "unsupported_size": 0,
+          "supported_rate": 0.6666666666666666,
+          "answerable_supported_rate": 0.6666666666666666,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.3333333333333333,
+          "avg_context_count": 3.3333333333333335,
+          "avg_context_chars": 10650.333333333334,
+          "ragas_all": {
+            "faithfulness": 0.6153846153846154,
+            "answer_relevancy": 0.5678348002161349,
+            "context_precision": 0.36296296294345676
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.9230769230769231,
+            "answer_relevancy": 0.8517522003242022,
+            "context_precision": 0.5444444444151851
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 1,
+          "answerable_size": 1,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 15521.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8672344464938124,
+            "context_precision": 0.6388888888675925
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8672344464938124,
+            "context_precision": 0.6388888888675925
+          }
+        },
+        "local_scope": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 0.25,
+          "answerable_supported_rate": 0.25,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.75,
+          "avg_context_count": 1.25,
+          "avg_context_chars": 4697.75,
+          "ragas_all": {
+            "faithfulness": 0.25,
+            "answer_relevancy": 0.21591745630293158,
+            "context_precision": 0.2499999999875
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8636698252117263,
+            "context_precision": 0.99999999995
+          }
+        },
+        "lookup": {
+          "dataset_size": 5,
+          "answerable_size": 5,
+          "unsupported_size": 0,
+          "supported_rate": 0.2,
+          "answerable_supported_rate": 0.2,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.8,
+          "avg_context_count": 1.0,
+          "avg_context_chars": 1961.8,
+          "ragas_all": {
+            "faithfulness": 0.4,
+            "answer_relevancy": 0.2668910910206536,
+            "context_precision": 0.199999999996
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.5330291213090567,
+            "context_precision": 0.99999999998
+          }
+        },
+        "numeric_procedure": {
+          "dataset_size": 1,
+          "answerable_size": 1,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 11866.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8805985748669963,
+            "context_precision": 0.6388888888675925
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8805985748669963,
+            "context_precision": 0.6388888888675925
+          }
+        },
+        "unsupported": {
+          "dataset_size": 1,
+          "answerable_size": 0,
+          "unsupported_size": 1,
+          "supported_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 17356.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.8041666666465626
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-04",
+      "system": "openai_file_search",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-broad_summary-006",
+      "question": "What does the report say about the geographic distribution of renewable energy investment, and why is that a problem?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The report says renewable energy investment is geographically concentrated in a few countries and regions, rather than being spread more evenly. It notes that in 2022 Europe and North America together received about 24% of investment, while the regions containing 120 developing and emerging markets received only about 15%; it also says Africa\u2019s share is falling \n\nThis is a problem because it excludes almost half of the global population, especially people in countries with major energy access ne",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 14612,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8776132836903354,
+        "context_precision": 0.7555555555303703
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_002d154f69d2f7f50069f385b3d2208190aa183a761d99a60a"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-04",
+      "system": "openai_file_search",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-broad_summary-007",
+      "question": "What is the report's overall assessment of progress on the energy transition through 2022, and where does it say the gap is largest?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The report\u2019s overall assessment is that the energy transition is not on track and that the gap between what is being achieved and what is required keeps growing through 2022. It says there is still \u201csignificant acceleration\u201d needed across energy sectors and technologies, and that delays are making the challenge harder and more costly  \n\nIt says the gap is largest in the power sector and in the broader implementation of transition measures: most progress to date has been in power, but even there ",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 17339,
+      "ragas": {
+        "faithfulness": 0.8461538461538461,
+        "answer_relevancy": 0.825891116958069,
+        "context_precision": 0.3333333333
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_06ab2b43a2b6ac2f0069f3860008008193a0f0d0c5de60d27f"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-04",
+      "system": "openai_file_search",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-comparison_synthesis-008",
+      "question": "Under the 1.5\u00b0C Scenario, how does the share of renewables in the global energy mix and the role of electricity change between 2020 and 2050?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Under the 1.5\u00b0C Scenario, the share of renewables in the global energy mix rises sharply: the share of renewable energy in total primary energy supply increases from 16% in 2020 to 77% by 2050 . At the same time, electricity becomes much more important in the energy system, becoming the main energy carrier and accounting for over 50% of total final energy consumption by 2050, up from 22% in 2020 . Also, electricity generation becomes far cleaner, with renewables\u2019 share in total electricity gener",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 15521,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8672344464938124,
+        "context_precision": 0.6388888888675925
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_085df22b60afa3eb0069f3865d2d008197a1a28dd3ee108417"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-04",
+      "system": "openai_file_search",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-numeric_procedure-009",
+      "question": "How much cumulative investment does the 1.5\u00b0C Scenario require by 2050, how does that compare with the Planned Energy Scenario, and how much annual investment must be redirected away from fossil-fuel technologies?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The 1.5\u00b0C Scenario requires a cumulative USD 150 trillion by 2050, compared with USD 103 trillion under the Planned Energy Scenario, so it needs an additional USD 47 trillion. Around USD 1 trillion of annual investment currently envisaged for fossil-fuel technologies in the Planned Energy Scenario must be redirected toward energy transition technologies and infrastructure",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 11866,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8805985748669963,
+        "context_precision": 0.6388888888675925
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_005c08657ba5f1f60069f386adaa708194808f6ba20c5a3d5f"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-04",
+      "system": "openai_file_search",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-unsupported-010",
+      "question": "What does the report recommend as the price floor for an internationally harmonized carbon tax through 2050?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The report says that under PB-A, the 2030 carbon price is USD 300/tCO2 for high-income countries and USD 60/tCO2 for low-income countries, while under PB-B it is USD 150/tCO2 and USD 30/tCO2 respectively; it also notes that PB-B\u2019s carbon tax is half that of PB-A with adjustment for national income differences \n\nINSUFFICIENT_EVIDENCE: I could not find a specific \u201cprice floor\u201d for an internationally harmonized carbon tax through 2050 in the provided excerpts.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 17356,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.8041666666465626
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0e371c52680912d80069f386ec96008197aec63baa6f0e9d25"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-04",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-011",
+      "question": "What is the publication identifier assigned to this NIST AI Risk Management Framework document?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The publication identifier is NIST AI 100-1, and the DOI link shown is https://doi.org/10.6028/NIST.AI.100-1",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 9809,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.5330291213090567,
+        "context_precision": 0.99999999998
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_076078e2ac0588fd0069f3874e616c8193be1f0c4cf9b17c9d"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-04",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-012",
+      "question": "What does the abbreviation TEVV stand for in this framework?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: I couldn\u2019t find any mention of \u201cTEVV\u201d in the uploaded file, so I can\u2019t determine what it stands for in this framework.",
+      "citations": [],
+      "context_count": 0,
+      "context_chars": 0,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0a70eb196681cbf20069f3877e1dd08196aa0386160bc4d702"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-04",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-013",
+      "question": "Who is named in the front matter as the U.S. Secretary of Commerce?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: I couldn\u2019t find any matching front matter in the uploaded file to identify the U.S. Secretary of Commerce.",
+      "citations": [],
+      "context_count": 0,
+      "context_chars": 0,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0426dfdea0b1e10a0069f3878fa1888196adae6e15bd2fc366"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-04",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-014",
+      "question": "Which email address is given for sending comments on the AI RMF Playbook?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: I couldn\u2019t find any file content mentioning the AI RMF Playbook or an email address for comments in the uploaded material.",
+      "citations": [],
+      "context_count": 0,
+      "context_chars": 0,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8014263337942115,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_039e4a75d40bf17b0069f387a8a9308195b5726bad00d2569e"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-04",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-015",
+      "question": "Which act of Congress directed the development of this framework?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: I couldn\u2019t find any matching information in the uploaded file to identify which act of Congress directed the development of the framework.",
+      "citations": [],
+      "context_count": 0,
+      "context_chars": 0,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_008cf50c3f3b20e20069f387c0edbc81949c5164cabcd09f3e"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-04",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-016",
+      "question": "In the section on AI safety, which kinds of safety risks does the framework say require the most urgent prioritization?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: I couldn\u2019t find any matching text in the uploaded file about an AI safety section or which safety risks the framework says should be prioritized most urgently.",
+      "citations": [],
+      "context_count": 0,
+      "context_chars": 0,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0e60059d3b65fb7a0069f387d35a30819691906b99a5bbadda"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-04",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-017",
+      "question": "In the privacy section, what privacy values does the framework say should generally guide AI system design, development, and deployment?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: I couldn\u2019t find the privacy section or the specific privacy values in the uploaded file, so I can\u2019t answer accurately from the available evidence.",
+      "citations": [],
+      "context_count": 0,
+      "context_chars": 0,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0163e08ed65a6bf00069f387e7f20c8190855855ac578e4dcf"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-04",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-018",
+      "question": "In the Map function table, which subcategory is about eliciting system requirements while taking socio-technical implications into account?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: I couldn\u2019t find the \u201cMap function table\u201d or a matching subcategory in the uploaded file, so I can\u2019t identify which subcategory it refers to.",
+      "citations": [],
+      "context_count": 0,
+      "context_chars": 0,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_01b23baad9c3cdfc0069f387fbb48481908a1923a25028c189"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-04",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-019",
+      "question": "In its discussion of risk prioritization, what does the framework say should happen with AI systems that present unacceptable negative risk levels?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework says that if an AI system presents unacceptable negative risk levels\u2014such as imminent significant negative impacts, severe harms already occurring, or catastrophic risks\u2014its development and deployment should cease in a safe manner until the risks can be sufficiently managed",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 18791,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8636698252117263,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_01aa7fd05fd4c1c20069f388135d348197a0de0ef2c4995a94"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-04",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-020",
+      "question": "Who does the framework say it is intended for, and why does it use the term 'AI actors'?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: I couldn\u2019t find any matching content in the uploaded file about who the framework is intended for or why it uses the term \u201cAI actors.\u201d",
+      "citations": [],
+      "context_count": 0,
+      "context_chars": 0,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_020f977d2eec720b0069f388736c10819088d7ea99f5b8cad6"
+    }
+  ]
+}

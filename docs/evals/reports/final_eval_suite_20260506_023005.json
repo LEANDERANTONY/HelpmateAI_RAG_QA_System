@@ -1,0 +1,1114 @@
+{
+  "suite": {
+    "suite_id": "heldout-product-fit-2026-04-draft",
+    "description": "Draft held-out product-fit final evaluation manifest. Documents are fixed; questions must be generated and frozen before any system run.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\final_eval_manifest.draft.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native",
+    "question_offset": 90,
+    "question_count": 30
+  },
+  "systems": [
+    "helpmate"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      },
+      "mode": "native_mockingbird_answer",
+      "generation_preset_name": "mockingbird-2.0"
+    }
+  },
+  "summary": {
+    "overall": {
+      "helpmate": {
+        "dataset_size": 30,
+        "answerable_size": 28,
+        "unsupported_size": 2,
+        "supported_rate": 0.8333333333333334,
+        "partial_rate": 0.0,
+        "answered_rate": 0.8333333333333334,
+        "answerable_supported_rate": 0.8928571428571429,
+        "answerable_coverage_rate": 0.8928571428571429,
+        "unsupported_abstention_rate": 1.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.10714285714285714,
+        "strict_false_abstention_rate": 0.10714285714285714,
+        "avg_context_count": 3.8666666666666667,
+        "avg_context_chars": 3575.733333333333,
+        "ragas_all": {
+          "faithfulness": 0.9061069882498454,
+          "answer_relevancy": 0.8532773299654801,
+          "context_precision": 0.7888888888466898
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.8943911161302466,
+          "answer_relevancy": 0.8877265383581804,
+          "context_precision": 0.765432098721322
+        }
+      }
+    },
+    "by_intent": {
+      "helpmate": {
+        "broad_summary": {
+          "dataset_size": 5,
+          "answerable_size": 5,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "partial_rate": 0.0,
+          "answered_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "answerable_coverage_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 4215.0,
+          "ragas_all": {
+            "faithfulness": 0.9057142857142857,
+            "answer_relevancy": 0.9074847924917904,
+            "context_precision": 0.7847222221793981
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.9057142857142857,
+            "answer_relevancy": 0.9074847924917904,
+            "context_precision": 0.7847222221793981
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 3,
+          "answerable_size": 3,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "partial_rate": 0.0,
+          "answered_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "answerable_coverage_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 3616.3333333333335,
+          "ragas_all": {
+            "faithfulness": 0.9545454545454546,
+            "answer_relevancy": 0.8436690160630282,
+            "context_precision": 0.38888888885
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.9545454545454546,
+            "answer_relevancy": 0.8436690160630282,
+            "context_precision": 0.38888888885
+          }
+        },
+        "local_scope": {
+          "dataset_size": 8,
+          "answerable_size": 8,
+          "unsupported_size": 0,
+          "supported_rate": 0.75,
+          "partial_rate": 0.0,
+          "answered_rate": 0.75,
+          "answerable_supported_rate": 0.75,
+          "answerable_coverage_rate": 0.75,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.25,
+          "strict_false_abstention_rate": 0.25,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 3609.75,
+          "ragas_all": {
+            "faithfulness": 0.8761904761904762,
+            "answer_relevancy": 0.8821123941712632,
+            "context_precision": 0.8749999999663194
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.8666666666666667,
+            "answer_relevancy": 0.8710191139845481,
+            "context_precision": 0.8333333332967592
+          }
+        },
+        "lookup": {
+          "dataset_size": 10,
+          "answerable_size": 10,
+          "unsupported_size": 0,
+          "supported_rate": 0.9,
+          "partial_rate": 0.0,
+          "answered_rate": 0.9,
+          "answerable_supported_rate": 0.9,
+          "answerable_coverage_rate": 0.9,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.1,
+          "strict_false_abstention_rate": 0.1,
+          "avg_context_count": 3.7,
+          "avg_context_chars": 3422.3,
+          "ragas_all": {
+            "faithfulness": 0.9,
+            "answer_relevancy": 0.8035080379365658,
+            "context_precision": 0.8531746031322751
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.8888888888888888,
+            "answer_relevancy": 0.8927867088184064,
+            "context_precision": 0.8531746031322751
+          }
+        },
+        "numeric_procedure": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "partial_rate": 0.0,
+          "answered_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "answerable_coverage_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 0.0,
+          "avg_context_count": 3.5,
+          "avg_context_chars": 2123.0,
+          "ragas_all": {
+            "faithfulness": 0.9,
+            "answer_relevancy": 0.951511578513805,
+            "context_precision": 0.9999999999
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.9,
+            "answer_relevancy": 0.951511578513805,
+            "context_precision": 0.9999999999
+          }
+        },
+        "unsupported": {
+          "dataset_size": 2,
+          "answerable_size": 0,
+          "unsupported_size": 2,
+          "supported_rate": 0.0,
+          "partial_rate": 0.0,
+          "answered_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "answerable_coverage_rate": 0.0,
+          "unsupported_abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 4000.5,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": null,
+            "context_precision": 0.999999999975
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-lookup-011",
+      "question": "At which university was this dissertation submitted?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The dissertation was submitted at the University of Pennsylvania [Source 1].",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 1",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 1"
+      ],
+      "context_count": 2,
+      "context_chars": 1273,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8592678028360689,
+        "context_precision": 0.99999999995
+      },
+      "note": "The title page and repository entry both identify University of Pennsylvania as the institution associated with the dissertation [Source 1]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-lookup-012",
+      "question": "Who is identified as the chairperson of the graduate group?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "Alejandro Ribeiro is identified as the Graduate Group Chairperson [Source 1].",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 3",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 3",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 3"
+      ],
+      "context_count": 3,
+      "context_chars": 2034,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.927136909588639,
+        "context_precision": 0.99999999995
+      },
+      "note": "The evidence explicitly states 'Graduate Group Chairperson Alejandro Ribeiro' in the dissertation committee listing [Source 1]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-lookup-013",
+      "question": "What computer hardware did the author use to run the online DMD timing experiments?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The author used a Dell Optiplex 9020 with a 3.40 GHz Intel i7-4770 CPU to run the online DMD timing experiments [Source 1].",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 105",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 105",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 102",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 103"
+      ],
+      "context_count": 4,
+      "context_chars": 4892,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9784676158773378,
+        "context_precision": 0.99999999995
+      },
+      "note": "Source 1 explicitly states: \"All computations were performed on a Dell Optiplex 9020 with a 3.40 GHz Intel i7-4770 CPU.\" This directly answers the hardware used."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-lookup-014",
+      "question": "To whom is the dissertation dedicated?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The dissertation is dedicated to Ma, described as \"the most tenacious person I know\" [Source 2].",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 3",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 5",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 3",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 1"
+      ],
+      "context_count": 4,
+      "context_chars": 1972,
+      "ragas": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 1.0000000000000002,
+        "context_precision": 0.49999999995
+      },
+      "note": "The dedication page explicitly states who the dissertation is dedicated to."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-lookup-015",
+      "question": "Which two organizations does the author thank for funding support in the acknowledgements?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The author thanks the National Science Foundation and the Horatio Alger Association for funding support [Source 1].",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 6",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 6",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 6",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 6"
+      ],
+      "context_count": 4,
+      "context_chars": 5268,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8667001908744086,
+        "context_precision": 0.9999999999666667
+      },
+      "note": "The acknowledgements explicitly state, \"I am grateful for support from the National Science Foundation and Horatio Alger Association\" [Source 1]. Recovery support verifier: The evidence directly states, 'I am grateful for support from the National Science Foundation and Horatio Alger Association,' which matches the proposed answer exactly. Both organizations are named and no contradictory information is present."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-local_scope-016",
+      "question": "In Chapter 3, what type of algorithm is used for the distributed implementation of the low-dimensional model?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "Chapter 3 uses gossip algorithms for the distributed implementation of the low-dimensional model [Source 1][Source 3]. Specifically, the text says the distributed implementation is done \"using gossip algorithms\" and that the push-sum algorithm is leveraged within that distributed approach [Source 1].",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 58",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 20",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 9",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 55"
+      ],
+      "context_count": 4,
+      "context_chars": 4040,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9116466918703238,
+        "context_precision": 0.8333333332916666
+      },
+      "note": "The evidence directly states the Chapter 3 section title as \"Distributed implementation of low-dimensional modeling using gossip algorithms\" and explains that the push-sum algorithm is leveraged in this distributed implementation."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-local_scope-017",
+      "question": "In Chapter 5, what type of features does the author use to estimate Koopman operators?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "In Chapter 5, the author uses random Fourier features (RFFs) to estimate Koopman operators [Source 2]. The chapter is titled \"Estimating Koopman operators with Fourier features,\" and it states that the method jointly learns the Koopman operator and the observable dictionary using RFFs in an RKHS framework [Source 3][Source 2][Source 4].",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 118",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 115",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 10",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 128"
+      ],
+      "context_count": 4,
+      "context_chars": 2828,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8786288455560053,
+        "context_precision": 0.9166666666361111
+      },
+      "note": "The evidence explicitly says Chapter 5 estimates Koopman operators with Fourier features and specifically uses Random Fourier Features (RFFs) to jointly learn the Koopman operator and observables."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-local_scope-018",
+      "question": "In the water tank experiment, what onboard hardware components are listed for each micro-autonomous surface vehicle?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not list any onboard hardware components for each micro-autonomous surface vehicle in the water tank experiment.",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 112",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 110",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 141",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 111"
+      ],
+      "context_count": 4,
+      "context_chars": 3413,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.948672075291554,
+        "context_precision": 0.999999999975
+      },
+      "note": "The sources discuss marine vehicles, aerial vehicles, sensing data, sampling rates, and optimal sensing locations, but none of the provided evidence names onboard hardware components for each micro-autonomous surface vehicle. Support-status verifier classified the answer as unsupported. Missing or ambiguous facts: The question asks what onboard hardware components are listed for each micro-autonomous surface vehicle, but the evidence does not list any such components.; The proposed answer states that no onboard hardware components are listed, which is not directly supported by the evidence because the evidence is silent on this specific hardware detail. The evidence mentions marine robots/vehicles, aerial vehicles, sensing data, sampling rates, and optimal sensing locations, but it does not enumerate onboard hardware components for each micro-autonomous surface vehicle. The proposed answer acknowledges the absence of listed components, but that absence is not directly established by the supplied evidence."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-local_scope-019",
+      "question": "In Chapter 2, how does the thesis distinguish a differential equation from an iterated map (difference equation)?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "In Chapter 2, the thesis distinguishes them by time domain: differential equations are used to study systems in continuous time, while iterated maps (difference equations) are used to study systems in discrete time [Source 4]. It also gives their forms: differential equations use derivatives, e.g. \\u02d9x = f(x), whereas difference equations use next-step updates, e.g. x(t + 1) = f(x(t)) [Source 1].",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 23",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 10",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 24",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 22"
+      ],
+      "context_count": 4,
+      "context_chars": 2946,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8387280204064278,
+        "context_precision": 0.7499999999625
+      },
+      "note": "The evidence explicitly states the distinction between continuous-time differential equations and discrete-time iterated maps/difference equations, and provides the corresponding equation forms."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-broad_summary-020",
+      "question": "How does the thesis describe the limitations of Gaussian Process modeling for spatiotemporal environmental processes?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The thesis says Gaussian Process modeling is useful because it provides continuous environmental representations, arbitrary-resolution sampling, uncertainty quantification, and spatial dependency capture, but it has important limitations for spatiotemporal environmental processes: it scales cubically with the number of data points, making it computationally expensive for high-dimensional systems; selecting the kernel covariance function and hyperparameters remains largely unaddressed; and choosi",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 52",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 52",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 2",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 146"
+      ],
+      "context_count": 4,
+      "context_chars": 4800,
+      "ragas": {
+        "faithfulness": 0.9285714285714286,
+        "answer_relevancy": 0.892689312227762,
+        "context_precision": 0.99999999995
+      },
+      "note": "The evidence directly states the limitations of GP modeling in this thesis: computational scaling, unresolved kernel/hyperparameter selection, difficulty capturing complex spatiotemporal relationships, and covariance-matrix growth/constraints from approximation methods."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-broad_summary-021",
+      "question": "How does the thesis define the goal of adaptive sampling for multi-robot teams?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The thesis defines the goal of adaptive sampling for multi-robot teams as enabling a mobile robot team to adaptively sample and track a dynamic spatiotemporal process by using sparse sensor measurements to build a low-dimensional model, then using that model to determine the next best measurement locations to improve the model [Source 1]. It also describes adaptive sampling as addressing both the optimal sensor allocation problem and the modeling problem through sampling schemes based on previou",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 55",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 51",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 88",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 50"
+      ],
+      "context_count": 4,
+      "context_chars": 4800,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9366409901079175,
+        "context_precision": 0.99999999995
+      },
+      "note": "The evidence directly states the purpose of the adaptive sampling strategy and its role in selecting next-best sampling locations to improve the model, which fully answers the question."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-broad_summary-022",
+      "question": "What does the thesis identify as the main weakness of using neural networks to model dynamical systems for robotics?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The thesis identifies the main weakness of neural networks for modeling dynamical systems as their lack of interpretability: they \"do not produce interpretable models\" [Source 2]. It also notes that, for robotic systems, related methods are computationally expensive and hard to compute in a distributed fashion [Source 3].",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 47",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 48",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 48",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 47"
+      ],
+      "context_count": 4,
+      "context_chars": 3761,
+      "ragas": {
+        "faithfulness": 0.6,
+        "answer_relevancy": 0.8920607553318912,
+        "context_precision": 0.49999999995
+      },
+      "note": "The evidence explicitly states that the drawback of DNNs is that they do not produce interpretable models [Source 2]. It further says that methods providing closed-form models are computationally expensive and hard to compute in a distributed fashion, which are key requirements for robotic systems [Source 3]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-broad_summary-023",
+      "question": "How does the thesis describe the role of transfer operator theory for analyzing dynamical systems?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The thesis describes transfer operator theory as a framework for analyzing dynamical systems by studying the statistical transition properties of a process and the evolution of probability densities or mass densities over time, rather than tracking individual trajectories. It emphasizes that this framework can lift potentially nonlinear dynamics into a linear, infinite-dimensional function space, making global analysis of complex systems possible [Source 1] [Source 2] [Source 3] [Source 4].",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 34",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 36",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 36",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 19"
+      ],
+      "context_count": 4,
+      "context_chars": 3350,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision": 0.6388888888675925
+      },
+      "note": "The evidence states that transfer operators describe the evolution of processes over time and are used to study mass densities of initial conditions [Source 1]. It also says the framework maps functions to functions, represents nonlinear systems in a linear space, and enables global analysis of complex systems [Source 2] [Source 3] [Source 4]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-comparison_synthesis-024",
+      "question": "How does the long-term online DMD method compare with the general adaptation method in terms of accuracy, storage, and computational performance?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The evidence supports that the long-term online DMD method is generally less accurate than the general adaptation method in at least one tested setting, but both provide close approximations to the batch method. In the 20\u00d720, 1000-time-step case, the general adaptation method outperforms the long-term adaptation method both with and without SVD computation [Source 2]. For computational performance, the comparison depends on environment size and duration: the general method is faster in the 20\u00d720",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 105",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 106",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 105",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 103"
+      ],
+      "context_count": 4,
+      "context_chars": 4871,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9804140150216352,
+        "context_precision": 0.49999999995
+      },
+      "note": "The evidence directly compares the two methods on accuracy, speed, and storage. It states the general method outperforms the long-term method in one accuracy/performance comparison, while also noting both online methods give close approximations to the batch method [Source 4]. It also states the long-term method needs no past-snapshot storage and uses much less memory, and that runtime advantage depends on the scenario [Source 2]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-comparison_synthesis-025",
+      "question": "How does the thesis compare coverage control with optimal design as approaches to sensor placement?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The thesis presents coverage control as a sensor-placement method that finds static robot positions to best cover an area with respect to a density function, and it describes it as a type of optimal sensor allocation problem [Source 2]. It contrasts this with optimal design, which it says comes from statistics and is intended to reduce experimentation costs by estimating statistical models with fewer experiments [Source 3]. The thesis also notes that coverage control is fast and reliable for det",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 15",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 50",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 16",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 96"
+      ],
+      "context_count": 4,
+      "context_chars": 3740,
+      "ragas": {
+        "faithfulness": 0.9090909090909091,
+        "answer_relevancy": 0.7069240171044214,
+        "context_precision": 0.3333333333
+      },
+      "note": "The evidence directly states what coverage control is and what optimal design is for, allowing a comparison. Coverage control is framed as optimal sensor allocation/static placement for coverage of a density function [Source 2], while optimal design is framed as a statistics-based approach to reducing experimental cost and number of experiments [Source 3]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-comparison_synthesis-026",
+      "question": "How does the thesis distinguish the Perron-Frobenius operator from the Koopman operator, and which one does it focus on?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The thesis distinguishes them as two different transfer operators and states that they are adjoint to one another with respect to the inner product [Source 2]. It also says there are different transfer operators such as Perron-Frobenius and Koopman, but because of the direct connection to sensor measurements from robots, it focuses mainly on the Koopman operator [Source 3].",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 36",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 36",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 19",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 47"
+      ],
+      "context_count": 4,
+      "context_chars": 2238,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision": 0.3333333333
+      },
+      "note": "The evidence explicitly says the Perron-Frobenius and Koopman operators are two important transfer operators and that they are adjoint to one another [Source 2]. It also explicitly states that the thesis focuses mainly on the Koopman operator due to its direct connection with sensor measurements from robots [Source 3]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-numeric_procedure-027",
+      "question": "In the long-term online DMD update, how is the matrix S' computed and which matrix identity is invoked?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "In the long-term online DMD update, the matrix S' is computed as the inverse of the updated Gram matrix: S' = (S^{-1} + X_{new}X_{new}^\\top)^{-1} [Source 1][Source 3]. The matrix identity invoked to compute it is the Woodbury matrix identity [Source 1].",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 100",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 99",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 100"
+      ],
+      "context_count": 3,
+      "context_chars": 1383,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.951511578513805,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The evidence explicitly states that S' = (S^{-1} + X_new X_new^\\top)^{-1} and that the Woodbury matrix identity is used to compute it."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-numeric_procedure-028",
+      "question": "How is the forgetting factor gamma incorporated into the online DMD update equations for Q' and S'?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The forgetting factor gamma is applied by weighting the previous estimates before adding the new data terms: Q' = gamma Q + Y_new X_new^\u22a4 and (S')^-1 = gamma S^-1 + X_new^\u22a4 X_new [Source 1].",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 101",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 42",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 43",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 44"
+      ],
+      "context_count": 4,
+      "context_chars": 2863,
+      "ragas": {
+        "faithfulness": 0.8,
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence explicitly gives the online DMD update equations for Q' and S' and shows gamma multiplying the prior Q and S^-1 terms before the new snapshot contributions are added [Source 1]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-unsupported-029",
+      "question": "What battery life specification do the micro-autonomous surface vehicles report under continuous operation?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not mention any battery life specification for the micro-autonomous surface vehicles under continuous operation.",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 110",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 111",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 141",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 110"
+      ],
+      "context_count": 4,
+      "context_chars": 2693,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The evidence discusses marine/surface robots, data sampling rates, and model performance, but it does not provide a battery life specification or continuous-operation endurance for micro-autonomous surface vehicles. Support-status verifier classified the answer as unsupported. Missing or ambiguous facts: The answer does not provide any battery life specification for the micro-autonomous surface vehicles under continuous operation.; The evidence supplied does not mention battery life or continuous-operation endurance for these vehicles. The proposed answer explicitly says the evidence does not mention a battery life specification, which acknowledges a gap, but it does not answer the question with any grounded specification. Since the question asks for the battery life specification and none is present in the evidence, the response is not supported as an answer to the question."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "upenn-learning-environmental-models-thesis-2022",
+      "document_type": "thesis_dissertation",
+      "question_id": "upenn-learning-environmental-models-thesis-2022-unsupported-030",
+      "question": "What classification accuracy does the thesis report when applying Koopman operators to the ImageNet benchmark?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not mention the thesis reporting any classification accuracy for applying Koopman operators to the ImageNet benchmark.",
+      "citations": [
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 34",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 33",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 34",
+        "upenn-learning-environmental-models-thesis-2022.pdf - Page 122"
+      ],
+      "context_count": 4,
+      "context_chars": 5308,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision": 0.999999999975
+      },
+      "note": "The supplied sources discuss transfer operators and Koopman operators in dynamical systems and simulation environments, but none of the evidence mentions ImageNet or any classification accuracy result for it. Support-status verifier classified the answer as unsupported. Missing or ambiguous facts: The thesis's classification accuracy for applying Koopman operators to the ImageNet benchmark is not provided in the evidence.; The proposed answer does not state any actual accuracy value. The evidence discusses transfer operators and Koopman operators in dynamical systems and simulation environments, but it contains no mention of ImageNet or any classification accuracy result. The proposed answer only says the evidence does not mention such an accuracy, which is an acknowledged gap rather than a supported answer to the question."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-011",
+      "question": "Where physically was this two-day FOMC meeting held?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not state where the two-day FOMC meeting was physically held.",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 12",
+        "fomc-minutes-2026-01-28.pdf - Page 12",
+        "fomc-minutes-2026-01-28.pdf - Page 2",
+        "fomc-minutes-2026-01-28.pdf - Page 3"
+      ],
+      "context_count": 4,
+      "context_chars": 3347,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The excerpts identify the meeting and discuss its participants and policy considerations, but they do not give a physical location for the meeting. Support-status verifier classified the answer as unsupported. Missing or ambiguous facts: The physical location where the two-day FOMC meeting was held is not stated in the evidence. The proposed answer only says the evidence does not state the meeting location, which acknowledges a gap, but it does not provide the requested location. Since the question asks where the meeting was physically held and the evidence contains no location, the answer is not a supported substantive answer."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-012",
+      "question": "Who was selected as Vice Chair of the Committee for the term beginning January 27, 2026?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "John C. Williams was selected as Vice Chair of the Committee for the term beginning January 27, 2026 [Source 3].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 2",
+        "fomc-minutes-2026-01-28.pdf - Page 3",
+        "fomc-minutes-2026-01-28.pdf - Page 3",
+        "fomc-minutes-2026-01-28.pdf - Page 2"
+      ],
+      "context_count": 4,
+      "context_chars": 3349,
+      "ragas": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.8908246394420883,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The evidence explicitly states that by unanimous vote, John C. Williams was selected to serve as Vice Chair until the selection of successors at the first regularly scheduled meeting in 2027, and the term began January 27, 2026 [Source 3][Source 4]. Recovery support verifier: The question asks who was selected as Vice Chair of the Committee for the term beginning January 27, 2026. The evidence explicitly states that by unanimous vote, John C. Williams was selected as Vice Chair. This directly matches the proposed answer with no contradiction."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-013",
+      "question": "Who was selected to serve as Manager of the System Open Market Account?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "Roberto Perli was selected to serve as Manager of the System Open Market Account (SOMA) [Source 2].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 16",
+        "fomc-minutes-2026-01-28.pdf - Page 3",
+        "fomc-minutes-2026-01-28.pdf - Page 3",
+        "fomc-minutes-2026-01-28.pdf - Page 16"
+      ],
+      "context_count": 4,
+      "context_chars": 4869,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8292236985394345,
+        "context_precision": 0.6388888888675925
+      },
+      "note": "The evidence explicitly states that the Committee selected Roberto Perli and Julie Ann Remache to serve as manager and deputy manager of the SOMA, respectively [Source 2], and also lists Roberto Perli as Manager, System Open Market Account [Source 4]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-014",
+      "question": "What was the unemployment rate in December as cited in the staff review?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The unemployment rate in December was 4.4 percent [Source 1].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 6",
+        "fomc-minutes-2026-01-28.pdf - Page 9",
+        "fomc-minutes-2026-01-28.pdf - Page 6",
+        "fomc-minutes-2026-01-28.pdf - Page 6"
+      ],
+      "context_count": 4,
+      "context_chars": 2584,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8166950637914295,
+        "context_precision": 0.8333333332916666
+      },
+      "note": "The evidence directly states that the unemployment rate was 4.4 percent in December."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-015",
+      "question": "What rate is paid on reserve balances effective January 29, 2026?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The interest rate paid on reserve balances was maintained at 3.65 percent, effective January 29, 2026 [Source 3].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 14",
+        "fomc-minutes-2026-01-28.pdf - Page 14",
+        "fomc-minutes-2026-01-28.pdf - Page 15",
+        "fomc-minutes-2026-01-28.pdf - Page 14"
+      ],
+      "context_count": 4,
+      "context_chars": 4635,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.866764458416251,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The evidence explicitly states the rate paid on reserve balances and its effective date."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-016",
+      "question": "In the Annual Organizational Matters section, who was selected as Secretary of the Committee?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "Joshua Gallin was selected as Secretary of the Committee [Source 2].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 4",
+        "fomc-minutes-2026-01-28.pdf - Page 3",
+        "fomc-minutes-2026-01-28.pdf - Page 2",
+        "fomc-minutes-2026-01-28.pdf - Page 4"
+      ],
+      "context_count": 4,
+      "context_chars": 4208,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy": 0.8012632968493971,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The evidence explicitly lists the officers selected by unanimous vote and names Joshua Gallin as Secretary [Source 2]. Recovery support verifier: The question asks who was selected as Secretary of the Committee in the Annual Organizational Matters section. The evidence explicitly states: 'Joshua Gallin Secretary' among the officers selected by unanimous vote. The proposed answer matches this exactly and is directly supported."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-017",
+      "question": "In the discussion of money markets, what factors did contacts attribute to the better-than-expected year-end repo outcome?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "Contacts attributed the better-than-expected year-end repo outcome to several factors: increased available liquidity from the start of reserve management purchases (RMPs) and a lower Treasury General Account (TGA), recent changes to standing repo operations\u2019 design and communications, increased adoption of centrally cleared repo, and overall preparedness for year-end tightness [Source 1].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 5",
+        "fomc-minutes-2026-01-28.pdf - Page 5",
+        "fomc-minutes-2026-01-28.pdf - Page 5",
+        "fomc-minutes-2026-01-28.pdf - Page 11"
+      ],
+      "context_count": 4,
+      "context_chars": 3987,
+      "ragas": {
+        "faithfulness": 0.3333333333333333,
+        "answer_relevancy": 0.8948684249439469,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The evidence directly lists the factors contacts attributed to the better-than-expected outcome in repo rates at year-end."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-018",
+      "question": "Among the elected FOMC members, who were the presidents of the Federal Reserve Banks of New York and Philadelphia?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not identify which elected FOMC members were the presidents of the Federal Reserve Banks of New York and Philadelphia. It only shows other Federal Reserve Bank officials, including a vice president from Philadelphia and associates from New York, but not the presidents of those banks among the elected FOMC members [Source 1][Source 2][Source 3][Source 4].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 17",
+        "fomc-minutes-2026-01-28.pdf - Page 17",
+        "fomc-minutes-2026-01-28.pdf - Page 2",
+        "fomc-minutes-2026-01-28.pdf - Page 17"
+      ],
+      "context_count": 4,
+      "context_chars": 3748,
+      "ragas": {
+        "faithfulness": 0.8,
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The question asks for the names of the elected FOMC members who were presidents of the Federal Reserve Banks of New York and Philadelphia. The provided evidence does not list the elected FOMC membership in a way that identifies those two presidents, and it does not name a New York Fed president or a Philadelphia Fed president among the elected members. The only Philadelphia-related person shown is a vice president, and the New York-related entries are non-president staff roles. Support-status verifier classified the answer as unsupported. Supported facts: The evidence shows a vice president from the Federal Reserve Bank of Philadelphia.; The evidence shows associates from the Federal Reserve Bank of New York. Missing or ambiguous facts: The names of the elected FOMC members who were presidents of the Federal Reserve Banks of New York and Philadelphia are not identified in the evidence.; It is not directly shown which elected FOMC members correspond to the New York and Philadelphia Fed presidents. The proposed answer does not provide the requested names and instead states that the evidence does not identify them. While that gap is acknowledged, the answer fails to answer the question. The evidence only supports the presence of a Philadelphia vice president and New York associates, not the presidents of those banks among elected FOMC members."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-019",
+      "question": "By approximately how much did the staff estimate the government shutdown reduced fourth-quarter real GDP growth?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The staff estimated the government shutdown reduced fourth-quarter real GDP growth by about 1 percentage point [Source 1].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 7",
+        "fomc-minutes-2026-01-28.pdf - Page 9",
+        "fomc-minutes-2026-01-28.pdf - Page 6",
+        "fomc-minutes-2026-01-28.pdf - Page 10"
+      ],
+      "context_count": 4,
+      "context_chars": 3708,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9009794042811877,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The evidence directly states the estimate and provides the approximate amount."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-broad_summary-020",
+      "question": "How does the staff describe credit performance in domestic markets at the time of the meeting?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The staff described credit performance in domestic markets as remaining low by historical standards [Source 1].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 7",
+        "fomc-minutes-2026-01-28.pdf - Page 6",
+        "fomc-minutes-2026-01-28.pdf - Page 6",
+        "fomc-minutes-2026-01-28.pdf - Page 9"
+      ],
+      "context_count": 4,
+      "context_chars": 4364,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9085481122995905,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "The evidence directly states that in the domestic financial situation, \"credit spreads remained low by historical standards\" [Source 1], which answers how the staff described credit performance at the time of the meeting."
+    }
+  ]
+}

@@ -186,8 +186,8 @@ class QueryAnalyzer:
         if intent_type == "summary":
             return [*artifact_types, "general", "results"]
         if intent_type in {"comparison", "cross_cutting"}:
-            return [*artifact_types, "general", "definition", "results"]
-        return [*artifact_types, "general", "definition"]
+            return [*artifact_types, "general", "results"]
+        return [*artifact_types, "general"]
 
     @classmethod
     def analyze(cls, question: str) -> QueryProfile:

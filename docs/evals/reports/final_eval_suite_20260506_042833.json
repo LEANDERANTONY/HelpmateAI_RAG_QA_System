@@ -1,0 +1,468 @@
+{
+  "suite": {
+    "suite_id": "heldout-product-fit-2026-04-draft",
+    "description": "Draft held-out product-fit final evaluation manifest. Documents are fixed; questions must be generated and frozen before any system run.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\final_eval_manifest.draft.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native",
+    "question_offset": 0,
+    "question_ids": [
+      "irena-world-energy-transitions-outlook-2023-lookup-012",
+      "irena-world-energy-transitions-outlook-2023-lookup-014",
+      "irena-world-energy-transitions-outlook-2023-local_scope-016",
+      "irena-world-energy-transitions-outlook-2023-local_scope-017",
+      "irena-world-energy-transitions-outlook-2023-local_scope-018",
+      "irena-world-energy-transitions-outlook-2023-local_scope-019",
+      "irena-world-energy-transitions-outlook-2023-broad_summary-020",
+      "irena-world-energy-transitions-outlook-2023-broad_summary-021",
+      "irena-world-energy-transitions-outlook-2023-comparison_synthesis-025"
+    ],
+    "question_count": 9
+  },
+  "systems": [
+    "helpmate"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      },
+      "mode": "native_mockingbird_answer",
+      "generation_preset_name": "mockingbird-2.0"
+    }
+  },
+  "summary": {
+    "overall": {
+      "helpmate": {
+        "dataset_size": 9,
+        "answerable_size": 9,
+        "unsupported_size": 0,
+        "supported_rate": 0.7777777777777778,
+        "partial_rate": 0.1111111111111111,
+        "answered_rate": 0.8888888888888888,
+        "answerable_supported_rate": 0.7777777777777778,
+        "answerable_coverage_rate": 0.8888888888888888,
+        "unsupported_abstention_rate": 0.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.1111111111111111,
+        "strict_false_abstention_rate": 0.2222222222222222,
+        "avg_context_count": 4.0,
+        "avg_context_chars": 3324.5555555555557,
+        "ragas_all": {
+          "faithfulness": 0.5694444444444444,
+          "answer_relevancy": 0.6933517955421721,
+          "context_precision": 0.8333333332850308
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.515625,
+          "answer_relevancy": 0.7800207699849435,
+          "context_precision": 0.8124999999487847
+        }
+      }
+    },
+    "by_intent": {
+      "helpmate": {
+        "broad_summary": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 0.5,
+          "partial_rate": 0.0,
+          "answered_rate": 0.5,
+          "answerable_supported_rate": 0.5,
+          "answerable_coverage_rate": 0.5,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.5,
+          "strict_false_abstention_rate": 0.5,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 2558.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.4400242022779404,
+            "context_precision": 0.9166666666333333
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8800484045558808,
+            "context_precision": 0.8333333332916666
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 1,
+          "answerable_size": 1,
+          "unsupported_size": 0,
+          "supported_rate": 0.0,
+          "partial_rate": 1.0,
+          "answered_rate": 1.0,
+          "answerable_supported_rate": 0.0,
+          "answerable_coverage_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 1.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 1939.0,
+          "ragas_all": {
+            "faithfulness": 0.625,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.9166666666361111
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.625,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.9166666666361111
+          }
+        },
+        "local_scope": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "partial_rate": 0.0,
+          "answered_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "answerable_coverage_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 3523.75,
+          "ragas_all": {
+            "faithfulness": 0.375,
+            "answer_relevancy": 0.911618113530682,
+            "context_precision": 0.8124999999343749
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.375,
+            "answer_relevancy": 0.911618113530682,
+            "context_precision": 0.8124999999343749
+          }
+        },
+        "lookup": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "partial_rate": 0.0,
+          "answered_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "answerable_coverage_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 4385.5,
+          "ragas_all": {
+            "faithfulness": 0.5,
+            "answer_relevancy": 0.8568226506004697,
+            "context_precision": 0.7499999999625
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.5,
+            "answer_relevancy": 0.8568226506004697,
+            "context_precision": 0.7499999999625
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-012",
+      "question": "Where does the report indicate IRENA is headquartered?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The report indicates that IRENA is headquartered in Abu Dhabi [Source 1].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 245",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 245",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 243",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 243"
+      ],
+      "context_count": 4,
+      "context_chars": 6378,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8942766878928724,
+        "context_precision": 0.999999999975
+      },
+      "note": "The evidence repeatedly lists IRENA publications as being from the International Renewable Energy Agency, Abu Dhabi [Source 1]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-014",
+      "question": "Which national government is acknowledged for providing generous support for the report?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The German Federal Ministry for Economic Affairs and Climate Action is acknowledged for providing generous support for the report [Source 2].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 3",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 3",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 137",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 161"
+      ],
+      "context_count": 4,
+      "context_chars": 2393,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.819368613308067,
+        "context_precision": 0.49999999995
+      },
+      "note": "The evidence explicitly states: \u201cIRENA is grateful for the generous support of the German Federal Ministry for Economic Affairs and Climate Action.\u201d [Source 2] Recovery support verifier: The evidence directly states: \u201cIRENA is grateful for the generous support of the German Federal Ministry for Economic Affairs and Climate Action.\u201d This exactly matches the proposed answer and identifies the national government acknowledged for providing generous support."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-local_scope-016",
+      "question": "According to the executive summary, how much was invested in off-grid renewable energy solutions in 2021, and how does that compare with what is needed annually to 2030?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "According to the executive summary, investments in off-grid renewable energy solutions in 2021 amounted to USD 0.5 billion, and this was far below the USD 15 billion needed annually to 2030 [Source 1].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 25",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 171",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 157",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 155"
+      ],
+      "context_count": 4,
+      "context_chars": 4230,
+      "ragas": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.9325113136489863,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence directly states both required facts: the 2021 investment amount and the annual amount needed to 2030."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-local_scope-017",
+      "question": "According to the executive summary, what share of global renewable energy investment in 2022 went to solar PV and wind power?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "According to the executive summary, solar PV and wind power received 97% of total renewable energy investment in 2022 [Source 4].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 150",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 151",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 159",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 159"
+      ],
+      "context_count": 4,
+      "context_chars": 3814,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.8102409636037707,
+        "context_precision": 0.4166666666458333
+      },
+      "note": "The evidence explicitly states that in 2022 the combined share of total renewable energy investment for solar and wind technologies was 97% [Source 4]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-local_scope-018",
+      "question": "Under the 1.5 degree C Scenario, what shares of total final energy consumption do hydrogen and modern biomass meet by 2050?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "Under the 1.5\u00b0C Scenario, hydrogen meets 14% of total final energy consumption by 2050, and modern biomass meets 16% [Source 1].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 48",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 48",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 25",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 97"
+      ],
+      "context_count": 4,
+      "context_chars": 4800,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9542078913024282,
+        "context_precision": 0.8333333332916666
+      },
+      "note": "The evidence explicitly states that modern biomass and hydrogen are projected to play more significant roles, with 16% and 14% of TFEC by 2050, respectively [Source 1]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-local_scope-019",
+      "question": "In the executive summary's tracking-progress table, what average annual investment is required in power grids and flexibility through 2030 and through 2050 under the 1.5 degree C scenario?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "In the executive summary's tracking-progress table, the average annual investment required in power grids and flexibility is 1.1 USD billion/yr through 2030 and 100 USD billion/yr through 2050 under the 1.5 degree C scenario [Source 1].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 23",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 23",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 24",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 23"
+      ],
+      "context_count": 4,
+      "context_chars": 1251,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.9495122855675429,
+        "context_precision": 0.9999999999
+      },
+      "note": "The table on page 23 provides the investment figures for power grids and flexibility as 1.1 USD billion/yr and 100 USD billion/yr, corresponding to the 2030 and 2050 columns in the tracking-progress table [Source 1]. Recovery support verifier: The question asks for the average annual investment required in power grids and flexibility through 2030 and through 2050 under the 1.5\u00b0C scenario. The evidence on page 23 directly shows the values 1.1 USD billion/yr and 100 USD billion/yr in the tracking-progress table, matching the proposed answer exactly with no contradiction."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-broad_summary-020",
+      "question": "What does the report say multilateral financing institutions and concessional finance should do to support the energy transition?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The report says multilateral financing institutions should direct more funds, at better terms, toward large-scale energy transition projects, and that they are uniquely placed to support large-scale and cross-border projects that can accelerate the global energy transition [Source 1]. It also says concessional finance is scarce and should be increased through grants and concessional loans to help developing nations and less mature markets [Source 2][Source 3].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 165",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 162",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 176",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 177"
+      ],
+      "context_count": 4,
+      "context_chars": 4217,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8800484045558808,
+        "context_precision": 0.8333333332916666
+      },
+      "note": "The evidence directly states what multilateral DFIs should do and what concessional finance should do to support the energy transition."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-broad_summary-021",
+      "question": "How does Volume 2 differ from Volume 1 in scope and approach?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not contain any information about Volume 2 or Volume 1, so I cannot compare their scope or approach.",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 223",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 224",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 222",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 170"
+      ],
+      "context_count": 4,
+      "context_chars": 899,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.999999999975
+      },
+      "note": "The sources only show isolated page excerpts about scenarios, health damages, and distributional topics. None mention Volume 1 or Volume 2, nor describe differences in scope or approach. Support-status verifier classified the answer as unsupported. Missing or ambiguous facts: The question asks how Volume 2 differs from Volume 1 in scope and approach, but the evidence does not identify Volume 1 or Volume 2 or describe any comparison between them. The proposed answer explicitly says the evidence does not contain information about Volume 2 or Volume 1 and that it cannot compare them. However, the supplied evidence only contains unrelated excerpts about scenarios, health damages, and distributional topics, with no mention of either volume. Because the answer does not provide a grounded comparison and instead acknowledges the gap, it is not supported by the evidence."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-comparison_synthesis-025",
+      "question": "How does the role of bioenergy in 2050 differ between the Planned Energy Scenario and the 1.5 degree C Scenario?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": false,
+      "support_status": "partial",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The evidence supports the 1.5\u00b0C Scenario only: bioenergy consumption in transport grows to 12 EJ by 2050, and bioenergy feedstocks for chemical production grow to 10.9 EJ by 2050 [Source 1]. The evidence does not provide the Planned Energy Scenario 2050 value or description, so the difference between the two scenarios cannot be fully stated from the supplied text [Source 4].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 99",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 99",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 98",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 100"
+      ],
+      "context_count": 4,
+      "context_chars": 1939,
+      "ragas": {
+        "faithfulness": 0.625,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.9166666666361111
+      },
+      "note": "The question asks for a comparison between the Planned Energy Scenario and the 1.5\u00b0C Scenario in 2050. The supplied evidence gives 2050 bioenergy figures for the 1.5\u00b0C Scenario, but the Planned Energy Scenario 2050 data are not shown in the provided excerpt. Therefore only part of the required comparison is supported. Support-status verifier classified the answer as partial. Supported facts: Under the 1.5\u00b0C Scenario, bioenergy feedstocks for chemical production grow to 10.9 EJ by 2050.; Under the 1.5\u00b0C Scenario, bioenergy consumption in transport grows to 12 EJ by 2050.; The supplied evidence includes a table comparing Planned Energy Scenario and 1.5\u00b0C Scenario bioenergy indicators for 2030 and 2050. Missing or ambiguous facts: The Planned Energy Scenario 2050 bioenergy value/role is not provided in the visible evidence.; The exact difference between the Planned Energy Scenario and the 1.5\u00b0C Scenario in 2050 cannot be determined from the supplied excerpt. The proposed answer grounds the 1.5\u00b0C Scenario with figures directly stated in the evidence and explicitly acknowledges that the Planned Energy Scenario 2050 value is missing, so the comparison cannot be fully completed from the excerpt. Because the question asks for a difference between both scenarios, the missing PES 2050 information prevents a fully supported answer."
+    }
+  ]
+}

@@ -52,6 +52,7 @@ class AnswerCache:
             citations=payload["citations"],
             evidence=evidence,
             supported=payload.get("supported", True),
+            support_status=payload.get("support_status") or ("supported" if payload.get("supported", True) else "unsupported"),
             cache_status=CacheStatus(
                 index_reused=cache_status.get("index_reused", False),
                 answer_cache_hit=True,

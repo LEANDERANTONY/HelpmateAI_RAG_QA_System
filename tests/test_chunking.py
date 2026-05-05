@@ -195,9 +195,68 @@ def test_chunking_creates_complete_table_artifact_and_page_metadata():
 
     assert len(table_artifacts) == 1
     assert table_artifacts[0].metadata["artifact_entry"] is True
-    assert table_artifacts[0].metadata["table_complete"] is True
+    assert table_artifacts[0].metadata["table_complete"] is False
     assert table_artifacts[0].metadata["retrieval_visibility"] == "targeted_or_numeric"
     assert "Reverse repo    3.50%      $160 billion per day" in table_artifacts[0].text
+    assert document.metadata["pages"][0]["artifact_counts"]["table"] == 1
+
+
+def test_chunking_preserves_extracted_table_artifact_metadata():
+    table_artifact = {
+        "artifact_type": "table",
+        "source_backend": "pdfplumber",
+        "original_page_number": 23,
+        "original_page_label": "Page 23",
+        "table_index_on_page": 2,
+        "row_count": 3,
+        "column_count": 4,
+        "text": (
+            "Extracted table:\n"
+            "| Measure | 2020 | 2030 | 2050 |\n"
+            "| --- | --- | --- | --- |\n"
+            "| Renewable share | 16% | 43% | 77% |"
+        ),
+    }
+    document = DocumentRecord(
+        document_id="doc7",
+        file_name="energy.pdf",
+        file_type="pdf",
+        source_path="energy.pdf",
+        fingerprint="stu",
+        char_count=120,
+        page_count=1,
+        metadata={
+            "pages": [
+                {
+                    "page_label": "Page 23",
+                    "text": "The scenario table summarizes energy transition indicators.",
+                    "section_heading": "Executive Summary",
+                    "section_path": ["Executive Summary"],
+                    "section_id": "executive-summary",
+                    "clause_ids": [],
+                    "content_type": "general",
+                    "table_artifacts": [table_artifact],
+                },
+            ]
+        },
+        extracted_text="",
+    )
+
+    chunks = chunk_document(document, chunk_size=1000, chunk_overlap=0)
+    table_chunks = [
+        chunk
+        for chunk in chunks
+        if chunk.metadata.get("artifact_type") == "table"
+        and chunk.metadata.get("table_extraction_backend") == "pdfplumber"
+    ]
+
+    assert len(table_chunks) == 1
+    assert table_chunks[0].metadata["table_original_page_number"] == 23
+    assert table_chunks[0].metadata["table_original_page_label"] == "Page 23"
+    assert table_chunks[0].metadata["table_index_on_page"] == 2
+    assert table_chunks[0].metadata["table_row_count"] == 3
+    assert table_chunks[0].metadata["table_column_count"] == 4
+    assert "Renewable share" in table_chunks[0].text
     assert document.metadata["pages"][0]["artifact_counts"]["table"] == 1
 
 
@@ -245,3 +304,41 @@ def test_chunking_creates_footnote_and_bibliography_artifacts():
 
     assert "footnote" in artifact_types
     assert "bibliography" in artifact_types
+
+
+def test_chunking_creates_definition_artifacts_for_acronyms():
+    text = (
+        "The Physics-Informed Neural Operator (PINO) adds a PDE residual term to the training loss.\n"
+        "Graph Neural Operator (GNO) is discussed as another neural operator variant."
+    )
+    document = DocumentRecord(
+        document_id="doc8",
+        file_name="paper.pdf",
+        file_type="pdf",
+        source_path="paper.pdf",
+        fingerprint="vwx",
+        char_count=len(text),
+        page_count=1,
+        metadata={
+            "pages": [
+                {
+                    "page_label": "Page 3",
+                    "text": text,
+                    "section_heading": "Neural operators",
+                    "section_path": ["Neural operators"],
+                    "section_id": "neural-operators",
+                    "clause_ids": [],
+                    "content_type": "general",
+                }
+            ]
+        },
+        extracted_text=text,
+    )
+
+    chunks = chunk_document(document, chunk_size=1000, chunk_overlap=0)
+    definitions = [chunk for chunk in chunks if chunk.metadata.get("artifact_type") == "definition"]
+
+    assert len(definitions) == 2
+    assert any(chunk.metadata["definition_label"] == "PINO" for chunk in definitions)
+    assert any("Physics-Informed Neural Operator" in chunk.text for chunk in definitions)
+    assert document.metadata["pages"][0]["artifact_counts"]["definition"] == 2

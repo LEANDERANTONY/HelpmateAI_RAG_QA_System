@@ -363,7 +363,8 @@ class RetrievalPlanner:
             "rules": [
                 "Choose resolved_scope_ids only from available_sections.section_id. Never invent IDs.",
                 "Use likely_scope_sections as the first place to resolve named local scopes.",
-                "If the question asks in/from/within a named chapter, section, appendix, page, or other local part, scope_strictness must be hard.",
+                "Use hard scope only for explicit page/clause filters or when the named chapter/section/appendix clearly matches the chosen section labels.",
+                "If the user gives a vague local hint and the chosen section labels do not clearly match it, use soft scope so strong evidence elsewhere can still compete.",
                 "For a hard scope, the retrieval must stay inside resolved_scope_ids even if words like conclusion, summary, or findings appear.",
                 "For a hard scope, return the minimal coherent section IDs for the requested local part, not every globally relevant section.",
                 "Treat words such as summary, conclusions, findings, limitations, or recommendations as answer_focus unless the user asks for the global document conclusion.",
@@ -488,6 +489,86 @@ class RetrievalPlanner:
             return True
         if re.search(r"\b(?:in|from|within|inside)\s+the\s+[a-z0-9][a-z0-9 ._-]{2,80}?\s+(?:chapter|section|appendix)\b", lowered):
             return True
+        return False
+
+    @classmethod
+    def _scope_phrases_from_question(cls, question: str) -> list[str]:
+        lowered = question.lower()
+        phrases: list[str] = []
+        patterns = [
+            r"\b(?:in|from|within|inside)\s+(?:the\s+)?(?P<phrase>[a-z0-9][a-z0-9 ._-]{1,80}?)\s+(?:chapter|section|appendix)\b",
+            r"\b(?:in|from|within|inside)\s+(?:the\s+)?(?:chapter|section|appendix)\s+(?:on|about|called|named|titled\s+)?(?P<phrase>[a-z0-9][a-z0-9 ._-]{1,80}?)(?:[,?]|$)",
+        ]
+        for pattern in patterns:
+            for match in re.finditer(pattern, lowered):
+                phrase = re.sub(r"\b(?:the|a|an|chapter|section|appendix|on|about|called|named|titled)\b", " ", match.group("phrase"))
+                phrase = re.sub(r"\s+", " ", phrase).strip()
+                if phrase:
+                    phrases.append(phrase)
+        return cls._dedupe_strings(phrases)
+
+    @staticmethod
+    def _scope_markers_from_question(question: str) -> list[tuple[str, str]]:
+        markers: list[tuple[str, str]] = []
+        for match in re.finditer(r"\b(?P<kind>chapter|section|appendix|page|clause)\s+(?P<marker>[a-z0-9ivxlcdm]+(?:\.[a-z0-9]+)*)\b", question.lower()):
+            markers.append((match.group("kind"), match.group("marker")))
+        return markers
+
+    def _scope_text_for_synopsis(self, synopsis: SectionSynopsisRecord) -> str:
+        metadata = synopsis.metadata or {}
+        values: list[str] = [
+            synopsis.section_id,
+            synopsis.title,
+            synopsis.region_kind,
+            str(metadata.get("chapter_title", "")),
+            str(metadata.get("document_section_role", "")),
+        ]
+        for key in ("section_path", "document_scope_labels", "section_aliases"):
+            items = metadata.get(key, [])
+            if isinstance(items, list):
+                values.extend(str(item) for item in items)
+            elif items:
+                values.append(str(items))
+        return " ".join(values)
+
+    def _hard_scope_matches_question(
+        self,
+        *,
+        question: str,
+        scope_query: str,
+        scope_ids: list[str],
+        synopses: list[SectionSynopsisRecord],
+        metadata_filters: dict[str, list[str]],
+    ) -> bool:
+        if metadata_filters.get("page_labels") or metadata_filters.get("clause_terms"):
+            return True
+        if metadata_filters.get("section_terms"):
+            section_terms = {term.lower() for term in metadata_filters.get("section_terms", []) if term}
+        else:
+            section_terms = set()
+
+        synopsis_by_id = self._synopsis_by_id(synopses)
+        selected = [synopsis_by_id[section_id] for section_id in scope_ids if section_id in synopsis_by_id]
+        if not selected:
+            return False
+
+        selected_text = " ".join(self._scope_text_for_synopsis(synopsis) for synopsis in selected).lower()
+        selected_terms = self._token_set(selected_text)
+        if section_terms and all(term in selected_text for term in section_terms):
+            return True
+
+        for kind, marker in self._scope_markers_from_question(question):
+            for synopsis in selected:
+                metadata = synopsis.metadata or {}
+                if kind == "chapter" and marker == str(metadata.get("chapter_number", "")).lower():
+                    return True
+                if marker in self._scope_text_for_synopsis(synopsis).lower():
+                    return True
+
+        for phrase in [*self._scope_phrases_from_question(question), scope_query]:
+            phrase_terms = self._token_set(phrase)
+            if phrase_terms and phrase_terms <= selected_terms:
+                return True
         return False
 
     @staticmethod
@@ -755,6 +836,14 @@ class RetrievalPlanner:
         scope_query = str(payload.get("scope_query", "")).strip()
         if scope_strictness == "hard" and not self._has_explicit_local_scope(question, metadata_filters):
             return None
+        if scope_strictness == "hard" and not self._hard_scope_matches_question(
+                question=question,
+                scope_query=scope_query,
+                scope_ids=valid_scope_ids,
+                synopses=synopses,
+                metadata_filters=metadata_filters,
+        ):
+            scope_strictness = "soft"
         if scope_strictness == "hard":
             valid_scope_ids = self._coherent_hard_scope_ids(
                 scope_ids=valid_scope_ids,

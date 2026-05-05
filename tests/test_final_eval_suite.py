@@ -108,15 +108,27 @@ def test_summarize_rows_reports_abstention_and_deltas():
             "intent_type": "lookup",
             "answerable": True,
             "supported": True,
+            "support_status": "supported",
             "context_count": 4,
             "context_chars": 1000,
             "ragas": {"faithfulness": 0.9, "answer_relevancy": 0.8, "context_precision": 0.7},
         },
         {
             "system": "helpmate",
+            "intent_type": "lookup",
+            "answerable": True,
+            "supported": False,
+            "support_status": "partial",
+            "context_count": 4,
+            "context_chars": 950,
+            "ragas": {"faithfulness": 0.85, "answer_relevancy": 0.7, "context_precision": 0.75},
+        },
+        {
+            "system": "helpmate",
             "intent_type": "unsupported",
             "answerable": False,
             "supported": False,
+            "support_status": "unsupported",
             "context_count": 4,
             "context_chars": 900,
             "ragas": {"faithfulness": 1.0, "answer_relevancy": 0.6, "context_precision": 0.8},
@@ -126,6 +138,7 @@ def test_summarize_rows_reports_abstention_and_deltas():
             "intent_type": "lookup",
             "answerable": True,
             "supported": False,
+            "support_status": "unsupported",
             "context_count": 5,
             "context_chars": 1200,
             "ragas": {"faithfulness": 0.5, "answer_relevancy": 0.4, "context_precision": 0.3},
@@ -135,6 +148,7 @@ def test_summarize_rows_reports_abstention_and_deltas():
             "intent_type": "unsupported",
             "answerable": False,
             "supported": True,
+            "support_status": "supported",
             "context_count": 5,
             "context_chars": 1000,
             "ragas": {"faithfulness": 0.6, "answer_relevancy": 0.5, "context_precision": 0.2},
@@ -145,13 +159,17 @@ def test_summarize_rows_reports_abstention_and_deltas():
     helpmate = summary["overall"]["helpmate"]
     openai = summary["overall"]["openai_file_search"]
 
-    assert helpmate["answerable_supported_rate"] == pytest.approx(1.0)
+    assert helpmate["answerable_supported_rate"] == pytest.approx(0.5)
+    assert helpmate["answerable_coverage_rate"] == pytest.approx(1.0)
+    assert helpmate["partial_rate"] == pytest.approx(1 / 3)
+    assert helpmate["strict_false_abstention_rate"] == pytest.approx(0.5)
+    assert helpmate["false_abstention_rate"] == pytest.approx(0.0)
     assert helpmate["unsupported_abstention_rate"] == pytest.approx(1.0)
     assert helpmate["false_support_rate"] == pytest.approx(0.0)
     assert openai["false_abstention_rate"] == pytest.approx(1.0)
     assert openai["false_support_rate"] == pytest.approx(1.0)
-    assert summary["deltas_vs_helpmate"]["openai_file_search"]["ragas_all_faithfulness"] == pytest.approx(0.4)
-    assert summary["by_intent"]["helpmate"]["lookup"]["dataset_size"] == 1
+    assert summary["deltas_vs_helpmate"]["openai_file_search"]["ragas_all_faithfulness"] == pytest.approx(0.3666666667)
+    assert summary["by_intent"]["helpmate"]["lookup"]["dataset_size"] == 2
 
 
 def test_run_final_eval_rejects_unknown_context_mode(tmp_path: Path):

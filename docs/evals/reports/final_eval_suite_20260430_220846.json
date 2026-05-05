@@ -1,0 +1,636 @@
+{
+  "suite": {
+    "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-03",
+    "description": "OpenAI native File Search corrected rerun chunk 3/10, questions 31-45.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\openai_native_15_chunks\\openai_native_15_chunk_03.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "openai_file_search"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      }
+    }
+  },
+  "summary": {
+    "overall": {
+      "openai_file_search": {
+        "dataset_size": 15,
+        "answerable_size": 14,
+        "unsupported_size": 1,
+        "supported_rate": 0.9333333333333333,
+        "answerable_supported_rate": 1.0,
+        "unsupported_abstention_rate": 1.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.0,
+        "avg_context_count": 5.0,
+        "avg_context_chars": 18284.133333333335,
+        "ragas_all": {
+          "faithfulness": 0.9433333333333334,
+          "answer_relevancy": 0.7963507559465793,
+          "context_precision": 0.9248148147716636
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.9678571428571429,
+          "answer_relevancy": 0.8532329527999065,
+          "context_precision": 0.9194444443996396
+        }
+      }
+    },
+    "by_intent": {
+      "openai_file_search": {
+        "broad_summary": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 21013.5,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9299445067701047,
+            "context_precision": 0.7944444444110185
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.9299445067701047,
+            "context_precision": 0.7944444444110185
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 1,
+          "answerable_size": 1,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 20361.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7234679698556453,
+            "context_precision": 0.9999999999666667
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7234679698556453,
+            "context_precision": 0.9999999999666667
+          }
+        },
+        "local_scope": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 18443.0,
+          "ragas_all": {
+            "faithfulness": 0.8875,
+            "answer_relevancy": 0.8695193419304051,
+            "context_precision": 0.9374999999572917
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.8875,
+            "answer_relevancy": 0.8695193419304051,
+            "context_precision": 0.9374999999572917
+          }
+        },
+        "lookup": {
+          "dataset_size": 6,
+          "answerable_size": 6,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 16492.5,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8753405641174579,
+            "context_precision": 0.9222222221711806
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8753405641174579,
+            "context_precision": 0.9222222221711806
+          }
+        },
+        "numeric_procedure": {
+          "dataset_size": 1,
+          "answerable_size": 1,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 18872.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.6317836033764678,
+            "context_precision": 0.99999999995
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.6317836033764678,
+            "context_precision": 0.99999999995
+          }
+        },
+        "unsupported": {
+          "dataset_size": 1,
+          "answerable_size": 0,
+          "unsupported_size": 1,
+          "supported_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 20275.0,
+          "ragas_all": {
+            "faithfulness": 0.6,
+            "answer_relevancy": 0.0,
+            "context_precision": 0.99999999998
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-03",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-001",
+      "question": "What target range did the Committee decide to maintain for the federal funds rate at this meeting?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The Committee decided to maintain the target range for the federal funds rate at 3\u00bd to 3\u00be percent.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 19515,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8164674199895036,
+        "context_precision": 0.9999999999666667
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0532dc5b77aaee870069f381dc08e881909080c6dfa553c601"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-03",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-002",
+      "question": "Which members dissented from the policy decision, and what alternative did they prefer?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Stephen I. Miran and Christopher J. Waller dissented from the policy decision, and they preferred to lower the target range for the federal funds rate by \u00bc percentage point at that meeting",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 19696,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7529549139288901,
+        "context_precision": 0.5833333333041666
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_09d0fa1d5ad457cf0069f38205af1481979feeca1b803f382d"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-03",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-003",
+      "question": "When is the next FOMC meeting scheduled to take place?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The next FOMC meeting is scheduled for Tuesday\u2013Wednesday, March 17\u201318, 2026, according to the minutes of the January 27\u201328, 2026 meeting",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 13259,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9919102298459127,
+        "context_precision": 0.9999999999
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0f4f867afa5bb3340069f382349d8881969d9356438351eeca"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-03",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-004",
+      "question": "In the staff's review of foreign developments, which foreign central banks cut their policy rates and which raised them?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "In the staff\u2019s review of foreign developments, the foreign central banks that cut their policy rates were the Bank of England and the Bank of Mexico. The Bank of Japan raised its key policy rate. The staff also noted that most other foreign central banks left rates unchanged",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 19655,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8865355976437369,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0fbf32093ef05b260069f382672eb4819494ce5bad006c5dee"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-03",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-005",
+      "question": "In the staff's financial stability assessment, which categories of vulnerability were characterized as 'notable' versus 'moderate'?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "In the staff\u2019s financial stability assessment, the vulnerabilities characterized as notable were asset valuation pressures and leverage in the financial sector, while nonfinancial business and household debt and funding risks were characterized as moderate",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 20407,
+      "ragas": {
+        "faithfulness": 0.8,
+        "answer_relevancy": 0.8990733090416256,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_05b700707f187af70069f382c533fc8195b19ee3c7df42ce2f"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-03",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-broad_summary-006",
+      "question": "What were the main reasons cited by participants who supported holding the federal funds rate steady at this meeting?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Participants who supported holding the federal funds rate steady mainly said that, after the 75 basis point cut last year, the current stance of monetary policy was already within the range of estimates of neutral. They also said keeping rates unchanged would leave policymakers well positioned to judge the extent and timing of any further adjustments using incoming data, the evolving outlook, and the balance of risks. The minutes add that some participants thought it would be appropriate to hold",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 20636,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9398062345141297,
+        "context_precision": 0.8333333332916666
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_03a5852d597e5a3e0069f382fb58908195b9236643367b0090"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-03",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-broad_summary-007",
+      "question": "What financial stability concerns did participants raise specifically about the AI sector?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Participants said the AI sector could pose financial stability risks through elevated equity market valuations, high concentration of market values and activity in a small number of firms, and increased debt financing. They also said the financing of the AI-related infrastructure buildout in opaque private markets warranted monitoring",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 21391,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9200827790260796,
+        "context_precision": 0.7555555555303703
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0a1a103f086f15a60069f383527edc81979efa2b71da2c3c47"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-03",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-comparison_synthesis-008",
+      "question": "How did the views of participants who preferred to lower rates differ from those who preferred to hold them steady?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Participants who preferred to lower rates were more concerned that the policy stance was still meaningfully restrictive and that downside risks to the labor market outweighed the risk of persistently elevated inflation. In contrast, participants who preferred to hold rates steady generally thought that, after the earlier 75 basis point cuts, policy was already around the neutral range and that keeping rates unchanged would leave them well positioned to assess incoming data and the balance of ris",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 20361,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7234679698556453,
+        "context_precision": 0.9999999999666667
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_04dec5af93df98200069f383a220b88196b312ba3d1e75ed55"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-03",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-numeric_procedure-009",
+      "question": "What specific operating parameters did the policy directive set for the standing overnight repo and reverse repo facilities, effective January 29, 2026?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The directive set these operating parameters effective January 29, 2026: standing overnight repurchase agreement operations at a rate of 3.75 percent, and standing overnight reverse repurchase agreement operations at an offering rate of 3.5 percent with a per-counterparty limit of $160 billion per day",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 18872,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6317836033764678,
+        "context_precision": 0.99999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_051d4c06e422a0b50069f383e74cc48190bb5e71879ab3cce9"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-03",
+      "system": "openai_file_search",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-unsupported-010",
+      "question": "What did this meeting's updated dot plot show about participants' median federal funds rate projection for year-end 2026?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: The uploaded meeting minutes shown in the file search results do not include the updated dot plot or any explicit mention of participants\u2019 median federal funds rate projection for year-end 2026. The results only summarize the policy discussion and the current target range, not the year-end 2026 median projection.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 20275,
+      "ragas": {
+        "faithfulness": 0.6,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.99999999998
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_099452e28b3e7e9f0069f38431cbb881949fb4325f9fcc3446"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-03",
+      "system": "openai_file_search",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-001",
+      "question": "What two scenarios does this report use as its primary comparison?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The report\u2019s primary comparison is between the Planned Energy Scenario and the 1.5\u00b0C Scenario. The Planned Energy Scenario is described as the primary reference case, based on governments\u2019 current energy plans and policies, while the 1.5\u00b0C Scenario is the pathway aligned with limiting warming to 1.5\u00b0C",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 14272,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7897380007273161,
+        "context_precision": 0.99999999998
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0ae35917b484f75d0069f3849a7e9c81979e1115742762ba54"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-03",
+      "system": "openai_file_search",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-002",
+      "question": "Who is identified as the Director-General of IRENA in the foreword?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The foreword identifies Francesco La Camera as the Director-General of IRENA.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 15858,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9999999999999997,
+        "context_precision": 0.9999999999
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0bc4acef142f14a70069f384d428108196b6629c465e4bf693"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-03",
+      "system": "openai_file_search",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-003",
+      "question": "What level of annual renewable power capacity additions does the report say is needed to stay on a 1.5\u00b0C pathway, and how much was actually added globally in 2022?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The report says annual deployment of about 1,000 GW of renewable power is needed to stay on a 1.5\u00b0C pathway, and that about 300 GW of renewables were actually added globally in 2022",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 16355,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9009728202131253,
+        "context_precision": 0.94999999997625
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_042dc1b413a0305f0069f384f9da348190b7858fdecd8c47dd"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-03",
+      "system": "openai_file_search",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-local_scope-004",
+      "question": "In the welfare impacts chapter of Volume 2, how many dimensions and how many indicators make up IRENA's welfare index?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "IRENA\u2019s welfare index in the welfare impacts chapter of Volume 2 has five dimensions and 10 indicators, with two indicators per dimension",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 16739,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.898862249510947,
+        "context_precision": 0.9999999999666667
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_023d26150e1c1ae10069f3853119d08193b9f3b015f1f89a6f"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-native-15-03",
+      "system": "openai_file_search",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-local_scope-005",
+      "question": "In the foreword's vision for overcoming barriers, what three pillars does the report propose as the foundations for a way forward?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The report says the way forward rests on three pillars: building the necessary infrastructure at scale, advancing an evolved policy and regulatory architecture, and strategically realigning institutional capacities so skills and capabilities match the energy system being created",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 16971,
+      "ragas": {
+        "faithfulness": 0.75,
+        "answer_relevancy": 0.7936062115253112,
+        "context_precision": 0.7499999999625
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_021bc888811e27220069f3856409c0819684581271d71227e1"
+    }
+  ]
+}

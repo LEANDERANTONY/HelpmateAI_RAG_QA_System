@@ -1,0 +1,1113 @@
+{
+  "suite": {
+    "suite_id": "heldout-product-fit-2026-04-draft",
+    "description": "Draft held-out product-fit final evaluation manifest. Documents are fixed; questions must be generated and frozen before any system run.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\final_eval_manifest.draft.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native",
+    "question_offset": 60,
+    "question_count": 30
+  },
+  "systems": [
+    "helpmate"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      },
+      "mode": "native_mockingbird_answer",
+      "generation_preset_name": "mockingbird-2.0"
+    }
+  },
+  "summary": {
+    "overall": {
+      "helpmate": {
+        "dataset_size": 30,
+        "answerable_size": 26,
+        "unsupported_size": 4,
+        "supported_rate": 0.7666666666666667,
+        "partial_rate": 0.0,
+        "answered_rate": 0.7666666666666667,
+        "answerable_supported_rate": 0.8846153846153846,
+        "answerable_coverage_rate": 0.8846153846153846,
+        "unsupported_abstention_rate": 1.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.11538461538461539,
+        "strict_false_abstention_rate": 0.11538461538461539,
+        "avg_context_count": 4.0,
+        "avg_context_chars": 3707.5333333333333,
+        "ragas_all": {
+          "faithfulness": 0.9052269027269028,
+          "answer_relevancy": 0.7148087133326423,
+          "context_precision": 0.9351851851254013
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.9633394383394384,
+          "answer_relevancy": 0.7787073647304564,
+          "context_precision": 0.9154589371309582
+        }
+      }
+    },
+    "by_intent": {
+      "helpmate": {
+        "broad_summary": {
+          "dataset_size": 7,
+          "answerable_size": 7,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "partial_rate": 0.0,
+          "answered_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "answerable_coverage_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 4128.428571428572,
+          "ragas_all": {
+            "faithfulness": 0.9299886621315193,
+            "answer_relevancy": 0.8001611081055621,
+            "context_precision": 0.8928571428099206
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.9299886621315193,
+            "answer_relevancy": 0.8001611081055621,
+            "context_precision": 0.8928571428099206
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 6,
+          "answerable_size": 6,
+          "unsupported_size": 0,
+          "supported_rate": 0.8333333333333334,
+          "partial_rate": 0.0,
+          "answered_rate": 0.8333333333333334,
+          "answerable_supported_rate": 0.8333333333333334,
+          "answerable_coverage_rate": 0.8333333333333334,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.16666666666666666,
+          "strict_false_abstention_rate": 0.16666666666666666,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 3658.8333333333335,
+          "ragas_all": {
+            "faithfulness": 0.7744810744810745,
+            "answer_relevancy": 0.6850349699098954,
+            "context_precision": 0.9398148147515432
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.9293772893772894,
+            "answer_relevancy": 0.8019526274629019,
+            "context_precision": 0.9277777777068519
+          }
+        },
+        "local_scope": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "partial_rate": 0.0,
+          "answered_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "answerable_coverage_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 4492.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7459756577529697,
+            "context_precision": 0.7916666665979166
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7459756577529697,
+            "context_precision": 0.7916666665979166
+          }
+        },
+        "lookup": {
+          "dataset_size": 5,
+          "answerable_size": 5,
+          "unsupported_size": 0,
+          "supported_rate": 0.6,
+          "partial_rate": 0.0,
+          "answered_rate": 0.6,
+          "answerable_supported_rate": 0.6,
+          "answerable_coverage_rate": 0.6,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.4,
+          "strict_false_abstention_rate": 0.4,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 3050.8,
+          "ragas_all": {
+            "faithfulness": 0.8,
+            "answer_relevancy": 0.6538922290750674,
+            "context_precision": 0.999999999925
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8231852359169967,
+            "context_precision": 0.9999999999166667
+          }
+        },
+        "numeric_procedure": {
+          "dataset_size": 4,
+          "answerable_size": 4,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "partial_rate": 0.0,
+          "answered_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "answerable_coverage_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 3422.75,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7114800389960463,
+            "context_precision": 0.9999999999166667
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.7114800389960463,
+            "context_precision": 0.9999999999166667
+          }
+        },
+        "unsupported": {
+          "dataset_size": 4,
+          "answerable_size": 0,
+          "unsupported_size": 4,
+          "supported_rate": 0.0,
+          "partial_rate": 0.0,
+          "answered_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "answerable_coverage_rate": 0.0,
+          "unsupported_abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 3365.25,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.6584099728523902,
+            "context_precision": 0.999999999975
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-021",
+      "question": "How does the framework describe its overall stance on risk tolerance for organizations using it?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The framework says it is flexible and can be used to prioritize risk, but it does not prescribe an organization\u2019s risk tolerance. Instead, organizations should follow applicable laws, regulations, norms, and existing sector or professional guidance; where no established guidelines exist, they should define a reasonable risk tolerance themselves [Source 1][Source 2].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 12",
+        "nist-ai-rmf-1-0.pdf - Page 12",
+        "nist-ai-rmf-1-0.pdf - Page 3",
+        "nist-ai-rmf-1-0.pdf - Page 4"
+      ],
+      "context_count": 4,
+      "context_chars": 3511,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8838762614498067,
+        "context_precision": 0.99999999995
+      },
+      "note": "The evidence directly states the framework does not prescribe risk tolerance, is intended to be flexible, and should align with existing laws, regulations, norms, and guidance; it also says organizations should define reasonable risk tolerance when no guidelines exist."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-022",
+      "question": "What outcomes does the framework say organizations and users should expect to gain from applying it?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The framework says organizations and users should expect it to help them: provide a common language and understanding for managing AI risks; be easy to use and fit with broader risk management processes; be useful across many sectors and technology domains; be outcome-focused and non-prescriptive; foster awareness of existing standards, guidelines, best practices, methodologies, and tools; and support operation under applicable laws and regulations [Source 3]. It also says framework users will e",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 33",
+        "nist-ai-rmf-1-0.pdf - Page 30",
+        "nist-ai-rmf-1-0.pdf - Page 47",
+        "nist-ai-rmf-1-0.pdf - Page 3"
+      ],
+      "context_count": 4,
+      "context_chars": 3749,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6734525925813711,
+        "context_precision": 0.9999999999666667
+      },
+      "note": "The evidence directly lists the framework\u2019s intended outcomes and benefits for users and organizations across the cited sources."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-023",
+      "question": "How does the framework characterize residual risk, and what does it say organizations should do about it?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The framework says residual risk is the risk that remains after risk management actions, and it treats risk tolerance as highly contextual rather than prescribed by the AI RMF. It says organizations should follow existing regulations and guidelines for risk criteria, tolerance, and response, and where established guidelines do not exist, organizations should define reasonable risk tolerance. Once tolerance is defined, the AI RMF can be used to manage risks and document risk management processes ",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 12",
+        "nist-ai-rmf-1-0.pdf - Page 12",
+        "nist-ai-rmf-1-0.pdf - Page 44",
+        "nist-ai-rmf-1-0.pdf - Page 3"
+      ],
+      "context_count": 4,
+      "context_chars": 4067,
+      "ragas": {
+        "faithfulness": 0.875,
+        "answer_relevancy": 0.8264465381836837,
+        "context_precision": 0.49999999995
+      },
+      "note": "The evidence states that the AI RMF does not prescribe risk tolerance, that risk tolerance is contextual and use-case specific, and that organizations should follow existing regulations/guidelines or define reasonable risk tolerance where none exist. It also says the AI RMF can then be used to manage risks and document processes [Source 1][Source 2]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-comparison_synthesis-024",
+      "question": "How does the framework distinguish between security and resilience for AI systems?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The framework distinguishes them as related but distinct characteristics. It says AI systems are resilient if they can withstand unexpected adverse events or changes, maintain functions and structure in the face of internal and external change, and degrade safely and gracefully when necessary [Source 1]. It says AI systems are secure if they maintain confidentiality, integrity, and availability through protection mechanisms that prevent unauthorized access and use [Source 1]. It further states t",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 20",
+        "nist-ai-rmf-1-0.pdf - Page 44",
+        "nist-ai-rmf-1-0.pdf - Page 33",
+        "nist-ai-rmf-1-0.pdf - Page 2"
+      ],
+      "context_count": 4,
+      "context_chars": 3188,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9821573555138338,
+        "context_precision": 0.9999999999
+      },
+      "note": "Source 1 directly defines both terms and explicitly contrasts them as related but distinct."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-comparison_synthesis-025",
+      "question": "How does the framework distinguish reliability from robustness?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The framework distinguishes them by scope and conditions of performance: reliability is the ability of an AI system to perform as required without failure for a given time interval under given conditions, and is a goal for overall correctness under expected use over the system\u2019s lifetime [Source 2]. Robustness is the ability to maintain performance under a variety of circumstances, including broad conditions and uses not initially anticipated, and to minimize potential harms if the system operat",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 19",
+        "nist-ai-rmf-1-0.pdf - Page 18",
+        "nist-ai-rmf-1-0.pdf - Page 19",
+        "nist-ai-rmf-1-0.pdf - Page 1"
+      ],
+      "context_count": 4,
+      "context_chars": 3331,
+      "ragas": {
+        "faithfulness": 0.8571428571428571,
+        "answer_relevancy": 0.7395116777822185,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence directly defines both terms and contrasts their focus: reliability under expected conditions over time versus robustness across a broader set of circumstances, including unexpected settings."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-comparison_synthesis-026",
+      "question": "How is the Govern function related to the Manage function in the framework?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "Unsupported by the recovered evidence. The recovered evidence did not fully support every required fact in the question.",
+      "citations": [],
+      "context_count": 4,
+      "context_chars": 3867,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.100446682144863,
+        "context_precision": 0.999999999975
+      },
+      "note": "The evidence directly states that MANAGE is defined by GOVERN and depends on processes, context, and documentation established in GOVERN. This fully answers how Govern relates to Manage. Recovery support verifier: The answer is only partially supported and adds unsupported interpretation. The evidence shows that GOVERN provides a structure for AI risk management functions and that MANAGE uses risk resources as defined by GOVERN, plus contextual information and documentation established in GOVERN. However, the claim that GOVERN is 'the basis for' MANAGE is not stated directly in the evidence and is an inference beyond the text."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-numeric_procedure-027",
+      "question": "How does the framework define risk in terms of harm and likelihood when considering negative impacts?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The framework defines risk, when considering negative impacts, as a function of two things: 1) the negative impact or magnitude of harm that would arise if the event occurs, and 2) the likelihood of occurrence [Source 1].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 9",
+        "nist-ai-rmf-1-0.pdf - Page 9",
+        "nist-ai-rmf-1-0.pdf - Page 4",
+        "nist-ai-rmf-1-0.pdf - Page 1"
+      ],
+      "context_count": 4,
+      "context_chars": 2741,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8705154121409029,
+        "context_precision": 0.9999999999
+      },
+      "note": "Source 1 explicitly states that for negative impacts, risk is a function of the magnitude of harm and the likelihood of occurrence."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-numeric_procedure-028",
+      "question": "How does the framework describe its versioning scheme for the AI RMF?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The framework uses a two-number versioning system to track major and minor changes. The first number is the generation number for the AI RMF and its companion documents, such as 1.0, and it changes only for major revisions. Minor revisions are shown with \u201c.n\u201d after the generation number, such as 1.1. Changes are also tracked in a Version Control Table that records the version number, date of change, and description of change [Source 1].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 3",
+        "nist-ai-rmf-1-0.pdf - Page 3",
+        "nist-ai-rmf-1-0.pdf - Page 3",
+        "nist-ai-rmf-1-0.pdf - Page 47"
+      ],
+      "context_count": 4,
+      "context_chars": 3921,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6053835710449142,
+        "context_precision": 0.9999999999666667
+      },
+      "note": "The evidence directly states the AI RMF\u2019s versioning scheme and how major and minor revisions are represented, along with the Version Control Table used to track changes."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-unsupported-029",
+      "question": "What specific quantitative bias threshold does the framework recommend for face recognition systems used in law enforcement?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not mention any specific quantitative bias threshold for face recognition systems used in law enforcement.",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 41",
+        "nist-ai-rmf-1-0.pdf - Page 11",
+        "nist-ai-rmf-1-0.pdf - Page 41",
+        "nist-ai-rmf-1-0.pdf - Page 11"
+      ],
+      "context_count": 4,
+      "context_chars": 4355,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8812147785232071,
+        "context_precision": 0.999999999975
+      },
+      "note": "The evidence discusses AI risk management, bias, human factors, and real-world settings, but it does not provide a numeric or quantitative threshold for face recognition systems in law enforcement. Support-status verifier classified the answer as unsupported. Missing or ambiguous facts: The question asks for a specific quantitative bias threshold recommended by the framework for face recognition systems used in law enforcement, but the evidence does not provide any numeric threshold or any face-recognition/law-enforcement-specific recommendation. The proposed answer correctly states that the evidence does not mention a specific quantitative bias threshold, but the supplied evidence contains no direct support for any threshold at all. Because the question asks for a specific threshold and none is present, the answer is not a grounded substantive response to the requested fact."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-unsupported-030",
+      "question": "What fee does NIST charge organizations to be officially certified as compliant with the AI RMF?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not state any fee or certification process for organizations to be officially certified as compliant with the AI RMF.",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 6",
+        "nist-ai-rmf-1-0.pdf - Page 7",
+        "nist-ai-rmf-1-0.pdf - Page 5",
+        "nist-ai-rmf-1-0.pdf - Page 3"
+      ],
+      "context_count": 4,
+      "context_chars": 2582,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8265679318175992,
+        "context_precision": 0.999999999975
+      },
+      "note": "The documents describe the AI RMF and related concepts, but none of the supplied sources mention certification, compliance fees, or NIST charging organizations for official certification. Support-status verifier classified the answer as unsupported. Supported facts: The provided evidence does not state any fee or certification process for organizations to be officially certified as compliant with the AI RMF. Missing or ambiguous facts: Whether NIST charges a fee for official certification as compliant with the AI RMF.; Whether there is any official certification process for AI RMF compliance. The proposed answer is grounded in the evidence only to the extent that the supplied sources do not mention a fee or certification process. However, the question asks what fee NIST charges, and the answer does not provide a fee amount or any direct evidence that such a fee exists or does not exist. Because the required fact is missing and the answer only states the evidence is silent, it is not a supported answer to the question."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-011",
+      "question": "What arXiv identifier and submission date are listed for this paper?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not list the arXiv identifier and submission date for the paper in question. It only shows a partial citation ending with \"Climax: A foundation model for weather and climate.arXiv\" [Source 1], but no identifier or submission date is visible.",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 41",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 42",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 39",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 39"
+      ],
+      "context_count": 4,
+      "context_chars": 3778,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence contains only an incomplete reference for the paper and does not provide the arXiv ID or submission date. No source shows both required facts. Support-status verifier classified the answer as unsupported. Supported facts: The evidence shows a partial citation for 'Climax: A foundation model for weather and climate'. Missing or ambiguous facts: The arXiv identifier for the paper is not provided in the visible evidence.; The submission date for the paper is not provided in the visible evidence. The proposed answer correctly notes that the evidence does not show the arXiv identifier or submission date, but it does not supply the requested facts. Since the question asks for those specific details and the evidence only contains an incomplete citation ending with 'arXiv', the answer is not a supported direct answer."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-012",
+      "question": "Who is the corresponding author for this paper?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The corresponding author is Tian Zheng [Source 2].",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 1",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 1",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 2",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 2"
+      ],
+      "context_count": 4,
+      "context_chars": 3469,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9056497823924575,
+        "context_precision": 0.99999999995
+      },
+      "note": "The evidence explicitly lists the correspondence email as tian.zheng@columbia.edu [Source 2], and Tian Zheng is one of the authors on the title page [Source 1]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-013",
+      "question": "What does the abbreviation PINO stand for in the paper?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not mention PINO or define what it stands for.",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 10",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 10",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 15",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 15"
+      ],
+      "context_count": 4,
+      "context_chars": 2333,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7999054376243467,
+        "context_precision": 0.999999999975
+      },
+      "note": "The evidence defines GINO as Geometry-Informed Neural Operators [Source 4], but there is no evidence for the abbreviation PINO. Support-status verifier classified the answer as unsupported. Missing or ambiguous facts: What PINO stands for in the paper The proposed answer explicitly says the evidence does not mention PINO or define it, which acknowledges the gap. However, the supplied evidence only defines GINO, not PINO, so the question is not answered from the evidence."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-014",
+      "question": "What does GNO refer to in the discussion of neural operator variants?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "GNO refers to Graph Neural Operator [Source 1].",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 15",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 10",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 15",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 15"
+      ],
+      "context_count": 4,
+      "context_chars": 1597,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7588766004547985,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence explicitly defines GNO as Graph Neural Operator. Recovery support verifier: The question asks what GNO refers to in the discussion of neural operator variants. The evidence explicitly states: \"Definition: GNO = Graph Neural Operator\" and the source text expands it as \"Graph Neural Operator (GNO).\" The proposed answer matches this exactly and is directly supported."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-lookup-015",
+      "question": "Which prior work do the authors cite for introducing 'Model Cards' as a way to document key modeling decisions?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The authors cite Mitchell et al. [2019] as the prior work introducing \"model cards\" [Source 1].",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 6",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 7",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 7",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 6"
+      ],
+      "context_count": 4,
+      "context_chars": 4077,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.805029324903734,
+        "context_precision": 0.9999999999
+      },
+      "note": "Source 1 explicitly says the summaries are \"similar in spirit to model cards Mitchell et al. [2019] and model info sheets Kapoor and Narayanan [2023].\" This identifies Mitchell et al. [2019] as the cited prior work for model cards."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-016",
+      "question": "In the inverse parameter inference case study (Case Study 2b), what model architecture is adopted and why?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "Case Study 2b adopts conditional normalizing flows because they provide invertible mappings between parameters and distributions, enabling likelihood-free inference in complex dynamical settings [Source 1].",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 10",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 11",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 20",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 27"
+      ],
+      "context_count": 4,
+      "context_chars": 4799,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.41443046820178236,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence explicitly states both the model architecture and the reason for choosing it in Case Study 2b."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-017",
+      "question": "In the pCO2 upscaling case study (Case Study 3b), how does the transfer learning approach handle the sparsity of in-situ observations?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The transfer learning approach handles the sparsity of in-situ pCO2 observations by first pre-training the model on simulated full-field data from ocean biogeochemical models, then fine-tuning it with the sparse observational data [Source 1]. This uses model simulations for coverage and observations for realism [Source 1].",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 9",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 32",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 6",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 6"
+      ],
+      "context_count": 4,
+      "context_chars": 4701,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9056508784867728,
+        "context_precision": 0.8333333332916666
+      },
+      "note": "The evidence explicitly states that, to overcome sparse in-situ pCO2 observations, the method pre-trains on simulated full-field data and then fine-tunes on sparse observations, leveraging both model coverage and measurement realism [Source 1]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-018",
+      "question": "In the development stage of the workflow framework, what does 'iterative refinement' specifically involve according to the paper?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "According to the paper, iterative refinement in the development stage involves using insights from validation to adjust objective functions, training procedures, or data preprocessing, and incorporating scientific feedback into model revisions [Source 3].",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 10",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 7",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 11",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 6"
+      ],
+      "context_count": 4,
+      "context_chars": 4422,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8300095309469248,
+        "context_precision": 0.3333333333
+      },
+      "note": "The evidence explicitly defines 'Iterative Refinement' in the development stage and lists the specific actions involved: adjusting objective functions, training procedures, or data preprocessing based on validation insights, plus incorporating scientific feedback into model revisions [Source 3]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-local_scope-019",
+      "question": "Beyond the three integration directions in Figure 1, what 'fourth direction' do the authors describe?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The authors describe the fourth direction as **human-in-the-loop**: workflows guided by scientific reasoning, modeling practices, and domain expertise [Source 1].",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 6",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 5",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 4",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 6"
+      ],
+      "context_count": 4,
+      "context_chars": 4046,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.833811753376399,
+        "context_precision": 0.9999999999
+      },
+      "note": "Source 1 explicitly states that, in addition to the three directions in Figure 1, a fourth direction is human-in-the-loop and defines it as workflow design guided by scientific reasoning, modeling practices, and domain expertise."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-broad_summary-020",
+      "question": "What open challenges in scientific machine learning workflows for climate modeling does the paper highlight in its conclusion?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The conclusion highlights these open challenges in scientific machine learning workflows for climate modeling: reproducibility and online evaluation, scalability, and integration with scientific inquiries/scientific reasoning [Source 3]. It also specifically emphasizes the need for greater uncertainty quantification/modeling, improved interpretability, and better workflow design that supports scientific interpretation and understanding [Source 4][Source 2][Source 1].",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 13",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 12",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 3",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 12"
+      ],
+      "context_count": 4,
+      "context_chars": 4150,
+      "ragas": {
+        "faithfulness": 0.7777777777777778,
+        "answer_relevancy": 0.8737419766468028,
+        "context_precision": 0.999999999975
+      },
+      "note": "The evidence explicitly states the conclusion discusses open challenges and opportunities for further research on reproducibility and online evaluation, scalability, and integration with scientific inquiries [Source 3]. It also names reproducibility, interpretability, uncertainty modeling/quantification, scalability, and integration with scientific reasoning as key issues in the conclusion/discussion [Source 2][Source 4][Source 1]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-broad_summary-021",
+      "question": "How does the paper describe the role of reanalysis datasets such as ERA5 in climate modeling and ML?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The paper says reanalysis datasets such as ERA5 combine historical observations with physics-based models through data assimilation to produce gridded, physically consistent estimates of atmospheric and oceanic variables over time. It describes them as critical for evaluating models, initializing simulations, and training machine learning systems that require spatiotemporally continuous inputs [Source 1].",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 3",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 3",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 1",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 6"
+      ],
+      "context_count": 4,
+      "context_chars": 4798,
+      "ragas": {
+        "faithfulness": 0.8571428571428571,
+        "answer_relevancy": 0.733882925440183,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence directly states both the construction of reanalysis datasets like ERA5 and their roles in climate modeling and ML."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-broad_summary-022",
+      "question": "Why do the authors say machine learning is not used as a generic plug-in to existing climate models?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The authors say machine learning is not used as a generic plug-in because successful use in climate modeling depends on thoughtful workflow design, not just dropping ML into an existing model. They say it must preserve physical relevance, handle sparse or heterogeneous data, and ensure workflow transparency and reliability, and that decisions are needed about problem setup, data preparation, training, evaluation, and iteration cycles [Source 1]. They also state that ML is used to improve physics",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 2",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 4",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 4",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 7"
+      ],
+      "context_count": 4,
+      "context_chars": 4799,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9238398144514671,
+        "context_precision": 0.9166666666361111
+      },
+      "note": "The evidence directly explains why ML is not treated as a generic plug-in: climate modeling requires physical consistency, data handling, transparency, and coordinated workflow choices, and ML is positioned as an augmenting tool rather than a replacement for physics-based models [Source 1][Source 2]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-broad_summary-023",
+      "question": "How does the paper position its case study summaries relative to model cards and model info sheets?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The paper says it uses the common workflow framework to structure the full case study summaries in the Supplement, and that these summaries are \"similar in spirit\" to model cards and model info sheets [Source 3]. It also says the summaries demonstrate the value of structured machine learning workflow descriptions with consistent terminology [Source 1].",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 6",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 20",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 6",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 1"
+      ],
+      "context_count": 4,
+      "context_chars": 3825,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6858876479856203,
+        "context_precision": 0.8333333332916666
+      },
+      "note": "The evidence directly states the relationship: the case study summaries are structured using the workflow framework and are similar in spirit to model cards and model info sheets. No additional facts are needed."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-comparison_synthesis-024",
+      "question": "How does the Fourier Neural Operator differ from the Spherical Fourier Neural Operator in terms of underlying transform and intended use case?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The Fourier Neural Operator (FNO) uses the Fast Fourier Transform as its underlying transform, while the Spherical Fourier Neural Operator (SFNO) uses the Spherical Harmonic Transform [Source 1]. In terms of intended use, FNO is described as excelling at learning homogeneous, periodic dynamics such as idealized fluid flows, whereas SFNO is designed for global weather and climate fields on the sphere with built-in rotational equivariance [Source 1].",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 15",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 15",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 15",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 42"
+      ],
+      "context_count": 4,
+      "context_chars": 3059,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8094050630053585,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence explicitly states the transform used by each architecture and the intended application domain for each, so all required facts are covered."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-comparison_synthesis-025",
+      "question": "How does the paper distinguish offline evaluation from online evaluation for ML components in climate models?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The paper distinguishes them by where and what is being tested. Offline evaluation uses validation data to test the ML component before integration, while online evaluation tests the component after it is inserted into the larger climate model or production workflow, focusing on stable interaction with other components, physical stability/coherence over long rollouts, and avoiding long-term biases or instabilities [Source 1] [Source 2]. The paper also says offline accuracy alone does not guarant",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 11",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 18",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 11",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 3"
+      ],
+      "context_count": 4,
+      "context_chars": 4419,
+      "ragas": {
+        "faithfulness": 0.9230769230769231,
+        "answer_relevancy": 0.7779456130209345,
+        "context_precision": 0.9999999999666667
+      },
+      "note": "The evidence explicitly contrasts offline testing using validation data with online performance evaluation in the integrated production climate-model environment, and it states the online criteria (stable coupling, physical stability/coherence, no long-term biases/instabilities)."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-comparison_synthesis-026",
+      "question": "How do autoregressive and direct forecasting strategies compare for subseasonal-to-seasonal prediction, according to the paper?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "According to the paper, autoregressive and direct strategies differ mainly in how they handle forecast horizons and training cost. Autoregressive models are trained for one-step-ahead predictions and then applied repeatedly for stepwise rollout; this is training-efficient and aligned with physics-based simulation, but it suffers from error accumulation over long horizons and higher forecasting costs due to sequential rollout [Source 3]. Direct models are trained separately for each target lead t",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 10",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 9",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 31",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 31"
+      ],
+      "context_count": 4,
+      "context_chars": 4089,
+      "ragas": {
+        "faithfulness": 0.8666666666666667,
+        "answer_relevancy": 0.700743427992164,
+        "context_precision": 0.6388888888675925
+      },
+      "note": "The evidence covers the comparison for subseasonal-to-seasonal forecasting: autoregressive = stepwise, sequential rollout, error accumulation, lower training cost; direct = separate horizon-specific training, avoids recursive errors, higher data/training cost. All required facts are supported."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-numeric_procedure-027",
+      "question": "What is the generic form of the kernel integral operator used in neural operators, and what role do T, R_phi, and T-inverse play?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The generic form is \\((K_\\phi v)(x)=T^{-1}(R_\\phi \\cdot (Tv))(x)\\) [Source 1]. Here, \\(T\\) is a linear transform, \\(R_\\phi\\) is a learned multiplier (or kernel), and \\(T^{-1}\\) is the inverse of \\(T\\) [Source 1].",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 15",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 15",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 15",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 15"
+      ],
+      "context_count": 4,
+      "context_chars": 3437,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6556710140924374,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence explicitly gives the generic kernel integral operator form and defines each of T, R_phi, and T-inverse."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-numeric_procedure-028",
+      "question": "What update rule do FNO layers apply to the feature field at each iteration, as written in the paper?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The paper writes the FNO layer update as\n\\(v^{t+1}(x)=\\sigma\\big(Wv^t(x)+(K(a;\\phi)v^t)(x)\\big)\\), for all \\(x\\in D\\) [Source 1]. In words, each iteration applies a learned linear map and a kernel integral operator to the current feature field, then a component-wise activation function [Source 1].",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 15",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 25",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 15",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 15"
+      ],
+      "context_count": 4,
+      "context_chars": 3592,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7143501587059303,
+        "context_precision": 0.9999999999
+      },
+      "note": "Source 1 explicitly gives the FNO update rule and defines its components. No additional facts are needed."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-unsupported-029",
+      "question": "Which proprietary cloud platform did the authors use to train and deploy the neural operators discussed in the case studies?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not mention any proprietary cloud platform used to train or deploy the neural operators.",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 10",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 10",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 10",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 11"
+      ],
+      "context_count": 4,
+      "context_chars": 4800,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9258571810687545,
+        "context_precision": 0.999999999975
+      },
+      "note": "The sources describe neural operators, training objectives, and validation/workflow steps, but they do not name any cloud platform or deployment environment. Therefore the question cannot be answered from the supplied evidence. Support-status verifier classified the answer as unsupported. Missing or ambiguous facts: The proprietary cloud platform used to train and deploy the neural operators is not identified in the evidence. The proposed answer does not provide a grounded platform name; it explicitly states that the evidence does not mention any proprietary cloud platform. The supplied evidence discusses neural operators, training objectives, and validation, but contains no cloud platform or deployment environment."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "arxiv-2510-03305",
+      "document_type": "research_paper",
+      "question_id": "arxiv-2510-03305-unsupported-030",
+      "question": "How many GPU-hours did the winning team in the ClimSim Kaggle competition use to train their final model?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not state how many GPU-hours the winning team in the ClimSim Kaggle competition used to train its final model.",
+      "citations": [
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 17",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 10",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 17",
+        "arxiv-2510-03305-ml-workflows-climate-modeling.pdf - Page 17"
+      ],
+      "context_count": 4,
+      "context_chars": 1724,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.999999999975
+      },
+      "note": "The evidence only mentions the ClimSim project, its goal of developing machine learning emulators for climate modeling, and that a 2024 competition used mean squared error as the primary loss. It does not provide any GPU-hour figure for the winning team or its final model. Support-status verifier classified the answer as unsupported. Supported facts: The evidence does not state how many GPU-hours the winning team used to train its final model. Missing or ambiguous facts: The actual GPU-hour count for the winning team in the ClimSim Kaggle competition. The proposed answer is an explicit statement that the evidence lacks the GPU-hour figure, which is grounded in the supplied evidence. However, the question asks for the number of GPU-hours, and that number is not provided anywhere in the evidence, so the answer does not supply the requested fact."
+    }
+  ]
+}

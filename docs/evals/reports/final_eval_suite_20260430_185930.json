@@ -1,0 +1,1050 @@
+{
+  "suite": {
+    "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+    "description": "OpenAI File Search chunk 4: nist-ai-rmf-1-0, same held-out final eval questions.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\tmp\\openai_eval_chunks\\openai_chunk_04_nist-ai-rmf-1-0.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native"
+  },
+  "systems": [
+    "openai_file_search"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      }
+    }
+  },
+  "summary": {
+    "overall": {
+      "openai_file_search": {
+        "dataset_size": 30,
+        "answerable_size": 27,
+        "unsupported_size": 3,
+        "supported_rate": 0.8,
+        "answerable_supported_rate": 0.8888888888888888,
+        "unsupported_abstention_rate": 1.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.1111111111111111,
+        "avg_context_count": 4.833333333333333,
+        "avg_context_chars": 2843.7,
+        "ragas_all": {
+          "faithfulness": 0.49302681992337166,
+          "answer_relevancy": 0.7307550690466069,
+          "context_precision": 0.26985294115943015
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.5099616858237548,
+          "answer_relevancy": 0.8003507899081885,
+          "context_precision": 0.26428571426660713
+        }
+      }
+    },
+    "by_intent": {
+      "openai_file_search": {
+        "broad_summary": {
+          "dataset_size": 6,
+          "answerable_size": 6,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 3000.0,
+          "ragas_all": {
+            "faithfulness": 0.6580459770114943,
+            "answer_relevancy": 0.8946254033217342,
+            "context_precision": 0.34999999997625
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.6580459770114943,
+            "answer_relevancy": 0.8946254033217342,
+            "context_precision": 0.34999999997625
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 5,
+          "answerable_size": 5,
+          "unsupported_size": 0,
+          "supported_rate": 0.8,
+          "answerable_supported_rate": 0.8,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.2,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 3000.0,
+          "ragas_all": {
+            "faithfulness": 0.4,
+            "answer_relevancy": 0.8610540390491731,
+            "context_precision": 0.0
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": 0.8610540390491731,
+            "context_precision": 0.0
+          }
+        },
+        "local_scope": {
+          "dataset_size": 6,
+          "answerable_size": 6,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 3000.0,
+          "ragas_all": {
+            "faithfulness": 0.3055555555555556,
+            "answer_relevancy": 0.6897020183655267,
+            "context_precision": 0.09999999999
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.3055555555555556,
+            "answer_relevancy": 0.6897020183655267,
+            "context_precision": 0.09999999999
+          }
+        },
+        "lookup": {
+          "dataset_size": 8,
+          "answerable_size": 8,
+          "unsupported_size": 0,
+          "supported_rate": 0.75,
+          "answerable_supported_rate": 0.75,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.25,
+          "avg_context_count": 4.375,
+          "avg_context_chars": 2440.75,
+          "ragas_all": {
+            "faithfulness": 0.5138888888888888,
+            "answer_relevancy": 0.7006985109309498,
+            "context_precision": 0.4234374999759766
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.5833333333333334,
+            "answer_relevancy": 0.817481596086108,
+            "context_precision": 0.41666666663833335
+          }
+        },
+        "numeric_procedure": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 3000.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8013005854638471,
+            "context_precision": null
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8013005854638471,
+            "context_precision": null
+          }
+        },
+        "unsupported": {
+          "dataset_size": 3,
+          "answerable_size": 0,
+          "unsupported_size": 3,
+          "supported_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "unsupported_abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "avg_context_count": 5.0,
+          "avg_context_chars": 2928.3333333333335,
+          "ragas_all": {
+            "faithfulness": 0.6,
+            "answer_relevancy": 0.0,
+            "context_precision": null
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-001",
+      "question": "What are the four core functions described in this framework for managing AI risks?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: I couldn\u2019t find any uploaded-file text identifying the framework or its four core functions.",
+      "citations": [],
+      "context_count": 0,
+      "context_chars": 0,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_01ee651704919f590069f348e4e96481959d8101168df4d1e5"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-002",
+      "question": "By when does NIST plan to conduct the next formal review of the framework with input from the AI community?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "NIST says a review with formal input from the AI community is expected to take place no later than 2028",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.8705602500538908,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0ed522d0314001690069f3492fc0248195b3d90890580c2fa0"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-003",
+      "question": "How does this framework define an AI system?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "In this framework, an AI system is treated as part of the AI lifecycle and the surrounding socio-technical context, but the uploaded excerpt does not give a single formal one-sentence definition of \u201cAI system.\u201d What it does say is that the framework is meant to help organizations manage risks and increase the trustworthiness of AI systems, and that AI actors are those who play an active role in the AI system lifecycle . It also describes AI systems through lifecycle phases and tasks: AI design c",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.6111111111111112,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.8874999999778125
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_01c16d94b2839b270069f349ab730c8193b857ee2ee0f105dc"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-004",
+      "question": "In the discussion of fairness and harmful bias, what three major categories of AI bias does NIST say organizations should consider?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "NIST says organizations should consider three major categories of AI bias: systemic, computational and statistical, and human-cognitive",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.913629414926695,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0c8ba6c35382d11e0069f34a77f750819799f3d01baf25e995"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-005",
+      "question": "In the Govern function, what subcategory specifically addresses safely retiring or phasing out AI systems?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The subcategory is GOVERN 1.7: \u201cProcesses and procedures are in place for decommissioning and phasing out AI systems safely and in a manner that does not increase risks or decrease the organization\u2019s trustworthiness.\u201d",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.42990831827123377,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0310eecf03234cbf0069f34abf20088193ba837c018448dac1"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-006",
+      "question": "What attributes does the framework say should be evaluated to consider an AI system trustworthy?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework says an AI system\u2019s trustworthiness should be evaluated across these characteristics: valid and reliable, safe, secure and resilient, accountable and transparent, explainable and interpretable, privacy-enhanced, and fair with harmful bias managed. It also notes that trustworthy AI requires balancing these characteristics based on the system\u2019s context of use.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.8333333333333334,
+        "answer_relevancy": 0.9005602531825457,
+        "context_precision": 0.4499999999775
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0adc98a9b306c8b30069f34b02712081969b0b9828e4d81823"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-007",
+      "question": "Why does the framework treat AI risks as different from risks in traditional software systems?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework treats AI risks as different from traditional software risks because AI systems have characteristics that make their risks more dynamic, harder to predict, and more tied to context and human/social factors. The NIST AI RMF says AI systems can be trained on data that changes over time, may involve complex contexts that make failures hard to detect and respond to, and are socio-technical\u2014meaning outcomes depend not just on code, but also on how people use the system and the social se",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.4827586206896552,
+        "answer_relevancy": 0.9828674829399006,
+        "context_precision": 0.249999999975
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_04afffacbb51c6e70069f34b461df0819385d998baca9c714b"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-comparison_synthesis-008",
+      "question": "How does the framework distinguish transparency, explainability, and interpretability?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "The framework treats them as distinct but complementary characteristics. It says transparency is about \u201cwhat happened\u201d in the system, explainability is about \u201chow\u201d a decision was made, and interpretability is about \u201cwhy\u201d a decision was made and its meaning or context to the user .\n\nIt also describes them more specifically as:\n- Transparency: the extent to which information about the AI system and its outputs is available to people interacting with it \n- Explainability: a representation of the me",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.4,
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0493dfd51ec35f0d0069f34bd119408195b3bf51e2d35060b2"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-comparison_synthesis-009",
+      "question": "What is the difference between a Current Profile and a Target Profile, and why would an organization compare the two?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "A Current Profile describes how AI risk is currently being managed and the related risks in terms of current outcomes, while a Target Profile describes the outcomes needed to achieve the desired AI risk management goals \n\nAn organization compares the two to identify gaps between the current state and the desired state. Those gaps can then be turned into action plans and prioritized based on the organization\u2019s needs and risk management process. The comparison can also help the organization estima",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy": 0.8273761679221797,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0ad1298a191e0cbe0069f34c4ff3088193b94b361314147ddf"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-unsupported-010",
+      "question": "What is the maximum allowable false positive rate that the framework recommends for an AI system used in clinical diagnosis?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: The framework says accuracy measures should consider false positive and false negative rates and that threshold values should be chosen with human judgment based on context, but it does not specify a maximum allowable false positive rate for clinical diagnosis in the retrieved text",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.2,
+        "answer_relevancy": 0.0,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0448ec4c7b10ac570069f34ce6cffc8190bc0151f65bf9e5b5"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-011",
+      "question": "What is the publication identifier assigned to this NIST AI Risk Management Framework document?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The publication identifier is NIST AI 100-1, and the document also lists the DOI URL https://doi.org/10.6028/NIST.AI.100-1",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2263,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.5634316274940697,
+        "context_precision": 0.99999999998
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_070106c2dec5819f0069f34d47d9188195b50e7d18f619d446"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-012",
+      "question": "What does the abbreviation TEVV stand for in this framework?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "TEVV stands for Test, Evaluation, Verification, and Validation in this framework. The document explicitly defines \u201cTest, Evaluation, Verification, and Validation (TEVV)\u201d and says these tasks are performed throughout the AI lifecycle",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8962962364843495,
+        "context_precision": 0.49999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0029327cad8b994f0069f34da19b7481938f538d8e876ac6f6"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-013",
+      "question": "Who is named in the front matter as the U.S. Secretary of Commerce?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "Gina M. Raimondo is named in the front matter as the U.S. Secretary of Commerce",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2785,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8901633851762657,
+        "context_precision": 0.9999999999
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_09e23d324974c71b0069f34e0388148196af5bf069eb9e047a"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-014",
+      "question": "Which email address is given for sending comments on the AI RMF Playbook?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The email address given for comments on the AI RMF Playbook is AIframework@nist.gov",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2478,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.956715832714878,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0937a8d6d833de7f0069f34e2fea20819592c6dd7111d6417a"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-015",
+      "question": "Which act of Congress directed the development of this framework?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework\u2019s development was directed by the National Artificial Intelligence Initiative Act of 2020, specifically as part of NIST\u2019s broader AI efforts .",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.5,
+        "answer_relevancy": 0.7277222445931947,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_03ebffc6c87f61320069f34e7a2b648196be88e3114b507822"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-016",
+      "question": "In the section on AI safety, which kinds of safety risks does the framework say require the most urgent prioritization?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework says the most urgent prioritization is for safety risks that pose a potential risk of serious injury or death, and it also notes that unacceptable negative risk levels such as imminent significant impacts, severe harms already occurring, or catastrophic risks should trigger stopping development and deployment until managed safely",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.8333333333333334,
+        "answer_relevancy": 0.6831599195533413,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_07f638baaa826b230069f34eb99e9081959df2d66698a5fac2"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-017",
+      "question": "In the privacy section, what privacy values does the framework say should generally guide AI system design, development, and deployment?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework says privacy values such as anonymity, confidentiality, and control should generally guide AI system design, development, and deployment",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.934243004669887,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_025136d3c771e6e70069f34f45e39c8193b7b980311b9d0939"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-018",
+      "question": "In the Map function table, which subcategory is about eliciting system requirements while taking socio-technical implications into account?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The subcategory is MAP 1.6. It says system requirements are elicited from relevant AI actors, and design decisions take socio-technical implications into account to address AI risks",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.4920153596806916,
+        "context_precision": 0.0
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0971cd27a82e58410069f34fc50edc819383e10743eaab82bb"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-019",
+      "question": "In its discussion of risk prioritization, what does the framework say should happen with AI systems that present unacceptable negative risk levels?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework says that if an AI system presents unacceptable negative risk levels\u2014such as imminent significant negative impacts, severe harms actually occurring, or catastrophic risks\u2014development and deployment should cease in a safe manner until the risks can be sufficiently managed.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6852560930913117,
+        "context_precision": 0.49999999995
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_03ef946e0ae874e00069f3505528b481949c119e78dc249ef4"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-020",
+      "question": "Who does the framework say it is intended for, and why does it use the term 'AI actors'?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework is intended for organizations and individuals across the AI lifecycle\u2014specifically the \u201cAI actors\u201d who design, develop, deploy, evaluate, and use AI systems. It says these are the primary audience, with a separate audience for people and groups in the \u201cPeople & Planet\u201d dimension such as researchers, civil society organizations, end users, and potentially impacted communities.  \n\nIt uses the term \u201cAI actors\u201d because NIST is following the OECD definition: people or organizations that",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy": 0.8680998892184433,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_02bddf88892318470069f350c4e9788195a7a554fd020e6e9c"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-021",
+      "question": "How does the framework describe its overall stance on risk tolerance for organizations using it?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework says it does not prescribe a single risk tolerance. Instead, organizations should set their own reasonable, context-specific tolerance based on their objectives, applicable laws and regulations, and sector or professional guidelines. It emphasizes that risk tolerance varies by organization and can change over time, and that where no established guidelines exist, the organization should define its own reasonable risk tolerance \n\nIt also frames the approach as flexible and voluntary,",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0f667e0fb3a210a90069f351ea4b548196aa254652a0cc8430"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-022",
+      "question": "What outcomes does the framework say organizations and users should expect to gain from applying it?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework says organizations and other users should expect to gain several benefits from applying it, including enhanced processes for governing, mapping, measuring, and managing AI risk, with clearer documentation of outcomes; improved awareness of tradeoffs among trustworthiness characteristics, socio-technical approaches, and AI risks; more explicit go/no-go commissioning and deployment decisions; stronger policies and procedures for organizational accountability; a culture more focused o",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0a968e59439b30720069f352f1725c81969bd5eb996536d194"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-023",
+      "question": "How does the framework characterize residual risk, and what does it say organizations should do about it?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework characterizes residual risk as the risk remaining after risk treatment, and says it directly affects end users or affected individuals and communities . It also says that documenting residual risks helps the system provider fully consider the risks of deploying the AI product and informs end users about potential negative impacts of interacting with the system .\n\nIn short, organizations should document residual risk and use that documentation to make sure they have fully considered",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy": 0.8269739879460475,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_03411c2a76f24b430069f353b5903881948373d461a86bf9d8"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-comparison_synthesis-024",
+      "question": "How does the framework distinguish between security and resilience for AI systems?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework says security and resilience are related but distinct. Resilience is the ability of an AI system to return to normal function after an unexpected adverse event, or to maintain its functions and structure and degrade safely and gracefully under internal or external change. Security is broader: it includes resilience, but also covers protocols to avoid, protect against, respond to, or recover from attacks, with an emphasis on confidentiality, integrity, and availability and protectio",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_093ddf2109b2302a0069f3545311f08190a1ff7ff3b96b18cf"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-comparison_synthesis-025",
+      "question": "How does the framework distinguish reliability from robustness?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework treats them as related but different qualities:\n\n- Reliability is about the system performing as required, without failure, for a given time interval and under given conditions. In the RMF, it is described as overall correctness of AI system operation under expected use over the system\u2019s lifetime .\n- Robustness is about maintaining performance across a variety of circumstances, including conditions not initially anticipated. It is framed as generalizability and the ability to keep ",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy": 0.9228822208829527,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_00d773df18c4c2a60069f3550d2f7c8190a321894101ad7116"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-comparison_synthesis-026",
+      "question": "How is the Govern function related to the Manage function in the framework?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The Govern function is the cross-cutting foundation for the framework: it \u201cis infused throughout AI risk management and enables the other functions,\u201d and its aspects should be integrated into the other functions . \n\nManage specifically operates within that governance structure. The file says MANAGE allocates risk resources to mapped and measured risks \u201cas defined by the GOVERN function,\u201d and uses contextual information and documentation practices established in GOVERN to reduce failures, increas",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy": 0.8329037283423868,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_02521d82dec2d25d0069f355e90e308197bebd91678e5d685f"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-numeric_procedure-027",
+      "question": "How does the framework define risk in terms of harm and likelihood when considering negative impacts?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "In the framework, risk for negative impacts is defined as a function of two things: the magnitude of harm if the event occurs, and the likelihood that the event will occur. It also states that risk is a composite measure of an event\u2019s probability and the magnitude or degree of its consequences.",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8365600563471,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_004dc6464f23c5890069f356d651a88190abbaac567a6b0118"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-numeric_procedure-028",
+      "question": "How does the framework describe its versioning scheme for the AI RMF?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "abstained": false,
+      "answer_preview": "The framework says the AI RMF uses a two-number versioning system to track major and minor changes. The first number represents the generation of the AI RMF and its companion documents, and it changes only with major revisions; minor revisions are shown as \u201c.n\u201d after the generation number, like 1.1. It also says all changes are tracked in a Version Control Table with the version number, date of change, and description of change",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy": 0.7660411145805942,
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0792364b841b016a0069f35739ecc48195917feb5d72903f63"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-unsupported-029",
+      "question": "What specific quantitative bias threshold does the framework recommend for face recognition systems used in law enforcement?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: The uploaded NIST AI RMF material says organizations should choose specific metrics and precise threshold values based on human judgment and context of use, but it does not give a specific quantitative bias threshold for face recognition systems used in law enforcement. It notes that \u201chuman judgment should be employed when deciding on the specific metrics related to AI trustworthiness characteristics and the precise threshold values for those metrics\u201d",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 3000,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_0044b4aa202e77720069f357d926048193a4c080ea548d63e0"
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft-openai-04-nist-ai-rmf-1-0",
+      "system": "openai_file_search",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-unsupported-030",
+      "question": "What fee does NIST charge organizations to be officially certified as compliant with the AI RMF?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "abstained": true,
+      "answer_preview": "INSUFFICIENT_EVIDENCE: The uploaded NIST AI RMF document says the framework is voluntary and available free of charge, but it does not mention any official certification program or a fee for organizations to be certified as compliant with the AI RMF",
+      "citations": [
+        "OpenAI File Search Result 1",
+        "OpenAI File Search Result 2",
+        "OpenAI File Search Result 3",
+        "OpenAI File Search Result 4",
+        "OpenAI File Search Result 5"
+      ],
+      "context_count": 5,
+      "context_chars": 2785,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]"
+      },
+      "note": "OpenAI Responses API answered with native file_search. response_id=resp_062c248174f71f780069f358a3450c81969a1163001d42355c"
+    }
+  ]
+}

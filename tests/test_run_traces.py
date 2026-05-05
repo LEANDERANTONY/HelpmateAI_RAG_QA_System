@@ -69,6 +69,7 @@ def test_pipeline_builds_compact_ephemeral_run_trace(tmp_path):
     assert trace.document_id == "doc-1"
     assert trace.expires_at == "2026-04-18T12:00:00+00:00"
     assert trace.payload["retrieval"]["retrieval_plan"]["planner_source"] == "llm_orchestrator"
+    assert trace.payload["answer"]["support_status"] == "supported"
     candidate_payload = trace.payload["retrieval"]["candidates"][0]
     assert candidate_payload["preview"] == "A" * 240
     assert "full document text should not appear" not in str(trace.payload)

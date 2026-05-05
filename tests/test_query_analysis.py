@@ -42,3 +42,10 @@ def test_query_analyzer_treats_paper_about_question_as_global_summary():
 
     assert profile.query_type == "summary_lookup"
     assert profile.evidence_spread == "global"
+
+
+def test_query_analyzer_treats_stand_for_questions_as_definition_lookup():
+    profile = QueryAnalyzer.analyze("What does PINO stand for?")
+
+    assert profile.query_type == "definition_lookup"
+    assert "definition" in profile.preferred_content_types

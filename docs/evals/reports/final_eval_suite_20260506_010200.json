@@ -1,0 +1,1107 @@
+{
+  "suite": {
+    "suite_id": "heldout-product-fit-2026-04-draft",
+    "description": "Draft held-out product-fit final evaluation manifest. Documents are fixed; questions must be generated and frozen before any system run.",
+    "frozen": false,
+    "manifest_path": "C:\\Users\\Leander Antony A\\Documents\\Projects\\HelpmateAI_RAG_QA_System\\docs\\evals\\final_eval_manifest.draft.json",
+    "context_budget": {
+      "top_k": 5,
+      "max_chars_per_context": 600
+    },
+    "context_mode": "native",
+    "question_offset": 30,
+    "question_count": 30
+  },
+  "systems": [
+    "helpmate"
+  ],
+  "ragas_enabled": true,
+  "ragas_judge": {
+    "provider": "gemini",
+    "model": "gemini-2.5-flash",
+    "embedding_provider": "openai",
+    "embedding_model": "text-embedding-3-small"
+  },
+  "settings": {
+    "answer_model": "gpt-5.4-mini",
+    "embedding_model": "text-embedding-3-small",
+    "retrieval_version": "v18-final-eval",
+    "generation_version": "v7-final-eval",
+    "ragas_context_policy": {
+      "native": "Score each system against the context it generated from. Helpmate uses full selected evidence; vendor answers use the capped context passed into their generator.",
+      "equalized": "Score all systems against the same top-k and max-character context cap.",
+      "active": "native"
+    },
+    "openai_file_search": {
+      "mode": "native_responses_file_search_answer",
+      "rewrite_query": true,
+      "max_num_results": 5
+    },
+    "vectara": {
+      "search_profile": "hybrid_rerank",
+      "search_config": {
+        "limit": 20,
+        "lexical_interpolation": 0.025,
+        "reranker": {
+          "type": "customer_reranker",
+          "reranker_name": "Rerank_Multilingual_v1",
+          "limit": 5
+        }
+      },
+      "mode": "native_mockingbird_answer",
+      "generation_preset_name": "mockingbird-2.0"
+    }
+  },
+  "summary": {
+    "overall": {
+      "helpmate": {
+        "dataset_size": 30,
+        "answerable_size": 28,
+        "unsupported_size": 2,
+        "supported_rate": 0.7666666666666667,
+        "partial_rate": 0.03333333333333333,
+        "answered_rate": 0.8,
+        "answerable_supported_rate": 0.8214285714285714,
+        "answerable_coverage_rate": 0.8571428571428571,
+        "unsupported_abstention_rate": 1.0,
+        "false_support_rate": 0.0,
+        "false_abstention_rate": 0.14285714285714285,
+        "strict_false_abstention_rate": 0.17857142857142858,
+        "avg_context_count": 3.966666666666667,
+        "avg_context_chars": 3930.633333333333,
+        "ragas_all": {
+          "faithfulness": 0.8732348111658457,
+          "answer_relevancy": 0.6816958181272018,
+          "context_precision": 0.8592592592066821
+        },
+        "ragas_attempted": {
+          "faithfulness": 0.9271221532091097,
+          "answer_relevancy": 0.7650199720251065,
+          "context_precision": 0.8634259258661265
+        }
+      }
+    },
+    "by_intent": {
+      "helpmate": {
+        "broad_summary": {
+          "dataset_size": 5,
+          "answerable_size": 5,
+          "unsupported_size": 0,
+          "supported_rate": 0.8,
+          "partial_rate": 0.0,
+          "answered_rate": 0.8,
+          "answerable_supported_rate": 0.8,
+          "answerable_coverage_rate": 0.8,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.2,
+          "strict_false_abstention_rate": 0.2,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 4325.8,
+          "ragas_all": {
+            "faithfulness": 0.76,
+            "answer_relevancy": 0.7415098144353488,
+            "context_precision": 0.7777777777310185
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.95,
+            "answer_relevancy": 0.8987775382214523,
+            "context_precision": 0.8680555555023148
+          }
+        },
+        "comparison_synthesis": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 1.0,
+          "partial_rate": 0.0,
+          "answered_rate": 1.0,
+          "answerable_supported_rate": 1.0,
+          "answerable_coverage_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 4359.5,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8547213598084403,
+            "context_precision": 0.9583333332680555
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.8547213598084403,
+            "context_precision": 0.9583333332680555
+          }
+        },
+        "local_scope": {
+          "dataset_size": 8,
+          "answerable_size": 8,
+          "unsupported_size": 0,
+          "supported_rate": 0.875,
+          "partial_rate": 0.0,
+          "answered_rate": 0.875,
+          "answerable_supported_rate": 0.875,
+          "answerable_coverage_rate": 0.875,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.125,
+          "strict_false_abstention_rate": 0.125,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 3955.0,
+          "ragas_all": {
+            "faithfulness": 0.8367346938775511,
+            "answer_relevancy": 0.6625037823831339,
+            "context_precision": 0.8611111110412616
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.9761904761904762,
+            "answer_relevancy": 0.7461801075730777,
+            "context_precision": 0.8928571427803571
+          }
+        },
+        "lookup": {
+          "dataset_size": 11,
+          "answerable_size": 11,
+          "unsupported_size": 0,
+          "supported_rate": 0.8181818181818182,
+          "partial_rate": 0.0,
+          "answered_rate": 0.8181818181818182,
+          "answerable_supported_rate": 0.8181818181818182,
+          "answerable_coverage_rate": 0.8181818181818182,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.18181818181818182,
+          "strict_false_abstention_rate": 0.18181818181818182,
+          "avg_context_count": 3.909090909090909,
+          "avg_context_chars": 3996.0,
+          "ragas_all": {
+            "faithfulness": 0.8787878787878788,
+            "answer_relevancy": 0.7365075565389514,
+            "context_precision": 0.8863636363208334
+          },
+          "ragas_attempted": {
+            "faithfulness": 0.8518518518518519,
+            "answer_relevancy": 0.7901150301657204,
+            "context_precision": 0.8611111110643518
+          }
+        },
+        "numeric_procedure": {
+          "dataset_size": 2,
+          "answerable_size": 2,
+          "unsupported_size": 0,
+          "supported_rate": 0.5,
+          "partial_rate": 0.5,
+          "answered_rate": 1.0,
+          "answerable_supported_rate": 0.5,
+          "answerable_coverage_rate": 1.0,
+          "unsupported_abstention_rate": 0.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 0.5,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 2836.0,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.35139528357240524,
+            "context_precision": 0.6666666666
+          },
+          "ragas_attempted": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.35139528357240524,
+            "context_precision": 0.6666666666
+          }
+        },
+        "unsupported": {
+          "dataset_size": 2,
+          "answerable_size": 0,
+          "unsupported_size": 2,
+          "supported_rate": 0.0,
+          "partial_rate": 0.0,
+          "answered_rate": 0.0,
+          "answerable_supported_rate": 0.0,
+          "answerable_coverage_rate": 0.0,
+          "unsupported_abstention_rate": 1.0,
+          "false_support_rate": 0.0,
+          "false_abstention_rate": 0.0,
+          "strict_false_abstention_rate": 0.0,
+          "avg_context_count": 4.0,
+          "avg_context_chars": 3151.5,
+          "ragas_all": {
+            "faithfulness": 1.0,
+            "answer_relevancy": 0.4551433840700077,
+            "context_precision": 0.999999999975
+          },
+          "ragas_attempted": {
+            "faithfulness": null,
+            "answer_relevancy": null,
+            "context_precision": null
+          }
+        }
+      }
+    },
+    "deltas_vs_helpmate": {}
+  },
+  "results": [
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-001",
+      "question": "What target range did the Committee decide to maintain for the federal funds rate at this meeting?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The Committee decided to maintain the target range for the federal funds rate at 3\u00bd to 3\u00be percent [Source 1].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 15",
+        "fomc-minutes-2026-01-28.pdf - Page 15",
+        "fomc-minutes-2026-01-28.pdf - Page 15",
+        "fomc-minutes-2026-01-28.pdf - Page 12"
+      ],
+      "context_count": 4,
+      "context_chars": 4542,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8950180414799448,
+        "context_precision": 0.99999999995
+      },
+      "note": "The evidence explicitly states the target range maintained at this meeting."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-002",
+      "question": "Which members dissented from the policy decision, and what alternative did they prefer?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The members who dissented were Stephen I. Miran and Christopher J. Waller, and they preferred lowering the target range for the federal funds rate by 1/4 percentage point [Source 1].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 15",
+        "fomc-minutes-2026-01-28.pdf - Page 13",
+        "fomc-minutes-2026-01-28.pdf - Page 12",
+        "fomc-minutes-2026-01-28.pdf - Page 13"
+      ],
+      "context_count": 4,
+      "context_chars": 4542,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7126335481221474,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence explicitly names the two voting against the policy decision and states their preferred alternative."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-lookup-003",
+      "question": "When is the next FOMC meeting scheduled to take place?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The evidence does not state when the next FOMC meeting is scheduled to take place.",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 2",
+        "fomc-minutes-2026-01-28.pdf - Page 14",
+        "fomc-minutes-2026-01-28.pdf - Page 14",
+        "fomc-minutes-2026-01-28.pdf - Page 2"
+      ],
+      "context_count": 4,
+      "context_chars": 3832,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.999999999975
+      },
+      "note": "The provided minutes identify the current meeting dates as January 27\u201328, 2026 [Source 1], but they do not give the date of the next scheduled FOMC meeting. Support-status verifier classified the answer as unsupported. Supported facts: The evidence identifies the current FOMC meeting as January 27\u201328, 2026. Missing or ambiguous facts: The date of the next scheduled FOMC meeting is not provided in the evidence. The proposed answer explicitly says the evidence does not state when the next FOMC meeting is scheduled, which acknowledges the gap. However, the question asks for the next meeting date, and the evidence only shows the current meeting dates, not the next scheduled meeting. Because the answer does not provide the requested fact and the evidence does not support it, the correct status is unsupported."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-004",
+      "question": "In the staff's review of foreign developments, which foreign central banks cut their policy rates and which raised them?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The staff review says that a few foreign central banks cut policy rates, including the Bank of England and the Bank of Mexico, and that the Bank of Japan raised its key policy rate [Source 1].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 7",
+        "fomc-minutes-2026-01-28.pdf - Page 7",
+        "fomc-minutes-2026-01-28.pdf - Page 8",
+        "fomc-minutes-2026-01-28.pdf - Page 9"
+      ],
+      "context_count": 4,
+      "context_chars": 4572,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9478121668634545,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence explicitly names the foreign central banks that cut rates and the one that raised rates, fully answering the question."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-local_scope-005",
+      "question": "In the staff's financial stability assessment, which categories of vulnerability were characterized as 'notable' versus 'moderate'?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The staff characterized vulnerabilities associated with asset valuation pressures as notable, and vulnerabilities associated with leverage in the financial sector as notable. Vulnerabilities associated with nonfinancial business and household debt were characterized as moderate, and vulnerabilities associated with funding risks were characterized as moderate [Source 1][Source 2].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 9",
+        "fomc-minutes-2026-01-28.pdf - Page 9",
+        "fomc-minutes-2026-01-28.pdf - Page 12",
+        "fomc-minutes-2026-01-28.pdf - Page 11"
+      ],
+      "context_count": 4,
+      "context_chars": 4800,
+      "ragas": {
+        "faithfulness_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "answer_relevancy_error": "Error code: 503 - [{'error': {'code': 503, 'message': 'This model is currently experiencing high demand. Spikes in demand are usually temporary. Please try again later.', 'status': 'UNAVAILABLE'}}]",
+        "context_precision": 0.49999999995
+      },
+      "note": "The evidence explicitly states which vulnerability categories were labeled notable versus moderate in the staff\u2019s financial stability assessment."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-broad_summary-006",
+      "question": "What were the main reasons cited by participants who supported holding the federal funds rate steady at this meeting?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "Participants who supported holding the federal funds rate steady generally cited two main reasons: first, after the 75 basis point reduction last year, they viewed the current stance of monetary policy as within the range of estimates of the neutral level; and second, they said keeping the target range unchanged would leave policymakers well positioned to assess incoming data, the evolving outlook, and the balance of risks before making any further adjustments [Source 1].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 12",
+        "fomc-minutes-2026-01-28.pdf - Page 13",
+        "fomc-minutes-2026-01-28.pdf - Page 12",
+        "fomc-minutes-2026-01-28.pdf - Page 12"
+      ],
+      "context_count": 4,
+      "context_chars": 4125,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9456166522363986,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence directly states the reasons given by those favoring maintaining the target range: the policy stance was viewed as near neutral after prior easing, and holding steady would preserve flexibility to evaluate incoming data, the outlook, and risks [Source 1]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-broad_summary-007",
+      "question": "What financial stability concerns did participants raise specifically about the AI sector?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "Participants raised several financial stability concerns about the AI sector: elevated equity market valuations, high concentration of market values and activities in a small number of firms, increased debt financing, and the need to monitor financing of the AI-related infrastructure buildout in opaque private markets [Source 1].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 12",
+        "fomc-minutes-2026-01-28.pdf - Page 9",
+        "fomc-minutes-2026-01-28.pdf - Page 12",
+        "fomc-minutes-2026-01-28.pdf - Page 11"
+      ],
+      "context_count": 4,
+      "context_chars": 4800,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9734670090826563,
+        "context_precision": 0.99999999995
+      },
+      "note": "The evidence directly lists the AI-sector-related vulnerabilities participants discussed, and it covers the full set named in the question."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-comparison_synthesis-008",
+      "question": "How did the views of participants who preferred to lower rates differ from those who preferred to hold them steady?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "Participants who preferred to lower rates said the policy rate was still meaningfully restrictive and that downside risks to the labor market were a more prominent concern than the risk of persistently elevated inflation. Those who preferred to hold rates steady generally thought the current stance was already within the range of estimates of the neutral level and that keeping rates unchanged would leave policymakers well positioned to decide on any future adjustments based on incoming data, the",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 12",
+        "fomc-minutes-2026-01-28.pdf - Page 13",
+        "fomc-minutes-2026-01-28.pdf - Page 11",
+        "fomc-minutes-2026-01-28.pdf - Page 13"
+      ],
+      "context_count": 4,
+      "context_chars": 4798,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.779598233864287,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence directly contrasts the two groups\u2019 views: lower-rate supporters emphasized restrictive policy and labor-market downside risks, while hold-steady supporters emphasized neutrality of the current stance and a data-dependent wait-and-see approach."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-numeric_procedure-009",
+      "question": "What specific operating parameters did the policy directive set for the standing overnight repo and reverse repo facilities, effective January 29, 2026?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "Effective January 29, 2026, the directive set the standing overnight repurchase agreement (repo) rate at 3.75 percent and the standing overnight reverse repurchase agreement offering rate at 3.5 percent. It also set the per-counterparty limit for reverse repo at $160 billion per day [Source 3].",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 13",
+        "fomc-minutes-2026-01-28.pdf - Page 13",
+        "fomc-minutes-2026-01-28.pdf - Page 14",
+        "fomc-minutes-2026-01-28.pdf - Page 8"
+      ],
+      "context_count": 4,
+      "context_chars": 2690,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.7027905671448105,
+        "context_precision": 0.3333333333
+      },
+      "note": "The evidence explicitly lists the operating parameters for both facilities and the effective date in Source 3. Recovery support verifier: The question asks for the specific operating parameters set for the standing overnight repo and reverse repo facilities effective January 29, 2026. The evidence directly states the standing overnight repurchase agreement rate is 3.75 percent, the standing overnight reverse repurchase agreement offering rate is 3.5 percent, and the per-counterparty limit for reverse repo is $160 billion per day. The proposed answer matches these facts without contradiction."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "fomc-minutes-2026-01-28",
+      "document_type": "institutional_minutes",
+      "question_id": "fomc-minutes-2026-01-28-unsupported-010",
+      "question": "What did this meeting's updated dot plot show about participants' median federal funds rate projection for year-end 2026?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not state what the updated dot plot showed about participants' median federal funds rate projection for year-end 2026.",
+      "citations": [
+        "fomc-minutes-2026-01-28.pdf - Page 11",
+        "fomc-minutes-2026-01-28.pdf - Page 11",
+        "fomc-minutes-2026-01-28.pdf - Page 4",
+        "fomc-minutes-2026-01-28.pdf - Page 3"
+      ],
+      "context_count": 4,
+      "context_chars": 3850,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.999999999975
+      },
+      "note": "The excerpts mention the meeting minutes and general economic conditions, but they do not include any updated dot plot figures or the median federal funds rate projection for year-end 2026. Support-status verifier classified the answer as unsupported. Missing or ambiguous facts: What the updated dot plot showed about participants' median federal funds rate projection for year-end 2026. The proposed answer explicitly says the evidence does not state the requested dot plot information, so it acknowledges a gap rather than answering the question. The supplied evidence excerpts do not include any updated dot plot or median federal funds rate projection for year-end 2026."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-001",
+      "question": "What two scenarios does this report use as its primary comparison?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The report uses the Planned Energy Scenario (PES) and the 1.5\u00b0C Scenario as its primary comparison [Source 4].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 58",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 223",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 236",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 96"
+      ],
+      "context_count": 4,
+      "context_chars": 2046,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.8342900336623629,
+        "context_precision": 0.499999999975
+      },
+      "note": "Source 4 explicitly states the figure is under the Planned Energy Scenario and 1.5\u00b0C Scenario, and Source 3 defines PES as the Planned Energy Scenario."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-002",
+      "question": "Who is identified as the Director-General of IRENA in the foreword?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not identify the Director-General of IRENA in the foreword.",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 3",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 2",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 135",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 137"
+      ],
+      "context_count": 4,
+      "context_chars": 8291,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9905478504369821,
+        "context_precision": 0.999999999975
+      },
+      "note": "The supplied sources include acknowledgements and general IRENA information, but none names the Director-General in the foreword. No substantive answer to who that person is can be supported from the evidence. Support-status verifier classified the answer as unsupported. Missing or ambiguous facts: The identity of the Director-General of IRENA in the foreword is not provided in the evidence.; The proposed answer does not name any person identified as Director-General in the foreword. The evidence shown includes acknowledgements and general IRENA information, but no foreword text and no identification of the Director-General of IRENA. The proposed answer only states that the evidence does not identify the person, which is an acknowledged gap rather than a supported answer to the question."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-lookup-003",
+      "question": "What level of annual renewable power capacity additions does the report say is needed to stay on a 1.5\u00b0C pathway, and how much was actually added globally in 2022?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The report says annual deployment of 1,000 GW of renewable power is needed each year to stay on a 1.5\u00b0C pathway, and 300 GW of renewables were installed globally in 2022 [Source 1].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 186",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 69",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 74",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 70"
+      ],
+      "context_count": 4,
+      "context_chars": 4356,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8540312349873217,
+        "context_precision": 0.99999999995
+      },
+      "note": "Source 1 explicitly states both required facts: the needed annual deployment level for the 1.5\u00b0C pathway and the amount installed globally in 2022."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-local_scope-004",
+      "question": "In the welfare impacts chapter of Volume 2, how many dimensions and how many indicators make up IRENA's welfare index?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "IRENA\u2019s welfare index has five dimensions and 10 indicators [Source 1].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 217",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 223",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 225",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 221"
+      ],
+      "context_count": 4,
+      "context_chars": 4407,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8803719832828661,
+        "context_precision": 0.7499999999625
+      },
+      "note": "Source 1 states that the index has five dimensions, each informed by two indicators, and Figure 6.1 labels it as five dimensions and 10 indicators."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-local_scope-005",
+      "question": "In the foreword's vision for overcoming barriers, what three pillars does the report propose as the foundations for a way forward?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The three pillars are: (1) building the necessary infrastructure and investing at scale in grids and transport routes; (2) advancing an evolved policy and regulatory architecture; and (3) strategically realigning institutional capacities so skills and capabilities match the energy system [Source 2].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 180",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 4",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 26",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 17"
+      ],
+      "context_count": 4,
+      "context_chars": 2679,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.5289365520602844,
+        "context_precision": 0.99999999995
+      },
+      "note": "Source 2 explicitly states that the report envisions three pillars forming the foundations for a way forward and names all three. Source 1 gives a closely related summary of the same three pillars as physical infrastructure, policy and regulatory enablers, and skills and capacities."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-broad_summary-006",
+      "question": "What does the report say about the geographic distribution of renewable energy investment, and why is that a problem?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The report says renewable energy investment is geographically concentrated in low-risk contexts, with East Asia and the Pacific attracting the most investment: about 45% of the total in 2019-2020 and almost two-thirds of the global total in 2022 [Source 3]. It says this is a problem because regions and countries with immense untapped potential struggle to attract private investment and need more public funds, but public funding has been strained; the report also says international collaboration ",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 170",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 159",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 160",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 161"
+      ],
+      "context_count": 4,
+      "context_chars": 3407,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8200472804375677,
+        "context_precision": 0.8333333332916666
+      },
+      "note": "The evidence directly states the geographic concentration of investment and explains the problem as underinvestment in regions with high potential, combined with scarce public resources and the need for North-South finance flows."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-broad_summary-007",
+      "question": "What is the report's overall assessment of progress on the energy transition through 2022, and where does it say the gap is largest?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The report says progress on the energy transition through 2022 was not on track: despite some progress and record renewable capacity additions, the overall transition remained off-track and the gap between what is being done and what is required kept growing [Source 1][Source 2][Source 4]. It says the largest gap is in the scale and pace of implementation needed to stay on the 1.5\u00b0C pathway, especially outside the power sector and in the broader energy system, where current deployment falls far ",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 21",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 38",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 4",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 21"
+      ],
+      "context_count": 4,
+      "context_chars": 4799,
+      "ragas": {
+        "faithfulness": 0.8,
+        "answer_relevancy": 0.8559792111291867,
+        "context_precision": 0.6388888888675925
+      },
+      "note": "The evidence directly states that the energy transition is off-track / not on track, that some progress occurred in 2022, and that the gap between achieved and required action continues to grow. It also identifies the biggest shortfall as the scale and extent of implementation needed for the 1.5\u00b0C pathway, with most progress concentrated in the power sector while other sectors lag."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-comparison_synthesis-008",
+      "question": "Under the 1.5\u00b0C Scenario, how does the share of renewables in the global energy mix and the role of electricity change between 2020 and 2050?",
+      "intent_type": "comparison_synthesis",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "Under the 1.5\u00b0C Scenario, the share of renewables in the global energy mix rises from 16% in 2020 to 77% by 2050 [Source 1][Source 4]. Electricity also becomes the main energy carrier, accounting for over 50% of total final energy consumption by 2050, driven by renewable energy deployment and electrification of end-use sectors [Source 1][Source 2].",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 25",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 48",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 65",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 41"
+      ],
+      "context_count": 4,
+      "context_chars": 3921,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9298444857525937,
+        "context_precision": 0.9166666666361111
+      },
+      "note": "The evidence directly states both required facts: the renewable share in the global energy mix increases from 16% to 77%, and electricity becomes the main energy carrier with over 50% of total final energy consumption by 2050."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-numeric_procedure-009",
+      "question": "How much cumulative investment does the 1.5\u00b0C Scenario require by 2050, how does that compare with the Planned Energy Scenario, and how much annual investment must be redirected away from fossil-fuel technologies?",
+      "intent_type": "numeric_procedure",
+      "answerable": true,
+      "supported": false,
+      "support_status": "partial",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The evidence supports that the 1.5\u00b0C Scenario requires a cumulative USD 150 trillion by 2050 [Source 1]. However, the provided evidence does not include the Planned Energy Scenario cumulative investment figure, and it does not state how much annual investment must be redirected away from fossil-fuel technologies. So only the 1.5\u00b0C cumulative investment is supported; the comparison to the Planned Energy Scenario and the fossil-fuel redirection amount are missing.",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 25",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 25",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 24",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 146"
+      ],
+      "context_count": 4,
+      "context_chars": 2982,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.0,
+        "context_precision": 0.9999999999
+      },
+      "note": "Source 1 gives the 1.5\u00b0C cumulative investment requirement (USD 150 trillion by 2050) and notes annual investment must more than quadruple, but the excerpt cuts off before giving the fossil-fuel redirection amount. Source 4 only identifies a figure comparing Planned Energy Scenario and another scenario, but no numeric values are provided in the supplied evidence. Support-status verifier classified the answer as partial. Supported facts: A cumulative USD 150 trillion is required to realise the 1.5\u00b0C target by 2050. Missing or ambiguous facts: The Planned Energy Scenario cumulative investment figure is not provided in the answer.; The amount of annual investment that must be redirected away from fossil-fuel technologies is not provided in the answer. The evidence directly supports the 1.5\u00b0C Scenario cumulative investment requirement of USD 150 trillion by 2050. The proposed answer explicitly acknowledges that the Planned Energy Scenario comparison and the fossil-fuel redirection amount are not included in the supplied evidence, so the answer is only partially supported."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "irena-world-energy-transitions-outlook-2023",
+      "document_type": "technical_report",
+      "question_id": "irena-world-energy-transitions-outlook-2023-unsupported-010",
+      "question": "What does the report recommend as the price floor for an internationally harmonized carbon tax through 2050?",
+      "intent_type": "unsupported",
+      "answerable": false,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "The provided evidence does not mention any recommended price floor for an internationally harmonized carbon tax through 2050.",
+      "citations": [
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 50",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 49",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 51",
+        "irena-world-energy-transitions-outlook-2023.pdf - Page 108"
+      ],
+      "context_count": 4,
+      "context_chars": 2453,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9102867681400154,
+        "context_precision": 0.999999999975
+      },
+      "note": "The sources discuss energy transition pathways, renewable energy shares, and net-zero emissions by 2050, but none provide a carbon tax recommendation or a price floor value. Support-status verifier classified the answer as unsupported. Missing or ambiguous facts: The question asks for the report's recommended price floor for an internationally harmonized carbon tax through 2050, but the evidence does not provide any carbon tax recommendation or any price floor value. The proposed answer explicitly says the evidence does not mention any recommended price floor, which acknowledges the gap. However, the supplied evidence contains no direct support for a carbon tax price floor, so the answer does not provide a grounded substantive answer to the question."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-011",
+      "question": "What is the publication identifier assigned to this NIST AI Risk Management Framework document?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The publication identifier is NIST AI 100-1 [Source 1][Source 2].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 1",
+        "nist-ai-rmf-1-0.pdf - Page 2",
+        "nist-ai-rmf-1-0.pdf - Page 3",
+        "nist-ai-rmf-1-0.pdf - Page 3"
+      ],
+      "context_count": 4,
+      "context_chars": 2845,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6030562818433571,
+        "context_precision": 0.9999999999666667
+      },
+      "note": "The evidence explicitly shows the document title and identifier as \"NIST AI 100-1 Artificial Intelligence Risk Management Framework (AI RMF 1.0)\" and repeats \"NIST AI 100-1\" on the publication page [Source 1][Source 2]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-012",
+      "question": "What does the abbreviation TEVV stand for in this framework?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "TEVV stands for Test, Evaluation, Verification, and Validation [Source 3].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 13",
+        "nist-ai-rmf-1-0.pdf - Page 13",
+        "nist-ai-rmf-1-0.pdf - Page 40",
+        "nist-ai-rmf-1-0.pdf - Page 14"
+      ],
+      "context_count": 4,
+      "context_chars": 3471,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.8628375743490776,
+        "context_precision": 0.4166666666458333
+      },
+      "note": "The evidence explicitly defines TEVV as \"Test, Evaluation, Verification, and Validation.\" Recovery support verifier: The question asks what TEVV stands for. Source 3 directly defines TEVV as Test, Evaluation, Verification, and Validation, and the proposed answer matches this exactly without contradiction."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-013",
+      "question": "Who is named in the front matter as the U.S. Secretary of Commerce?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "Gina M. Raimondo is named as the U.S. Secretary of Commerce in the front matter [Source 1][Source 2].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 2",
+        "nist-ai-rmf-1-0.pdf - Page 2",
+        "nist-ai-rmf-1-0.pdf - Page 3"
+      ],
+      "context_count": 3,
+      "context_chars": 2152,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.6769738925747898,
+        "context_precision": 0.99999999995
+      },
+      "note": "The front matter explicitly lists \u201cGina M. Raimondo, Secretary\u201d under \u201cU.S. Department of Commerce\u201d [Source 2], and Source 1 identifies her as the U.S. Department of Commerce Secretary."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-014",
+      "question": "Which email address is given for sending comments on the AI RMF Playbook?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The email address given for sending comments on the AI RMF Playbook is AIframework@nist.gov [Source 1].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 3",
+        "nist-ai-rmf-1-0.pdf - Page 3",
+        "nist-ai-rmf-1-0.pdf - Page 2",
+        "nist-ai-rmf-1-0.pdf - Page 3"
+      ],
+      "context_count": 4,
+      "context_chars": 3097,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.9628313888499141,
+        "context_precision": 0.99999999995
+      },
+      "note": "The evidence explicitly states that comments on the AI RMF Playbook may be sent via email to AIframework@nist.gov [Source 1]."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-lookup-015",
+      "question": "Which act of Congress directed the development of this framework?",
+      "intent_type": "lookup",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The framework was directed by the National Artificial Intelligence Initiative Act of 2020 (P.L. 116-283) [Source 1].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 7",
+        "nist-ai-rmf-1-0.pdf - Page 7",
+        "nist-ai-rmf-1-0.pdf - Page 7",
+        "nist-ai-rmf-1-0.pdf - Page 6"
+      ],
+      "context_count": 4,
+      "context_chars": 4782,
+      "ragas": {
+        "faithfulness": 0.6666666666666666,
+        "answer_relevancy": 0.7093632756225675,
+        "context_precision": 0.8333333332916666
+      },
+      "note": "The evidence explicitly states that the AI RMF was directed by the National Artificial Intelligence Initiative Act of 2020 (P.L. 116-283) [Source 1]. Recovery support verifier: The evidence directly states that the AI RMF was directed by the National Artificial Intelligence Initiative Act of 2020 (P.L. 116-283). The proposed answer matches this exactly and does not add unsupported information."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-016",
+      "question": "In the section on AI safety, which kinds of safety risks does the framework say require the most urgent prioritization?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "Unsupported by the recovered evidence. The recovered evidence did not fully support every required fact in the question.",
+      "citations": [],
+      "context_count": 4,
+      "context_chars": 3285,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.16044583124347092,
+        "context_precision": 0.6388888888675925
+      },
+      "note": "The evidence states the prioritization principle but does not specify particular safety-risk categories that require the most urgent prioritization. Recovery support verifier: The question asks which kinds of safety risks the framework says require the most urgent prioritization. The evidence only says AI risk management efforts should prioritize minimizing potential negative impacts and consider that certain failures can cause greater harm. It does not identify specific kinds of safety risks as the most urgent, so the proposed answer does not directly support the requested fact."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-017",
+      "question": "In the privacy section, what privacy values does the framework say should generally guide AI system design, development, and deployment?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The framework says privacy values such as anonymity, confidentiality, and control should generally guide AI system design, development, and deployment [Source 1].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 22",
+        "nist-ai-rmf-1-0.pdf - Page 44",
+        "nist-ai-rmf-1-0.pdf - Page 3",
+        "nist-ai-rmf-1-0.pdf - Page 2"
+      ],
+      "context_count": 4,
+      "context_chars": 3975,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.934243004669887,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence directly states the privacy values and the guidance context in the privacy section."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-018",
+      "question": "In the Map function table, which subcategory is about eliciting system requirements while taking socio-technical implications into account?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "MAP 1.6 is the subcategory about eliciting system requirements while taking socio-technical implications into account: \u201cSystem requirements ... are elicited from and understood by relevant AI actors. Design decisions take socio-technical implications into account to address AI risks.\u201d [Source 1]",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 31",
+        "nist-ai-rmf-1-0.pdf - Page 30",
+        "nist-ai-rmf-1-0.pdf - Page 30",
+        "nist-ai-rmf-1-0.pdf - Page 4"
+      ],
+      "context_count": 4,
+      "context_chars": 3834,
+      "ragas": {
+        "faithfulness": 0.8571428571428571,
+        "answer_relevancy": 0.3210294435006513,
+        "context_precision": 0.9999999999
+      },
+      "note": "The evidence explicitly names MAP 1.6 and states both required elements: eliciting system requirements and considering socio-technical implications. Recovery support verifier: The evidence directly states in Table 2 that MAP 1.6 is: \u201cSystem requirements ... are elicited from and understood by relevant AI actors. Design decisions take socio-technical implications into account to address AI risks.\u201d This exactly matches the question\u2019s description about eliciting system requirements while taking socio-technical implications into account."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-local_scope-019",
+      "question": "In its discussion of risk prioritization, what does the framework say should happen with AI systems that present unacceptable negative risk levels?",
+      "intent_type": "local_scope",
+      "answerable": true,
+      "supported": true,
+      "support_status": "supported",
+      "answered": true,
+      "abstained": false,
+      "answer_preview": "The framework says that when an AI system presents unacceptable negative risk levels, development and deployment should cease in a safe manner until the risks can be sufficiently managed [Source 1].",
+      "citations": [
+        "nist-ai-rmf-1-0.pdf - Page 13",
+        "nist-ai-rmf-1-0.pdf - Page 12",
+        "nist-ai-rmf-1-0.pdf - Page 12",
+        "nist-ai-rmf-1-0.pdf - Page 13"
+      ],
+      "context_count": 4,
+      "context_chars": 4088,
+      "ragas": {
+        "faithfulness": 1.0,
+        "answer_relevancy": 0.864687495061323,
+        "context_precision": 0.9999999999
+      },
+      "note": "Source 1 directly states the required action for AI systems with unacceptable negative risk levels."
+    },
+    {
+      "suite_id": "heldout-product-fit-2026-04-draft",
+      "system": "helpmate",
+      "document_id": "nist-ai-rmf-1-0",
+      "document_type": "policy_framework",
+      "question_id": "nist-ai-rmf-1-0-broad_summary-020",
+      "question": "Who does the framework say it is intended for, and why does it use the term 'AI actors'?",
+      "intent_type": "broad_summary",
+      "answerable": true,
+      "supported": false,
+      "support_status": "unsupported",
+      "answered": false,
+      "abstained": true,
+      "answer_preview": "Unsupported by the recovered evidence. The recovered evidence did not fully support every required fact in the question.",
+      "citations": [],
+      "context_count": 4,
+      "context_chars": 4498,
+      "ragas": {
+        "faithfulness": 0.0,
+        "answer_relevancy": 0.1124389192909347,
+        "context_precision": 0.4166666666458333
+      },
+      "note": "Source 3 states the framework prompts organizations and their internal teams who design, develop, and deploy AI. Source 1 explains that different AI actors have different responsibilities and awareness depending on their roles in the lifecycle, which is why the term is used. Recovery support verifier: The answer is only partially supported. The evidence directly supports that the framework is intended for organizations and their internal teams who design, develop, and deploy AI. However, the explanation for using the term 'AI actors' is not fully supported as stated: the evidence says different AI actors have different responsibilities and awareness depending on their roles in the lifecycle, but it does not explicitly say this is why the term is used."
+    }
+  ]
+}
