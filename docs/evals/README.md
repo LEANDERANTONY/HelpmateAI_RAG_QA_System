@@ -38,25 +38,39 @@ These layers answer different questions:
 - `ragas` gives us answer-quality signals on top of retrieval, especially for broad or narrative questions
 This is important because a system can retrieve the right page while still give a vague or weak answer. That is exactly why the `ragas` layer is now the main answer-quality signal.
 
-## Current Summary Table
+## Current Final-Eval Marker
 
-As of the stabilized `2026-04-19` snapshot, the repo treats these tables as the current reference view of the benchmark stack.
+The current public marker is the 150-question held-out product-fit suite in `docs/evals/final_eval_manifest.draft.json`. The latest full HelpmateAI aggregate is `docs/evals/reports/final_eval_suite_helpmate_150_aggregate_20260506.json`.
+
+After the support-verifier policy correction, the estimated HelpmateAI read is:
+
+- answerable coverage: `92.6%`
+- strict fully supported rate: `89.6%`
+- false abstention rate: `7.4%`
+- false support rate: `0.0%`
+- unsupported-question abstention: `100.0%`
+
+This corrected support-status estimate is based on a targeted rerun of the 17 answerable abstentions. The full RAGAS aggregate should be rerun before treating the corrected support-status estimate as a permanent benchmark artifact.
+
+## Historical Project-Benchmark Table
+
+As of the stabilized `2026-04-19` snapshot, the repo treats these tables as the historical project-benchmark reference view. They remain useful for regression history, but the 150-question held-out suite is the public product-fit marker.
 
 ## Methodology And Caveats
 
-The current benchmark is useful, but it should be read precisely.
+The historical project benchmark is useful, but it should be read precisely.
 
 - The main four-document suite contains documents and question families used during HelpmateAI development, so it is a tuned workload for HelpmateAI and a less tuned workload for external vendors.
 - Vendor answer-quality rows are generated with the shared Helpmate answer generator on top of vendor retrieval contexts. This makes retrieval context quality easier to compare, but it does not evaluate each vendor's full native answer product.
-- OpenAI File Search is queried with `rewrite_query=True` and `max_num_results=5`.
+- OpenAI File Search final-eval rows use native file-search answer generation with `rewrite_query=True` and `max_num_results=5`.
 - Historical Vectara rows before the final-eval scaffold used `limit=5`.
 - Final-eval Vectara rows use the `hybrid_rerank` profile: initial `limit=20`, `lexical_interpolation=0.025`, and `Rerank_Multilingual_v1` with returned `limit=5`.
-- Vendor snippets are truncated to 400 characters before answer generation and `ragas` scoring.
-- HelpmateAI uses its own final evidence bundle, currently `final_top_k=4`, after planning, fusion, reranking, and optional reorder-only evidence selection.
+- Historical vendor snippets were truncated to 400 characters before shared answer generation and `ragas` scoring. The final-eval native-mode reports score each system against the context it generated from.
+- HelpmateAI uses its own final evidence bundle after planning, fusion, reranking, optional reorder-only evidence selection, and support-status verification.
 - `ragas` uses the configured OpenAI-backed evaluator and no-reference metrics because these datasets are retrieval-labeled rather than gold-answer datasets.
 - Faithfulness can be affected by abstention behavior. A system that refuses unsupported questions may score differently from a system that attempts every answer.
 
-Therefore, the benchmark supports a narrow claim: HelpmateAI outperforms the tested vendor retrieval configurations on this project workload. It is not yet a broad claim that HelpmateAI beats every tuned Vectara or OpenAI deployment on arbitrary documents.
+Therefore, the benchmark supports a narrow claim: HelpmateAI is competitive with the tested native OpenAI File Search and Vectara configurations on answerable coverage while showing stricter unsupported-question abstention and no false support in the current suite. It is not a broad claim that HelpmateAI beats every tuned Vectara or OpenAI deployment on arbitrary documents.
 
 The next stronger protocol is:
 

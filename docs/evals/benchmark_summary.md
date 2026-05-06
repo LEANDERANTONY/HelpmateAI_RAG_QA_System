@@ -1,6 +1,8 @@
 # Benchmark Summary
 
-This file is the current high-level benchmark snapshot for HelpmateAI.
+This file is the historical project-benchmark snapshot for HelpmateAI.
+
+Note: the public product-fit marker has moved to the 150-question held-out final-eval suite. The older project benchmark below remains useful as regression and architecture-development history, but it should not be used as the public vendor-superiority headline.
 
 ## Policy
 
@@ -18,7 +20,7 @@ Reason:
 
 ## Methodology Boundary
 
-The current benchmark answers this question:
+The historical project benchmark answers this question:
 
 > On this project workload, does HelpmateAI's retrieval pipeline produce better answer-quality signals than the tested OpenAI File Search and Vectara retrieval contexts when scored with the same `ragas` stack?
 
@@ -30,10 +32,10 @@ Important caveats:
 
 - The four main document families were used during HelpmateAI development and tuning.
 - Vendor retrieval contexts are passed through the shared Helpmate answer generator for answer-quality comparison.
-- OpenAI File Search uses `rewrite_query=True` with `max_num_results=5`.
-- Vectara uses `limit=5`.
-- Vendor snippets are truncated to 400 characters before shared answer generation and scoring.
-- HelpmateAI uses its own final selected evidence bundle, currently `final_top_k=4`.
+- OpenAI File Search historical rows use `rewrite_query=True` with `max_num_results=5`.
+- Vectara historical rows use `limit=5`; final-eval rows use the stronger hybrid-rerank profile.
+- Historical vendor snippets are truncated to 400 characters before shared answer generation and scoring; final-eval native-mode reports use each vendor's own answer generation.
+- HelpmateAI uses its own final selected evidence bundle after planning, fusion, reranking, and optional reorder-only evidence selection.
 - The `ragas` bridge uses OpenAI-backed no-reference metrics, not human gold-answer grading.
 - Abstention and partial-answer behavior can affect faithfulness and should be reported beside supported/attempted rates.
 
@@ -95,6 +97,8 @@ Important note:
 | OpenAI retrieval + shared answer model | `0.4000` | `0.1535` | `0.4422` |
 
 ## Interpretation
+
+This interpretation applies to the older tuned project workload, not the newer 150-question held-out product-fit suite.
 
 - Helpmate now leads both external baselines on the health-policy benchmark across all three `ragas` metrics.
 - On the thesis benchmark, Helpmate remains ahead of both external baselines across all three `ragas` metrics.

@@ -4,11 +4,13 @@ This document is not part of the public README story. It is the working plan for
 
 ## Current Position
 
-HelpmateAI has a credible architecture and strong project-benchmark results. The current public claim should stay narrow:
+HelpmateAI has a credible architecture and a real held-out product-fit benchmark. The current public claim should stay narrow:
 
-> On the current project workload, HelpmateAI's topology-aware retrieval and abstention pipeline outperforms the tested OpenAI File Search and Vectara retrieval configurations.
+> On the current 150-question held-out product-fit suite, HelpmateAI is competitive with OpenAI File Search and Vectara on answerable coverage while being stricter on unsupported questions and false support.
 
-We should not claim broad vendor superiority until we run a blind, never-tuned evaluation with tighter controls.
+The latest corrected estimate is `92.6%` answerable coverage, `89.6%` strict fully supported rate, `7.4%` false abstention, `0.0%` false support, and `100.0%` abstention on intentionally unsupported questions. OpenAI and Vectara still show higher raw answerable-supported rates in their native runs, but also higher false-support rates. Do not claim broad vendor superiority.
+
+The next bottleneck is no longer the support verifier. It is artifact-aware ingestion and retrieval precision for title-page/footer metadata, forewords, acknowledgements, credits, definitions, bibliography-confusable identifiers, and table-heavy numeric regions.
 
 ## Workstream 1: Code Quality Polish
 
@@ -602,15 +604,17 @@ Public framing if it works:
 
 ## Immediate Next Actions
 
-1. Pick the first held-out product-fit document set.
-2. Create `docs/evals/final_eval_manifest.json` from `docs/evals/final_eval_manifest.example.json`.
-3. Record source URLs, access dates, license notes, and document type for every held-out PDF.
-4. Generate questions with a non-production model family and freeze the manifest before any system run.
-5. Run a dry pilot with `--systems helpmate --max-questions 8 --skip-ragas`.
-6. Run the full product-fit comparison with HelpmateAI, OpenAI File Search, and Vectara.
-7. Add QASPER or FinanceBench only after the product-fit harness is proven stable.
-8. Do not retune on the final held-out set.
-9. Start the scoring-weight refactor only after final eval artifacts are saved.
+1. Treat `docs/evals/final_eval_manifest.draft.json` as the current 150-question product-fit marker.
+2. Keep the corrected support-status estimate separate from the saved full RAGAS aggregate until the full suite is rerun.
+3. Do not retune on individual held-out questions.
+4. Improve artifact-aware ingestion generally:
+   - preserve document identity metadata separately from bibliography entries
+   - strengthen foreword, acknowledgement, credits, and correspondence landmarks
+   - improve acronym/definition artifact representation
+   - keep table rows tied to captions, units, page labels, and surrounding prose
+5. Rerun HelpmateAI on the full 150-question suite after artifact-ingestion changes.
+6. Rerun OpenAI File Search and Vectara only when the benchmark story changes materially.
+7. Start the scoring-weight refactor only after the artifact-ingestion direction is stable.
 
 ## Deployment Hygiene Note
 

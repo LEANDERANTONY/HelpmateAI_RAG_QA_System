@@ -754,3 +754,22 @@ Improvements:
 - health-policy performance stayed stable after removing model-based rewrite logic
 - `pancreas8` improved materially under the stronger section-first retrieval path
 - thesis and `pancreas7` are now the clearest remaining retrieval-quality targets
+
+## Day 21: Held-Out Final-Eval Suite And Support-Verifier Correction
+
+- Promoted the 150-question held-out product-fit suite as the current public evaluation marker.
+- Compared HelpmateAI against native OpenAI File Search and native Vectara runs instead of shared-answer vendor rows.
+- Added partial-answer accounting so strict support and answerable coverage are reported separately.
+- Fixed a support-verifier policy bug where a second-pass verifier could identify a fully supported atomic answer but the code still forced it back to unsupported.
+
+Challenges:
+
+- answerable coverage was close to vendor baselines, but atomic metadata lookups and table-heavy numeric questions exposed the remaining ingestion/retrieval weakness
+- one arXiv footer question was incorrectly recovered from a bibliography entry, showing that document-identity metadata needs to be separated from references
+- raw vendor supported rates are not enough by themselves because OpenAI and Vectara also produced false support on intentionally unsupported questions
+
+Improvements:
+
+- corrected HelpmateAI estimate: `92.6%` answerable coverage, `89.6%` strict fully supported rate, `7.4%` false abstention, `0.0%` false support, and `100.0%` unsupported-question abstention
+- recovery now permits full support only when the verifier finds direct support for all required facts with no missing facts, no gap language, and no inferential phrasing
+- next backend focus is artifact-aware ingestion for title pages, footers, forewords, acknowledgements, definitions, and tables rather than another answer-layer threshold change

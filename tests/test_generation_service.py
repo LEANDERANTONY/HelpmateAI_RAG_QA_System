@@ -256,3 +256,80 @@ def test_support_status_verifier_recovers_general_gap_phrasing_to_partial():
     assert answer.supported is False
     assert answer.support_status == "partial"
     assert "Support-status verifier classified the answer as partial" in (answer.note or "")
+
+
+def test_support_status_verifier_can_recover_fully_supported_atomic_answer():
+    answer_payload = json.dumps(
+        {
+            "supported": False,
+            "support_status": "unsupported",
+            "answer": "The report was copy-edited by Steven B. Kennedy [Source 1].",
+            "reason": "The first pass was uncertain.",
+        }
+    )
+    verifier_payload = json.dumps(
+        {
+            "support_status": "supported",
+            "answer_acknowledges_gap": False,
+            "supported_facts": ["The report was copy-edited by Steven B. Kennedy."],
+            "missing_or_ambiguous_facts": [],
+            "reason": "The evidence directly states the copy editor.",
+        }
+    )
+    generator = AnswerGenerator(Settings(openai_api_key="test-key"))
+    generator.client = _FakeClient([answer_payload, verifier_payload])
+    retrieval = RetrievalResult(
+        question="Who is credited with copy-editing the report?",
+        candidates=[
+            RetrievalCandidate(
+                chunk_id="c1",
+                text="The report was copy-edited by Steven B. Kennedy.",
+                metadata={"page_label": "Page iv"},
+            )
+        ],
+    )
+
+    answer = generator.generate("Who is credited with copy-editing the report?", retrieval)
+
+    assert answer.supported is True
+    assert answer.support_status == "supported"
+    assert answer.citations == ["Page iv"]
+    assert "Support-status verifier classified the answer as supported" in (answer.note or "")
+
+
+def test_support_status_verifier_does_not_recover_inferential_atomic_answer():
+    answer_payload = json.dumps(
+        {
+            "supported": True,
+            "support_status": "supported",
+            "answer": "The report likely means Steven B. Kennedy was the copy editor [Source 1].",
+            "reason": "The answer is probably supported.",
+        }
+    )
+    verifier_payload = json.dumps(
+        {
+            "support_status": "supported",
+            "answer_acknowledges_gap": False,
+            "supported_facts": ["The report names Steven B. Kennedy near copy-editing metadata."],
+            "missing_or_ambiguous_facts": [],
+            "reason": "The evidence contains the relevant name.",
+        }
+    )
+    generator = AnswerGenerator(Settings(openai_api_key="test-key"))
+    generator.client = _FakeClient([answer_payload, verifier_payload])
+    retrieval = RetrievalResult(
+        question="Who is credited with copy-editing the report?",
+        candidates=[
+            RetrievalCandidate(
+                chunk_id="c1",
+                text="The report was copy-edited by Steven B. Kennedy.",
+                metadata={"page_label": "Page iv"},
+            )
+        ],
+    )
+
+    answer = generator.generate("Who is credited with copy-editing the report?", retrieval)
+
+    assert answer.supported is False
+    assert answer.support_status == "unsupported"
+    assert "inferential wording" in (answer.note or "")

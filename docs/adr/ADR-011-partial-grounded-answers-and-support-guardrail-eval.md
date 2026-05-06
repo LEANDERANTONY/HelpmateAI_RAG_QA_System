@@ -25,9 +25,15 @@ Keep the existing weak/unsupported retrieval thresholds unchanged and treat answ
 Update the generation prompt so partial-but-grounded answers are allowed:
 
 - if the evidence supports part of the question, answer that supported part directly
-- set `supported=true` for the grounded partial answer
-- explain the missing coverage in `reason`
+- set `support_status=partial` and keep the strict boolean `supported=false`
+- explain the missing coverage in the visible answer and in `reason`
 - set `supported=false` only when the evidence cannot answer the question at all
+
+Later correction:
+
+- a strict support-status verifier can recover a first-pass refusal to `supported` only when all required facts are directly grounded, no required facts are missing, the answer does not acknowledge a gap, and the answer does not use inferential phrasing
+- the same verifier can recover `partial` only when the answer visibly names the missing required fact
+- this fixed a verifier-policy bug where a second-pass verifier could identify a fully supported atomic answer, but the code still forced it back to `unsupported`
 
 Add a repeatable support guardrail eval:
 
@@ -74,6 +80,7 @@ Positive:
 - broad summary questions produce useful grounded answers instead of unnecessary "insufficient evidence" responses
 - unsupported answers are still rejected when the evidence cannot answer the question at all
 - the threshold choice remains defensible because we did not tune it to one document or one phrase
+- atomic lookup questions can now be recovered when the verifier finds complete direct support after an over-cautious first pass
 - future changes can rerun the support guardrail eval as a regression check
 
 Tradeoffs:

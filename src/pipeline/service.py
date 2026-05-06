@@ -137,9 +137,11 @@ class HelpmatePipeline:
                 retrieval_result = self.evidence_selector.select(question, recovered_retrieval)
                 answer = self.generate_answer(document.document_id, question, retrieval_result)
                 if answer.supported:
-                    verified, verifier_reason = self.generator.verify_supported_answer(
+                    verifier_status, verifier_reason = self.generator.verify_support_status(
                         question=question,
-                        answer=answer,
+                        answer_text=answer.answer,
+                        reason_text=answer.note or "",
+                        claimed_support_status=answer.support_status,
                         evidence=answer.evidence,
                     )
                     answer.note = (
@@ -147,7 +149,10 @@ class HelpmatePipeline:
                         if answer.note
                         else f"Recovery support verifier: {verifier_reason}"
                     )
-                    if not verified:
+                    if verifier_status == "partial":
+                        answer.supported = False
+                        answer.support_status = "partial"
+                    elif verifier_status != "supported":
                         answer.supported = False
                         answer.support_status = "unsupported"
                         answer.answer = (

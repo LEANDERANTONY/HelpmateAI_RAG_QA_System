@@ -244,6 +244,8 @@ class AnswerGenerator:
                 claimed_support_status=support_status,
                 evidence=evidence,
             )
+            if support_status == "supported" and not _uses_inferential_supported_language(answer_text) and not _answer_reports_support_gap(answer_text):
+                supported = True
         if support_status == "partial":
             supported = False
             if not _answer_reports_support_gap(answer_text):
@@ -356,9 +358,8 @@ class AnswerGenerator:
         verifier_reason = str(payload.get("reason", "")).strip()
 
         if verifier_status == "supported":
-            # This verifier is a conservative recovery aid for borderline refusals;
-            # it cannot upgrade an answer to full support after the first pass refused it.
-            verifier_status = "partial" if acknowledges_gap and supported_facts and missing_facts else "unsupported"
+            if not supported_facts or missing_facts or acknowledges_gap:
+                verifier_status = "partial" if acknowledges_gap and supported_facts and missing_facts else "unsupported"
         if verifier_status == "partial" and not (acknowledges_gap and supported_facts and missing_facts):
             verifier_status = "unsupported"
 

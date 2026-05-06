@@ -3,7 +3,7 @@ from pathlib import Path
 
 from src.config import Settings
 from src.pipeline import HelpmatePipeline
-from src.schemas import AnswerResult, CacheStatus, DocumentRecord, RetrievalCandidate, RetrievalResult
+from src.schemas import AnswerResult, CacheStatus, DocumentRecord, IndexRecord, RetrievalCandidate, RetrievalResult
 
 
 def _settings(tmp_path: Path) -> Settings:
@@ -94,3 +94,90 @@ def test_trace_expiry_falls_back_to_retention_window(tmp_path):
     expires_at = pipeline._trace_expires_at(document, datetime(2026, 4, 17, 12, 0, tzinfo=timezone.utc))
 
     assert expires_at == "2026-04-18T12:00:00+00:00"
+
+
+def test_recovery_verifier_can_keep_recovered_answer_as_partial(tmp_path, monkeypatch):
+    settings = _settings(tmp_path)
+    pipeline = HelpmatePipeline(settings)
+    document = DocumentRecord(
+        document_id="doc-1",
+        file_name="report.pdf",
+        file_type=".pdf",
+        source_path=str(tmp_path / "report.pdf"),
+        fingerprint="fingerprint-1",
+        char_count=100,
+        page_count=1,
+        metadata={},
+        extracted_text="",
+    )
+    index_record = IndexRecord(
+        document_id=document.document_id,
+        fingerprint=document.fingerprint,
+        collection_name="collection",
+        storage_path=str(tmp_path / "index"),
+        chunk_count=1,
+        section_count=0,
+        embedding_model=settings.embedding_model,
+        chunk_size=settings.chunk_size,
+        chunk_overlap=settings.chunk_overlap,
+        created_at="2026-04-18T12:00:00+00:00",
+    )
+    candidate = RetrievalCandidate(
+        chunk_id="chunk-1",
+        text="The report gives one side of the comparison, but not the other.",
+        metadata={"page_label": "Page 1"},
+    )
+    initial_retrieval = RetrievalResult(
+        question="Compare both scenarios.",
+        candidates=[candidate],
+        evidence_status="unsupported",
+    )
+    recovered_retrieval = RetrievalResult(
+        question="Compare both scenarios.",
+        candidates=[candidate],
+        evidence_status="strong",
+        retrieval_plan={"abstention_recovery_applied": True},
+    )
+    recovered_answer = AnswerResult(
+        question="Compare both scenarios.",
+        answer="The report gives one side of the comparison, but it does not provide the other side [Source 1].",
+        citations=["Page 1"],
+        evidence=[candidate],
+        supported=True,
+        support_status="supported",
+        cache_status=CacheStatus(),
+        model_name="gpt",
+    )
+    first_answer = AnswerResult(
+        question="Compare both scenarios.",
+        answer="Unsupported by the retrieved evidence.",
+        citations=[],
+        evidence=[candidate],
+        supported=False,
+        support_status="unsupported",
+        cache_status=CacheStatus(),
+        model_name="gpt",
+    )
+    generated_answers = [first_answer, recovered_answer]
+
+    monkeypatch.setattr(pipeline.answer_cache, "get", lambda _: None)
+    monkeypatch.setattr(pipeline.answer_cache, "set", lambda *_, **__: None)
+    monkeypatch.setattr(pipeline, "retrieve_evidence", lambda *_: initial_retrieval)
+    monkeypatch.setattr(pipeline.evidence_selector, "select", lambda _question, result: result)
+    monkeypatch.setattr(pipeline, "generate_answer", lambda *_: generated_answers.pop(0))
+    monkeypatch.setattr(pipeline.retriever, "should_recover_after_abstention", lambda *_: True)
+    monkeypatch.setattr(pipeline.retriever, "recover_after_abstention", lambda **_: recovered_retrieval)
+    monkeypatch.setattr(
+        pipeline.generator,
+        "verify_support_status",
+        lambda **_: (
+            "partial",
+            "Support-status verifier classified the answer as partial. Missing or ambiguous facts: other side.",
+        ),
+    )
+
+    answer = pipeline.answer_question(document, index_record, "Compare both scenarios.")
+
+    assert answer.supported is False
+    assert answer.support_status == "partial"
+    assert "Unsupported by the recovered evidence" not in answer.answer

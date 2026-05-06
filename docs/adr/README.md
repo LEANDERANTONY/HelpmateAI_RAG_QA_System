@@ -45,7 +45,8 @@ Current state note:
   - topology edge sets remained benchmark-invariant on the current corpus
 - the newest support-guardrail closure is:
   - weak/unsupported retrieval thresholds remain unchanged after sweep testing
-  - generation now permits grounded partial answers with missing coverage explained in `reason`
+  - generation now permits grounded partial answers with missing coverage explained in the visible answer and `reason`
+  - support-status verification can recover a first-pass refusal to full support only when all required facts are directly grounded and no gap/inferential language remains
   - `support_guardrail_eval` tracks calibration negatives and held-out manual questions together
 - the newest experimental retrieval architecture change is:
   - indexing now records generic section profile metadata for chapter, role, page range, and scope labels

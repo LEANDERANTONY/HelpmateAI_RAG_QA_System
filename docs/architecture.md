@@ -268,7 +268,7 @@ Important properties:
 - explicit `support_status` values: `supported`, `partial`, and `unsupported`
 - strict `supported=true` only when every required fact is directly covered by evidence
 - `partial` answers only when evidence supports a substantive part of the question and the answer itself names or acknowledges the missing required fact
-- a bounded support-status verifier for non-supported first-pass answers; it can recover `partial` but cannot upgrade a refused answer to full support
+- a bounded support-status verifier for non-supported first-pass answers; it can recover `supported` only when all required facts are grounded and no gap or inferential wording remains, otherwise it preserves `partial` or `unsupported`
 - citations and citation details
 - retrieval notes visible to the UI
 - conservative abstention when evidence is weak or unsupported
@@ -332,14 +332,11 @@ This lets the team compare:
 
 Current benchmark read:
 
-- health-policy retrieval remains stable
-- thesis is now recovered and stronger than the earlier pre-topology baseline
-- `pancreas7` remains improved under the topology-aware stack
-- `pancreas8` remains strong overall, though broad paper-summary retrieval is still the hardest remaining benchmark case
-- the new report-generation eval sets show strong retrieval quality overall, but broad paper-summary questions are still more fragile than concrete questions
-- the smart-indexing/orchestrator branch passed a lean six-case upgrade check with `1.0000` supported rate, `0.9050` faithfulness, `0.6034` answer relevancy, and `0.7500` context precision
-- on five shared lean regression cases, the branch improved answer relevancy by `+0.0966` and context precision by `+0.1000` versus `main` while keeping supported rate unchanged
-- OpenAI is still the weakest external retrieval baseline on the current document families
+- the 150-question held-out product-fit suite is the current public evaluation marker
+- after the verifier-policy correction, HelpmateAI's estimated answerable coverage is `92.6%`, strict fully supported rate is `89.6%`, and false abstention is `7.4%`
+- HelpmateAI kept `0.0%` false support and `100.0%` abstention on intentionally unsupported questions in this suite
+- OpenAI File Search and Vectara remain useful native-mode baselines; in the saved runs they have higher answerable-supported rates, but also higher false-support rates
+- broad/local/comparison questions are now mostly healthy; the remaining misses are concentrated in tiny metadata/footer facts, forewords/acknowledgements, abbreviation definitions, bibliography-confusable identifiers, and table-heavy numeric evidence
 
 ## UI And Product Surface
 
@@ -371,32 +368,29 @@ The active app now carries:
 - ephemeral run traces make workflow decisions inspectable without becoming long-term memory
 - live deployment now reflects the benchmarked architecture instead of a separate demo shell
 - evaluation policy is now simpler and more credible:
-  - Vectara as main external retrieval baseline
-  - OpenAI as historical/reference retrieval baseline
+  - fixed held-out product-fit manifest as the public marker
+  - OpenAI File Search and Vectara native-mode baselines
   - `ragas` as the active answer-quality meter
+  - explicit separation of full support, partial support, false abstention, and false support
 
 ## Current Weaknesses
 
-- clause-level misses still happen when relevant content spans adjacent sections
-- narrative and synthesis-heavy questions are harder than factual clause lookups
-- the broadest paper-summary questions are still the hardest benchmark family
-- `reportgeneration2` remains a structure-repair heuristic-gap case
-- region-hit metrics are newer than page-hit metrics, so they still need interpretation before they become optimization targets
-- answer-quality eval coverage is still deeper on the main four document families than on the newer report-generation sets
-- orchestration needs broader held-out coverage before it should be treated as a settled default
+- title-page, footer, and header metadata can lose to semantically similar bibliography entries
+- foreword, acknowledgement, and credits pages are still easy to under-rank for atomic lookup questions
+- acronym and definition lookups need better artifact representation when the definition is outside normal prose flow
+- table-heavy numeric questions still depend on preserving row, column, unit, and caption context more cleanly at ingestion time
+- partial support is deliberately conservative and does not count as full support
+- the latest verifier correction has targeted validation; a full rerun should be done before treating the corrected support-status estimate as a permanent benchmark
 
 ## Likely Next Product Step
 
-The most justified next improvements are now split into two tracks.
+The most justified next backend improvement is artifact-aware ingestion and retrieval precision:
 
-Backend-quality track:
-
-- add answer-quality eval coverage for the newer report-generation papers
-- add gold-answer coverage for a selected subset of benchmark questions
-- expand scoped retrieval eval beyond the thesis-local cases
-- add trace-driven failed-answer review tooling
-- extend external vendor comparison only after a materially new retrieval or answer-layer change
-- close the remaining structure-repair gap on `reportgeneration2`
+- preserve title-page/footer/header identity separately from bibliography references
+- strengthen foreword, acknowledgement, credits, and correspondence landmarks
+- improve acronym/definition artifacts without query-specific hardcoding
+- keep table rows tied to captions, units, page labels, and surrounding prose
+- rerun the 150-question suite after artifact-ingestion changes, then rerun OpenAI and Vectara only when the benchmark story materially changes
 
 Frontend/product track:
 
