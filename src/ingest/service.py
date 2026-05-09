@@ -4,6 +4,7 @@ import hashlib
 import os
 import re
 from pathlib import Path
+from typing import Any
 
 from src.schemas import DocumentRecord
 from src.structure import enrich_pages_with_structure, infer_document_style
@@ -13,6 +14,21 @@ def _file_fingerprint(path: Path) -> str:
     digest = hashlib.sha256()
     digest.update(path.read_bytes())
     return digest.hexdigest()
+
+
+def _strip_invalid_storage_chars(value: Any) -> Any:
+    if isinstance(value, str):
+        return value.replace("\x00", "")
+    if isinstance(value, list):
+        return [_strip_invalid_storage_chars(item) for item in value]
+    if isinstance(value, tuple):
+        return tuple(_strip_invalid_storage_chars(item) for item in value)
+    if isinstance(value, dict):
+        return {
+            _strip_invalid_storage_chars(key): _strip_invalid_storage_chars(item)
+            for key, item in value.items()
+        }
+    return value
 
 
 def _page_heading(text: str) -> str:
@@ -335,9 +351,14 @@ def ingest_document(path: str | Path) -> DocumentRecord:
     else:
         raise ValueError(f"Unsupported document type: {file_path.suffix}")
 
+    full_text = _strip_invalid_storage_chars(full_text)
+    pages = _strip_invalid_storage_chars(pages)
+    extraction_metadata = _strip_invalid_storage_chars(extraction_metadata)
     fingerprint = _file_fingerprint(file_path)
     document_id = fingerprint[:16]
     enriched_pages, outline = enrich_pages_with_structure(pages)
+    enriched_pages = _strip_invalid_storage_chars(enriched_pages)
+    outline = _strip_invalid_storage_chars(outline)
     document_style = infer_document_style(enriched_pages, outline)
     for page in enriched_pages:
         section_path = page.get("section_path", [])

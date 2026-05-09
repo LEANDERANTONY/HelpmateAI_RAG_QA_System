@@ -173,6 +173,43 @@ def test_pdf_invalid_mode_falls_back_to_pypdf(monkeypatch: pytest.MonkeyPatch, t
     assert called["docling"] is False
 
 
+def test_ingest_document_strips_null_bytes_from_extracted_text_and_metadata(
+    monkeypatch: pytest.MonkeyPatch,
+    tmp_path: Path,
+):
+    pdf_path = tmp_path / "sample.pdf"
+    pdf_path.write_bytes(b"%PDF fake")
+
+    def fake_extract_pdf(path: Path):
+        return (
+            "Title\x00\n\nBody text",
+            [
+                {
+                    "page_label": "Page 1",
+                    "text": "Title\x00\n\nBody text",
+                    "section_heading": "Title\x00",
+                    "extraction_backend": "pypdf",
+                    "table_artifacts": [
+                        {
+                            "artifact_type": "table",
+                            "text": "A\x00 | B",
+                        }
+                    ],
+                }
+            ],
+            1,
+            {"extraction_backend": "pypdf", "note": "contains\x00null"},
+        )
+
+    monkeypatch.setattr(service, "_extract_pdf", fake_extract_pdf)
+
+    document = service.ingest_document(pdf_path)
+
+    assert "\x00" not in document.extracted_text
+    assert "\x00" not in str(document.metadata)
+    assert document.char_count == len(document.extracted_text)
+
+
 def test_docling_extracts_expanded_markdown_pages(monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
     pdf_path = tmp_path / "sample.pdf"
     pdf_path.write_bytes(b"%PDF fake")
