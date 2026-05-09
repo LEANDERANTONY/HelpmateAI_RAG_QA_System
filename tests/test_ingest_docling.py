@@ -90,6 +90,35 @@ def test_pdf_docling_mode_uses_docling(monkeypatch: pytest.MonkeyPatch, tmp_path
     assert metadata["extraction_backend"] == "docling"
 
 
+def test_pdf_docling_mode_falls_back_to_pypdf_when_docling_fails(monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
+    pdf_path = tmp_path / "sample.pdf"
+    pdf_path.write_bytes(b"%PDF fake")
+
+    def fake_docling(path: Path):
+        raise RuntimeError("docling unavailable")
+
+    def fake_pypdf(path: Path):
+        return (
+            "plain text",
+            [{"page_label": "Page 1", "text": "plain text", "section_heading": "plain text", "extraction_backend": "pypdf"}],
+            1,
+            {"extraction_backend": "pypdf"},
+        )
+
+    monkeypatch.setenv("HELPMATE_PDF_EXTRACTOR", "docling")
+    monkeypatch.setattr(service, "_extract_pdf_docling", fake_docling)
+    monkeypatch.setattr(service, "_extract_pdf_pypdf", fake_pypdf)
+
+    full_text, pages, page_count, metadata = service._extract_pdf(pdf_path)
+
+    assert page_count == 1
+    assert full_text == "plain text"
+    assert pages[0]["extraction_backend"] == "pypdf"
+    assert metadata["extraction_backend"] == "pypdf"
+    assert metadata["requested_extraction_backend"] == "docling"
+    assert "docling unavailable" in metadata["extraction_fallback_reason"]
+
+
 def test_pdf_pypdf_mode_bypasses_docling(monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
     pdf_path = tmp_path / "sample.pdf"
     pdf_path.write_bytes(b"%PDF fake")
@@ -230,6 +259,35 @@ def test_docx_docling_mode_uses_docling(monkeypatch: pytest.MonkeyPatch, tmp_pat
     assert "| A | 1 |" in full_text
     assert pages[0]["extraction_backend"] == "docling"
     assert metadata["extraction_backend"] == "docling"
+
+
+def test_docx_docling_mode_falls_back_to_python_docx_when_docling_fails(monkeypatch: pytest.MonkeyPatch, tmp_path: Path):
+    docx_path = tmp_path / "sample.docx"
+    docx_path.write_bytes(b"fake docx")
+
+    def fake_docling(path: Path):
+        raise RuntimeError("docling unavailable")
+
+    def fake_python_docx(path: Path):
+        return (
+            "plain docx text",
+            [{"page_label": "Document", "text": "plain docx text", "section_heading": "plain docx text", "extraction_backend": "python-docx"}],
+            1,
+            {"extraction_backend": "python-docx"},
+        )
+
+    monkeypatch.setenv("HELPMATE_DOCX_EXTRACTOR", "docling")
+    monkeypatch.setattr(service, "_extract_docx_docling", fake_docling)
+    monkeypatch.setattr(service, "_extract_docx_python_docx", fake_python_docx)
+
+    full_text, pages, page_count, metadata = service._extract_docx(docx_path)
+
+    assert page_count == 1
+    assert full_text == "plain docx text"
+    assert pages[0]["extraction_backend"] == "python-docx"
+    assert metadata["extraction_backend"] == "python-docx"
+    assert metadata["requested_extraction_backend"] == "docling"
+    assert "docling unavailable" in metadata["extraction_fallback_reason"]
 
 
 def test_docx_python_docx_mode_bypasses_docling(monkeypatch: pytest.MonkeyPatch, tmp_path: Path):

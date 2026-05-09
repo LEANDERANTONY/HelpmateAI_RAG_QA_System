@@ -275,7 +275,16 @@ def _extract_pdf(path: Path) -> tuple[str, list[dict[str, str]], int, dict[str, 
     if mode == "pypdf":
         return _extract_pdf_pypdf(path)
     if mode == "docling":
-        return _extract_pdf_docling(path)
+        try:
+            return _extract_pdf_docling(path)
+        except Exception as exc:
+            full_text, pages, page_count, metadata = _extract_pdf_pypdf(path)
+            metadata = {
+                **metadata,
+                "requested_extraction_backend": "docling",
+                "extraction_fallback_reason": str(exc)[:300],
+            }
+            return full_text, pages, page_count, metadata
     return _extract_pdf_pypdf(path)
 
 
@@ -301,7 +310,16 @@ def _extract_docx(path: Path) -> tuple[str, list[dict[str, str]], int, dict[str,
     if mode == "python-docx":
         return _extract_docx_python_docx(path)
     if mode == "docling":
-        return _extract_docx_docling(path)
+        try:
+            return _extract_docx_docling(path)
+        except Exception as exc:
+            full_text, pages, page_count, metadata = _extract_docx_python_docx(path)
+            metadata = {
+                **metadata,
+                "requested_extraction_backend": "docling",
+                "extraction_fallback_reason": str(exc)[:300],
+            }
+            return full_text, pages, page_count, metadata
     return _extract_docx_python_docx(path)
 
 
