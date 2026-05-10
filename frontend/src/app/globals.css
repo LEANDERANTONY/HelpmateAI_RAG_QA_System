@@ -2454,7 +2454,7 @@ input[type="file"]:disabled::file-selector-button {
   flex-direction: column;
   gap: 18px;
   overflow-y: auto;
-  padding: 48px 56px 56px;
+  padding: 0 56px 56px;
 }
 
 .h-conv-inner {
@@ -2463,16 +2463,32 @@ input[type="file"]:disabled::file-selector-button {
   gap: 18px;
   margin: 0 auto;
   max-width: 760px;
+  padding-top: 48px;
   width: 100%;
 }
 
 .h-ask-group {
+  background: var(--bg-page);
   display: flex;
   flex-direction: column;
   gap: 10px;
+  padding-bottom: 14px;
   position: sticky;
   top: 0;
   z-index: 12;
+}
+
+/* Soft fade below the sticky ask group so older Q&A cards dissolve as they
+   scroll up under it instead of ghosting through the 85%-opaque ask card. */
+.h-ask-group::after {
+  background: linear-gradient(180deg, var(--bg-page) 0%, rgba(4, 7, 15, 0) 100%);
+  content: "";
+  height: 28px;
+  left: 0;
+  pointer-events: none;
+  position: absolute;
+  right: 0;
+  top: 100%;
 }
 
 .h-ask {
