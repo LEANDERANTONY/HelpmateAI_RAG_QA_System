@@ -2476,25 +2476,15 @@ input[type="file"]:disabled::file-selector-button {
   z-index: 12;
 }
 
-/* Soft fade right at the card's bottom edge — 5px solid bg-page reads as
-   a shadow extension of the card, then a 14px gradient dissolves older
-   Q&A cards as they scroll up into it. Group has no bg of its own, so the
-   card's rounded corners aren't framed by a hard rectangle. */
-.h-ask-group::after {
-  background: linear-gradient(180deg, var(--bg-page) 0%, var(--bg-page) 26%, rgba(4, 7, 15, 0) 100%);
-  content: "";
-  height: 19px;
-  left: 0;
-  pointer-events: none;
-  position: absolute;
-  right: 0;
-  top: 100%;
-}
-
 .h-ask {
   background: rgb(10, 14, 22);
   border: 1px solid var(--border);
   border-radius: var(--radius-lg);
+  /* Soft drop-shadow that naturally hugs the card's rounded corners and
+     gives it 3D depth. Negative spread keeps the shadow tighter than the
+     card so it reads as silhouette, not a glow. Solid card above it fully
+     occludes the chunk of older Q&A directly behind. */
+  box-shadow: 0 10px 18px -8px rgba(4, 7, 15, 0.85);
   display: flex;
   flex-direction: column;
   gap: 10px;
