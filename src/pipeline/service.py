@@ -161,6 +161,11 @@ class HelpmatePipeline:
                         )
                         answer.citations = []
                         answer.citation_details = []
+        self.retriever.stamp_union_highlight_terms(
+            question=question,
+            answer=answer.answer,
+            candidates=answer.evidence,
+        )
         answer.cache_status = CacheStatus(index_reused=index_record.reused, answer_cache_hit=False)
         trace = self._build_run_trace(
             document=document,

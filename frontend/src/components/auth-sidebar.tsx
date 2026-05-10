@@ -11,15 +11,26 @@ type AuthSidebarProps = {
   user: AuthUserSummary | null;
 };
 
-const workflowStates = [
-  { label: "Auth", value: "Google session" },
-  { label: "Storage", value: "Supabase + Chroma" },
-  { label: "Mode", value: "One document workspace" },
+const workflowStates: Array<{ label: string; value: string; description: string }> = [
+  {
+    label: "Auth",
+    value: "Google session",
+    description: "Session-based access for a private document workflow.",
+  },
+  {
+    label: "Storage",
+    value: "Supabase + Chroma",
+    description: "Cloud-backed document state and vector retrieval.",
+  },
+  {
+    label: "Mode",
+    value: "One document workspace",
+    description: "A focused workspace tuned for one active document at a time.",
+  },
 ];
 
 export function AuthSidebar({ user }: AuthSidebarProps) {
   const authEnabled = isSupabaseConfigured();
-  const [expanded, setExpanded] = useState(false);
   const [pendingAction, setPendingAction] = useState<"signin" | "signout" | null>(
     null,
   );
@@ -89,89 +100,60 @@ export function AuthSidebar({ user }: AuthSidebarProps) {
     }
   }
 
+  const sessionDescription = user
+    ? user.email || "Your account is connected for private workspace access."
+    : "Open Google sign-in to access uploads, indexing, and your saved workspace state.";
+
   return (
     <section className="auth-inline-panel">
-      <div className="auth-inline-summary">
-        <div className="auth-inline-lead">
+      <p className="h-eyebrow">Account</p>
+      <div className="auth-inline-identity">
+        <span className="auth-inline-avatar">{accountInitial}</span>
+        <h2>{accountLabel}</h2>
+      </div>
+      <p className="auth-inline-copy">
+        {user
+          ? "Signed in and ready to work with your active document workspace."
+          : authEnabled
+            ? "Sign in with Google to unlock uploads, indexing, and saved workspace access."
+            : "Connect the Supabase frontend env vars to enable Google sign-in here."}
+      </p>
+      <div className="auth-inline-actions">
+        {user ? (
           <button
-            aria-expanded={expanded}
-            aria-label={expanded ? "Collapse account panel" : "Expand account panel"}
-            className="auth-inline-toggle"
-            onClick={() => setExpanded((current) => !current)}
+            className="auth-inline-button"
+            disabled={pendingAction === "signout"}
+            onClick={handleSignOut}
             type="button"
           >
-            <span />
-            <span />
-            <span />
+            {pendingAction === "signout" ? "Signing out..." : "Sign out"}
           </button>
-
-          <div className="auth-inline-heading">
-            <p className="eyebrow">Account</p>
-            <div className="auth-inline-identity">
-              <span className="auth-inline-avatar">{accountInitial}</span>
-              <h2>{accountLabel}</h2>
-            </div>
-          </div>
-        </div>
-
-        <p className="auth-inline-copy">
-          {user
-            ? "Signed in and ready to work with your active document workspace."
-            : authEnabled
-              ? "Sign in with Google to unlock uploads, indexing, and saved workspace access."
-              : "Connect the Supabase frontend env vars to enable Google sign-in here."}
-        </p>
-
-        <div className="auth-inline-actions">
-          {user ? (
-            <button
-              className="secondary-button px-4 py-3"
-              disabled={pendingAction === "signout"}
-              onClick={handleSignOut}
-              type="button"
-            >
-              {pendingAction === "signout" ? "Signing out..." : "Sign out"}
-            </button>
-          ) : (
-            <button
-              className="primary-button px-4 py-3"
-              disabled={pendingAction === "signin" || !authEnabled}
-              onClick={handleGoogleSignIn}
-              type="button"
-            >
-              {pendingAction === "signin" ? "Redirecting..." : "Continue with Google"}
-            </button>
-          )}
-        </div>
+        ) : (
+          <button
+            className="auth-inline-button auth-inline-primary"
+            disabled={pendingAction === "signin" || !authEnabled}
+            onClick={handleGoogleSignIn}
+            type="button"
+          >
+            {pendingAction === "signin" ? "Redirecting..." : "Continue with Google"}
+          </button>
+        )}
       </div>
 
-      {expanded ? (
-        <div className="auth-inline-details">
-          <div className="auth-inline-details-card">
-            <p className="eyebrow">Session</p>
-            <h3>{user ? "Google account connected" : "Ready for sign-in"}</h3>
-            <p>
-              {user
-                ? user.email || "Your account is connected for private workspace access."
-                : "Open Google sign-in to access uploads, indexing, and your saved workspace state."}
-            </p>
-          </div>
-
-          {workflowStates.map((item) => (
-            <div className="auth-inline-details-card" key={item.label}>
-              <p className="eyebrow">{item.label}</p>
-              <h3>{item.value}</h3>
-              <p>
-                {item.label === "Auth"
-                  ? "Session-based access for a private document workflow."
-                  : item.label === "Storage"
-                    ? "Cloud-backed document state and vector retrieval."
-                    : "A focused workspace tuned for one active document at a time."}
-              </p>
-            </div>
-          ))}
+      <div className="auth-inline-meta">
+        <div>
+          <p className="h-eyebrow">Session</p>
+          <h3>{user ? "Google account connected" : "Ready for sign-in"}</h3>
+          <p>{sessionDescription}</p>
         </div>
-      ) : null}
+        {workflowStates.map((item) => (
+          <div key={item.label}>
+            <p className="h-eyebrow">{item.label}</p>
+            <h3>{item.value}</h3>
+            <p>{item.description}</p>
+          </div>
+        ))}
+      </div>
 
       {error ? <p className="auth-inline-error">{error}</p> : null}
     </section>

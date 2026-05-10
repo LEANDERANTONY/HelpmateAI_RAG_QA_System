@@ -126,6 +126,77 @@ class HybridRetriever:
         candidate_terms = cls._normalize_term_set(candidate_terms)
         return len(significant_terms & candidate_terms) / max(len(significant_terms), 1)
 
+    def _stamp_candidate_strengths(self, candidates: list[RetrievalCandidate]) -> None:
+        # Per-chunk strength is independent of the overall evidence status: each
+        # chunk gets a tier based on its own fused score against the same
+        # thresholds the overall assessment uses. This lets the UI surface a
+        # block-and-label per evidence card without requiring a separate
+        # per-chunk grader. The label flows out through `metadata` so it's a
+        # purely additive change to the existing wire format.
+        weak_threshold = self.settings.weak_evidence_score_threshold
+        unsupported_threshold = self.settings.unsupported_evidence_score_threshold
+        for candidate in candidates:
+            score = self._evidence_score(candidate)
+            if score >= weak_threshold:
+                strength = "strong"
+            elif score >= unsupported_threshold:
+                strength = "weak"
+            else:
+                strength = "unsupported"
+            candidate.metadata["evidence_strength"] = strength
+
+    def _stamp_highlight_terms(self, question: str, candidates: list[RetrievalCandidate]) -> None:
+        # Lets the UI <mark> the question's significant terms inside each
+        # chunk's preview text. Terms are filtered to those that actually
+        # appear in the candidate, so the UI never has to render a stale list.
+        significant_terms = self._significant_question_terms(question)
+        if not significant_terms:
+            return
+        for candidate in candidates:
+            text_lower = candidate.text.lower()
+            present = sorted(
+                {term for term in significant_terms if term in text_lower}
+            )
+            if present:
+                candidate.metadata["highlight_terms"] = present
+
+    def stamp_union_highlight_terms(
+        self,
+        question: str,
+        answer: str,
+        candidates: list[RetrievalCandidate],
+        *,
+        cap: int = 6,
+    ) -> None:
+        # Re-stamps `metadata.highlight_terms` with the union of question-
+        # derived and answer-derived significant terms, deduped and capped.
+        # Question-derived terms cue "where my query lives in this chunk";
+        # answer-derived terms close the answer→source loop ("here's the
+        # exact phrasing the answer leaned on"). Both stories matter — the
+        # union surfaces them on the same chunk without doubling work.
+        # Answer-derived terms are emitted first so they survive the cap.
+        question_terms = self._significant_question_terms(question)
+        answer_terms = self._significant_question_terms(answer) if answer else set()
+        if not question_terms and not answer_terms:
+            return
+        answer_only = answer_terms - question_terms
+        for candidate in candidates:
+            text_lower = candidate.text.lower()
+            merged: list[str] = []
+            seen: set[str] = set()
+            for term in sorted(answer_only):
+                if term in text_lower and term not in seen:
+                    merged.append(term)
+                    seen.add(term)
+            for term in sorted(question_terms):
+                if term in text_lower and term not in seen:
+                    merged.append(term)
+                    seen.add(term)
+            if merged:
+                candidate.metadata["highlight_terms"] = merged[:cap]
+            elif "highlight_terms" in candidate.metadata:
+                candidate.metadata.pop("highlight_terms")
+
     def _assess_evidence_status(
         self,
         question: str,
@@ -134,6 +205,8 @@ class HybridRetriever:
     ) -> tuple[str, float, float, float]:
         if not candidates:
             return "unsupported", 0.0, 0.0, 0.0
+        self._stamp_candidate_strengths(candidates)
+        self._stamp_highlight_terms(question, candidates)
         best_score = self._evidence_score(candidates[0])
         max_lexical = max((candidate.lexical_score for candidate in candidates), default=0.0)
         content_overlap = self._content_overlap_ratio(question, candidates)

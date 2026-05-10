@@ -1,0 +1,138 @@
+import type { RetrievalCandidate } from "@/lib/api-types";
+
+export type CitationTarget = {
+  chunkId: string;
+  evidenceIndex: number;
+  label: string;
+};
+
+export type CitationSegment =
+  | { type: "text"; text: string }
+  | { type: "citation"; label: string; raw: string; target: CitationTarget | null };
+
+const CITATION_PATTERN = /\[(Source\s+\d+|Section\s+[^\]]+|p\.\s*\d+|Page\s+\d+)\]/gi;
+
+function metadataValue(candidate: RetrievalCandidate, key: string) {
+  const value = candidate.metadata[key];
+  if (Array.isArray(value)) {
+    return value.join(" ");
+  }
+  if (value === null || value === undefined) {
+    return "";
+  }
+  return String(value);
+}
+
+function normalize(value: string) {
+  return value.toLowerCase().replace(/[^a-z0-9]+/g, " ").trim();
+}
+
+function compact(value: string) {
+  return normalize(value).replace(/\s+/g, "");
+}
+
+export function stripReferencesBlock(text: string) {
+  return text.replace(/\s*references?\s*:\s*[\s\S]*$/i, "").trim();
+}
+
+export function resolveCitationTarget(
+  rawLabel: string,
+  evidence: RetrievalCandidate[],
+): CitationTarget | null {
+  const sourceMatch = rawLabel.match(/^Source\s+(\d+)$/i);
+  if (sourceMatch) {
+    const evidenceIndex = Number(sourceMatch[1]) - 1;
+    const candidate = evidence[evidenceIndex];
+    if (!candidate) {
+      return null;
+    }
+    return {
+      chunkId: candidate.chunk_id,
+      evidenceIndex,
+      label: rawLabel,
+    };
+  }
+
+  const normalizedRaw = normalize(rawLabel);
+  const compactRaw = compact(rawLabel.replace(/^Section\s+/i, ""));
+  const pageMatch = rawLabel.match(/(?:p\.|Page)\s*(\d+)/i);
+  const pageNeedle = pageMatch ? `page ${pageMatch[1]}` : "";
+
+  const evidenceIndex = evidence.findIndex((candidate) => {
+    const haystack = [
+      candidate.citation_label,
+      metadataValue(candidate, "page_label"),
+      metadataValue(candidate, "section_id"),
+      metadataValue(candidate, "section_heading"),
+      metadataValue(candidate, "numbered_heading"),
+      metadataValue(candidate, "chapter_number"),
+      metadataValue(candidate, "chapter_title"),
+    ];
+    const normalizedHaystack = normalize(haystack.join(" "));
+    if (pageNeedle && normalizedHaystack.includes(pageNeedle)) {
+      return true;
+    }
+    if (normalizedHaystack.includes(normalizedRaw)) {
+      return true;
+    }
+    return compact(haystack.join(" ")).includes(compactRaw);
+  });
+
+  if (evidenceIndex < 0) {
+    return null;
+  }
+
+  return {
+    chunkId: evidence[evidenceIndex].chunk_id,
+    evidenceIndex,
+    label: rawLabel,
+  };
+}
+
+export function splitCitationSegments(
+  text: string,
+  evidence: RetrievalCandidate[],
+): CitationSegment[] {
+  const segments: CitationSegment[] = [];
+  let lastIndex = 0;
+
+  for (const match of text.matchAll(CITATION_PATTERN)) {
+    const start = match.index ?? 0;
+    const full = match[0];
+    const raw = match[1].trim();
+    if (start > lastIndex) {
+      segments.push({ type: "text", text: text.slice(lastIndex, start) });
+    }
+    segments.push({
+      type: "citation",
+      label: raw,
+      raw: full,
+      target: resolveCitationTarget(raw, evidence),
+    });
+    lastIndex = start + full.length;
+  }
+
+  if (lastIndex < text.length) {
+    segments.push({ type: "text", text: text.slice(lastIndex) });
+  }
+
+  return segments.length ? segments : [{ type: "text", text }];
+}
+
+export function uniqueCitationTargets(
+  answerText: string,
+  evidence: RetrievalCandidate[],
+) {
+  const seen = new Set<string>();
+  return splitCitationSegments(stripReferencesBlock(answerText), evidence)
+    .filter((segment): segment is Extract<CitationSegment, { type: "citation" }> => segment.type === "citation")
+    .map((segment) => segment.target)
+    .filter((target): target is CitationTarget => Boolean(target))
+    .filter((target) => {
+      if (seen.has(target.chunkId)) {
+        return false;
+      }
+      seen.add(target.chunkId);
+      return true;
+    });
+}

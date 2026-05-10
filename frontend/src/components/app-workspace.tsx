@@ -1,34 +1,218 @@
 "use client";
 
-import { useEffect, useMemo, useState } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import type {
+  ChangeEvent,
+  KeyboardEvent as ReactKeyboardEvent,
+  MouseEvent as ReactMouseEvent,
+  ReactNode,
+} from "react";
 
+import { AuthSidebar } from "@/components/auth-sidebar";
 import { askQuestion, buildIndex, getCurrentWorkspace, getStarterQuestions, uploadDocument } from "@/lib/api";
 import type { AuthUserSummary } from "@/lib/auth";
-import { AuthSidebar } from "@/components/auth-sidebar";
+import {
+  splitCitationSegments,
+  stripReferencesBlock,
+  uniqueCitationTargets,
+} from "@/lib/citations";
 import type {
   AnswerResult,
   DocumentBundleResponse,
   DocumentRecord,
   IndexRecord,
+  RetrievalCandidate,
 } from "@/lib/api-types";
 
-type AsyncState = "idle" | "loading" | "ready";
-type InspectorTab = "evidence" | "debug";
-
-type ParsedAnswerBlock =
-  | { type: "definition-list"; items: Array<{ term: string; value: string }> }
-  | { type: "paragraphs"; paragraphs: string[] };
+type AsyncState = "idle" | "loading" | "ready" | "error";
+type SupportStatus = AnswerResult["support_status"];
 
 type AppWorkspaceProps = {
   user: AuthUserSummary | null;
 };
 
-function stripInlineReferences(text: string) {
-  return text.replace(/\s*references?\s*:\s*[\s\S]*$/i, "").trim();
+type QATurn = {
+  id: string;
+  question: string;
+  answer: AnswerResult;
+  askedAt: Date;
+};
+
+type DefinitionItem = {
+  term: string;
+  value: string;
+};
+
+type IconProps = {
+  size?: number;
+};
+
+const FLASH_MS = 1400;
+const STREAM_MAX_MS = 3400;
+const STREAM_MIN_MS = 1400;
+const STREAM_BASE_MS = 600;
+const STREAM_PER_CHAR_MS = 4;
+
+function streamingDuration(text: string) {
+  return Math.min(
+    STREAM_MAX_MS,
+    Math.max(STREAM_MIN_MS, STREAM_BASE_MS + text.length * STREAM_PER_CHAR_MS),
+  );
 }
 
-function parseDefinitionStyleAnswer(text: string) {
-  const normalized = text.trim();
+function useTypingProgress(text: string, durationMs: number, active: boolean) {
+  const [chars, setChars] = useState(active ? 0 : text.length);
+  useEffect(() => {
+    let raf = 0;
+    if (!active) {
+      raf = requestAnimationFrame(() => setChars(text.length));
+      return () => cancelAnimationFrame(raf);
+    }
+    const start = performance.now();
+    const tick = () => {
+      const elapsed = performance.now() - start;
+      const progress = Math.min(1, elapsed / Math.max(1, durationMs));
+      setChars(Math.floor(progress * text.length));
+      if (progress < 1) {
+        raf = requestAnimationFrame(tick);
+      }
+    };
+    raf = requestAnimationFrame(tick);
+    return () => cancelAnimationFrame(raf);
+  }, [active, text, durationMs]);
+  return chars;
+}
+
+const icons = {
+  Chevron({ size = 14 }: IconProps) {
+    return (
+      <svg aria-hidden="true" height={size} viewBox="0 0 24 24" width={size}>
+        <path d="m6 9 6 6 6-6" />
+      </svg>
+    );
+  },
+  Doc({ size = 14 }: IconProps) {
+    return (
+      <svg aria-hidden="true" height={size} viewBox="0 0 24 24" width={size}>
+        <path d="M14 3H7a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h10a2 2 0 0 0 2-2V8z" />
+        <path d="M14 3v5h5" />
+      </svg>
+    );
+  },
+  More({ size = 14 }: IconProps) {
+    return (
+      <svg aria-hidden="true" height={size} viewBox="0 0 24 24" width={size}>
+        <circle cx="6" cy="12" r="1.8" />
+        <circle cx="12" cy="12" r="1.8" />
+        <circle cx="18" cy="12" r="1.8" />
+      </svg>
+    );
+  },
+  Refresh({ size = 14 }: IconProps) {
+    return (
+      <svg aria-hidden="true" height={size} viewBox="0 0 24 24" width={size}>
+        <path d="M3 12a9 9 0 0 1 15.5-6.3L21 8" />
+        <path d="M21 3v5h-5" />
+        <path d="M21 12a9 9 0 0 1-15.5 6.3L3 16" />
+        <path d="M3 21v-5h5" />
+      </svg>
+    );
+  },
+  Search({ size = 14 }: IconProps) {
+    return (
+      <svg aria-hidden="true" height={size} viewBox="0 0 24 24" width={size}>
+        <circle cx="11" cy="11" r="7" />
+        <path d="m20 20-3.5-3.5" />
+      </svg>
+    );
+  },
+  Send({ size = 14 }: IconProps) {
+    return (
+      <svg aria-hidden="true" height={size} viewBox="0 0 24 24" width={size}>
+        <path d="M5 12h14" />
+        <path d="m13 6 6 6-6 6" />
+      </svg>
+    );
+  },
+  Swap({ size = 14 }: IconProps) {
+    return (
+      <svg aria-hidden="true" height={size} viewBox="0 0 24 24" width={size}>
+        <path d="M7 7h13l-3-3" />
+        <path d="M17 17H4l3 3" />
+      </svg>
+    );
+  },
+  Upload({ size = 16 }: IconProps) {
+    return (
+      <svg aria-hidden="true" height={size} viewBox="0 0 24 24" width={size}>
+        <path d="M12 16V4" />
+        <path d="m7 9 5-5 5 5" />
+        <path d="M5 20h14" />
+      </svg>
+    );
+  },
+};
+
+function makeTurnId() {
+  if (typeof crypto !== "undefined" && "randomUUID" in crypto) {
+    return crypto.randomUUID();
+  }
+  return `qa-${Date.now()}`;
+}
+
+function metadataText(candidate: RetrievalCandidate, key: string) {
+  const value = candidate.metadata[key];
+  if (Array.isArray(value)) {
+    return value.join(", ");
+  }
+  if (value === null || value === undefined || value === "") {
+    return "";
+  }
+  return String(value);
+}
+
+function metadataHighlightTerms(candidate: RetrievalCandidate): string[] {
+  const value = candidate.metadata.highlight_terms;
+  if (!Array.isArray(value)) {
+    return [];
+  }
+  return value.filter(
+    (term): term is string => typeof term === "string" && term.length > 0,
+  );
+}
+
+function escapeRegex(value: string) {
+  return value.replace(/[.*+?^${}()|[\]\\]/g, "\\$&");
+}
+
+function renderHighlightedText(text: string, terms: string[]): ReactNode[] {
+  if (!terms.length) {
+    return [text];
+  }
+  // Sort longer terms first so plurals like "obligations" beat the shorter
+  // "obligation" stem to a match — otherwise the singular wins and the
+  // trailing "s" renders unmarked.
+  const sorted = [...terms].sort((a, b) => b.length - a.length);
+  const pattern = new RegExp(`\\b(${sorted.map(escapeRegex).join("|")})\\b`, "gi");
+  const segments: ReactNode[] = [];
+  let lastIndex = 0;
+  let key = 0;
+  for (const match of text.matchAll(pattern)) {
+    const start = match.index ?? 0;
+    if (start > lastIndex) {
+      segments.push(text.slice(lastIndex, start));
+    }
+    segments.push(<mark key={`mk-${key++}-${start}`}>{match[0]}</mark>);
+    lastIndex = start + match[0].length;
+  }
+  if (lastIndex < text.length) {
+    segments.push(text.slice(lastIndex));
+  }
+  return segments.length ? segments : [text];
+}
+
+function parseDefinitionStyleAnswer(text: string): DefinitionItem[] | null {
+  const normalized = stripReferencesBlock(text).trim();
   if (!normalized.startsWith("{") || !normalized.endsWith("}")) {
     return null;
   }
@@ -38,84 +222,1467 @@ function parseDefinitionStyleAnswer(text: string) {
     return null;
   }
 
-  const items = matches.map((match) => ({
+  return matches.map((match) => ({
     term: match[1].trim(),
     value: match[2].trim(),
   }));
-
-  return items.length ? items : null;
 }
 
-function parseAnswerContent(text: string): ParsedAnswerBlock {
-  const cleaned = stripInlineReferences(text);
-  const definitionItems = parseDefinitionStyleAnswer(cleaned);
+function formatNumber(value: number | null | undefined) {
+  if (typeof value !== "number") {
+    return "-";
+  }
+  return new Intl.NumberFormat("en", { maximumFractionDigits: 0 }).format(value);
+}
 
-  if (definitionItems) {
-    return {
-      type: "definition-list",
-      items: definitionItems,
-    };
+function accountInitial(user: AuthUserSummary | null) {
+  const seed = user?.displayName || user?.email || "H";
+  return seed.trim().charAt(0).toUpperCase();
+}
+
+function accountLabel(user: AuthUserSummary | null) {
+  return user?.email || user?.displayName || "Sign in";
+}
+
+function supportCopy(status: SupportStatus | null | undefined) {
+  if (status === "partial") {
+    return "PARTIAL";
+  }
+  if (status === "unsupported") {
+    return "ABSTAINED";
+  }
+  return "SUPPORTED";
+}
+
+function relativeTime(value: Date) {
+  const elapsedMs = Date.now() - value.getTime();
+  const minutes = Math.floor(elapsedMs / 60000);
+  if (minutes < 1) {
+    return "just now";
+  }
+  if (minutes === 1) {
+    return "1 min ago";
+  }
+  return `${minutes} min ago`;
+}
+
+function docStatus(
+  indexState: AsyncState,
+  indexRecord: IndexRecord | null,
+  lastAnswer: AnswerResult | null,
+) {
+  if (indexState === "loading") {
+    return { className: "pulse", label: "Building index" };
+  }
+  if (indexState === "error") {
+    return { className: "danger", label: "Index failed" };
+  }
+  if (!indexRecord) {
+    return { className: "muted", label: "Index pending" };
+  }
+  if (!lastAnswer) {
+    return { className: "", label: "Ready for questions" };
+  }
+  if (lastAnswer.support_status === "partial") {
+    return { className: "warn", label: "Last answer partial" };
+  }
+  if (lastAnswer.support_status === "unsupported") {
+    return { className: "muted", label: "Last question abstained" };
+  }
+  return { className: "", label: "Last answer supported" };
+}
+
+function candidateLabel(candidate: RetrievalCandidate, index: number) {
+  const section = metadataText(candidate, "section_heading") || metadataText(candidate, "section_id");
+  const page = metadataText(candidate, "page_label");
+  if (section && page) {
+    return `${section} - ${page}`;
+  }
+  if (candidate.citation_label) {
+    return candidate.citation_label;
+  }
+  if (page) {
+    return page;
+  }
+  return `Source ${index + 1}`;
+}
+
+function candidateStrength(candidate: RetrievalCandidate) {
+  // The current API has answer-level support, not per-chunk strength. Render
+  // this visual only when an additive backend field is actually present.
+  const value = metadataText(candidate, "evidence_strength").toLowerCase();
+  if (value === "strong" || value === "weak" || value === "unsupported") {
+    return value;
+  }
+  return null;
+}
+
+function candidateKind(candidate: RetrievalCandidate) {
+  return (
+    metadataText(candidate, "semantic_chunk_role") ||
+    metadataText(candidate, "content_type") ||
+    metadataText(candidate, "section_kind") ||
+    "chunk"
+  );
+}
+
+function ErrorBanner({ error }: { error: string | null }) {
+  if (!error) {
+    return null;
+  }
+  return <div className="h-error">{error}</div>;
+}
+
+function Hairline() {
+  return <div className="h-hairline" />;
+}
+
+function Stat({ label, value, mono = false }: { label: string; value: string; mono?: boolean }) {
+  return (
+    <div className="h-stat">
+      <span>{label}</span>
+      <strong className={mono ? "mono" : ""}>{value}</strong>
+    </div>
+  );
+}
+
+function SupportPip({
+  className = "",
+  children,
+}: {
+  className?: string;
+  children: ReactNode;
+}) {
+  return <span className={`h-pip ${className}`.trim()}>{children}</span>;
+}
+
+function AccountTopbar({
+  user,
+  open,
+  onToggle,
+}: {
+  user: AuthUserSummary | null;
+  open: boolean;
+  onToggle: () => void;
+}) {
+  return (
+    <div className="h-account-wrap">
+      <button
+        aria-expanded={open}
+        className="h-account"
+        onClick={onToggle}
+        type="button"
+      >
+        <span className="h-avatar">{accountInitial(user)}</span>
+        <span className="h-account-email">{accountLabel(user)}</span>
+        <icons.Chevron size={12} />
+      </button>
+      {open ? (
+        <div className="h-account-popover">
+          <AuthSidebar user={user} />
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+function Topbar({
+  user,
+  accountOpen,
+  onAccountToggle,
+  onPaletteOpen,
+}: {
+  user: AuthUserSummary | null;
+  accountOpen: boolean;
+  onAccountToggle: () => void;
+  onPaletteOpen: () => void;
+}) {
+  return (
+    <header className="h-topbar">
+      <div className="h-topbar-inner">
+        <div className="h-brand">
+          <div className="h-brand-mark">H</div>
+          <div className="h-wordmark">HELPMATE</div>
+        </div>
+        <button
+          aria-label="Open search palette"
+          className="h-palette"
+          onClick={onPaletteOpen}
+          type="button"
+        >
+          <span>
+            <icons.Search size={13} />
+            <span>Search documents and questions</span>
+          </span>
+          <kbd>⌘K</kbd>
+        </button>
+        <div className="h-spacer" />
+        <AccountTopbar user={user} open={accountOpen} onToggle={onAccountToggle} />
+      </div>
+    </header>
+  );
+}
+
+function UploadDropzone({
+  disabled,
+  selectedFile,
+  onFileChange,
+  onUpload,
+  uploadState,
+}: {
+  disabled: boolean;
+  selectedFile: File | null;
+  onFileChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  onUpload: () => void;
+  uploadState: AsyncState;
+}) {
+  return (
+    <div className="h-drop">
+      <input
+        accept=".pdf,.docx"
+        className="h-sr-only"
+        disabled={disabled}
+        id="document-upload"
+        onChange={onFileChange}
+        type="file"
+      />
+      <label className={`h-drop-zone ${disabled ? "disabled" : ""}`} htmlFor="document-upload">
+        <span className="h-drop-icon">
+          <icons.Upload />
+        </span>
+        <span className="label">{selectedFile ? selectedFile.name : "Drop file here"}</span>
+        <span className="sub">{selectedFile ? "Ready to upload" : "or choose file"}</span>
+        <span className="hint">PDF - DOCX</span>
+      </label>
+      <button
+        className="h-btn h-btn-primary"
+        disabled={disabled || !selectedFile || uploadState === "loading"}
+        onClick={onUpload}
+        type="button"
+      >
+        {uploadState === "loading" ? "Uploading..." : "Upload document"}
+      </button>
+    </div>
+  );
+}
+
+function DocStrip({
+  document,
+  indexRecord,
+  indexState,
+  uploadState,
+  isAuthenticated,
+  selectedFile,
+  lastAnswer,
+  error,
+  replaceOpen,
+  confirmReindex,
+  onFileChange,
+  onUpload,
+  onToggleReplace,
+  onReindex,
+  onSetConfirmReindex,
+}: {
+  document: DocumentRecord | null;
+  indexRecord: IndexRecord | null;
+  indexState: AsyncState;
+  uploadState: AsyncState;
+  isAuthenticated: boolean;
+  selectedFile: File | null;
+  lastAnswer: AnswerResult | null;
+  error: string | null;
+  replaceOpen: boolean;
+  confirmReindex: boolean;
+  onFileChange: (event: ChangeEvent<HTMLInputElement>) => void;
+  onUpload: () => void;
+  onToggleReplace: () => void;
+  onReindex: () => void;
+  onSetConfirmReindex: (value: boolean) => void;
+}) {
+  const status = docStatus(indexState, indexRecord, lastAnswer);
+
+  if (!document) {
+    return (
+      <aside className="h-doc">
+        <div>
+          <p className="h-eyebrow">Start here</p>
+          <h2 className="h-doc-title">Bring in a document</h2>
+          <p className="h-muted">
+            Upload a PDF or DOCX. Helpmate keeps one document active at a time so
+            conversation, evidence, and indexing state stay clear.
+          </p>
+        </div>
+        <UploadDropzone
+          disabled={!isAuthenticated}
+          onFileChange={onFileChange}
+          onUpload={onUpload}
+          selectedFile={selectedFile}
+          uploadState={uploadState}
+        />
+        {!isAuthenticated ? (
+          <p className="h-note">Open the account menu and sign in to upload.</p>
+        ) : null}
+      </aside>
+    );
   }
 
-  const paragraphs = cleaned
-    .split(/\n\s*\n|\n(?=[-*•]\s)/)
+  return (
+    <aside className={`h-doc ${indexState === "error" ? "failed" : ""}`}>
+      <div>
+        <p className="h-eyebrow">Document</p>
+        <h2 className="h-doc-title">{document.file_name}</h2>
+      </div>
+
+      <Hairline />
+
+      {indexState === "loading" ? (
+        <div className="h-indexing">
+          <div className="h-progress" />
+          <p>Preparing document...</p>
+          <span>Index progress is not streamed by the backend yet.</span>
+        </div>
+      ) : (
+        <div>
+          <Stat label="Pages" value={formatNumber(document.page_count)} />
+          <Stat label="Chunks" value={indexRecord ? formatNumber(indexRecord.chunk_count) : "-"} />
+          <Stat label="Sections" value={indexRecord ? formatNumber(indexRecord.section_count) : "-"} />
+          <Stat label="Embedding" value={indexRecord?.embedding_model ?? "-"} mono />
+        </div>
+      )}
+
+      <Hairline />
+
+      <div>
+        <p className="h-eyebrow">Status</p>
+        <SupportPip className={status.className}>{status.label}</SupportPip>
+        {indexState === "error" && error ? <p className="h-note">{error}</p> : null}
+      </div>
+
+      <Hairline />
+
+      <div>
+        <p className="h-eyebrow">Actions</p>
+        <div className="h-action-stack">
+          <button
+            className="h-action"
+            disabled={indexState === "loading" || !isAuthenticated}
+            onClick={() => onSetConfirmReindex(true)}
+            type="button"
+          >
+            <icons.Refresh />
+            Re-index
+          </button>
+          {confirmReindex ? (
+            <div className="h-confirm">
+              <p>Re-index this document? Existing answers stay visible in this session.</p>
+              <div>
+                <button className="h-btn h-btn-primary" onClick={onReindex} type="button">
+                  Confirm
+                </button>
+                <button className="h-btn h-btn-ghost" onClick={() => onSetConfirmReindex(false)} type="button">
+                  Cancel
+                </button>
+              </div>
+            </div>
+          ) : null}
+
+          <button
+            className="h-action"
+            disabled={uploadState === "loading" || indexState === "loading" || !isAuthenticated}
+            onClick={onToggleReplace}
+            type="button"
+          >
+            <icons.Swap />
+            Replace document
+          </button>
+          {replaceOpen ? (
+            <div className="h-replace">
+              <input
+                accept=".pdf,.docx"
+                className="h-sr-only"
+                disabled={!isAuthenticated}
+                id="replace-upload"
+                onChange={onFileChange}
+                type="file"
+              />
+              <label className="h-btn h-btn-ghost" htmlFor="replace-upload">
+                Choose replacement
+              </label>
+              <span>{selectedFile?.name ?? "No file selected"}</span>
+              <button
+                className="h-btn h-btn-danger"
+                disabled={!selectedFile || uploadState === "loading"}
+                onClick={onUpload}
+                type="button"
+              >
+                {uploadState === "loading" ? "Replacing..." : "Upload replacement"}
+              </button>
+            </div>
+          ) : null}
+        </div>
+      </div>
+    </aside>
+  );
+}
+
+function AskBlock({
+  question,
+  placeholder,
+  canAsk,
+  isLoading,
+  askFocused,
+  onQuestionChange,
+  onAsk,
+  onFocusChange,
+}: {
+  question: string;
+  placeholder: string;
+  canAsk: boolean;
+  isLoading: boolean;
+  askFocused: boolean;
+  onQuestionChange: (value: string) => void;
+  onAsk: () => void;
+  onFocusChange: (value: boolean) => void;
+}) {
+  function handleKeyDown(event: ReactKeyboardEvent<HTMLTextAreaElement>) {
+    if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
+      event.preventDefault();
+      if (canAsk && question.trim()) {
+        onAsk();
+      }
+    }
+  }
+
+  return (
+    <div className={`h-ask ${askFocused ? "focal-glow" : ""} ${isLoading ? "loading" : ""}`}>
+      <textarea
+        disabled={!canAsk || isLoading}
+        id="ask-textarea"
+        onBlur={() => onFocusChange(false)}
+        onChange={(event) => onQuestionChange(event.target.value)}
+        onFocus={() => onFocusChange(true)}
+        onKeyDown={handleKeyDown}
+        placeholder={isLoading ? "Generating answer..." : placeholder}
+        value={question}
+      />
+      <div className="h-ask-row">
+        <span className="h-help">
+          <kbd>⌘↵</kbd>
+          <span>to submit</span>
+        </span>
+        <button
+          className="h-btn h-btn-primary"
+          disabled={!canAsk || !question.trim() || isLoading}
+          onClick={onAsk}
+          type="button"
+        >
+          {isLoading ? (
+            <>
+              <span aria-hidden="true" className="button-spinner" />
+              Generating
+            </>
+          ) : (
+            <>
+              <icons.Send size={13} />
+              Generate answer
+            </>
+          )}
+        </button>
+      </div>
+    </div>
+  );
+}
+
+function StarterChips({
+  starters,
+  visible,
+  onPick,
+}: {
+  starters: string[];
+  visible: boolean;
+  onPick: (question: string) => void;
+}) {
+  if (!visible || !starters.length) {
+    return null;
+  }
+  return (
+    <div className="h-starters">
+      <p className="h-eyebrow">Starter questions</p>
+      <div className="h-chip-row">
+        {starters.slice(0, 3).map((starter) => (
+          <button className="h-chip" key={starter} onClick={() => onPick(starter)} type="button">
+            {starter}
+          </button>
+        ))}
+      </div>
+    </div>
+  );
+}
+
+function EmptyHero({ isAuthenticated }: { isAuthenticated: boolean }) {
+  return (
+    <section className="h-hero">
+      <p className="h-eyebrow">Helpmate AI</p>
+      <h1>
+        Grounded answers from your own documents — with{" "}
+        <span className="h-accent">visible evidence</span> and{" "}
+        <span className="h-accent">zero hallucinated support</span>.
+      </h1>
+      <div className="h-hero-stats">
+        <div>
+          <strong>0%</strong>
+          <span>False support</span>
+        </div>
+        <div>
+          <strong>100%</strong>
+          <span>Abstention on unanswerable</span>
+        </div>
+      </div>
+      <div className="h-hero-bench">
+        <p>
+          On a <span className="mono">150-question</span> held-out suite:{" "}
+          <span className="mono">0%</span> false support,{" "}
+          <span className="mono">100%</span> abstention on unanswerable
+          questions.
+        </p>
+        <ul>
+          <li>
+            <span>Vectara</span>
+            <span className="mono">20% false support</span>
+          </li>
+          <li>
+            <span>OpenAI File Search</span>
+            <span className="mono">6.7% false support</span>
+          </li>
+        </ul>
+      </div>
+      <div className="h-hero-steps">
+        <p>
+          <span>1</span>Upload a PDF or DOCX in the strip on the left.
+        </p>
+        <p>
+          <span>2</span>Ask anything from the document. Helpmate only answers
+          with what&apos;s in it — no model memory.
+        </p>
+        <p>
+          <span>3</span>See the source for every claim in the answer, beside
+          the answer.
+        </p>
+      </div>
+      {!isAuthenticated ? (
+        <p className="h-empty-line">Sign in from the account menu to start a private study session.</p>
+      ) : null}
+    </section>
+  );
+}
+
+function CitationPill({
+  label,
+  active,
+  onClick,
+}: {
+  label: string;
+  active: boolean;
+  onClick?: () => void;
+}) {
+  if (!onClick) {
+    return <span className="h-cite muted">[{label}]</span>;
+  }
+  return (
+    <button className={`h-cite ${active ? "active" : ""}`} onClick={onClick} type="button">
+      [{label}]
+    </button>
+  );
+}
+
+function AnswerBody({
+  turn,
+  highlightedCitationKey,
+  onCitationClick,
+}: {
+  turn: QATurn;
+  highlightedCitationKey: string | null;
+  onCitationClick: (turnId: string, chunkId: string) => void;
+}) {
+  const definitions = parseDefinitionStyleAnswer(turn.answer.answer);
+  if (definitions) {
+    return (
+      <div className="h-definition-grid">
+        {definitions.map((item) => (
+          <article key={item.term}>
+            <p>{item.term}</p>
+            <span>{item.value}</span>
+          </article>
+        ))}
+      </div>
+    );
+  }
+
+  const paragraphs = stripReferencesBlock(turn.answer.answer)
+    .split(/\n\s*\n/)
     .map((paragraph) => paragraph.trim())
     .filter(Boolean);
 
-  return {
-    type: "paragraphs",
-    paragraphs: paragraphs.length ? paragraphs : [cleaned],
+  return (
+    <div className="h-answer-body">
+      {(paragraphs.length ? paragraphs : [stripReferencesBlock(turn.answer.answer)]).map((paragraph, paragraphIndex) => {
+        const segments = splitCitationSegments(paragraph, turn.answer.evidence);
+        return (
+          <p key={`${turn.id}-${paragraphIndex}`}>
+            {segments.map((segment, segmentIndex) => {
+              if (segment.type === "text") {
+                return <span key={segmentIndex}>{segment.text}</span>;
+              }
+              const chunkId = segment.target?.chunkId;
+              const citationKey = chunkId ? `${turn.id}:${chunkId}` : null;
+              return (
+                <CitationPill
+                  active={citationKey === highlightedCitationKey}
+                  key={`${segment.raw}-${segmentIndex}`}
+                  label={segment.label}
+                  onClick={chunkId ? () => onCitationClick(turn.id, chunkId) : undefined}
+                />
+              );
+            })}
+          </p>
+        );
+      })}
+    </div>
+  );
+}
+
+function QACard({
+  turn,
+  streaming,
+  highlightedCitationKey,
+  cardRef,
+  onCitationClick,
+  onUseFollowup,
+  onReplayStream,
+}: {
+  turn: QATurn;
+  streaming: boolean;
+  highlightedCitationKey: string | null;
+  cardRef: (element: HTMLElement | null) => void;
+  onCitationClick: (turnId: string, chunkId: string) => void;
+  onUseFollowup: (question: string) => void;
+  onReplayStream: (turnId: string) => void;
+}) {
+  const fullAnswerText = useMemo(
+    () => stripReferencesBlock(turn.answer.answer),
+    [turn.answer.answer],
+  );
+  const typingDuration = useMemo(() => streamingDuration(fullAnswerText), [fullAnswerText]);
+  const charsTyped = useTypingProgress(fullAnswerText, typingDuration, streaming);
+  const partialText = streaming ? fullAnswerText.slice(0, charsTyped) : fullAnswerText;
+
+  const uniqueTargets = uniqueCitationTargets(turn.answer.answer, turn.answer.evidence);
+  const followups = turn.answer.support_status === "partial"
+    ? ["Ask for the missing facts", "Show only supported clauses"]
+    : ["Summarize the cited evidence", "What should I read next?"];
+
+  return (
+    <article className={`h-qa-card${streaming ? " focal-glow streaming" : ""}`} ref={cardRef}>
+      <div className="h-qa-head">
+        <span className="h-qa-meta">Q · {relativeTime(turn.askedAt)}</span>
+        <button aria-label="Question actions" type="button">
+          <icons.More />
+        </button>
+      </div>
+      <h3>{turn.question}</h3>
+      <Hairline />
+      <div className="h-answer-head">
+        <span>A</span>
+        {streaming ? (
+          <SupportPip className="pulse">generating</SupportPip>
+        ) : (
+          <SupportPip className={turn.answer.support_status === "partial" ? "warn" : turn.answer.support_status === "unsupported" ? "muted" : ""}>
+            {supportCopy(turn.answer.support_status)}
+          </SupportPip>
+        )}
+        <span className="h-model">
+          {streaming
+            ? "Streaming response"
+            : turn.answer.cache_status.answer_cache_hit
+              ? "Cache hit"
+              : turn.answer.model_name || "Fresh answer"}
+        </span>
+      </div>
+      {streaming ? (
+        <div className="h-answer-body">
+          <p>
+            {partialText}
+            <span aria-hidden="true" className="h-caret" />
+          </p>
+        </div>
+      ) : (
+        <AnswerBody
+          highlightedCitationKey={highlightedCitationKey}
+          onCitationClick={onCitationClick}
+          turn={turn}
+        />
+      )}
+      {!streaming && uniqueTargets.length >= 4 ? (
+        <>
+          <Hairline />
+          <div className="h-citation-row">
+            <p>Citations - {uniqueTargets.length} sources</p>
+            <div>
+              {uniqueTargets.map((target) => (
+                <CitationPill
+                  active={highlightedCitationKey === `${turn.id}:${target.chunkId}`}
+                  key={target.chunkId}
+                  label={target.label}
+                  onClick={() => onCitationClick(turn.id, target.chunkId)}
+                />
+              ))}
+            </div>
+          </div>
+        </>
+      ) : null}
+      {!streaming && turn.answer.note ? <p className="h-note-card">{turn.answer.note}</p> : null}
+      {!streaming ? (
+        <>
+          <Hairline />
+          <div className="h-followups">
+            <p>Follow-ups</p>
+            <div>
+              {followups.map((followup) => (
+                <button className="h-chip" key={followup} onClick={() => onUseFollowup(followup)} type="button">
+                  {followup}
+                </button>
+              ))}
+            </div>
+          </div>
+          <button
+            aria-label="Replay streaming animation"
+            className="h-replay"
+            onClick={() => onReplayStream(turn.id)}
+            type="button"
+          >
+            <icons.Refresh size={12} />
+            <span>Replay stream</span>
+          </button>
+        </>
+      ) : null}
+    </article>
+  );
+}
+
+function PendingQACard({ question }: { question: string }) {
+  return (
+    <article className="h-qa-card focal-glow">
+      <div className="h-qa-head">
+        <span>Q - now</span>
+      </div>
+      <h3>{question}</h3>
+      <Hairline />
+      <div className="h-answer-head">
+        <span>A</span>
+        <SupportPip className="pulse">generating</SupportPip>
+      </div>
+      <div className="h-answer-body">
+        <p>Retrieving evidence and generating a grounded answer...</p>
+      </div>
+    </article>
+  );
+}
+
+function Conversation({
+  document,
+  indexRecord,
+  indexState,
+  isAuthenticated,
+  starters,
+  question,
+  turns,
+  pendingQuestion,
+  answerState,
+  askFocused,
+  highlightedCitationKey,
+  streamingTurnId,
+  onQuestionChange,
+  onAsk,
+  onFocusChange,
+  onPickStarter,
+  onCitationClick,
+  onReplayStream,
+  registerTurnRef,
+}: {
+  document: DocumentRecord | null;
+  indexRecord: IndexRecord | null;
+  indexState: AsyncState;
+  isAuthenticated: boolean;
+  starters: string[];
+  question: string;
+  turns: QATurn[];
+  pendingQuestion: string | null;
+  answerState: AsyncState;
+  askFocused: boolean;
+  highlightedCitationKey: string | null;
+  streamingTurnId: string | null;
+  onQuestionChange: (value: string) => void;
+  onAsk: () => void;
+  onFocusChange: (value: boolean) => void;
+  onPickStarter: (question: string) => void;
+  onCitationClick: (turnId: string, chunkId: string) => void;
+  onReplayStream: (turnId: string) => void;
+  registerTurnRef: (turnId: string, element: HTMLElement | null) => void;
+}) {
+  const canAsk = Boolean(isAuthenticated && document && indexRecord && indexState !== "loading" && indexState !== "error");
+  const placeholder = !document
+    ? "Upload a document first"
+    : indexState === "loading"
+      ? "Indexing - please wait"
+      : starters[0] ?? "Ask anything from the document — ⌘↵ to submit";
+
+  return (
+    <main className="h-conv">
+      <div className="h-conv-inner">
+        {!document ? (
+          <EmptyHero isAuthenticated={isAuthenticated} />
+        ) : (
+          <>
+            <StarterChips
+              onPick={onPickStarter}
+              starters={starters}
+              visible={Boolean(indexRecord && turns.length === 0 && !pendingQuestion)}
+            />
+            <div className="h-ask-group">
+              <p className="h-eyebrow">Ask</p>
+              <AskBlock
+                askFocused={askFocused}
+                canAsk={canAsk}
+                isLoading={answerState === "loading"}
+                onAsk={onAsk}
+                onFocusChange={onFocusChange}
+                onQuestionChange={onQuestionChange}
+                placeholder={placeholder}
+                question={question}
+              />
+            </div>
+            {indexState === "loading" ? (
+              <p className="h-empty-line">
+                Helpmate is preparing the document. The ask box unlocks when the index is ready.
+              </p>
+            ) : indexState === "error" ? (
+              <p className="h-empty-line">
+                Indexing did not complete. Retry indexing or replace the document from the strip.
+              </p>
+            ) : turns.length === 0 && !pendingQuestion ? (
+              <p className="h-empty-line">
+                Ask anything from the document. Helpmate only answers with what is in it.
+              </p>
+            ) : null}
+            {pendingQuestion ? <PendingQACard question={pendingQuestion} /> : null}
+            <div className="h-thread">
+              {turns.map((turn) => (
+                <QACard
+                  cardRef={(element) => registerTurnRef(turn.id, element)}
+                  highlightedCitationKey={highlightedCitationKey}
+                  key={turn.id}
+                  onCitationClick={onCitationClick}
+                  onReplayStream={onReplayStream}
+                  onUseFollowup={onPickStarter}
+                  streaming={streamingTurnId === turn.id}
+                  turn={turn}
+                />
+              ))}
+            </div>
+          </>
+        )}
+      </div>
+    </main>
+  );
+}
+
+function EvidenceCard({
+  candidate,
+  index,
+  turnId,
+  fileName,
+  debugOpen,
+  highlighted,
+  tagRinged,
+  cardRef,
+  onTagClick,
+}: {
+  candidate: RetrievalCandidate;
+  index: number;
+  turnId: string;
+  fileName: string;
+  debugOpen: boolean;
+  highlighted: boolean;
+  tagRinged: boolean;
+  cardRef: (element: HTMLElement | null) => void;
+  onTagClick: (turnId: string, chunkId: string) => void;
+}) {
+  const strength = candidateStrength(candidate);
+  return (
+    <article
+      className={`h-evi-card ${highlighted ? "focal-glow active" : ""}`}
+      data-chunk-id={candidate.chunk_id}
+      ref={cardRef}
+    >
+      <div className="h-evi-card-head">
+        <button
+          className={`h-cite h-cite-header ${tagRinged ? "active" : ""}`}
+          onClick={() => onTagClick(turnId, candidate.chunk_id)}
+          type="button"
+        >
+          {candidateLabel(candidate, index)}
+        </button>
+        {strength ? <span className={`h-strength ${strength}`}>{strength}</span> : null}
+      </div>
+      <p className="h-evi-preview">
+        {renderHighlightedText(candidate.text, metadataHighlightTerms(candidate))}
+      </p>
+      <div className="h-source-row">
+        <span aria-hidden="true" className="h-source-arrow">↗</span>
+        <span>Open in source</span>
+        <span className="h-source-dot" aria-hidden="true">·</span>
+        <strong>{fileName}</strong>
+      </div>
+      {debugOpen ? (
+        <div className="h-debug-strip">
+          <span><b>Score</b> {candidate.fused_score.toFixed(3)}</span>
+          <span><b>Dense</b> {candidate.dense_score.toFixed(3)}</span>
+          <span><b>Lexical</b> {candidate.lexical_score.toFixed(3)}</span>
+          <span><b>Kind</b> {candidateKind(candidate)}</span>
+        </div>
+      ) : null}
+    </article>
+  );
+}
+
+function EvidenceEmpty({ document, pending }: { document: DocumentRecord | null; pending: boolean }) {
+  if (pending) {
+    return (
+      <div className="h-evi-skeletons">
+        <SupportPip className="pulse">Retrieving evidence</SupportPip>
+        <div className="h-evi-skeleton" />
+        <div className="h-evi-skeleton" />
+        <div className="h-evi-skeleton" />
+      </div>
+    );
+  }
+  return (
+    <div className="h-evi-empty">
+      <div className="stack"><span /><span /><span /></div>
+      <p>
+        {document
+          ? "Evidence appears here as you ask questions. Cards link to parseable citations in the answer."
+          : "Evidence will appear here after a document is indexed and questioned."}
+      </p>
+    </div>
+  );
+}
+
+function EvidenceRail({
+  document,
+  turns,
+  pending,
+  debugOpen,
+  debugEnabled,
+  highlightedChunkId,
+  highlightedCitationKey,
+  onDebugToggle,
+  onEvidenceTagClick,
+  registerEvidenceRef,
+}: {
+  document: DocumentRecord | null;
+  turns: QATurn[];
+  pending: boolean;
+  debugOpen: boolean;
+  debugEnabled: boolean;
+  highlightedChunkId: string | null;
+  highlightedCitationKey: string | null;
+  onDebugToggle: () => void;
+  onEvidenceTagClick: (turnId: string, chunkId: string) => void;
+  registerEvidenceRef: (chunkId: string, element: HTMLElement | null) => void;
+}) {
+  const groups = [...turns].reverse();
+  const evidenceCount = groups.reduce((total, turn) => total + turn.answer.evidence.length, 0);
+
+  return (
+    <aside className="h-evi">
+      <div className="h-evi-head">
+        <div>
+          <span className="h-eyebrow">Evidence</span>
+          <span className="h-evi-count">· {evidenceCount} {evidenceCount === 1 ? "chunk" : "chunks"}</span>
+        </div>
+        {debugEnabled ? (
+          <button className={`h-debug-toggle ${debugOpen ? "on" : ""}`} onClick={onDebugToggle} type="button">
+            <span>Debug</span>
+            <i />
+          </button>
+        ) : null}
+      </div>
+      {groups.length || pending ? (
+        <div className="h-evi-list">
+          {pending ? (
+            <div className="h-evi-skeletons">
+              <SupportPip className="pulse">Retrieving evidence</SupportPip>
+              <div className="h-evi-skeleton" />
+              <div className="h-evi-skeleton" />
+            </div>
+          ) : null}
+          {groups.map((turn) => (
+            <section className="h-evi-group" key={turn.id}>
+              <p className="h-evi-group-head">Q · {relativeTime(turn.askedAt)} · {turn.question.slice(0, 54)}</p>
+              {turn.answer.evidence.map((candidate, index) => (
+                <EvidenceCard
+                  cardRef={(element) => registerEvidenceRef(candidate.chunk_id, element)}
+                  candidate={candidate}
+                  debugOpen={debugOpen}
+                  fileName={document?.file_name ?? "Document"}
+                  highlighted={highlightedChunkId === candidate.chunk_id}
+                  index={index}
+                  key={`${turn.id}-${candidate.chunk_id}`}
+                  onTagClick={onEvidenceTagClick}
+                  tagRinged={highlightedCitationKey === `${turn.id}:${candidate.chunk_id}`}
+                  turnId={turn.id}
+                />
+              ))}
+            </section>
+          ))}
+        </div>
+      ) : (
+        <EvidenceEmpty document={document} pending={pending} />
+      )}
+    </aside>
+  );
+}
+
+function MobileEvidence({
+  turn,
+  fileName,
+  open,
+  debugOpen,
+  highlightedChunkId,
+  highlightedCitationKey,
+  onToggle,
+  onEvidenceTagClick,
+}: {
+  turn: QATurn;
+  open: boolean;
+  debugOpen: boolean;
+  highlightedChunkId: string | null;
+  highlightedCitationKey: string | null;
+  onToggle: () => void;
+  onEvidenceTagClick: (turnId: string, chunkId: string) => void;
+  fileName: string;
+}) {
+  return (
+    <div className="h-mobile-evidence">
+      <button className={`h-mobile-evidence-toggle ${open ? "open" : ""}`} onClick={onToggle} type="button">
+        <span>{open ? "Hide" : "Show"} evidence ({turn.answer.evidence.length})</span>
+        <icons.Chevron />
+      </button>
+      {open ? (
+        <div className="h-mobile-evidence-list">
+          {turn.answer.evidence.map((candidate, index) => (
+            <EvidenceCard
+              cardRef={() => undefined}
+              candidate={candidate}
+              debugOpen={debugOpen}
+              fileName={fileName}
+              highlighted={highlightedChunkId === candidate.chunk_id}
+              index={index}
+              key={candidate.chunk_id}
+              onTagClick={onEvidenceTagClick}
+              tagRinged={highlightedCitationKey === `${turn.id}:${candidate.chunk_id}`}
+              turnId={turn.id}
+            />
+          ))}
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
+type PaletteAction = "focus-ask" | "reindex" | "replace";
+
+type PaletteSection = {
+  heading: string;
+  chunkId: string;
+  pageLabel: string;
+};
+
+type PaletteResult =
+  | { kind: "qa"; key: string; turnId: string; question: string; preview: string }
+  | { kind: "section"; key: string; section: PaletteSection }
+  | {
+      kind: "action";
+      key: string;
+      action: PaletteAction;
+      label: string;
+      description: string;
+    };
+
+function paletteSectionsFromTurns(turns: QATurn[]): PaletteSection[] {
+  const seen = new Set<string>();
+  const sections: PaletteSection[] = [];
+  for (const turn of turns) {
+    for (const candidate of turn.answer.evidence) {
+      const heading = metadataText(candidate, "section_heading").trim();
+      if (!heading) {
+        continue;
+      }
+      const dedupeKey = heading.toLowerCase();
+      if (seen.has(dedupeKey)) {
+        continue;
+      }
+      seen.add(dedupeKey);
+      sections.push({
+        heading,
+        chunkId: candidate.chunk_id,
+        pageLabel: metadataText(candidate, "page_label"),
+      });
+    }
+  }
+  return sections;
+}
+
+function PaletteResultRow({
+  result,
+  selected,
+  onSelect,
+  onHover,
+}: {
+  result: PaletteResult;
+  selected: boolean;
+  onSelect: () => void;
+  onHover: () => void;
+}) {
+  let title = "";
+  let preview = "";
+  let badge = "";
+  if (result.kind === "qa") {
+    title = result.question;
+    preview = result.preview;
+    badge = "Q&A";
+  } else if (result.kind === "section") {
+    title = result.section.heading;
+    preview = result.section.pageLabel || "Document section";
+    badge = "Section";
+  } else {
+    title = result.label;
+    preview = result.description;
+    badge = "Action";
+  }
+  return (
+    <button
+      className={`h-palette-result${selected ? " selected" : ""}`}
+      onClick={onSelect}
+      onMouseEnter={onHover}
+      type="button"
+    >
+      <span className="h-palette-result-badge">{badge}</span>
+      <span className="h-palette-result-body">
+        <span className="h-palette-result-title">{title}</span>
+        {preview ? <span className="h-palette-result-preview">{preview}</span> : null}
+      </span>
+    </button>
+  );
+}
+
+function CommandPalette({
+  open,
+  turns,
+  documentLoaded,
+  isAuthenticated,
+  indexState,
+  onClose,
+  onSelectTurn,
+  onSelectSection,
+  onAction,
+}: {
+  open: boolean;
+  turns: QATurn[];
+  documentLoaded: boolean;
+  isAuthenticated: boolean;
+  indexState: AsyncState;
+  onClose: () => void;
+  onSelectTurn: (turnId: string) => void;
+  onSelectSection: (section: PaletteSection) => void;
+  onAction: (action: PaletteAction) => void;
+}) {
+  const [query, setQuery] = useState("");
+  const [selectedIndex, setSelectedIndex] = useState(0);
+  const inputRef = useRef<HTMLInputElement | null>(null);
+  const overlayRef = useRef<HTMLDivElement | null>(null);
+
+  const sections = useMemo(() => paletteSectionsFromTurns(turns), [turns]);
+
+  const actions = useMemo<
+    Array<{ action: PaletteAction; label: string; description: string }>
+  >(() => {
+    const list: Array<{ action: PaletteAction; label: string; description: string }> = [];
+    if (documentLoaded && isAuthenticated && indexState === "ready") {
+      list.push({
+        action: "focus-ask",
+        label: "Focus ask box",
+        description: "Move the cursor to the question input.",
+      });
+    }
+    if (documentLoaded && isAuthenticated && indexState !== "loading") {
+      list.push({
+        action: "reindex",
+        label: "Re-index document",
+        description: "Rebuild the index for the active document.",
+      });
+    }
+    if (isAuthenticated) {
+      list.push({
+        action: "replace",
+        label: "Replace document",
+        description: "Swap the active document for a new upload.",
+      });
+    }
+    return list;
+  }, [documentLoaded, isAuthenticated, indexState]);
+
+  const results = useMemo<PaletteResult[]>(() => {
+    const q = query.trim().toLowerCase();
+    const qaMatches = [...turns]
+      .reverse()
+      .filter((turn) => {
+        if (!q) {
+          return true;
+        }
+        return (
+          turn.question.toLowerCase().includes(q) ||
+          turn.answer.answer.toLowerCase().includes(q)
+        );
+      })
+      .slice(0, 6)
+      .map<PaletteResult>((turn) => ({
+        kind: "qa",
+        key: `qa-${turn.id}`,
+        turnId: turn.id,
+        question: turn.question,
+        preview: stripReferencesBlock(turn.answer.answer).replace(/\s+/g, " ").slice(0, 110),
+      }));
+
+    const sectionMatches = sections
+      .filter((section) => !q || section.heading.toLowerCase().includes(q))
+      .slice(0, 6)
+      .map<PaletteResult>((section) => ({
+        kind: "section",
+        key: `section-${section.chunkId}`,
+        section,
+      }));
+
+    const actionMatches = actions
+      .filter(
+        (item) =>
+          !q ||
+          item.label.toLowerCase().includes(q) ||
+          item.description.toLowerCase().includes(q),
+      )
+      .map<PaletteResult>((item) => ({
+        kind: "action",
+        key: `action-${item.action}`,
+        action: item.action,
+        label: item.label,
+        description: item.description,
+      }));
+
+    return [...qaMatches, ...sectionMatches, ...actionMatches];
+  }, [actions, query, sections, turns]);
+
+  useEffect(() => {
+    const raf = requestAnimationFrame(() => setSelectedIndex(0));
+    return () => cancelAnimationFrame(raf);
+  }, [results.length, query]);
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+    const raf = requestAnimationFrame(() => {
+      setQuery("");
+      setSelectedIndex(0);
+      inputRef.current?.focus();
+    });
+    return () => cancelAnimationFrame(raf);
+  }, [open]);
+
+  const handleSelect = useCallback(
+    (result: PaletteResult) => {
+      if (result.kind === "qa") {
+        onSelectTurn(result.turnId);
+      } else if (result.kind === "section") {
+        onSelectSection(result.section);
+      } else {
+        onAction(result.action);
+      }
+      onClose();
+    },
+    [onAction, onClose, onSelectSection, onSelectTurn],
+  );
+
+  useEffect(() => {
+    if (!open) {
+      return;
+    }
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        event.preventDefault();
+        onClose();
+        return;
+      }
+      if (!results.length) {
+        return;
+      }
+      if (event.key === "ArrowDown") {
+        event.preventDefault();
+        setSelectedIndex((current) => Math.min(current + 1, results.length - 1));
+      } else if (event.key === "ArrowUp") {
+        event.preventDefault();
+        setSelectedIndex((current) => Math.max(current - 1, 0));
+      } else if (event.key === "Enter") {
+        event.preventDefault();
+        const target = results[selectedIndex];
+        if (target) {
+          handleSelect(target);
+        }
+      }
+    }
+    document.addEventListener("keydown", onKeyDown);
+    return () => document.removeEventListener("keydown", onKeyDown);
+  }, [handleSelect, onClose, open, results, selectedIndex]);
+
+  if (!open) {
+    return null;
+  }
+
+  function onOverlayMouseDown(event: ReactMouseEvent<HTMLDivElement>) {
+    if (event.target === overlayRef.current) {
+      onClose();
+    }
+  }
+
+  const groupHeads: Record<PaletteResult["kind"], string> = {
+    qa: "This session",
+    section: "Sections",
+    action: "Actions",
   };
+
+  let lastKind: PaletteResult["kind"] | null = null;
+
+  return (
+    <div
+      aria-modal="true"
+      className="h-palette-overlay"
+      onMouseDown={onOverlayMouseDown}
+      ref={overlayRef}
+      role="dialog"
+    >
+      <div className="h-palette-modal">
+        <div className="h-palette-input-wrap">
+          <icons.Search size={14} />
+          <input
+            aria-label="Search palette"
+            className="h-palette-input"
+            onChange={(event) => setQuery(event.target.value)}
+            placeholder="Search Q&A, sections, and actions..."
+            ref={inputRef}
+            type="text"
+            value={query}
+          />
+          <kbd>ESC</kbd>
+        </div>
+        <div className="h-palette-results">
+          {results.length === 0 ? (
+            <p className="h-palette-empty">No matches in this session.</p>
+          ) : (
+            results.map((result, index) => {
+              const showHead = result.kind !== lastKind;
+              lastKind = result.kind;
+              return (
+                <div className="h-palette-row" key={result.key}>
+                  {showHead ? (
+                    <p className="h-palette-group-head">{groupHeads[result.kind]}</p>
+                  ) : null}
+                  <PaletteResultRow
+                    onHover={() => setSelectedIndex(index)}
+                    onSelect={() => handleSelect(result)}
+                    result={result}
+                    selected={index === selectedIndex}
+                  />
+                </div>
+              );
+            })
+          )}
+        </div>
+        <div className="h-palette-shortcut">
+          <span>↑↓ navigate</span>
+          <span>↵ open</span>
+          <span>esc close</span>
+        </div>
+      </div>
+    </div>
+  );
 }
 
 export function AppWorkspace({ user }: AppWorkspaceProps) {
   const debugPanelEnabled =
     process.env.NEXT_PUBLIC_ENABLE_DEBUG_PANEL === "true";
   const isAuthenticated = Boolean(user);
+
   const [document, setDocument] = useState<DocumentRecord | null>(null);
   const [indexRecord, setIndexRecord] = useState<IndexRecord | null>(null);
   const [answer, setAnswer] = useState<AnswerResult | null>(null);
+  const [turns, setTurns] = useState<QATurn[]>([]);
+  const [pendingQuestion, setPendingQuestion] = useState<string | null>(null);
   const [starters, setStarters] = useState<string[]>([]);
   const [question, setQuestion] = useState("");
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
   const [uploadState, setUploadState] = useState<AsyncState>("idle");
   const [indexState, setIndexState] = useState<AsyncState>("idle");
   const [answerState, setAnswerState] = useState<AsyncState>("idle");
-  const [inspectorTab, setInspectorTab] = useState<InspectorTab>("evidence");
-  const [lastAction, setLastAction] = useState("Waiting for a document.");
   const [error, setError] = useState<string | null>(null);
+  const [askFocused, setAskFocused] = useState(false);
+  const [accountOpen, setAccountOpen] = useState(false);
+  const [replaceOpen, setReplaceOpen] = useState(false);
+  const [confirmReindex, setConfirmReindex] = useState(false);
+  const [debugOpen, setDebugOpen] = useState(false);
+  const [highlightedChunkId, setHighlightedChunkId] = useState<string | null>(null);
+  const [highlightedCitationKey, setHighlightedCitationKey] = useState<string | null>(null);
+  const [streamingTurnId, setStreamingTurnId] = useState<string | null>(null);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [mobileEvidenceOpen, setMobileEvidenceOpen] = useState<Record<string, boolean>>({});
+  const evidenceRefs = useRef<Record<string, HTMLElement | null>>({});
+  const turnRefs = useRef<Record<string, HTMLElement | null>>({});
+  const flashTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  const streamTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const statusSummary = useMemo(() => {
-    if (!isAuthenticated) {
-      return "Sign in with Google to unlock private uploads, indexing, and grounded answers.";
-    }
-    if (answerState === "loading") {
-      return "Generating a grounded answer from the indexed document.";
-    }
-    if (indexState === "loading") {
-      return "Building or reusing the local index for this document.";
-    }
-    if (uploadState === "loading") {
-      return "Ingesting the selected document through the API boundary.";
-    }
-    return lastAction;
-  }, [answerState, indexState, isAuthenticated, lastAction, uploadState]);
+  const status = useMemo(() => docStatus(indexState, indexRecord, answer), [answer, indexRecord, indexState]);
+  const evidencePending = answerState === "loading";
 
-  const parsedAnswer = useMemo(
-    () => (answer ? parseAnswerContent(answer.answer) : null),
-    [answer],
-  );
-
-  function applyDocumentBundle(
-    bundle: DocumentBundleResponse,
-    nextAction: string,
-  ) {
+  function applyDocumentBundle(bundle: DocumentBundleResponse) {
     setDocument(bundle.document);
     setIndexRecord(bundle.index);
     setAnswer(null);
+    setTurns([]);
+    setPendingQuestion(null);
     setQuestion("");
-    setLastAction(nextAction);
-    setInspectorTab("evidence");
+    setSelectedFile(null);
+    setError(null);
+    setConfirmReindex(false);
+    setReplaceOpen(false);
+    setHighlightedChunkId(null);
+    setHighlightedCitationKey(null);
+    setStreamingTurnId(null);
+    if (streamTimer.current) {
+      clearTimeout(streamTimer.current);
+      streamTimer.current = null;
+    }
+    setMobileEvidenceOpen({});
+    setIndexState(bundle.index ? "ready" : "idle");
+    setUploadState("ready");
   }
 
   async function refreshStarters(documentId: string) {
@@ -141,11 +1708,8 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
         }
         setDocument(workspace.document);
         setIndexRecord(workspace.index);
-        setLastAction(
-          workspace.index
-            ? `Resumed ${workspace.document.file_name} from your active workspace.`
-            : `Resumed ${workspace.document.file_name}. Build the index to continue.`,
-        );
+        setIndexState(workspace.index ? "ready" : "idle");
+        setUploadState("ready");
         await refreshStarters(workspace.document.document_id);
       } catch {
         if (!cancelled) {
@@ -161,6 +1725,21 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
     };
   }, [document, isAuthenticated]);
 
+  useEffect(() => {
+    return () => {
+      if (flashTimer.current) {
+        clearTimeout(flashTimer.current);
+      }
+      if (streamTimer.current) {
+        clearTimeout(streamTimer.current);
+      }
+    };
+  }, []);
+
+  function handleFileChange(event: ChangeEvent<HTMLInputElement>) {
+    setSelectedFile(event.target.files?.[0] ?? null);
+  }
+
   async function handleUpload() {
     if (!selectedFile) {
       setError("Choose a PDF or DOCX before uploading.");
@@ -170,42 +1749,54 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
       setError("Sign in with Google before uploading a document.");
       return;
     }
+
     setError(null);
     setUploadState("loading");
     setIndexState("idle");
-    setLastAction(`Uploading ${selectedFile.name}...`);
+
     try {
       const uploadedBundle = await uploadDocument(selectedFile);
-      applyDocumentBundle(
-        uploadedBundle,
-        `Uploaded ${uploadedBundle.document.file_name}.`,
-      );
-      setUploadState("ready");
-      setSelectedFile(null);
+      applyDocumentBundle(uploadedBundle);
 
       let finalBundle = uploadedBundle;
       if (!uploadedBundle.index) {
         setIndexState("loading");
-        setLastAction(
-          `Upload complete. Building the index for ${uploadedBundle.document.file_name}...`,
-        );
         await new Promise((resolve) => window.setTimeout(resolve, 0));
         finalBundle = await buildIndex(uploadedBundle.document.document_id);
       }
 
-      applyDocumentBundle(
-        finalBundle,
-        `Uploaded ${finalBundle.document.file_name} and prepared it for questions.`,
-      );
-      setIndexState(finalBundle.index ? "ready" : "idle");
+      applyDocumentBundle(finalBundle);
       await refreshStarters(finalBundle.document.document_id);
     } catch (uploadError) {
-      setUploadState("idle");
-      setIndexState("idle");
+      setUploadState(document ? "ready" : "idle");
+      setIndexState(document ? "error" : "idle");
       setError(
         uploadError instanceof Error
           ? uploadError.message
           : "Upload failed unexpectedly.",
+      );
+    }
+  }
+
+  async function handleReindex() {
+    if (!document) {
+      return;
+    }
+    setError(null);
+    setIndexState("loading");
+    setConfirmReindex(false);
+    try {
+      const bundle = await buildIndex(document.document_id);
+      setDocument(bundle.document);
+      setIndexRecord(bundle.index);
+      setIndexState(bundle.index ? "ready" : "idle");
+      await refreshStarters(bundle.document.document_id);
+    } catch (reindexError) {
+      setIndexState("error");
+      setError(
+        reindexError instanceof Error
+          ? reindexError.message
+          : "Indexing failed unexpectedly.",
       );
     }
   }
@@ -223,18 +1814,38 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
       setError("This document is still being prepared. Try again in a moment.");
       return;
     }
-    if (!question.trim()) {
+    const submittedQuestion = question.trim();
+    if (!submittedQuestion) {
       setError("Enter a question before generating an answer.");
       return;
     }
+
     setError(null);
     setAnswerState("loading");
+    setPendingQuestion(submittedQuestion);
+    setQuestion("");
+
     try {
-      const response = await askQuestion(document.document_id, question);
+      const response = await askQuestion(document.document_id, submittedQuestion);
+      const turn: QATurn = {
+        id: makeTurnId(),
+        question: submittedQuestion,
+        answer: response.answer,
+        askedAt: new Date(),
+      };
       setAnswer(response.answer);
-      setLastAction("Answer generated successfully.");
-      setInspectorTab("evidence");
+      setTurns((current) => [...current, turn]);
+      setMobileEvidenceOpen((current) => ({ ...current, [turn.id]: false }));
       setAnswerState("ready");
+      setStreamingTurnId(turn.id);
+      const dur = streamingDuration(stripReferencesBlock(response.answer.answer));
+      if (streamTimer.current) {
+        clearTimeout(streamTimer.current);
+      }
+      streamTimer.current = setTimeout(() => {
+        setStreamingTurnId((current) => (current === turn.id ? null : current));
+        streamTimer.current = null;
+      }, dur);
     } catch (answerError) {
       setAnswerState("idle");
       setError(
@@ -242,444 +1853,206 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
           ? answerError.message
           : "Answer generation failed unexpectedly.",
       );
+    } finally {
+      setPendingQuestion(null);
     }
   }
 
+  function clearFlashLater() {
+    if (flashTimer.current) {
+      clearTimeout(flashTimer.current);
+    }
+    flashTimer.current = setTimeout(() => {
+      setHighlightedChunkId(null);
+      setHighlightedCitationKey(null);
+    }, FLASH_MS);
+  }
+
+  function handleCitationClick(turnId: string, chunkId: string) {
+    setAskFocused(false);
+    setHighlightedChunkId(chunkId);
+    setHighlightedCitationKey(`${turnId}:${chunkId}`);
+    setMobileEvidenceOpen((current) => ({ ...current, [turnId]: true }));
+    window.setTimeout(() => {
+      evidenceRefs.current[chunkId]?.scrollIntoView({
+        block: "center",
+        behavior: "smooth",
+      });
+    }, 0);
+    clearFlashLater();
+  }
+
+  function registerEvidenceRef(chunkId: string, element: HTMLElement | null) {
+    evidenceRefs.current[chunkId] = element;
+  }
+
+  function registerTurnRef(turnId: string, element: HTMLElement | null) {
+    turnRefs.current[turnId] = element;
+  }
+
+  function handlePaletteSelectTurn(turnId: string) {
+    const node = turnRefs.current[turnId];
+    if (node) {
+      node.scrollIntoView({ behavior: "smooth", block: "center" });
+    }
+  }
+
+  function handlePaletteSelectSection(section: PaletteSection) {
+    setHighlightedChunkId(section.chunkId);
+    setHighlightedCitationKey(null);
+    window.setTimeout(() => {
+      evidenceRefs.current[section.chunkId]?.scrollIntoView({
+        behavior: "smooth",
+        block: "center",
+      });
+    }, 0);
+    clearFlashLater();
+  }
+
+  function handlePaletteAction(action: PaletteAction) {
+    if (action === "focus-ask") {
+      window.setTimeout(() => {
+        const textarea = window.document.getElementById("ask-textarea");
+        if (textarea instanceof HTMLTextAreaElement) {
+          textarea.focus();
+        }
+      }, 0);
+    } else if (action === "reindex") {
+      setConfirmReindex(true);
+    } else if (action === "replace") {
+      setReplaceOpen(true);
+    }
+  }
+
+  useEffect(() => {
+    // `document` here is the DOM global; the state variable above shadows the
+    // name so we resolve it through `window` for the listener registration.
+    const doc = window.document;
+    function onKeyDown(event: KeyboardEvent) {
+      if ((event.metaKey || event.ctrlKey) && event.key.toLowerCase() === "k") {
+        event.preventDefault();
+        setPaletteOpen((current) => !current);
+      }
+    }
+    doc.addEventListener("keydown", onKeyDown);
+    return () => doc.removeEventListener("keydown", onKeyDown);
+  }, []);
+
+  function handleReplayStream(turnId: string) {
+    if (streamTimer.current) {
+      clearTimeout(streamTimer.current);
+    }
+    const turn = turns.find((candidate) => candidate.id === turnId);
+    if (!turn) {
+      return;
+    }
+    setStreamingTurnId(turnId);
+    const dur = streamingDuration(stripReferencesBlock(turn.answer.answer));
+    streamTimer.current = setTimeout(() => {
+      setStreamingTurnId((current) => (current === turnId ? null : current));
+      streamTimer.current = null;
+    }, dur);
+  }
+
   return (
-    <div className="grid gap-6">
-      <section className="p-1">
-        <div className="flex flex-wrap items-center justify-between gap-3">
-          <div className="max-w-3xl">
-            <p className="eyebrow">Workspace</p>
-            <h1 className="section-heading text-[2.15rem] leading-[0.98] md:text-[3.05rem]">
-              RAG augmented document QA
-            </h1>
-          </div>
-        </div>
-
-        <div className="mt-7 rounded-[1.6rem] border border-white/8 bg-white/[0.018] p-4 shadow-[0_12px_28px_rgba(0,0,0,0.14)] md:p-[1.125rem]">
-          <div className="flex flex-wrap items-start justify-between gap-3">
-            <div className="max-w-2xl">
-              <p className="text-[0.68rem] uppercase tracking-[0.26em] text-blue-200/75">
-                Live state
-              </p>
-              <p className="mt-1.5 text-[0.96rem] font-medium leading-6 text-white md:text-[1rem]">
-                {statusSummary}
-              </p>
-            </div>
-            <div className="flex flex-wrap gap-2">
-              <span className="status-chip">
-                Document {document ? "loaded" : "pending"}
-              </span>
-              <span className="status-chip">
-                Index {indexRecord ? "ready" : indexState === "loading" ? "building" : "pending"}
-              </span>
-              <span className="status-chip">
-                Answer {answer ? "ready" : answerState === "loading" ? "running" : "idle"}
-              </span>
-            </div>
-          </div>
-        </div>
-
-        <div className="mt-5">
-          <AuthSidebar user={user} />
-        </div>
-
-        <div className="mt-8 grid gap-6">
-          <div className="surface-card surface-card-neutral">
-            <p className="eyebrow">Step 1</p>
-            <h2 className="text-xl font-semibold text-white">Upload your document</h2>
-            <p className="mt-2 text-[0.96rem] leading-7 text-slate-300">
-              Upload one PDF or DOCX file and Helpmate will prepare it for
-              questioning in the workspace.
-            </p>
-
-            <div className="mt-5 rounded-[1.5rem] border border-dashed border-white/10 bg-black/20 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
-              <span className="inline-flex rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs uppercase tracking-[0.26em] text-blue-200">
-                One document at a time
-              </span>
-              <p className="mt-4 text-[1.08rem] font-medium text-white md:text-[1.14rem]">
-                Bring in a new document from your machine.
-              </p>
-              <p className="mt-2 text-[0.95rem] leading-7 text-slate-400">
-                The workspace supports one active document at a time so the
-                answer, evidence, and indexing state stay clear.
-              </p>
-              <div className="mt-4 flex flex-wrap items-center gap-4">
-                <label
-                  className={`inline-flex items-center rounded-full bg-white px-4 py-2 text-sm font-medium text-slate-950 ${isAuthenticated ? "cursor-pointer" : "cursor-not-allowed opacity-60"}`}
-                  htmlFor="document-upload"
-                >
-                  Choose File
-                </label>
-                <input
-                  accept=".pdf,.docx"
-                  className="sr-only"
-                  disabled={!isAuthenticated}
-                  id="document-upload"
-                  onChange={(event) =>
-                    setSelectedFile(event.target.files?.[0] ?? null)
-                  }
-                  type="file"
-                />
-                <p className="text-sm text-slate-300">
-                  {selectedFile
-                    ? selectedFile.name
-                    : document && uploadState === "ready"
-                      ? document.file_name
-                      : "No file chosen"}
-                </p>
-              </div>
-              <div className="mt-3 flex flex-wrap items-center justify-between gap-3">
-                <button
-                  className="primary-button w-auto px-5 py-3"
-                  disabled={uploadState === "loading" || !isAuthenticated}
-                  onClick={handleUpload}
-                  type="button"
-                >
-                  {uploadState === "loading" ? (
-                    <>
-                      <span aria-hidden="true" className="button-spinner" />
-                      Uploading...
-                    </>
-                  ) : (
-                    "Upload document"
-                  )}
-                </button>
-              </div>
-              {document && uploadState === "ready" ? (
-                <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-blue-100 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
-                  {indexRecord
-                    ? `${document.file_name} is uploaded and ready for questions.`
-                    : `${document.file_name} is uploaded successfully.`}
-                </div>
-              ) : null}
-              {indexState === "loading" ? (
-                <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-blue-100">
-                  {document
-                    ? `Upload complete. Building the index for ${document.file_name}...`
-                    : "Preparing the document workspace..."}
-                </div>
-              ) : null}
-              {!isAuthenticated ? (
-                <div className="mt-4 rounded-2xl border border-white/10 bg-white/[0.03] px-4 py-3 text-sm text-slate-200">
-                  Sign in first to start a private one-document workspace.
-                </div>
-              ) : null}
-            </div>
-          </div>
-
-          <div className="surface-card surface-card-neutral">
-            <p className="eyebrow">Step 2</p>
-            <h2 className="text-xl font-semibold text-white">Index and ask</h2>
-            <p className="mt-2 text-[0.96rem] leading-7 text-slate-300">
-              Once a document is active, the workspace exposes status, starter
-              questions, answer generation, and inspectable evidence.
-            </p>
-
-            <div className="mt-5 grid gap-3 lg:grid-cols-2">
-              <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
-                <span className="soft-panel-label">Document</span>
-                <p className="mt-3 text-lg font-medium text-white">
-                  {document?.file_name ?? "Nothing loaded yet"}
-                </p>
-                <p className="mt-2 text-sm text-white">
-                  {document
-                    ? `${document.file_type.toUpperCase()} - ${document.page_count ?? "?"} pages`
-                    : "Upload a file first"}
-                </p>
-              </div>
-              <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
-                <span className="soft-panel-label">Index</span>
-                <p className="mt-3 text-lg font-medium text-white">
-                  {indexRecord ? "Ready" : "Pending"}
-                </p>
-                <p className="mt-2 text-sm text-white">
-                  {indexRecord
-                    ? `${indexRecord.chunk_count} chunks - ${indexRecord.section_count} sections`
-                    : "Build or reuse an index for the active document"}
-                </p>
-              </div>
-            </div>
-
-            <div className="mt-4 flex flex-wrap items-center gap-3">
-              <span className="text-[0.95rem] text-slate-300">
-                {indexState === "loading"
-                  ? "The document is being prepared for retrieval and grounded QA."
-                  : indexRecord
-                    ? `Embedding model: ${indexRecord.embedding_model}`
-                    : document
-                      ? "The workspace will expose starter questions and answer generation once preparation completes."
-                      : "This becomes available after a document upload."}
-              </span>
-            </div>
-
-            {starters.length > 0 ? (
-              <div className="mt-6">
-                <p className="eyebrow">Starter questions</p>
-                <div className="mt-3 flex flex-wrap gap-2">
-                  {starters.map((starter) => (
-                    <button
-                      className="rounded-full border border-blue-300/16 bg-white/[0.03] px-4 py-2 text-left text-sm leading-5 text-slate-100 transition hover:border-blue-300/40 hover:bg-blue-300/10"
-                      key={starter}
-                      onClick={() => setQuestion(starter)}
-                      type="button"
-                    >
-                      {starter}
-                    </button>
-                  ))}
-                </div>
-              </div>
-            ) : null}
-
-            <div className="mt-6">
-              <label className="text-[0.96rem] font-medium text-slate-300" htmlFor="question">
-                Ask a grounded question
-              </label>
-              <textarea
-                className="mt-3 min-h-40 w-full resize-y rounded-[1.5rem] border border-white/10 bg-black/25 px-4 py-4 text-base text-white outline-none transition placeholder:text-slate-500 focus:border-blue-300/50"
-                disabled={!isAuthenticated}
-                id="question"
-                onChange={(event) => setQuestion(event.target.value)}
-                placeholder="What are the key exclusions, deadlines, findings, or future directions in this document?"
-                value={question}
-              />
-              <div className="mt-4 flex flex-wrap items-center justify-between gap-3">
-                <p className="text-[0.95rem] text-slate-300">
-                  {answerState === "loading"
-                    ? "Running retrieval, routing, and answer generation."
-                    : "Answers will come back with citations, evidence, and retrieval notes."}
-                </p>
-                <button
-                  className="primary-button w-auto px-5 py-3"
-                  disabled={answerState === "loading" || !isAuthenticated}
-                  onClick={handleAsk}
-                  type="button"
-                >
-                  {answerState === "loading" ? (
-                    <>
-                      <span aria-hidden="true" className="button-spinner" />
-                      Generating answer...
-                    </>
-                  ) : (
-                    "Generate answer"
-                  )}
-                </button>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        {error ? (
-          <div className="mt-6 rounded-3xl border border-rose-400/25 bg-rose-400/10 px-4 py-3 text-sm text-rose-100">
-            {error}
-          </div>
-        ) : null}
-      </section>
-
-      <aside className="grid gap-6">
-        <section className="overflow-hidden">
-          <div className="grid gap-6">
-            <div className="surface-card surface-card-neutral">
-              <div className="flex flex-wrap items-center justify-between gap-3">
-                <div className="max-w-3xl">
-                  <p className="eyebrow">Answer</p>
-                  <h2 className="mt-2.5 font-[family:var(--font-space-grotesk)] text-3xl font-semibold tracking-[-0.04em] text-white">
-                    {answer ? "Readable answer with source visibility" : "Answer panel ready when you are"}
-                  </h2>
-                </div>
-                {answer ? (
-                    <span className="rounded-full border border-white/10 bg-white/[0.03] px-3 py-1 text-xs uppercase tracking-[0.24em] text-blue-100 shadow-[0_8px_20px_rgba(44,91,255,0.08)]">
-                      {answer.support_status === "partial"
-                        ? "Partially supported"
-                        : answer.supported
-                          ? "Supported"
-                          : "Unsupported"}
-                    </span>
-                ) : null}
-              </div>
-
-              {answer ? (
-                <div className="mt-4 space-y-4">
-                  <div className="flex flex-wrap items-center gap-2.5 text-sm text-slate-300">
-                    <span className="workspace-meta-chip">
-                      {answer.cache_status.answer_cache_hit ? "Cache hit" : "Fresh answer"}
-                    </span>
-                    <span className="workspace-meta-chip">
-                      {answer.model_name || "gpt-4o-mini"}
-                    </span>
-                    <span className="workspace-meta-chip">
-                      {answer.citations.length} citations
-                    </span>
-                  </div>
-
-                  <div className="rounded-[1.75rem] border border-white/10 bg-black/25 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)] md:p-[1.375rem]">
-                    {parsedAnswer?.type === "definition-list" ? (
-                      <div className="grid gap-3 md:grid-cols-2">
-                        {parsedAnswer.items.map((item) => (
-                          <article
-                            className="rounded-[1.25rem] border border-blue-300/10 bg-black/20 p-4"
-                            key={item.term}
-                          >
-                            <p className="text-xs font-semibold uppercase tracking-[0.22em] text-blue-100/80">
-                              {item.term}
-                            </p>
-                            <p className="mt-3 text-[0.98rem] leading-7 text-white">
-                              {item.value}
-                            </p>
-                          </article>
-                        ))}
-                      </div>
-                    ) : (
-                      <div className="space-y-3">
-                        {parsedAnswer?.paragraphs.map((paragraph, index) => (
-                          <p className="text-[1.08rem] leading-8 text-white md:text-[1.12rem] md:leading-9" key={`${index}-${paragraph.slice(0, 24)}`}>
-                            {paragraph}
-                          </p>
-                        ))}
-                      </div>
-                    )}
-                  </div>
-
-                  {answer.citation_details.length > 0 ? (
-                    <div>
-                      <h3 className="text-sm font-semibold uppercase tracking-[0.22em] text-blue-100/85">
-                        Citation trail
-                      </h3>
-                      <div className="mt-2 flex flex-wrap gap-2">
-                        {answer.citation_details.map((citation) => (
-                          <span
-                            className="rounded-full border border-blue-300/12 bg-white/[0.03] px-3.5 py-2 text-sm text-slate-100"
-                            key={citation}
-                          >
-                            {citation}
-                          </span>
-                        ))}
-                      </div>
-                    </div>
-                  ) : null}
-
-                  {answer.note ? (
-                    <div className="rounded-[1.25rem] border border-white/10 bg-black/25 p-4 text-[0.98rem] leading-7 text-white">
-                      {answer.note}
-                    </div>
-                  ) : null}
-                </div>
-              ) : (
-                <div className="mt-5 rounded-[1.75rem] border border-white/10 bg-black/25 p-5 text-[0.96rem] leading-7 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
-                  The answer panel fills in after a document is indexed and a question is asked. Once it runs,
-                  this area will show the answer, support status, and its citation trail.
-                </div>
-              )}
-            </div>
-
-            <div className="surface-card surface-card-neutral">
-              {debugPanelEnabled ? (
-                <div className="flex flex-wrap items-center gap-2">
-                  <button
-                    className={
-                      inspectorTab === "evidence"
-                        ? "inline-flex items-center rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm font-medium text-white"
-                        : "inline-flex items-center rounded-full bg-white px-4 py-2 text-sm font-medium text-slate-950"
-                    }
-                    onClick={() => setInspectorTab("evidence")}
-                    type="button"
-                  >
-                    Evidence
-                  </button>
-                  <button
-                    className={
-                      inspectorTab === "debug"
-                        ? "inline-flex items-center rounded-full border border-white/10 bg-white/[0.03] px-4 py-2 text-sm font-medium text-white"
-                        : "inline-flex items-center rounded-full bg-white px-4 py-2 text-sm font-medium text-slate-950"
-                    }
-                    onClick={() => setInspectorTab("debug")}
-                    type="button"
-                  >
-                    Debug
-                  </button>
-                </div>
-              ) : (
-                <div>
-                  <span className="soft-panel-label">Evidence</span>
-                </div>
-              )}
-
-              <div className="mt-5">
-                {(!debugPanelEnabled || inspectorTab === "evidence") ? (
-                  <div className="space-y-3">
-                    {answer?.evidence?.length ? (
-                      answer.evidence.slice(0, 4).map((candidate) => (
-                        <article className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]" key={candidate.chunk_id}>
-                          <div className="flex items-center justify-between gap-3">
-                            <span className="soft-panel-label">
-                              {candidate.citation_label || "Evidence"}
-                            </span>
-                            <span className="text-xs text-slate-500">
-                              {candidate.metadata.section_kind?.toString() ??
-                                candidate.metadata.content_type?.toString() ??
-                                "Chunk"}
-                            </span>
-                          </div>
-                          <p className="mt-3 overflow-hidden text-[1rem] leading-7 text-white md:text-[1.02rem] [display:-webkit-box] [-webkit-box-orient:vertical] [-webkit-line-clamp:7]">
-                            {candidate.text}
-                          </p>
-                        </article>
-                      ))
-                    ) : (
-                      <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4 text-sm leading-6 text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
-                        Retrieved evidence cards will appear here once the backend answers a question.
-                      </div>
-                    )}
-                  </div>
-                ) : null}
-
-                {debugPanelEnabled && inspectorTab === "debug" ? (
-                  <div className="space-y-4">
-                    <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
-                      <span className="soft-panel-label">Active query</span>
-                      <p className="mt-3 text-sm leading-6 text-white">
-                        {answer?.query_used ?? "Ask a question to populate query details."}
-                      </p>
-                    </div>
-                    <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
-                      <span className="soft-panel-label">Variants</span>
-                      <div className="mt-3 flex flex-wrap gap-2">
-                        {(answer?.query_variants ?? []).length ? (
-                          answer?.query_variants.map((variant) => (
-                            <span
-                              className="rounded-full border border-blue-300/12 bg-white/[0.03] px-3 py-1 text-xs text-slate-100"
-                              key={variant}
-                            >
-                              {variant}
-                            </span>
-                          ))
-                        ) : (
-                          <span className="text-sm text-white">No query variants yet.</span>
-                        )}
-                      </div>
-                    </div>
-                    <div className="rounded-[1.5rem] border border-white/10 bg-black/25 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.02)]">
-                      <span className="soft-panel-label">Retrieval notes</span>
-                      {(answer?.retrieval_notes ?? []).length ? (
-                        <ul className="mt-3 space-y-2 text-sm text-white">
-                          {answer?.retrieval_notes.map((note) => (
-                            <li key={note}>{note}</li>
-                          ))}
-                        </ul>
-                      ) : (
-                        <p className="mt-3 text-sm text-white">
-                          Retrieval notes will appear after the first answer.
-                        </p>
-                      )}
-                    </div>
-                  </div>
-                ) : null}
-              </div>
-            </div>
-          </div>
-        </section>
-      </aside>
+    <div className="h-shell">
+      <Topbar
+        accountOpen={accountOpen}
+        onAccountToggle={() => setAccountOpen((current) => !current)}
+        onPaletteOpen={() => setPaletteOpen(true)}
+        user={user}
+      />
+      <div className="h-mobile-docbar">
+        <span>
+          <icons.Doc />
+          {document?.file_name ?? "No document loaded"}
+        </span>
+        <SupportPip className={status.className}>{status.label}</SupportPip>
+      </div>
+      <div className="h-frame">
+        <DocStrip
+          confirmReindex={confirmReindex}
+          document={document}
+          error={error}
+          indexRecord={indexRecord}
+          indexState={indexState}
+          isAuthenticated={isAuthenticated}
+          lastAnswer={answer}
+          onFileChange={handleFileChange}
+          onReindex={handleReindex}
+          onSetConfirmReindex={setConfirmReindex}
+          onToggleReplace={() => setReplaceOpen((current) => !current)}
+          onUpload={handleUpload}
+          replaceOpen={replaceOpen}
+          selectedFile={selectedFile}
+          uploadState={uploadState}
+        />
+        <Conversation
+          answerState={answerState}
+          askFocused={askFocused}
+          document={document}
+          highlightedCitationKey={highlightedCitationKey}
+          indexRecord={indexRecord}
+          indexState={indexState}
+          isAuthenticated={isAuthenticated}
+          onAsk={handleAsk}
+          onCitationClick={handleCitationClick}
+          onFocusChange={setAskFocused}
+          onPickStarter={setQuestion}
+          onQuestionChange={setQuestion}
+          onReplayStream={handleReplayStream}
+          pendingQuestion={pendingQuestion}
+          question={question}
+          registerTurnRef={registerTurnRef}
+          starters={starters}
+          streamingTurnId={streamingTurnId}
+          turns={turns}
+        />
+        <EvidenceRail
+          debugEnabled={debugPanelEnabled}
+          debugOpen={debugOpen}
+          document={document}
+          highlightedChunkId={highlightedChunkId}
+          highlightedCitationKey={highlightedCitationKey}
+          onDebugToggle={() => setDebugOpen((current) => !current)}
+          onEvidenceTagClick={handleCitationClick}
+          pending={evidencePending}
+          registerEvidenceRef={registerEvidenceRef}
+          turns={turns}
+        />
+      </div>
+      <div className="h-mobile-thread-evidence">
+        {turns.map((turn) => (
+          <MobileEvidence
+            debugOpen={debugOpen}
+            fileName={document?.file_name ?? "Document"}
+            highlightedChunkId={highlightedChunkId}
+            highlightedCitationKey={highlightedCitationKey}
+            key={turn.id}
+            onEvidenceTagClick={handleCitationClick}
+            onToggle={() =>
+              setMobileEvidenceOpen((current) => ({
+                ...current,
+                [turn.id]: !current[turn.id],
+              }))
+            }
+            open={Boolean(mobileEvidenceOpen[turn.id])}
+            turn={turn}
+          />
+        ))}
+      </div>
+      <ErrorBanner error={indexState === "error" ? null : error} />
+      <CommandPalette
+        documentLoaded={Boolean(document)}
+        indexState={indexState}
+        isAuthenticated={isAuthenticated}
+        onAction={handlePaletteAction}
+        onClose={() => setPaletteOpen(false)}
+        onSelectSection={handlePaletteSelectSection}
+        onSelectTurn={handlePaletteSelectTurn}
+        open={paletteOpen}
+        turns={turns}
+      />
     </div>
   );
 }
