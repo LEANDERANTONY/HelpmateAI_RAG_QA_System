@@ -941,7 +941,9 @@ function QACard({
           </div>
         </>
       ) : null}
-      {!streaming && turn.answer.note ? <p className="h-note-card">{turn.answer.note}</p> : null}
+      {!streaming && turn.answer.note && turn.answer.support_status !== "supported" ? (
+        <p className="h-note-card">{turn.answer.note}</p>
+      ) : null}
       {!streaming ? (
         <>
           <Hairline />
