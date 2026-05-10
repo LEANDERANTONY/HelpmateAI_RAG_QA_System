@@ -2471,15 +2471,16 @@ input[type="file"]:disabled::file-selector-button {
   background: var(--bg-page);
   display: flex;
   flex-direction: column;
-  gap: 10px;
   padding-bottom: 14px;
   position: sticky;
   top: 0;
   z-index: 12;
 }
 
-/* Soft fade below the sticky ask group so older Q&A cards dissolve as they
-   scroll up under it instead of ghosting through the 85%-opaque ask card. */
+/* Soft fade below the sticky ask card so older Q&A cards dissolve as they
+   scroll up under it instead of ghosting through the 85%-opaque card edge.
+   The card itself (.h-ask) is the only opaque element — no transparent
+   strip above it, so the dark patch only exists where the card is. */
 .h-ask-group::after {
   background: linear-gradient(180deg, var(--bg-page) 0%, rgba(4, 7, 15, 0) 100%);
   content: "";
@@ -2499,7 +2500,7 @@ input[type="file"]:disabled::file-selector-button {
   flex-direction: column;
   gap: 10px;
   min-height: 128px;
-  padding: 20px 24px 16px;
+  padding: 14px 24px 16px;
   transition:
     border-color var(--duration-base) var(--ease-out),
     box-shadow var(--duration-base) var(--ease-out),
@@ -2512,6 +2513,17 @@ input[type="file"]:disabled::file-selector-button {
 
 .h-ask.focal-glow {
   border-color: var(--accent-strong);
+}
+
+.h-ask-label {
+  color: var(--fg-3);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  line-height: 1;
+  margin: 0;
+  text-transform: uppercase;
 }
 
 .h-ask textarea {

@@ -655,6 +655,7 @@ function AskBlock({
 
   return (
     <div className={`h-ask ${askFocused ? "focal-glow" : ""} ${isLoading ? "loading" : ""}`}>
+      <p className="h-ask-label">Ask</p>
       <textarea
         disabled={!canAsk || isLoading}
         id="ask-textarea"
@@ -1049,7 +1050,6 @@ function Conversation({
               visible={Boolean(indexRecord && turns.length === 0 && !pendingQuestion)}
             />
             <div className="h-ask-group">
-              <p className="h-eyebrow">Ask</p>
               <AskBlock
                 askFocused={askFocused}
                 canAsk={canAsk}
