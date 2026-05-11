@@ -1944,6 +1944,9 @@ input[type="file"]:disabled::file-selector-button {
 .h-avatar.h-avatar-logo {
   background: none;
   border: 0;
+  /* SVG already carries a rounded-square shape with its own accent stroke;
+     drop the circular mask so the corners don't clip the icon's outline. */
+  border-radius: 7px;
   box-shadow: 0 4px 12px rgba(127, 224, 176, 0.18);
   object-fit: contain;
 }
@@ -2026,6 +2029,7 @@ input[type="file"]:disabled::file-selector-button {
 
 .h-account-popover .auth-inline-avatar.auth-inline-avatar-logo {
   background: none;
+  border-radius: 8px;
   box-shadow: 0 6px 14px rgba(127, 224, 176, 0.18);
   object-fit: contain;
 }
