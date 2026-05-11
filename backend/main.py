@@ -7,6 +7,7 @@ from typing import Any
 
 from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 
 from backend.auth import AuthenticatedUser, require_authenticated_user
@@ -436,6 +437,62 @@ def get_starter_questions(
         document_id=document_id,
         document_style=document_style,
         questions=questions,
+    )
+
+
+_INLINE_MEDIA_TYPES = {
+    ".pdf": "application/pdf",
+    ".docx": (
+        "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+    ),
+}
+
+
+@app.get("/documents/{document_id}/file")
+def get_document_file(
+    document_id: str,
+    download: int = 0,
+    user: AuthenticatedUser = Depends(require_authenticated_user),
+):
+    """Stream the document file for inline viewing or download.
+
+    Inline (default) serves the file with `Content-Disposition: inline` so
+    browsers / PDF.js render it in place. `?download=1` flips it to
+    `attachment` with the original filename so the user gets a save dialog.
+
+    Range requests are handled by Starlette's FileResponse — it inspects
+    the request's Range header and responds with 206 Partial Content
+    plus the right Content-Range slice. PDF.js issues Range requests for
+    large PDFs and needs this to stream-render efficiently.
+
+    Stage 1 only knows about source_path; Stage 2 will distinguish the
+    viewable (always PDF) path from the original source for the download
+    branch.
+    """
+    document = _require_document_for_user(document_id, user)
+    file_path = Path(document.source_path)
+    if not file_path.exists() or not file_path.is_file():
+        raise HTTPException(status_code=404, detail="Document file is missing on disk.")
+
+    suffix = file_path.suffix.lower()
+    media_type = _INLINE_MEDIA_TYPES.get(suffix, "application/octet-stream")
+
+    base_headers = {"Cache-Control": "private, max-age=3600"}
+
+    if download:
+        # FileResponse renders the proper RFC 5987-encoded attachment
+        # header when given a filename kwarg — including unicode names.
+        return FileResponse(
+            path=file_path,
+            media_type=media_type,
+            filename=document.file_name,
+            headers=base_headers,
+        )
+
+    return FileResponse(
+        path=file_path,
+        media_type=media_type,
+        headers={**base_headers, "Content-Disposition": "inline"},
     )
 
 
