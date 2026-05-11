@@ -61,7 +61,7 @@ export function LandingTopbar() {
     return (
       <header className="l-topbar">
         <div className="l-topbar-inner">
-          <Link href="/" className="l-brand" aria-label="Helpmate AI home">
+          <div className="l-brand">
             <img
               alt=""
               aria-hidden
@@ -71,7 +71,7 @@ export function LandingTopbar() {
               width={28}
             />
             <div className="l-wordmark">Helpmate AI</div>
-          </Link>
+          </div>
           <Link href="/" className="l-cta l-cta-back">
             <span aria-hidden>←</span>
             Back
@@ -87,7 +87,7 @@ export function LandingTopbar() {
     <>
       <header className="l-topbar">
         <div className="l-topbar-inner">
-          <Link href="/" className="l-brand" aria-label="Helpmate AI home">
+          <div className="l-brand">
             <img
               alt=""
               aria-hidden
@@ -97,7 +97,7 @@ export function LandingTopbar() {
               width={28}
             />
             <div className="l-wordmark">Helpmate AI</div>
-          </Link>
+          </div>
           <nav className="l-nav" aria-label="Primary">
             {NAV_LINKS.map((link) => (
               <a key={link.href} href={link.href}>
