@@ -196,6 +196,14 @@ class Settings:
     unsupported_lexical_hit_threshold: float = _env_float("HELPMATE_UNSUPPORTED_LEXICAL_HIT_THRESHOLD", 0.005)
     unsupported_content_overlap_threshold: float = _env_float("HELPMATE_UNSUPPORTED_CONTENT_OVERLAP_THRESHOLD", 0.05)
     workspace_retention_hours: int = _env_int("HELPMATE_WORKSPACE_RETENTION_HOURS", 24)
+    # DOCX→PDF rendition for the in-app viewer. Conversion runs once at ingest
+    # via LibreOffice headless; the resulting PDF is cached alongside the
+    # source upload and served by /documents/{id}/file. If the host has no
+    # LibreOffice available the upload still succeeds — only the inline viewer
+    # path degrades to a "download" affordance.
+    docx_pdf_conversion_enabled: bool = _env_bool("HELPMATE_DOCX_PDF_CONVERSION_ENABLED", True)
+    docx_pdf_conversion_timeout: int = _env_int("HELPMATE_DOCX_PDF_TIMEOUT", 60)
+    docx_pdf_soffice_binary: str = _env_str("HELPMATE_DOCX_PDF_SOFFICE", "soffice")
 
     def __post_init__(self) -> None:
         uploads_dir = _env_path("HELPMATE_UPLOADS_DIR", self.data_dir / "uploads")

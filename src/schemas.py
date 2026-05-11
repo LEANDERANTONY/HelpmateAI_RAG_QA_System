@@ -15,6 +15,14 @@ class DocumentRecord:
     page_count: int | None
     metadata: dict[str, Any] = field(default_factory=dict)
     extracted_text: str = ""
+    # Sibling-file convention for the in-app viewer (Tier 2):
+    #   source_path is the original upload (.pdf or .docx) — used for "Download"
+    #   viewable_pdf_path is the PDF rendition served inline by /documents/{id}/file
+    # For PDF uploads these point at the same file. For DOCX uploads we run
+    # LibreOffice headless at ingest to produce a sibling .pdf so the viewer can
+    # render it without per-request conversion. Optional/nullable for backward
+    # compatibility with documents indexed before this field existed.
+    viewable_pdf_path: str | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)

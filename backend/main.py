@@ -456,42 +456,66 @@ def get_document_file(
 ):
     """Stream the document file for inline viewing or download.
 
-    Inline (default) serves the file with `Content-Disposition: inline` so
-    browsers / PDF.js render it in place. `?download=1` flips it to
-    `attachment` with the original filename so the user gets a save dialog.
+    Two distinct files live behind a document_id once ingest finishes:
+
+    - `source_path`   the original upload (`.pdf` or `.docx`), renamed to
+                      `{document_id}{ext}` for collision-safe storage.
+                      Returned for `?download=1` so the user gets the file
+                      in its original format.
+    - `viewable_pdf_path`  a PDF rendition the in-app viewer can render
+                      with PDF.js. For PDF uploads this aliases the source.
+                      For DOCX uploads it's a LibreOffice-produced sibling
+                      file. Returned for the default (inline) branch.
+
+    Backward compatibility: documents indexed before this field existed
+    don't carry `viewable_pdf_path`. For those we fall back to the source
+    file when its extension is `.pdf`; DOCX-only legacy records get a 415
+    on the inline path so the frontend can render a "download to view"
+    affordance instead.
 
     Range requests are handled by Starlette's FileResponse — it inspects
     the request's Range header and responds with 206 Partial Content
     plus the right Content-Range slice. PDF.js issues Range requests for
     large PDFs and needs this to stream-render efficiently.
-
-    Stage 1 only knows about source_path; Stage 2 will distinguish the
-    viewable (always PDF) path from the original source for the download
-    branch.
     """
     document = _require_document_for_user(document_id, user)
-    file_path = Path(document.source_path)
-    if not file_path.exists() or not file_path.is_file():
-        raise HTTPException(status_code=404, detail="Document file is missing on disk.")
-
-    suffix = file_path.suffix.lower()
-    media_type = _INLINE_MEDIA_TYPES.get(suffix, "application/octet-stream")
-
     base_headers = {"Cache-Control": "private, max-age=3600"}
 
     if download:
-        # FileResponse renders the proper RFC 5987-encoded attachment
-        # header when given a filename kwarg — including unicode names.
+        # Download always serves the ORIGINAL source format. A user who
+        # uploaded a DOCX should get their DOCX back, not the PDF rendition.
+        source_path = Path(document.source_path)
+        if not source_path.exists() or not source_path.is_file():
+            raise HTTPException(status_code=404, detail="Document file is missing on disk.")
+        media_type = _INLINE_MEDIA_TYPES.get(
+            source_path.suffix.lower(), "application/octet-stream"
+        )
         return FileResponse(
-            path=file_path,
+            path=source_path,
             media_type=media_type,
             filename=document.file_name,
             headers=base_headers,
         )
 
+    # Inline branch: prefer the viewable PDF, fall back to source for legacy
+    # records (pre-Stage-2 documents have viewable_pdf_path=None).
+    viewable_raw = getattr(document, "viewable_pdf_path", None) or document.source_path
+    viewable_path = Path(viewable_raw)
+    if not viewable_path.exists() or not viewable_path.is_file():
+        raise HTTPException(status_code=404, detail="Document file is missing on disk.")
+
+    if viewable_path.suffix.lower() != ".pdf":
+        # Inline rendering needs a PDF rendition. This only fires for legacy
+        # DOCX documents that predate viewable_pdf_path; the frontend reads
+        # 415 as "switch to download affordance".
+        raise HTTPException(
+            status_code=415,
+            detail="Inline viewing requires a PDF rendition; use ?download=1 to fetch the source.",
+        )
+
     return FileResponse(
-        path=file_path,
-        media_type=media_type,
+        path=viewable_path,
+        media_type="application/pdf",
         headers={**base_headers, "Content-Disposition": "inline"},
     )
 

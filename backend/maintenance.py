@@ -67,13 +67,24 @@ def sweep_local_workspace_storage(settings: Settings | None = None) -> SweepSumm
             summary.expired_workspaces_deleted += 1
             continue
 
-        source_path = _safe_resolve(document.source_path)
+        # Whitelist both the original upload AND the viewable PDF rendition
+        # (Tier-2 viewer). For PDF uploads they point at the same file; for
+        # DOCX uploads viewable_pdf_path is a sibling .pdf that LibreOffice
+        # produced at ingest time. Without this the sweeper would treat the
+        # rendition as an orphan and delete it on its next pass, breaking
+        # the inline viewer for any document older than a few minutes.
         uploads_root = _safe_resolve(settings.uploads_dir)
-        try:
-            source_path.relative_to(uploads_root)
-            active_upload_paths.add(source_path)
-        except ValueError:
-            pass
+        candidate_paths = [document.source_path]
+        viewable = getattr(document, "viewable_pdf_path", None)
+        if viewable and viewable != document.source_path:
+            candidate_paths.append(viewable)
+        for raw_path in candidate_paths:
+            resolved = _safe_resolve(raw_path)
+            try:
+                resolved.relative_to(uploads_root)
+                active_upload_paths.add(resolved)
+            except ValueError:
+                pass
 
         if index_record is not None:
             active_fingerprints.add(index_record.fingerprint)

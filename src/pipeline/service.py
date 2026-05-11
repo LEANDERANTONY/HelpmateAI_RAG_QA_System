@@ -5,11 +5,13 @@ import uuid
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+import logging
+
 from src.cache import AnswerCache
 from src.chunking import ChunkSemanticsService, chunk_document
 from src.config import Settings, get_settings
 from src.generation import AnswerGenerator, EvidenceSelector
-from src.ingest import ingest_document
+from src.ingest import DocxConversionError, convert_docx_to_pdf, ingest_document
 from src.landmarks import DocumentLandmarkService
 from src.retrieval import ChromaIndexStore, HybridRetriever
 from src.sections import build_sections
@@ -19,6 +21,9 @@ from src.schemas import AnswerResult, CacheStatus, DocumentRecord, IndexRecord, 
 from src.structure.classifier import DocumentClassifierService
 from src.topology import DocumentTopologyService, SynopsisSemanticsService
 from src.traces import build_run_trace_store
+
+
+logger = logging.getLogger(__name__)
 
 
 class HelpmatePipeline:
@@ -46,7 +51,103 @@ class HelpmatePipeline:
 
     def ingest_document(self, file_path: str | Path) -> DocumentRecord:
         persisted_path = self._persist_upload(file_path)
-        return ingest_document(persisted_path)
+        document = ingest_document(persisted_path)
+        # Normalize storage AFTER ingestion (which reads from disk) so the
+        # extractor sees the original file at the original name. Once we know
+        # the document_id we rename to `{id}{ext}` to dodge cross-user
+        # filename collisions in the flat uploads directory, and produce a
+        # viewable PDF for DOCX uploads so the in-app viewer can render them.
+        self.normalize_upload_paths(document)
+        return document
+
+    def normalize_upload_paths(self, document: DocumentRecord) -> DocumentRecord:
+        """Rename the source upload to `{document_id}{ext}` and produce a
+        viewable PDF rendition when needed.
+
+        Two responsibilities folded into one pass over disk because they
+        share the same target filename stem:
+
+        1.  Source rename. Multiple users uploading `policy.pdf` would
+            otherwise overwrite each other's file under the shared uploads
+            dir. The document_id is a 16-char content fingerprint so it's
+            unique enough to avoid clashes while still being deterministic
+            on re-ingest of the same content.
+        2.  Viewable PDF. PDF uploads are usable as-is — `viewable_pdf_path`
+            is just an alias for the renamed source. DOCX uploads get a
+            sibling `.pdf` produced by LibreOffice headless; if the
+            converter fails or is disabled we leave `viewable_pdf_path` as
+            None and the `/file` endpoint falls back to download-only.
+
+        This mutates `document.source_path` and `document.viewable_pdf_path`
+        in place and returns the same record for chaining.
+        """
+        source = Path(document.source_path)
+        if not source.exists() or not source.is_file():
+            logger.warning(
+                "normalize_upload_paths: source missing on disk for %s (%s)",
+                document.document_id,
+                source,
+            )
+            return document
+
+        suffix = source.suffix.lower()
+        target_dir = source.parent
+        renamed = target_dir / f"{document.document_id}{suffix}"
+
+        if source.resolve() != renamed.resolve():
+            if renamed.exists():
+                # document_id is a content fingerprint, so a pre-existing file
+                # at the renamed path is byte-identical to what we just got.
+                # Drop the temporary upload and reuse the canonical file —
+                # this also avoids racing a concurrent reader who has the
+                # canonical file open (matters on Windows, where unlink of
+                # an open file fails with permission denied).
+                try:
+                    source.unlink()
+                except OSError:
+                    pass
+            else:
+                source.rename(renamed)
+            document.source_path = str(renamed)
+
+        if suffix == ".pdf":
+            document.viewable_pdf_path = document.source_path
+            return document
+
+        if suffix != ".docx":
+            # Other file types reach here only if SUPPORTED_UPLOAD_TYPES is
+            # extended without updating this method. Leave viewable empty so
+            # the viewer falls back to a download affordance.
+            return document
+
+        if not self.settings.docx_pdf_conversion_enabled:
+            return document
+
+        viewable = target_dir / f"{document.document_id}.pdf"
+        if viewable.exists() and viewable.is_file():
+            # A prior ingest of the same DOCX (same fingerprint) already
+            # produced the rendition — reuse it instead of paying the
+            # LibreOffice subprocess cost again.
+            document.viewable_pdf_path = str(viewable)
+            return document
+        try:
+            convert_docx_to_pdf(
+                Path(document.source_path),
+                viewable,
+                soffice_binary=self.settings.docx_pdf_soffice_binary,
+                timeout=self.settings.docx_pdf_conversion_timeout,
+            )
+        except DocxConversionError as exc:
+            logger.warning(
+                "DOCX viewer rendition failed for %s; viewer will fall back "
+                "to download-only (%s)",
+                document.document_id,
+                exc,
+            )
+            return document
+
+        document.viewable_pdf_path = str(viewable)
+        return document
 
     @staticmethod
     def _apply_section_metadata_to_chunks(chunks, sections) -> None:
@@ -198,12 +299,19 @@ class HelpmatePipeline:
             )
         self.answer_cache.delete_for_fingerprint(document.fingerprint)
         self.run_trace_store.delete_for_document(document.document_id)
-        source_path = Path(document.source_path)
-        try:
-            if source_path.exists() and source_path.is_file():
-                source_path.unlink()
-        except Exception:
-            pass
+        # Clean up both the source upload and the viewable PDF rendition if
+        # they're distinct files. For PDF uploads they alias the same path so
+        # the second unlink is a no-op via the exists() guard.
+        paths_to_clean = [document.source_path]
+        if document.viewable_pdf_path and document.viewable_pdf_path != document.source_path:
+            paths_to_clean.append(document.viewable_pdf_path)
+        for raw in paths_to_clean:
+            try:
+                path = Path(raw)
+                if path.exists() and path.is_file():
+                    path.unlink()
+            except Exception:
+                pass
 
     def _trace_expires_at(self, document: DocumentRecord, created_at: datetime) -> str:
         metadata = document.metadata or {}
