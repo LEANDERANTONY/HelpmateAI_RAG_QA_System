@@ -757,7 +757,7 @@ function EmptyHero({ isAuthenticated }: { isAuthenticated: boolean }) {
       <h1>
         Grounded answers with{" "}
         <span className="h-accent">visible evidence</span> and{" "}
-        <span className="h-accent">zero false support</span>.
+        <span className="h-accent">zero false support</span>
       </h1>
       <div className="h-hero-steps">
         <p>
@@ -765,11 +765,15 @@ function EmptyHero({ isAuthenticated }: { isAuthenticated: boolean }) {
         </p>
         <p>
           <span>2</span>Ask anything from the document. Helpmate only answers
-          with what&apos;s in it — no model memory.
+          with what&apos;s in it.
         </p>
         <p>
           <span>3</span>See the source for every claim in the answer, beside
           the answer.
+        </p>
+        <p>
+          <span>4</span>Ask the same question again and the cached answer
+          comes back instantly.
         </p>
       </div>
       {!isAuthenticated ? (
