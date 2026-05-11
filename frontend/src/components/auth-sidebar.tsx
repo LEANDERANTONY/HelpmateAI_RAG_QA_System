@@ -17,16 +17,6 @@ const workflowStates: Array<{ label: string; value: string; description: string 
     value: "Google session",
     description: "Session-based access for a private document workflow.",
   },
-  {
-    label: "Storage",
-    value: "Supabase + Chroma",
-    description: "Cloud-backed document state and vector retrieval.",
-  },
-  {
-    label: "Mode",
-    value: "One document workspace",
-    description: "A focused workspace tuned for one active document at a time.",
-  },
 ];
 
 export function AuthSidebar({ user }: AuthSidebarProps) {
