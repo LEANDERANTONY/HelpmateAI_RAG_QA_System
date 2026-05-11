@@ -11,14 +11,6 @@ type AuthSidebarProps = {
   user: AuthUserSummary | null;
 };
 
-const workflowStates: Array<{ label: string; value: string; description: string }> = [
-  {
-    label: "Auth",
-    value: "Google session",
-    description: "Session-based access for a private document workflow.",
-  },
-];
-
 export function AuthSidebar({ user }: AuthSidebarProps) {
   const authEnabled = isSupabaseConfigured();
   const [pendingAction, setPendingAction] = useState<"signin" | "signout" | null>(
@@ -136,13 +128,6 @@ export function AuthSidebar({ user }: AuthSidebarProps) {
           <h3>{user ? "Google account connected" : "Ready for sign-in"}</h3>
           <p>{sessionDescription}</p>
         </div>
-        {workflowStates.map((item) => (
-          <div key={item.label}>
-            <p className="h-eyebrow">{item.label}</p>
-            <h3>{item.value}</h3>
-            <p>{item.description}</p>
-          </div>
-        ))}
       </div>
 
       {error ? <p className="auth-inline-error">{error}</p> : null}
