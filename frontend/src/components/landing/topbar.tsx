@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
+import { useLandingHref } from "@/components/landing/use-landing-href";
 
 // Topbar — chrome.md §"Topbar". Two render shapes:
 //
@@ -30,6 +31,8 @@ export function LandingTopbar() {
   // endsWith() handles both the dev path (/landing/privacy-policy) and
   // the prod path (/privacy-policy after the helpmateai.xyz host rewrite).
   const isSecondary = pathname?.endsWith("/privacy-policy") ?? false;
+
+  const landingHref = useLandingHref();
 
   const [menuOpen, setMenuOpen] = useState(false);
 
@@ -72,7 +75,7 @@ export function LandingTopbar() {
             />
             <div className="l-wordmark">Helpmate AI</div>
           </div>
-          <Link href="/" className="l-cta l-cta-back">
+          <Link href={landingHref} className="l-cta l-cta-back">
             <span aria-hidden>←</span>
             Back
           </Link>

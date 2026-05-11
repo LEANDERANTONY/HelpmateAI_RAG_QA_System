@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useLandingHref } from "@/components/landing/use-landing-href";
 
 export function LandingFooter() {
   const pathname = usePathname();
@@ -9,6 +10,7 @@ export function LandingFooter() {
   // link would be a self-link — swap it for a Home link back to the
   // landing root.
   const isSecondary = pathname?.endsWith("/privacy-policy") ?? false;
+  const landingHref = useLandingHref();
 
   return (
     <footer className="l-foot">
@@ -24,7 +26,7 @@ export function LandingFooter() {
         <div className="l-foot-col">
           <div className="head">Resources</div>
           {isSecondary ? (
-            <Link href="/">Home</Link>
+            <Link href={landingHref}>Home</Link>
           ) : (
             <a href="https://helpmateai.xyz/privacy-policy">Privacy Policy</a>
           )}
