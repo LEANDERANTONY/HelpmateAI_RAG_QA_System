@@ -19,6 +19,7 @@
 // plumbing without the actual PDF.js viewer. Stage 3b replaces the body
 // with the PDF.js mount; the chrome stays put.
 
+import { PdfViewer } from "@/components/viewer/pdf-viewer";
 import { useCurrentChunk, useReadModeActions } from "@/lib/read-mode-state";
 
 export function SourcePane() {
@@ -83,36 +84,19 @@ export function SourcePane() {
       </header>
 
       <div className="h-source-body">
-        {/* Stage 3a placeholder. Stage 3b replaces this with the PDF.js
-            viewer mount. The debug strip below confirms state plumbing
-            reaches the pane — it goes away in 3b. */}
-        <SourceLoadingSkeleton />
-        <div className="h-source-debug" aria-hidden>
-          <span>chunk_id</span>
-          <code>{currentChunk.chunkId}</code>
-          <span>page_label</span>
-          <code>{currentChunk.pageLabel}</code>
-          <span>text_preview</span>
-          <code>
-            {currentChunk.chunkText.slice(0, 140)}
-            {currentChunk.chunkText.length > 140 ? "…" : ""}
-          </code>
-        </div>
+        <PdfViewer
+          documentId={currentChunk.documentId}
+          chunkId={currentChunk.chunkId}
+          pageLabel={currentChunk.pageLabel}
+          chunkText={currentChunk.chunkText}
+          onDownloadOriginal={() => {
+            // Surface the original file as a download. The /file endpoint
+            // serves the source format (PDF or DOCX) when ?download=1.
+            window.open(`/api/documents/${currentChunk.documentId}/file?download=1`, "_blank");
+          }}
+        />
       </div>
     </section>
-  );
-}
-
-function SourceLoadingSkeleton() {
-  return (
-    <div className="h-source-skeleton" role="status" aria-label="Source loading">
-      <div className="h-source-skeleton-bar pulse" />
-      <div className="h-source-skeleton-bar pulse" style={{ width: "85%" }} />
-      <div className="h-source-skeleton-bar pulse" style={{ width: "72%" }} />
-      <div className="h-source-skeleton-bar pulse" style={{ width: "90%" }} />
-      <div className="h-source-skeleton-bar pulse" style={{ width: "60%" }} />
-      <p className="h-source-skeleton-label">Source loading…</p>
-    </div>
   );
 }
 

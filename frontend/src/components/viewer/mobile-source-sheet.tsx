@@ -26,6 +26,7 @@
 import { useCallback, useMemo } from "react";
 import { Drawer } from "vaul";
 
+import { PdfViewer } from "@/components/viewer/pdf-viewer";
 import {
   useCurrentChunk,
   useKeyboardActive,
@@ -148,39 +149,22 @@ export function MobileSourceSheet() {
           </header>
 
           <div className="h-source-body">
-            {/* Stage 3a.1 placeholder — same skeleton as desktop pane.
-                Stage 3b replaces this with the PDF.js viewer mount. */}
-            <SourceLoadingSkeleton />
-            <div className="h-source-debug" aria-hidden>
-              <span>chunk_id</span>
-              <code>{currentChunk.chunkId}</code>
-              <span>page_label</span>
-              <code>{currentChunk.pageLabel}</code>
-              <span>mobile_snap</span>
-              <code>{mobileSnap}</code>
-              <span>text_preview</span>
-              <code>
-                {currentChunk.chunkText.slice(0, 140)}
-                {currentChunk.chunkText.length > 140 ? "…" : ""}
-              </code>
-            </div>
+            <PdfViewer
+              documentId={currentChunk.documentId}
+              chunkId={currentChunk.chunkId}
+              pageLabel={currentChunk.pageLabel}
+              chunkText={currentChunk.chunkText}
+              onDownloadOriginal={() => {
+                window.open(
+                  `/api/documents/${currentChunk.documentId}/file?download=1`,
+                  "_blank",
+                );
+              }}
+            />
           </div>
         </Drawer.Content>
       </Drawer.Portal>
     </Drawer.Root>
-  );
-}
-
-function SourceLoadingSkeleton() {
-  return (
-    <div className="h-source-skeleton" role="status" aria-label="Source loading">
-      <div className="h-source-skeleton-bar pulse" />
-      <div className="h-source-skeleton-bar pulse" style={{ width: "85%" }} />
-      <div className="h-source-skeleton-bar pulse" style={{ width: "72%" }} />
-      <div className="h-source-skeleton-bar pulse" style={{ width: "90%" }} />
-      <div className="h-source-skeleton-bar pulse" style={{ width: "60%" }} />
-      <p className="h-source-skeleton-label">Source loading…</p>
-    </div>
   );
 }
 

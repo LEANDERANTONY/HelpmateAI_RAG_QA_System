@@ -3919,6 +3919,130 @@ input[type="file"]:disabled::file-selector-button {
   }
 }
 
+/* ============================================================ */
+/*  PDF.JS VIEWER                                               */
+/*  Hosts pdfjs-dist's bundled PDFViewer inside the SourcePane  */
+/*  body slot (desktop) or the bottom sheet body (mobile). The  */
+/*  baseline page rendering CSS comes from                      */
+/*  pdfjs-dist/web/pdf_viewer.css imported by the component;    */
+/*  rules here are dark-theme overrides + workspace chrome.     */
+/* ============================================================ */
+
+.h-pdf-viewer {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  min-height: 0;
+  position: relative;
+}
+
+.h-pdf-container {
+  background: #1c1d20;
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow: auto;
+  /* PDF.js positions pages absolutely inside .pdfViewer; the container
+     just needs to be a scrollable box. */
+  position: relative;
+}
+
+.h-pdf-container:focus {
+  outline: 1px solid var(--accent);
+  outline-offset: -1px;
+}
+
+/* PDF.js paints page canvases at full opacity; that's the right look
+   on a dark theme as long as the surrounding chrome doesn't fight
+   the page background. The container background above bleeds at the
+   page edges; the pages themselves stay white per the source PDF. */
+.h-pdf-container .pdfViewer {
+  padding: 12px 0;
+}
+
+.h-pdf-container .pdfViewer .page {
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  margin: 8px auto;
+}
+
+/* Loading overlay sits above the container until pagesinit fires.
+   Removed when state="ready". */
+.h-pdf-loading {
+  align-items: center;
+  background: var(--bg-page);
+  display: flex;
+  inset: 0;
+  justify-content: center;
+  padding: 24px;
+  position: absolute;
+  z-index: 2;
+}
+
+.h-pdf-viewer[data-state="ready"] .h-pdf-loading,
+.h-pdf-viewer[data-state="error"] .h-pdf-loading {
+  display: none;
+}
+
+/* Banner sits ABOVE the PDF container — narrow, full-width strip that
+   communicates load failure / no-match without obscuring the viewer
+   itself. Three flavors: soft (informational, e.g. no match), warn
+   (load failure), and the auth-specific variant which inherits warn. */
+.h-pdf-banner {
+  align-items: center;
+  background: var(--bg-chip);
+  border-bottom: 1px solid var(--hairline);
+  color: var(--fg-2);
+  display: flex;
+  flex: 0 0 auto;
+  font-size: 13px;
+  gap: 12px;
+  padding: 10px 14px;
+}
+
+.h-pdf-banner-soft {
+  background: rgba(127, 224, 176, 0.06);
+  color: var(--fg-2);
+}
+
+.h-pdf-banner-warn {
+  background: rgba(247, 165, 96, 0.08);
+  color: var(--fg);
+}
+
+.h-pdf-banner-action {
+  background: transparent;
+  border: 1px solid var(--hairline);
+  border-radius: 6px;
+  color: var(--fg);
+  cursor: pointer;
+  font-family: inherit;
+  font-size: 12px;
+  margin-left: auto;
+  padding: 5px 10px;
+  transition: border-color var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out);
+}
+
+.h-pdf-banner-action:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+/* The SourcePane body wraps the viewer; on the desktop pane the body
+   already has padding for the skeleton placeholder. With the real
+   viewer, we want the PDF container to span edge-to-edge inside the
+   body so the gray PDF backdrop becomes the chrome's bottom half. */
+.h-source-body:has(.h-pdf-viewer) {
+  padding: 0;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .h-pdf-viewer,
+  .h-pdf-viewer * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
+
 /* === SourcePane shell === */
 .h-source-pane {
   animation: h-source-enter var(--duration-base) var(--ease-out);

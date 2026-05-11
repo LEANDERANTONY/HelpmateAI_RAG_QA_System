@@ -39,3 +39,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# pdf.js worker — auto-copied from node_modules by scripts/copy-pdfjs-worker.mjs
+# (postinstall). Version-pinned by package-lock.json, so committing would
+# duplicate ~1MB across every dep bump.
+/public/pdf.worker.min.mjs
