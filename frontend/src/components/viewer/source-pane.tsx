@@ -19,10 +19,15 @@
 // plumbing without the actual PDF.js viewer. Stage 3b replaces the body
 // with the PDF.js mount; the chrome stays put.
 
-import { useReadMode } from "@/lib/read-mode-state";
+import { useCurrentChunk, useReadModeActions } from "@/lib/read-mode-state";
 
 export function SourcePane() {
-  const { currentChunk, exitReadMode } = useReadMode();
+  // Narrow subscriptions: re-render when the chunk changes (auto-jump on
+  // new answer in Stage 3c will mutate currentChunk in place), but the
+  // actions object stays reference-stable so the close handlers don't
+  // churn between renders.
+  const currentChunk = useCurrentChunk();
+  const { exitReadMode } = useReadModeActions();
 
   // Defensive empty frame — shouldn't happen because the reducer requires
   // a chunk on `enter`, but the type is nullable so we don't crash if a

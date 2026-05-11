@@ -20,7 +20,7 @@ import {
   stripReferencesBlock,
   uniqueCitationTargets,
 } from "@/lib/citations";
-import { ReadModeProvider, useReadMode } from "@/lib/read-mode-state";
+import { useReadModeActions, useReadModeStatus } from "@/lib/read-mode-state";
 import type {
   AnswerResult,
   DocumentBundleResponse,
@@ -1227,9 +1227,10 @@ function EvidenceCard({
   onTagClick: (turnId: string, chunkId: string) => void;
 }) {
   const strength = candidateStrength(candidate);
-  const { enterReadMode } = useReadMode();
+  // useReadModeActions only — never re-renders this card from state changes.
   // Building the ReadModeChunk at click time (not on render) keeps the
   // payload's identity stable across re-renders we don't care about.
+  const { enterReadMode } = useReadModeActions();
   const handleOpenInSource = () => {
     enterReadMode({
       chunkId: candidate.chunk_id,
@@ -2204,9 +2205,8 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
   }, []);
 
   return (
-    <ReadModeProvider>
-      <WorkspaceShellChrome>
-        <Topbar
+    <WorkspaceShellChrome>
+      <Topbar
           accountOpen={accountOpen}
           onAccountClose={() => setAccountOpen(false)}
           onAccountToggle={() => setAccountOpen((current) => !current)}
@@ -2314,17 +2314,17 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
           open={paletteOpen}
           turns={turns}
         />
-      </WorkspaceShellChrome>
-    </ReadModeProvider>
+    </WorkspaceShellChrome>
   );
 }
 
-// Lives inside the ReadModeProvider so it can read `mode` and own the global
-// ESC handler. The outer `<div className="h-shell">` was moved here, and now
-// carries `data-read-mode` so CSS can hide DocStrip / EvidenceRail / mobile
-// docbar when in read mode without those components knowing about it.
+// Owns the `data-read-mode` attribute on .h-shell and the global ESC handler.
+// Subscribes to `mode` via `useReadModeStatus()` so this is the only place
+// that re-renders on mode flips — child components reading mode use their
+// own selector subscriptions and stay independent.
 function WorkspaceShellChrome({ children }: { children: ReactNode }) {
-  const { mode, exitReadMode } = useReadMode();
+  const mode = useReadModeStatus();
+  const { exitReadMode } = useReadModeActions();
   useEffect(() => {
     if (mode !== "read") {
       return;
@@ -2352,7 +2352,10 @@ function WorkspaceShellChrome({ children }: { children: ReactNode }) {
 // `.h-frame`. CSS positions it as a grid column on desktop or as a fixed
 // full-screen overlay on mobile based on viewport.
 function SourcePaneMount() {
-  const { mode } = useReadMode();
+  // Subscribes only to `mode` so this component re-renders solely on mode
+  // flips, not on currentChunk changes. The SourcePane child reads
+  // currentChunk via its own selector when it does mount.
+  const mode = useReadModeStatus();
   if (mode !== "read") {
     return null;
   }

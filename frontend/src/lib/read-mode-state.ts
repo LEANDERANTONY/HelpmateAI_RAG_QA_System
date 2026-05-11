@@ -1,7 +1,6 @@
 "use client";
 
-// Read Mode state — context + reducer (NOT Zustand, just to stay
-// consistent with the rest of the workspace's React-only patterns).
+// Read Mode state — Zustand store with selector-based subscriptions.
 //
 // Read Mode is a layout transition the workspace enters when a user clicks
 // "Open in source" on an evidence card. While in Read Mode:
@@ -13,26 +12,31 @@
 // On mobile (<=900px) Read Mode becomes a full-screen overlay so the source
 // fills the viewport — there's no two-pane to coexist with.
 //
-// The "current chunk" is the source position the viewer should land on. It's
-// updated by:
-//   • enterReadMode(chunk) — initial entry from an evidence card
-//   • setCurrentChunk(chunk) — auto-jump when a new answer arrives, or when
-//     a citation pill is clicked while already in Read Mode
+// State shape:
+//   • mode: 'normal' | 'read'
+//   • currentChunk: the source position the viewer should land on
 //
-// Out of scope for Stage 3a:
-//   • The PDF.js viewer itself (Stage 3b)
-//   • Auto-jump wiring (Stage 3c)
-//   • Persistence across reloads — session-local only on purpose
+// Why Zustand and not context+reducer?
+// Stage 3b/3c bolts more consumers onto this slice (SourcePane, citation
+// pills nested in every answer, Topbar, EvidenceCards). Context fans out
+// re-renders to every consumer on every state change; Zustand's selectors
+// let each consumer subscribe to just the slice it needs. EvidenceCards
+// using `useReadModeActions()` never re-render from state changes at all.
+//
+// Consumer pattern:
+//   const mode = useReadModeStatus();                   // re-renders on mode flips
+//   const chunk = useCurrentChunk();                    // re-renders on chunk changes
+//   const { enterReadMode } = useReadModeActions();     // never re-renders from state
+//
+// Or use the lower-level selector form for ad-hoc slices:
+//   const fileName = useReadModeStore(s => s.currentChunk?.fileName);
+//
+// Out of scope:
+//   • Persistence across reloads — session-local on purpose (spec).
+//   • Scroll-position restoration on re-entry (spec defers to "no memory").
 
-import {
-  createContext,
-  useCallback,
-  useContext,
-  useMemo,
-  useReducer,
-  type ReactNode,
-} from "react";
-import { createElement } from "react";
+import { useShallow } from "zustand/react/shallow";
+import { create } from "zustand";
 
 export type ReadModeChunk = {
   chunkId: string;
@@ -48,79 +52,49 @@ export type ReadModeStatus = "normal" | "read";
 type ReadModeState = {
   mode: ReadModeStatus;
   currentChunk: ReadModeChunk | null;
-};
-
-type ReadModeAction =
-  | { type: "enter"; chunk: ReadModeChunk }
-  | { type: "exit" }
-  | { type: "set-chunk"; chunk: ReadModeChunk };
-
-const INITIAL_STATE: ReadModeState = {
-  mode: "normal",
-  currentChunk: null,
-};
-
-function readModeReducer(state: ReadModeState, action: ReadModeAction): ReadModeState {
-  switch (action.type) {
-    case "enter":
-      return { mode: "read", currentChunk: action.chunk };
-    case "exit":
-      // Keep currentChunk null on exit so re-entry doesn't accidentally show
-      // stale state — Stage 3a spec says no scroll restoration anyway.
-      return { mode: "normal", currentChunk: null };
-    case "set-chunk":
-      // Only mutate currentChunk when we're already in read mode. If we're
-      // in normal mode, setCurrentChunk is a no-op (the citation-pill path
-      // routes through the normal-mode flash behavior instead).
-      if (state.mode !== "read") {
-        return state;
-      }
-      return { ...state, currentChunk: action.chunk };
-    default:
-      return state;
-  }
-}
-
-type ReadModeContextValue = ReadModeState & {
   enterReadMode: (chunk: ReadModeChunk) => void;
   exitReadMode: () => void;
   setCurrentChunk: (chunk: ReadModeChunk) => void;
 };
 
-const ReadModeContext = createContext<ReadModeContextValue | null>(null);
+export const useReadModeStore = create<ReadModeState>((set) => ({
+  mode: "normal",
+  currentChunk: null,
+  enterReadMode: (chunk) => set({ mode: "read", currentChunk: chunk }),
+  // Clear currentChunk on exit so re-entry never shows stale state — spec
+  // says no scroll restoration, so there's nothing worth keeping.
+  exitReadMode: () => set({ mode: "normal", currentChunk: null }),
+  // setCurrentChunk is the auto-jump path (new answer, citation pill in
+  // read mode). It's a no-op when called from normal mode because there's
+  // no viewer to scroll — the normal-mode citation path uses the evidence
+  // rail flash instead.
+  setCurrentChunk: (chunk) =>
+    set((state) => (state.mode === "read" ? { currentChunk: chunk } : state)),
+}));
 
-export function ReadModeProvider({ children }: { children: ReactNode }) {
-  const [state, dispatch] = useReducer(readModeReducer, INITIAL_STATE);
+// Convenience selectors. These are the recommended consumption points
+// because each subscribes to exactly one slice — re-renders stay narrow.
 
-  // Stable identities so consumers' useEffect deps don't churn.
-  const enterReadMode = useCallback((chunk: ReadModeChunk) => {
-    dispatch({ type: "enter", chunk });
-  }, []);
-  const exitReadMode = useCallback(() => {
-    dispatch({ type: "exit" });
-  }, []);
-  const setCurrentChunk = useCallback((chunk: ReadModeChunk) => {
-    dispatch({ type: "set-chunk", chunk });
-  }, []);
-
-  const value = useMemo<ReadModeContextValue>(
-    () => ({
-      mode: state.mode,
-      currentChunk: state.currentChunk,
-      enterReadMode,
-      exitReadMode,
-      setCurrentChunk,
-    }),
-    [state.mode, state.currentChunk, enterReadMode, exitReadMode, setCurrentChunk],
-  );
-
-  return createElement(ReadModeContext.Provider, { value }, children);
+export function useReadModeStatus(): ReadModeStatus {
+  return useReadModeStore((state) => state.mode);
 }
 
-export function useReadMode(): ReadModeContextValue {
-  const value = useContext(ReadModeContext);
-  if (value === null) {
-    throw new Error("useReadMode must be used within a ReadModeProvider");
-  }
-  return value;
+export function useCurrentChunk(): ReadModeChunk | null {
+  return useReadModeStore((state) => state.currentChunk);
+}
+
+// useShallow keeps the actions object reference-stable across renders. Without
+// it, picking three actions in one selector would return a new object every
+// time the store updates, causing consumers to re-render unnecessarily.
+export function useReadModeActions(): Pick<
+  ReadModeState,
+  "enterReadMode" | "exitReadMode" | "setCurrentChunk"
+> {
+  return useReadModeStore(
+    useShallow((state) => ({
+      enterReadMode: state.enterReadMode,
+      exitReadMode: state.exitReadMode,
+      setCurrentChunk: state.setCurrentChunk,
+    })),
+  );
 }
