@@ -1714,6 +1714,7 @@ input[type="file"]:disabled::file-selector-button {
   --accent-tint: rgba(127, 224, 176, 0.14);
   --accent-glow: rgba(127, 224, 176, 0.40);
   --accent-fg: #04241a;
+  --accent-deep: rgba(9, 188, 138, 0.12);
   --warning: #ffcb94;
   --danger: #ff8b8b;
   --success: var(--accent);
