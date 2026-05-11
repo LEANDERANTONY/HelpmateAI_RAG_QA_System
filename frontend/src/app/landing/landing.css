@@ -867,6 +867,8 @@
 }
 .l-policy-sec .l-sec-head p {
   max-width: 760px;
+  text-align: justify;
+  hyphens: auto;
 }
 .l-policy h3 {
   margin: 40px 0 12px;
