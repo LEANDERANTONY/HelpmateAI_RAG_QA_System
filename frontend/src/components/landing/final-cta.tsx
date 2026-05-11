@@ -18,9 +18,7 @@ export function LandingFinalCTA() {
       <div className="l-final-wash" aria-hidden />
       <div className="l-final-inner">
         <h2 id="final-cta-heading">Ready when you are</h2>
-        <p>
-          Upload a document. Ask one question. See if it earns the answer.
-        </p>
+        <p>Upload a document and ask your questions</p>
         <a className="btn" href={WORKSPACE_URL}>
           Open workspace
           <span aria-hidden>→</span>
