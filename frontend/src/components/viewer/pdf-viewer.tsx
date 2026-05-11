@@ -98,6 +98,70 @@ function bannerKindFromLoadError(kind: PdfLoadError["kind"]): BannerKind {
 }
 
 const WINDOW_RADIUS = 3;
+// Small delay after textlayerrendered before we query for `.highlight`.
+// The find controller paints highlight spans asynchronously after the
+// text layer renders; without this buffer the querySelector lands too
+// early and we fall back to page-top scroll. Empirically ~50ms is
+// enough on a fast laptop, doubled to be conservative.
+const HIGHLIGHT_PAINT_DELAY_MS = 60;
+
+// Scroll a specific page's first match highlight into the centre of
+// the viewport. pdfjs's public scrollMatchIntoView requires both the
+// highlight DOM element and the controller's internal _selected state
+// to match — neither of which we have from outside. The workaround is
+// to drive page rendering via scrollPageIntoView, then wait for the
+// text layer to render and locate the .highlight span ourselves.
+//
+// Two scrolls happen in quick succession:
+//   1. scrollPageIntoView lands the user near the page top (and
+//      triggers rendering if the page wasn't in viewport)
+//   2. After textlayerrendered fires for the same page, we scroll
+//      the .highlight span to {block: 'center'} via native API
+//
+// CSS scroll-behavior:smooth on .h-pdf-container coalesces these into
+// one motion — the browser's scroll engine overrides the first
+// target with the second before either animation completes. End
+// result: the match lands centred, no visible "land at top then drift"
+// double-scroll. Falls back to page-top scroll if the highlight can't
+// be located (rare; usually means text-layer hasn't fully painted).
+function scrollToMatchOnPage(
+  state: {
+    viewer: { scrollPageIntoView: (opts: { pageNumber: number }) => void; getPageView: (idx: number) => unknown };
+    eventBus: { on: (name: string, fn: (payload: { pageNumber: number }) => void) => void; off: (name: string, fn: (payload: { pageNumber: number }) => void) => void };
+  },
+  pageIndex: number,
+) {
+  const pageNumber = pageIndex + 1;
+
+  const centerOnHighlight = (): boolean => {
+    const pageView = state.viewer.getPageView(pageIndex) as { div?: HTMLElement } | null | undefined;
+    if (!pageView?.div) return false;
+    const highlight = pageView.div.querySelector(".textLayer .highlight");
+    if (highlight instanceof HTMLElement) {
+      highlight.scrollIntoView({ block: "center", behavior: "smooth" });
+      return true;
+    }
+    return false;
+  };
+
+  // Kick the page render / scroll. If the page is already rendered
+  // (in viewport), this is effectively a no-op for the scroll engine —
+  // and the immediate centerOnHighlight check below catches that case
+  // without waiting for the event.
+  state.viewer.scrollPageIntoView({ pageNumber });
+
+  if (centerOnHighlight()) return;
+
+  // Listen once for textlayerrendered on this page, then try again
+  // after a paint buffer. The listener auto-removes itself on first
+  // matching event; if a different page renders first we ignore it.
+  const onRendered = (payload: { pageNumber: number }) => {
+    if (payload.pageNumber !== pageNumber) return;
+    state.eventBus.off("textlayerrendered", onRendered);
+    window.setTimeout(centerOnHighlight, HIGHLIGHT_PAINT_DELAY_MS);
+  };
+  state.eventBus.on("textlayerrendered", onRendered);
+}
 
 export function PdfViewer({
   documentId,
@@ -170,7 +234,7 @@ export function PdfViewer({
         const matches = pageMatches[idx];
         if (matches && matches.length > 0) {
           try {
-            state.viewer.scrollPageIntoView({ pageNumber: idx + 1 });
+            scrollToMatchOnPage(state, idx);
             // PDF.js dispatches updatefindmatchescount progressively
             // during a scan — the first dispatch with total=0 sets the
             // no-match banner, then a later dispatch with total>0 lands
