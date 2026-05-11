@@ -755,38 +755,10 @@ function EmptyHero({ isAuthenticated }: { isAuthenticated: boolean }) {
     <section className="h-hero">
       <p className="h-eyebrow">Helpmate AI</p>
       <h1>
-        Grounded answers from your own documents — with{" "}
+        Grounded answers with{" "}
         <span className="h-accent">visible evidence</span> and{" "}
-        <span className="h-accent">zero hallucinated support</span>.
+        <span className="h-accent">zero false support</span>.
       </h1>
-      <div className="h-hero-stats">
-        <div>
-          <strong>0%</strong>
-          <span>False support</span>
-        </div>
-        <div>
-          <strong>100%</strong>
-          <span>Abstention on unanswerable</span>
-        </div>
-      </div>
-      <div className="h-hero-bench">
-        <p>
-          On a <span className="mono">150-question</span> held-out suite:{" "}
-          <span className="mono">0%</span> false support,{" "}
-          <span className="mono">100%</span> abstention on unanswerable
-          questions.
-        </p>
-        <ul>
-          <li>
-            <span>Vectara</span>
-            <span className="mono">20% false support</span>
-          </li>
-          <li>
-            <span>OpenAI File Search</span>
-            <span className="mono">6.7% false support</span>
-          </li>
-        </ul>
-      </div>
       <div className="h-hero-steps">
         <p>
           <span>1</span>Upload a PDF or DOCX in the strip on the left.

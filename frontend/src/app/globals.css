@@ -2915,68 +2915,6 @@ input[type="file"]:disabled::file-selector-button {
   font-variant-numeric: tabular-nums;
 }
 
-.h-hero-bench {
-  border-bottom: 1px solid var(--hairline);
-  border-top: 1px solid var(--hairline);
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  padding: 14px 0;
-}
-
-.h-hero-bench p {
-  color: var(--fg-2);
-  font-size: 13.5px;
-  line-height: 1.6;
-  margin: 0;
-}
-
-.h-hero-bench ul {
-  display: flex;
-  flex-direction: column;
-  gap: 4px;
-  list-style: none;
-  margin: 0;
-  padding: 0;
-}
-
-.h-hero-bench li {
-  align-items: baseline;
-  color: var(--fg-3);
-  display: flex;
-  font-size: 12.5px;
-  gap: 12px;
-  justify-content: space-between;
-}
-
-.h-hero-bench li::before {
-  color: var(--fg-4);
-  content: "─";
-  flex: 0 0 auto;
-}
-
-.h-hero-bench li > span:first-of-type {
-  flex: 1;
-}
-
-.h-hero-stats {
-  border-bottom: 1px solid var(--hairline);
-  border-top: 1px solid var(--hairline);
-  display: grid;
-  gap: 24px;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  padding: 16px 0;
-}
-
-.h-hero-stats strong {
-  color: var(--accent);
-  display: block;
-  font-family: var(--font-mono);
-  font-size: 28px;
-  font-weight: 500;
-}
-
-.h-hero-stats span,
 .h-hero-steps p {
   color: var(--fg-3);
   font-size: 12px;
@@ -3000,14 +2938,15 @@ input[type="file"]:disabled::file-selector-button {
 
 .h-hero-steps span {
   align-items: center;
-  background: var(--bg-chip);
-  border: 1px solid var(--border);
+  background: var(--accent-soft);
+  border: 1px solid var(--accent-tint);
   border-radius: 50%;
-  color: var(--fg-2);
+  color: var(--accent);
   display: grid;
   flex: 0 0 22px;
   font-family: var(--font-mono);
   font-size: 11px;
+  font-weight: 600;
   height: 22px;
   place-items: center;
   width: 22px;
@@ -3466,8 +3405,7 @@ input[type="file"]:disabled::file-selector-button {
     padding: 20px 18px;
   }
 
-  .h-definition-grid,
-  .h-hero-stats {
+  .h-definition-grid {
     grid-template-columns: 1fr;
   }
 
