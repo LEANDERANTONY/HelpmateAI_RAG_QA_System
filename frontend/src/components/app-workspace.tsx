@@ -402,7 +402,7 @@ function Topbar({
       <div className="h-topbar-inner">
         <div className="h-brand">
           <div className="h-brand-mark">H</div>
-          <div className="h-wordmark">HELPMATE</div>
+          <div className="h-wordmark">Helpmate AI</div>
         </div>
         <button
           aria-label="Open search palette"
@@ -885,7 +885,7 @@ function QACard({
   return (
     <article className={`h-qa-card${streaming ? " focal-glow streaming" : ""}`} ref={cardRef}>
       <div className="h-qa-head">
-        <span className="h-qa-meta">Q · {relativeTime(turn.askedAt)}</span>
+        <span className="h-qa-meta">{relativeTime(turn.askedAt)}</span>
         <button aria-label="Question actions" type="button">
           <icons.More />
         </button>
@@ -893,7 +893,6 @@ function QACard({
       <h3>{turn.question}</h3>
       <Hairline />
       <div className="h-answer-head">
-        <span>A</span>
         {streaming ? (
           <SupportPip className="pulse">generating</SupportPip>
         ) : (
@@ -981,7 +980,6 @@ function PendingQACard({ question }: { question: string }) {
       <h3>{question}</h3>
       <Hairline />
       <div className="h-answer-head">
-        <span>A</span>
         <SupportPip className="pulse">generating</SupportPip>
       </div>
       <div className="h-answer-body">
