@@ -421,14 +421,21 @@ def get_starter_questions(
 ) -> StarterQuestionsResponse:
     document = _require_document_for_user(document_id, user)
     _save_touched_document(document, user)
-    document_style = (document.metadata or {}).get(
-        "document_style",
-        "generic_longform",
-    )
+    metadata = document.metadata or {}
+    document_style = metadata.get("document_style", "generic_longform")
+    # Doc-tuned questions written by DocumentClassifierService during indexing
+    # win when they exist. Otherwise fall back to the per-style deterministic
+    # pack so the endpoint always returns three usable items.
+    custom = metadata.get("document_starter_questions")
+    questions: list[str] = []
+    if isinstance(custom, list):
+        questions = [str(item).strip() for item in custom if isinstance(item, str) and item.strip()]
+    if len(questions) != 3:
+        questions = get_question_starters(document_style)
     return StarterQuestionsResponse(
         document_id=document_id,
         document_style=document_style,
-        questions=get_question_starters(document_style),
+        questions=questions,
     )
 
 

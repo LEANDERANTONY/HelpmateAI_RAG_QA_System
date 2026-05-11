@@ -943,7 +943,6 @@ function QACard({
   menuOpen,
   cardRef,
   onCitationClick,
-  onUseFollowup,
   onMenuToggle,
   onMenuClose,
   onCopyAnswer,
@@ -957,7 +956,6 @@ function QACard({
   menuOpen: boolean;
   cardRef: (element: HTMLElement | null) => void;
   onCitationClick: (turnId: string, chunkId: string) => void;
-  onUseFollowup: (question: string) => void;
   onMenuToggle: (turnId: string) => void;
   onMenuClose: () => void;
   onCopyAnswer: (turnId: string) => void;
@@ -974,9 +972,6 @@ function QACard({
   const partialText = streaming ? fullAnswerText.slice(0, charsTyped) : fullAnswerText;
 
   const uniqueTargets = uniqueCitationTargets(turn.answer.answer, turn.answer.evidence);
-  const followups = turn.answer.support_status === "partial"
-    ? ["Ask for the missing facts", "Show only supported clauses"]
-    : ["Summarize the cited evidence", "What should I read next?"];
 
   return (
     <article className={`h-qa-card${streaming ? " focal-glow streaming" : ""}`} ref={cardRef}>
@@ -1043,21 +1038,6 @@ function QACard({
       ) : null}
       {!streaming && turn.answer.note && turn.answer.support_status !== "supported" ? (
         <p className="h-note-card">{turn.answer.note}</p>
-      ) : null}
-      {!streaming ? (
-        <>
-          <Hairline />
-          <div className="h-followups">
-            <p>Follow-ups</p>
-            <div>
-              {followups.map((followup) => (
-                <button className="h-chip" key={followup} onClick={() => onUseFollowup(followup)} type="button">
-                  {followup}
-                </button>
-              ))}
-            </div>
-          </div>
-        </>
       ) : null}
     </article>
   );
@@ -1193,7 +1173,6 @@ function Conversation({
                   onMenuClose={onMenuClose}
                   onMenuToggle={onMenuToggle}
                   onReAsk={onReAsk}
-                  onUseFollowup={onPickStarter}
                   streaming={streamingTurnId === turn.id}
                   turn={turn}
                 />
