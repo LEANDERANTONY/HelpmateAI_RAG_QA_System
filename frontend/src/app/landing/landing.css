@@ -847,6 +847,52 @@
 }
 
 /* ================================================================
+   Policy long-form — used by /landing/privacy-policy and any future
+   long-form static page. Section head reuses .l-sec-head (centered);
+   the policy body sits below at a 640px reading column for ~70-char
+   line length.
+   ================================================================ */
+.l-policy {
+  margin: 48px auto 0;
+  width: 100%;
+  max-width: 640px;
+}
+.l-policy h3 {
+  margin: 40px 0 12px;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 20px;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+}
+.l-policy h3:first-child {
+  margin-top: 0;
+}
+.l-policy p {
+  margin: 0 0 16px;
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.7;
+  color: var(--fg-2);
+  text-wrap: pretty;
+}
+.l-policy p:last-child {
+  margin-bottom: 0;
+}
+.l-policy a {
+  color: var(--accent);
+  border-bottom: 1px solid var(--accent-tint);
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    border-bottom-color var(--duration-fast) var(--ease-out);
+}
+.l-policy a:hover {
+  color: var(--accent-strong);
+  border-bottom-color: var(--accent);
+}
+
+/* ================================================================
    Flow carousel — spec-sheet §4.5 + §5.2. Minimal token swap of
    the existing 4-step section (Phase 0 question 3 default). Tab
    pill row + grid-overlap cross-fade so all four steps share the
@@ -1305,6 +1351,19 @@
   }
   .l-claim-text p {
     font-size: 14px;
+  }
+
+  /* Policy long-form — mobile */
+  .l-policy {
+    margin-top: 32px;
+  }
+  .l-policy h3 {
+    margin: 32px 0 10px;
+    font-size: 18px;
+  }
+  .l-policy p {
+    font-size: 14px;
+    line-height: 1.65;
   }
 
   /* Flow carousel — mobile */
