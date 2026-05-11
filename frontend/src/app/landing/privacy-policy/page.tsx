@@ -8,7 +8,7 @@ export const metadata: Metadata = {
 
 export default function PrivacyPolicyPage() {
   return (
-    <section className="l-sec">
+    <section className="l-sec l-policy-sec">
       <div className="l-sec-inner narrow">
         <div className="l-sec-head">
           <div className="eyebrow">Privacy · Effective Apr 17, 2026</div>

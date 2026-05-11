@@ -1,20 +1,22 @@
 "use client";
 
 import Link from "next/link";
+import { usePathname } from "next/navigation";
 import { useEffect, useState } from "react";
 
-// Topbar — chrome.md §"Topbar". On desktop (>900px): brand left,
-// nav center, primary CTA right. On mobile (≤900px): brand left,
-// burger right; tapping the burger opens a near-opaque fixed
-// dropdown with the same links + a copy of the CTA.
+// Topbar — chrome.md §"Topbar". Two render shapes:
 //
-// State-managed in this component (rather than CSS-only :target
-// or a hidden checkbox) so we can:
-//   • lock body scroll while the menu is open
-//   • close on ESC
-//   • close on backdrop tap
-//   • close automatically when the viewport widens above 900px
-//   • close after a link click before the smooth-scroll fires
+//  1. Default (landing root + any future primary surface):
+//     brand left · nav center · primary CTA right. Mobile collapses
+//     to brand + burger; burger dropdown contains the nav + a copy
+//     of the CTA. ESC / tap-outside / resize-to-desktop all close
+//     the menu; body scroll is locked while open.
+//
+//  2. Secondary (any page whose pathname ends in /privacy-policy):
+//     brand left · "← Back" CTA right. No nav, no burger. The
+//     Back link is wired to "/" — the brand mark already does
+//     the same thing, so the explicit Back affordance is the
+//     duplicate the user wanted for primary navigation back home.
 
 const WORKSPACE_URL = "https://app.helpmateai.xyz";
 
@@ -24,9 +26,13 @@ const NAV_LINKS = [
 ] as const;
 
 export function LandingTopbar() {
+  const pathname = usePathname();
+  // endsWith() handles both the dev path (/landing/privacy-policy) and
+  // the prod path (/privacy-policy after the helpmateai.xyz host rewrite).
+  const isSecondary = pathname?.endsWith("/privacy-policy") ?? false;
+
   const [menuOpen, setMenuOpen] = useState(false);
 
-  // Body scroll lock + ESC dismiss + auto-close on resize-to-desktop.
   useEffect(() => {
     if (!menuOpen) return;
 
@@ -50,6 +56,25 @@ export function LandingTopbar() {
       window.removeEventListener("resize", onResize);
     };
   }, [menuOpen]);
+
+  if (isSecondary) {
+    return (
+      <header className="l-topbar">
+        <div className="l-topbar-inner">
+          <Link href="/" className="l-brand" aria-label="Helpmate AI home">
+            <div className="l-brand-mark" aria-hidden>
+              H
+            </div>
+            <div className="l-wordmark">Helpmate AI</div>
+          </Link>
+          <Link href="/" className="l-cta l-cta-back">
+            <span aria-hidden>←</span>
+            Back
+          </Link>
+        </div>
+      </header>
+    );
+  }
 
   const close = () => setMenuOpen(false);
 
@@ -102,8 +127,6 @@ export function LandingTopbar() {
           aria-modal="true"
           aria-label="Site menu"
           onClick={(e) => {
-            // backdrop tap dismiss — only when the click lands on
-            // the panel itself, not inside .l-mobile-menu-inner
             if (e.target === e.currentTarget) close();
           }}
         >

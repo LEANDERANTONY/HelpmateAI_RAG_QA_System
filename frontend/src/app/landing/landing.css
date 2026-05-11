@@ -849,13 +849,17 @@
 /* ================================================================
    Policy long-form — used by /landing/privacy-policy and any future
    long-form static page. Section head reuses .l-sec-head (centered);
-   the policy body sits below at a 640px reading column for ~70-char
-   line length.
+   the policy body sits below at a 760px reading column, with the
+   section head's lede paragraph widened to match via the
+   .l-policy-sec modifier on the parent section.
    ================================================================ */
 .l-policy {
   margin: 48px auto 0;
   width: 100%;
-  max-width: 640px;
+  max-width: 760px;
+}
+.l-policy-sec .l-sec-head p {
+  max-width: 760px;
 }
 .l-policy h3 {
   margin: 40px 0 12px;
