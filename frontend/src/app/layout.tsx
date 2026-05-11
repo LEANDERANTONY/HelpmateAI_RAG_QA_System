@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { DM_Sans, Geist_Mono, Space_Grotesk } from "next/font/google";
+import { Toaster } from "@/components/toaster";
 import "./globals.css";
 
 const dmSans = DM_Sans({
@@ -40,6 +41,7 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         {children}
+        <Toaster />
         <Analytics />
         <SpeedInsights />
       </body>

@@ -6,6 +6,7 @@ import type {
   SampleDocument,
   StarterQuestionsResponse,
 } from "@/lib/api-types";
+import { ApiError, isRetriableStatus } from "@/lib/api-errors";
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
@@ -43,20 +44,50 @@ async function requestAgainst<T>(
     }
   }
 
-  const response = await fetch(`${baseUrl}${path}`, {
-    ...init,
-    headers,
-  });
+  let response: Response;
+  try {
+    response = await fetch(`${baseUrl}${path}`, {
+      ...init,
+      headers,
+    });
+  } catch (fetchError) {
+    if (fetchError instanceof DOMException && fetchError.name === "AbortError") {
+      throw fetchError;
+    }
+    throw new ApiError(0, "", true);
+  }
   if (!response.ok) {
-    const fallbackMessage = `Request failed with status ${response.status}`;
-    let message = fallbackMessage;
+    let detail = "";
     try {
       const payload = (await response.json()) as { detail?: string };
-      message = payload.detail ?? fallbackMessage;
+      if (typeof payload.detail === "string") {
+        detail = payload.detail;
+      }
     } catch {
-      // Ignore JSON parsing failures and fall back to the generic message.
+      // Body wasn't JSON. Leave detail empty so callers can use a friendly fallback.
     }
-    throw new Error(message);
+    const retryAfterHeader = response.headers.get("retry-after");
+    let retryAfterSeconds: number | null = null;
+    if (retryAfterHeader) {
+      const trimmed = retryAfterHeader.trim();
+      if (/^\d+$/.test(trimmed)) {
+        retryAfterSeconds = parseInt(trimmed, 10);
+      } else {
+        const dateMs = Date.parse(trimmed);
+        if (!Number.isNaN(dateMs)) {
+          const diff = Math.ceil((dateMs - Date.now()) / 1000);
+          if (diff > 0) {
+            retryAfterSeconds = diff;
+          }
+        }
+      }
+    }
+    throw new ApiError(
+      response.status,
+      detail,
+      isRetriableStatus(response.status),
+      retryAfterSeconds,
+    );
   }
   return (await response.json()) as T;
 }

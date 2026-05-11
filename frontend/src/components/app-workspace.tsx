@@ -9,8 +9,11 @@ import type {
 } from "react";
 
 import { AuthSidebar } from "@/components/auth-sidebar";
+import { ErrorState } from "@/components/error-state";
 import { askQuestion, buildIndex, getCurrentWorkspace, getStarterQuestions, uploadDocument } from "@/lib/api";
+import { ApiError } from "@/lib/api-errors";
 import type { AuthUserSummary } from "@/lib/auth";
+import { notifyApiError, notifyError } from "@/lib/toast";
 import {
   splitCitationSegments,
   stripReferencesBlock,
@@ -326,13 +329,6 @@ function candidateKind(candidate: RetrievalCandidate) {
   );
 }
 
-function ErrorBanner({ error }: { error: string | null }) {
-  if (!error) {
-    return null;
-  }
-  return <div className="h-error">{error}</div>;
-}
-
 function Hairline() {
   return <div className="h-hairline" />;
 }
@@ -554,7 +550,9 @@ function DocStrip({
       <div>
         <p className="h-eyebrow">Status</p>
         <SupportPip className={status.className}>{status.label}</SupportPip>
-        {indexState === "error" && error ? <p className="h-note">{error}</p> : null}
+        {indexState === "error" && error ? (
+          <ErrorState title="Indexing failed" message={error} />
+        ) : null}
       </div>
 
       <Hairline />
@@ -1710,9 +1708,16 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
         setIndexState(workspace.index ? "ready" : "idle");
         setUploadState("ready");
         await refreshStarters(workspace.document.document_id);
-      } catch {
+      } catch (loadError) {
         if (!cancelled) {
           setStarters([]);
+          if (
+            loadError instanceof ApiError &&
+            loadError.status !== 404 &&
+            loadError.retriable
+          ) {
+            notifyApiError(loadError, "load", { onRetry: restoreWorkspace });
+          }
         }
       }
     }
@@ -1741,11 +1746,11 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
 
   async function handleUpload() {
     if (!selectedFile) {
-      setError("Choose a PDF or DOCX before uploading.");
+      notifyError("Pick a file first", "Choose a PDF or DOCX before uploading.");
       return;
     }
     if (!isAuthenticated) {
-      setError("Sign in with Google before uploading a document.");
+      notifyError("Sign-in required", "Sign in with Google before uploading a document.");
       return;
     }
 
@@ -1767,13 +1772,19 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
       applyDocumentBundle(finalBundle);
       await refreshStarters(finalBundle.document.document_id);
     } catch (uploadError) {
-      setUploadState(document ? "ready" : "idle");
-      setIndexState(document ? "error" : "idle");
-      setError(
-        uploadError instanceof Error
-          ? uploadError.message
-          : "Upload failed unexpectedly.",
-      );
+      const hadDocument = Boolean(document);
+      setUploadState(hadDocument ? "ready" : "idle");
+      setIndexState(hadDocument ? "error" : "idle");
+      if (hadDocument) {
+        setError("Re-index this document or upload a new one to recover.");
+      } else {
+        setError(null);
+      }
+      notifyApiError(uploadError, "upload", {
+        onRetry: () => {
+          void handleUpload();
+        },
+      });
     }
   }
 
@@ -1792,40 +1803,22 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
       await refreshStarters(bundle.document.document_id);
     } catch (reindexError) {
       setIndexState("error");
-      setError(
-        reindexError instanceof Error
-          ? reindexError.message
-          : "Indexing failed unexpectedly.",
-      );
+      setError("Re-index this document or upload a new one to recover.");
+      notifyApiError(reindexError, "index", {
+        onRetry: () => {
+          void handleReindex();
+        },
+      });
     }
   }
 
-  async function handleAsk() {
-    if (!document) {
-      setError("Upload a document first.");
-      return;
-    }
-    if (!isAuthenticated) {
-      setError("Sign in with Google before generating answers.");
-      return;
-    }
-    if (!indexRecord) {
-      setError("This document is still being prepared. Try again in a moment.");
-      return;
-    }
-    const submittedQuestion = question.trim();
-    if (!submittedQuestion) {
-      setError("Enter a question before generating an answer.");
-      return;
-    }
-
+  async function runAsk(submittedQuestion: string) {
     setError(null);
     setAnswerState("loading");
     setPendingQuestion(submittedQuestion);
-    setQuestion("");
 
     try {
-      const response = await askQuestion(document.document_id, submittedQuestion);
+      const response = await askQuestion(document!.document_id, submittedQuestion);
       const turn: QATurn = {
         id: makeTurnId(),
         question: submittedQuestion,
@@ -1847,14 +1840,37 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
       }, dur);
     } catch (answerError) {
       setAnswerState("idle");
-      setError(
-        answerError instanceof Error
-          ? answerError.message
-          : "Answer generation failed unexpectedly.",
-      );
+      notifyApiError(answerError, "ask", {
+        onRetry: () => {
+          void runAsk(submittedQuestion);
+        },
+      });
     } finally {
       setPendingQuestion(null);
     }
+  }
+
+  async function handleAsk() {
+    if (!document) {
+      notifyError("Upload a document first", "Bring in a PDF or DOCX before asking.");
+      return;
+    }
+    if (!isAuthenticated) {
+      notifyError("Sign-in required", "Sign in with Google before generating answers.");
+      return;
+    }
+    if (!indexRecord) {
+      notifyError("Indexing in progress", "This document is still being prepared. Try again in a moment.");
+      return;
+    }
+    const submittedQuestion = question.trim();
+    if (!submittedQuestion) {
+      notifyError("Type a question", "Enter a question before generating an answer.");
+      return;
+    }
+
+    setQuestion("");
+    await runAsk(submittedQuestion);
   }
 
   function clearFlashLater() {
@@ -2040,7 +2056,6 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
           />
         ))}
       </div>
-      <ErrorBanner error={indexState === "error" ? null : error} />
       <CommandPalette
         documentLoaded={Boolean(document)}
         indexState={indexState}
