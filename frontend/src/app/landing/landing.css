@@ -152,6 +152,13 @@
     0 0 32px var(--accent-glow);
 }
 
+/* Minimal-chrome variant (privacy policy etc.) — without a center
+   .l-nav to act as a margin-auto spacer, the CTA needs its own
+   push to land on the right side of the topbar. */
+.l-cta-back {
+  margin-left: auto;
+}
+
 /* ================================================================
    Burger + mobile menu — chrome.md §"Topbar — mobile (≤ 900px)".
    The burger button is hidden at desktop and replaces the topbar
