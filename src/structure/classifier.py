@@ -263,4 +263,12 @@ class DocumentClassifierService:
         document.metadata["document_style_confidence"] = result.confidence
         document.metadata["document_style_source"] = result.source
         document.metadata["document_starter_questions"] = list(result.starter_questions)
+        logger.info(
+            "Document classifier finished: style=%s confidence=%.2f source=%s "
+            "starter_questions=%d",
+            result.style,
+            result.confidence,
+            result.source,
+            len(result.starter_questions),
+        )
         return result
