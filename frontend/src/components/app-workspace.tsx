@@ -10,6 +10,7 @@ import type {
 
 import { AuthSidebar } from "@/components/auth-sidebar";
 import { ErrorState } from "@/components/error-state";
+import { SourcePane } from "@/components/viewer/source-pane";
 import { askQuestion, buildIndex, getCurrentWorkspace, getStarterQuestions, uploadDocument } from "@/lib/api";
 import { ApiError } from "@/lib/api-errors";
 import type { AuthUserSummary } from "@/lib/auth";
@@ -19,6 +20,7 @@ import {
   stripReferencesBlock,
   uniqueCitationTargets,
 } from "@/lib/citations";
+import { ReadModeProvider, useReadMode } from "@/lib/read-mode-state";
 import type {
   AnswerResult,
   DocumentBundleResponse,
@@ -1225,6 +1227,18 @@ function EvidenceCard({
   onTagClick: (turnId: string, chunkId: string) => void;
 }) {
   const strength = candidateStrength(candidate);
+  const { enterReadMode } = useReadMode();
+  // Building the ReadModeChunk at click time (not on render) keeps the
+  // payload's identity stable across re-renders we don't care about.
+  const handleOpenInSource = () => {
+    enterReadMode({
+      chunkId: candidate.chunk_id,
+      pageLabel: metadataText(candidate, "page_label"),
+      chunkText: candidate.text,
+      documentId: metadataText(candidate, "document_id"),
+      fileName,
+    });
+  };
   return (
     <article
       className={`h-evi-card ${highlighted ? "focal-glow active" : ""}`}
@@ -1244,12 +1258,17 @@ function EvidenceCard({
       <p className="h-evi-preview">
         {renderHighlightedText(candidate.text, metadataHighlightTerms(candidate))}
       </p>
-      <div className="h-source-row">
+      <button
+        type="button"
+        className="h-source-row"
+        onClick={handleOpenInSource}
+        aria-label={`Open ${fileName} in source viewer`}
+      >
         <span aria-hidden="true" className="h-source-arrow">↗</span>
         <span>Open in source</span>
         <span className="h-source-dot" aria-hidden="true">·</span>
         <strong>{fileName}</strong>
-      </div>
+      </button>
       {debugOpen ? (
         <div className="h-debug-strip">
           <span><b>Score</b> {candidate.fused_score.toFixed(3)}</span>
@@ -2185,110 +2204,157 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
   }, []);
 
   return (
-    <div className="h-shell">
-      <Topbar
-        accountOpen={accountOpen}
-        onAccountClose={() => setAccountOpen(false)}
-        onAccountToggle={() => setAccountOpen((current) => !current)}
-        onPaletteOpen={() => setPaletteOpen(true)}
-        user={user}
-      />
-      <div className="h-mobile-docbar">
-        <span>
-          <icons.Doc />
-          {document?.file_name ?? "No document loaded"}
-        </span>
-        <SupportPip className={status.className}>{status.label}</SupportPip>
-      </div>
-      <div className="h-frame">
-        <DocStrip
-          confirmReindex={confirmReindex}
-          document={document}
-          error={error}
-          indexRecord={indexRecord}
-          indexState={indexState}
-          isAuthenticated={isAuthenticated}
-          lastAnswer={answer}
-          onFileChange={handleFileChange}
-          onReindex={handleReindex}
-          onSetConfirmReindex={setConfirmReindex}
-          onToggleReplace={() => setReplaceOpen((current) => !current)}
-          onUpload={handleUpload}
-          replaceOpen={replaceOpen}
-          selectedFile={selectedFile}
-          uploadState={uploadState}
+    <ReadModeProvider>
+      <WorkspaceShellChrome>
+        <Topbar
+          accountOpen={accountOpen}
+          onAccountClose={() => setAccountOpen(false)}
+          onAccountToggle={() => setAccountOpen((current) => !current)}
+          onPaletteOpen={() => setPaletteOpen(true)}
+          user={user}
         />
-        <Conversation
-          answerState={answerState}
-          askFocused={askFocused}
-          document={document}
-          highlightedCitationKey={highlightedCitationKey}
-          indexRecord={indexRecord}
-          indexState={indexState}
-          isAuthenticated={isAuthenticated}
-          onAsk={handleAsk}
-          onCitationClick={handleCitationClick}
-          onCopyAnswer={handleCopyAnswer}
-          onCopyCitations={handleCopyCitations}
-          onDeleteTurn={handleDeleteTurn}
-          onFocusChange={setAskFocused}
-          onMenuClose={handleMenuClose}
-          onMenuToggle={handleMenuToggle}
-          onPickStarter={setQuestion}
-          onQuestionChange={setQuestion}
-          onReAsk={handleReAskTurn}
-          openMenuTurnId={openMenuTurnId}
-          pendingQuestion={pendingQuestion}
-          question={question}
-          registerTurnRef={registerTurnRef}
-          starters={starters}
-          streamingTurnId={streamingTurnId}
-          turns={turns}
-        />
-        <EvidenceRail
-          debugEnabled={debugPanelEnabled}
-          debugOpen={debugOpen}
-          document={document}
-          highlightedChunkId={highlightedChunkId}
-          highlightedCitationKey={highlightedCitationKey}
-          onDebugToggle={() => setDebugOpen((current) => !current)}
-          onEvidenceTagClick={handleCitationClick}
-          pending={evidencePending}
-          registerEvidenceRef={registerEvidenceRef}
-          turns={turns}
-        />
-      </div>
-      <div className="h-mobile-thread-evidence">
-        {turns.map((turn) => (
-          <MobileEvidence
+        <div className="h-mobile-docbar">
+          <span>
+            <icons.Doc />
+            {document?.file_name ?? "No document loaded"}
+          </span>
+          <SupportPip className={status.className}>{status.label}</SupportPip>
+        </div>
+        <div className="h-frame">
+          <DocStrip
+            confirmReindex={confirmReindex}
+            document={document}
+            error={error}
+            indexRecord={indexRecord}
+            indexState={indexState}
+            isAuthenticated={isAuthenticated}
+            lastAnswer={answer}
+            onFileChange={handleFileChange}
+            onReindex={handleReindex}
+            onSetConfirmReindex={setConfirmReindex}
+            onToggleReplace={() => setReplaceOpen((current) => !current)}
+            onUpload={handleUpload}
+            replaceOpen={replaceOpen}
+            selectedFile={selectedFile}
+            uploadState={uploadState}
+          />
+          <Conversation
+            answerState={answerState}
+            askFocused={askFocused}
+            document={document}
+            highlightedCitationKey={highlightedCitationKey}
+            indexRecord={indexRecord}
+            indexState={indexState}
+            isAuthenticated={isAuthenticated}
+            onAsk={handleAsk}
+            onCitationClick={handleCitationClick}
+            onCopyAnswer={handleCopyAnswer}
+            onCopyCitations={handleCopyCitations}
+            onDeleteTurn={handleDeleteTurn}
+            onFocusChange={setAskFocused}
+            onMenuClose={handleMenuClose}
+            onMenuToggle={handleMenuToggle}
+            onPickStarter={setQuestion}
+            onQuestionChange={setQuestion}
+            onReAsk={handleReAskTurn}
+            openMenuTurnId={openMenuTurnId}
+            pendingQuestion={pendingQuestion}
+            question={question}
+            registerTurnRef={registerTurnRef}
+            starters={starters}
+            streamingTurnId={streamingTurnId}
+            turns={turns}
+          />
+          <EvidenceRail
+            debugEnabled={debugPanelEnabled}
             debugOpen={debugOpen}
-            fileName={document?.file_name ?? "Document"}
+            document={document}
             highlightedChunkId={highlightedChunkId}
             highlightedCitationKey={highlightedCitationKey}
-            key={turn.id}
+            onDebugToggle={() => setDebugOpen((current) => !current)}
             onEvidenceTagClick={handleCitationClick}
-            onToggle={() =>
-              setMobileEvidenceOpen((current) => ({
-                ...current,
-                [turn.id]: !current[turn.id],
-              }))
-            }
-            open={Boolean(mobileEvidenceOpen[turn.id])}
-            turn={turn}
+            pending={evidencePending}
+            registerEvidenceRef={registerEvidenceRef}
+            turns={turns}
           />
-        ))}
-      </div>
-      <CommandPalette
-        documentLoaded={Boolean(document)}
-        indexState={indexState}
-        isAuthenticated={isAuthenticated}
-        onAction={handlePaletteAction}
-        onClose={() => setPaletteOpen(false)}
-        onSelectSection={handlePaletteSelectSection}
-        onSelectTurn={handlePaletteSelectTurn}
-        open={paletteOpen}
-        turns={turns}
-      />
+          {/* SourcePaneMount is null in normal mode and renders the read-mode
+              pane when entered. Mounting it inside .h-frame (rather than as
+              a sibling) lets the grid claim the column on desktop; on mobile
+              CSS lifts it to a full-screen overlay via position: fixed. */}
+          <SourcePaneMount />
+        </div>
+        <div className="h-mobile-thread-evidence">
+          {turns.map((turn) => (
+            <MobileEvidence
+              debugOpen={debugOpen}
+              fileName={document?.file_name ?? "Document"}
+              highlightedChunkId={highlightedChunkId}
+              highlightedCitationKey={highlightedCitationKey}
+              key={turn.id}
+              onEvidenceTagClick={handleCitationClick}
+              onToggle={() =>
+                setMobileEvidenceOpen((current) => ({
+                  ...current,
+                  [turn.id]: !current[turn.id],
+                }))
+              }
+              open={Boolean(mobileEvidenceOpen[turn.id])}
+              turn={turn}
+            />
+          ))}
+        </div>
+        <CommandPalette
+          documentLoaded={Boolean(document)}
+          indexState={indexState}
+          isAuthenticated={isAuthenticated}
+          onAction={handlePaletteAction}
+          onClose={() => setPaletteOpen(false)}
+          onSelectSection={handlePaletteSelectSection}
+          onSelectTurn={handlePaletteSelectTurn}
+          open={paletteOpen}
+          turns={turns}
+        />
+      </WorkspaceShellChrome>
+    </ReadModeProvider>
+  );
+}
+
+// Lives inside the ReadModeProvider so it can read `mode` and own the global
+// ESC handler. The outer `<div className="h-shell">` was moved here, and now
+// carries `data-read-mode` so CSS can hide DocStrip / EvidenceRail / mobile
+// docbar when in read mode without those components knowing about it.
+function WorkspaceShellChrome({ children }: { children: ReactNode }) {
+  const { mode, exitReadMode } = useReadMode();
+  useEffect(() => {
+    if (mode !== "read") {
+      return;
+    }
+    function onKeyDown(event: KeyboardEvent) {
+      if (event.key === "Escape") {
+        // stopPropagation so we don't also close the command palette if it
+        // happens to be open — Read Mode exit takes priority.
+        event.stopPropagation();
+        exitReadMode();
+      }
+    }
+    window.document.addEventListener("keydown", onKeyDown);
+    return () => window.document.removeEventListener("keydown", onKeyDown);
+  }, [mode, exitReadMode]);
+
+  return (
+    <div className="h-shell" data-read-mode={mode}>
+      {children}
     </div>
   );
+}
+
+// Renders nothing in normal mode. In read mode, mounts the SourcePane inside
+// `.h-frame`. CSS positions it as a grid column on desktop or as a fixed
+// full-screen overlay on mobile based on viewport.
+function SourcePaneMount() {
+  const { mode } = useReadMode();
+  if (mode !== "read") {
+    return null;
+  }
+  return <SourcePane />;
 }

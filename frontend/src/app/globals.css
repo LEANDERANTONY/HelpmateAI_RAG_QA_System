@@ -3754,3 +3754,261 @@ input[type="file"]:disabled::file-selector-button {
   border: 1px solid rgba(160, 178, 218, 0.18);
   color: #8a93a8;
 }
+
+/* ============================================================ */
+/*  READ MODE                                                   */
+/*  Toggled by data-read-mode="read" on .h-shell. Hides the     */
+/*  doc strip + evidence rail, replaces the 3-col grid with a   */
+/*  2-pane chat/source layout. On mobile (<=900px) the source   */
+/*  pane lifts to a fixed full-screen overlay.                  */
+/* ============================================================ */
+
+/* "Open in source" affordance — was a div, now a button. Reset
+   default button chrome but otherwise keep the previous look. */
+.h-source-row {
+  background: transparent;
+  border-left: 0;
+  border-right: 0;
+  border-bottom: 0;
+  font-family: var(--font-mono);
+  text-align: left;
+  width: 100%;
+}
+
+/* === Desktop two-pane === */
+@media (min-width: 901px) {
+  .h-shell[data-read-mode="read"] .h-frame {
+    /* Chat takes the rest, source claims min(700px, 55%). At common
+       breakpoints (1280-1920) this gives roughly the 45/55 split the
+       spec asks for. The min-700 floor protects the viewer at the
+       narrowest desktop widths. */
+    grid-template-columns: minmax(0, 1fr) minmax(700px, 55%);
+  }
+  .h-shell[data-read-mode="read"] .h-doc,
+  .h-shell[data-read-mode="read"] .h-evi {
+    display: none;
+  }
+}
+
+/* === Mobile overlay (<=900px) === */
+@media (max-width: 900px) {
+  .h-shell[data-read-mode="read"] .h-source-pane {
+    position: fixed;
+    inset: 0;
+    z-index: 100;
+  }
+  /* Hide the mobile evidence accordions and the mobile doc bar while
+     Read Mode is the foreground experience. They reappear on exit. */
+  .h-shell[data-read-mode="read"] .h-mobile-thread-evidence,
+  .h-shell[data-read-mode="read"] .h-mobile-docbar {
+    display: none;
+  }
+}
+
+/* === SourcePane shell === */
+.h-source-pane {
+  animation: h-source-enter var(--duration-base) var(--ease-out);
+  background: var(--bg-page);
+  border-left: 1px solid var(--hairline);
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+  min-width: 0;
+  overflow: hidden;
+}
+
+@media (max-width: 900px) {
+  .h-source-pane {
+    animation: h-source-enter-mobile var(--duration-base) var(--ease-out);
+    border-left: 0;
+  }
+}
+
+.h-source-chrome {
+  align-items: center;
+  background: var(--bg-page);
+  border-bottom: 1px solid var(--hairline);
+  display: flex;
+  flex: 0 0 auto;
+  gap: 12px;
+  padding: 14px 18px;
+}
+
+.h-source-back {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  color: var(--fg);
+  cursor: pointer;
+  display: none; /* desktop variant is shown via .h-source-meta */
+  font-family: inherit;
+  font-size: 13px;
+  font-weight: 500;
+  gap: 4px;
+  padding: 6px 4px 6px 0;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.h-source-back:hover {
+  color: var(--accent);
+}
+
+@media (max-width: 900px) {
+  .h-source-back {
+    display: inline-flex;
+  }
+}
+
+.h-source-meta {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+
+@media (max-width: 900px) {
+  .h-source-meta {
+    display: none;
+  }
+}
+
+.h-source-eyebrow {
+  color: var(--fg-4);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.h-source-filename {
+  color: var(--fg);
+  font-size: 14px;
+  font-weight: 600;
+  max-width: 360px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.h-source-chrome-spacer {
+  flex: 1;
+}
+
+.h-source-page-pill {
+  background: var(--bg-chip);
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  color: var(--fg-2);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  padding: 4px 10px;
+  white-space: nowrap;
+}
+
+.h-source-close {
+  align-items: center;
+  background: transparent;
+  border: 1px solid var(--hairline);
+  border-radius: 8px;
+  color: var(--fg-3);
+  cursor: pointer;
+  display: inline-flex;
+  height: 30px;
+  justify-content: center;
+  padding: 0;
+  transition: color var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out);
+  width: 30px;
+}
+
+.h-source-close:hover {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.h-source-body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  min-height: 0;
+  overflow: auto;
+  padding: 24px;
+}
+
+.h-source-skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin: 12px 0 24px;
+  max-width: 600px;
+}
+
+.h-source-skeleton-bar {
+  background: rgba(255, 255, 255, 0.04);
+  border-radius: 4px;
+  height: 16px;
+}
+
+.h-source-skeleton-label {
+  color: var(--fg-3);
+  font-family: var(--font-mono);
+  font-size: 12px;
+  margin-top: 8px;
+  text-align: center;
+}
+
+.h-source-debug {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--hairline);
+  border-radius: 8px;
+  color: var(--fg-3);
+  display: grid;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  gap: 6px 10px;
+  grid-template-columns: 90px 1fr;
+  margin-top: 16px;
+  padding: 12px 14px;
+}
+
+.h-source-debug code {
+  background: transparent;
+  color: var(--fg-2);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  padding: 0;
+  word-break: break-all;
+}
+
+/* Slide-fade in for the pane. 200ms matches the spec; var keeps it
+   in sync with the rest of the workspace's motion language. */
+@keyframes h-source-enter {
+  from {
+    opacity: 0;
+    transform: translateX(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes h-source-enter-mobile {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .h-source-pane,
+  .h-source-pane * {
+    animation: none !important;
+    transition: none !important;
+  }
+}
