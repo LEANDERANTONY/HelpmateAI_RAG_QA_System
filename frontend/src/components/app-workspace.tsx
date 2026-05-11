@@ -356,13 +356,39 @@ function AccountTopbar({
   user,
   open,
   onToggle,
+  onClose,
 }: {
   user: AuthUserSummary | null;
   open: boolean;
   onToggle: () => void;
+  onClose: () => void;
 }) {
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function onDocPointer(event: globalThis.MouseEvent) {
+      if (wrapRef.current && !wrapRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    }
+    function onKey(event: globalThis.KeyboardEvent) {
+      if (event.key === "Escape") {
+        event.stopPropagation();
+        onClose();
+      }
+    }
+    const doc = window.document;
+    doc.addEventListener("mousedown", onDocPointer);
+    doc.addEventListener("keydown", onKey, true);
+    return () => {
+      doc.removeEventListener("mousedown", onDocPointer);
+      doc.removeEventListener("keydown", onKey, true);
+    };
+  }, [onClose, open]);
+
   return (
-    <div className="h-account-wrap">
+    <div className="h-account-wrap" ref={wrapRef}>
       <button
         aria-expanded={open}
         className="h-account"
@@ -386,11 +412,13 @@ function Topbar({
   user,
   accountOpen,
   onAccountToggle,
+  onAccountClose,
   onPaletteOpen,
 }: {
   user: AuthUserSummary | null;
   accountOpen: boolean;
   onAccountToggle: () => void;
+  onAccountClose: () => void;
   onPaletteOpen: () => void;
 }) {
   return (
@@ -413,7 +441,12 @@ function Topbar({
           <kbd>⌘K</kbd>
         </button>
         <div className="h-spacer" />
-        <AccountTopbar user={user} open={accountOpen} onToggle={onAccountToggle} />
+        <AccountTopbar
+          onClose={onAccountClose}
+          onToggle={onAccountToggle}
+          open={accountOpen}
+          user={user}
+        />
       </div>
     </header>
   );
@@ -2212,6 +2245,7 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
     <div className="h-shell">
       <Topbar
         accountOpen={accountOpen}
+        onAccountClose={() => setAccountOpen(false)}
         onAccountToggle={() => setAccountOpen((current) => !current)}
         onPaletteOpen={() => setPaletteOpen(true)}
         user={user}
