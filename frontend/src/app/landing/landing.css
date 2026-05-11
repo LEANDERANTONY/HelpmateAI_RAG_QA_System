@@ -90,19 +90,12 @@
   gap: 8px;
 }
 .l-brand-mark {
-  width: 22px;
-  height: 22px;
+  width: 28px;
+  height: 28px;
   border-radius: 6px;
-  background: linear-gradient(135deg, var(--accent) 0%, #4ec594 100%);
-  display: grid;
-  place-items: center;
-  color: var(--accent-fg);
-  font-family: var(--font-display);
-  font-weight: 700;
-  font-size: 13px;
-  box-shadow:
-    0 0 18px rgba(127, 224, 176, 0.35),
-    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+  display: block;
+  object-fit: contain;
+  box-shadow: 0 0 20px rgba(127, 224, 176, 0.25);
 }
 .l-wordmark {
   font-family: var(--font-display);

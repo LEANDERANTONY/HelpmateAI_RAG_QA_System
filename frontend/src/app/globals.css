@@ -1852,17 +1852,11 @@ input[type="file"]:disabled::file-selector-button {
 }
 
 .h-brand-mark {
-  align-items: center;
-  background: linear-gradient(135deg, var(--accent), #4ec594);
   border-radius: 6px;
-  box-shadow: 0 0 18px rgba(127, 224, 176, 0.35), inset 0 1px 0 rgba(255, 255, 255, 0.32);
-  color: var(--accent-fg);
-  display: grid;
-  font-family: var(--font-display);
-  font-size: 13px;
-  font-weight: 700;
+  box-shadow: 0 0 18px rgba(127, 224, 176, 0.28);
+  display: block;
   height: 22px;
-  place-items: center;
+  object-fit: contain;
   width: 22px;
 }
 
@@ -1947,6 +1941,13 @@ input[type="file"]:disabled::file-selector-button {
   color: var(--fg);
 }
 
+.h-avatar.h-avatar-logo {
+  background: none;
+  border: 0;
+  box-shadow: 0 4px 12px rgba(127, 224, 176, 0.18);
+  object-fit: contain;
+}
+
 .h-avatar {
   align-items: center;
   background: linear-gradient(135deg, var(--accent), #4ec594);
@@ -2021,6 +2022,12 @@ input[type="file"]:disabled::file-selector-button {
   height: 30px;
   justify-content: center;
   width: 30px;
+}
+
+.h-account-popover .auth-inline-avatar.auth-inline-avatar-logo {
+  background: none;
+  box-shadow: 0 6px 14px rgba(127, 224, 176, 0.18);
+  object-fit: contain;
 }
 
 .h-account-popover .auth-inline-copy {

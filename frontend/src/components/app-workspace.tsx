@@ -395,7 +395,18 @@ function AccountTopbar({
         onClick={onToggle}
         type="button"
       >
-        <span className="h-avatar">{accountInitial(user)}</span>
+        {user ? (
+          <span className="h-avatar">{accountInitial(user)}</span>
+        ) : (
+          <img
+            alt=""
+            aria-hidden="true"
+            className="h-avatar h-avatar-logo"
+            height={26}
+            src="/brand/helpmate-icon.svg"
+            width={26}
+          />
+        )}
         <span className="h-account-email">{accountLabel(user)}</span>
         <icons.Chevron size={12} />
       </button>
@@ -425,7 +436,14 @@ function Topbar({
     <header className="h-topbar">
       <div className="h-topbar-inner">
         <div className="h-brand">
-          <div className="h-brand-mark">H</div>
+          <img
+            alt=""
+            aria-hidden="true"
+            className="h-brand-mark"
+            height={22}
+            src="/brand/helpmate-icon.svg"
+            width={22}
+          />
           <div className="h-wordmark">Helpmate AI</div>
         </div>
         <button

@@ -58,9 +58,14 @@ export function LandingTopbar() {
       <header className="l-topbar">
         <div className="l-topbar-inner">
           <Link href="/" className="l-brand" aria-label="Helpmate AI home">
-            <div className="l-brand-mark" aria-hidden>
-              H
-            </div>
+            <img
+              alt=""
+              aria-hidden
+              className="l-brand-mark"
+              height={28}
+              src="/brand/helpmate-icon.svg"
+              width={28}
+            />
             <div className="l-wordmark">Helpmate AI</div>
           </Link>
           <nav className="l-nav" aria-label="Primary">

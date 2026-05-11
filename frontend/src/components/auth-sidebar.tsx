@@ -90,7 +90,18 @@ export function AuthSidebar({ user }: AuthSidebarProps) {
     <section className="auth-inline-panel">
       <p className="h-eyebrow">Account</p>
       <div className="auth-inline-identity">
-        <span className="auth-inline-avatar">{accountInitial}</span>
+        {user ? (
+          <span className="auth-inline-avatar">{accountInitial}</span>
+        ) : (
+          <img
+            alt=""
+            aria-hidden="true"
+            className="auth-inline-avatar auth-inline-avatar-logo"
+            height={30}
+            src="/brand/helpmate-icon.svg"
+            width={30}
+          />
+        )}
         <h2>{accountLabel}</h2>
       </div>
       <p className="auth-inline-copy">
