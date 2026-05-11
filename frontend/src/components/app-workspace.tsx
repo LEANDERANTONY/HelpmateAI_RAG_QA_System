@@ -13,7 +13,7 @@ import { ErrorState } from "@/components/error-state";
 import { askQuestion, buildIndex, getCurrentWorkspace, getStarterQuestions, uploadDocument } from "@/lib/api";
 import { ApiError } from "@/lib/api-errors";
 import type { AuthUserSummary } from "@/lib/auth";
-import { notifyApiError, notifyError } from "@/lib/toast";
+import { notifyApiError, notifyError, notifySuccess } from "@/lib/toast";
 import {
   splitCitationSegments,
   stripReferencesBlock,
@@ -849,22 +849,114 @@ function AnswerBody({
   );
 }
 
+function TurnActionsMenu({
+  open,
+  onToggle,
+  onClose,
+  onCopyAnswer,
+  onCopyCitations,
+  onReAsk,
+  onDelete,
+}: {
+  open: boolean;
+  onToggle: () => void;
+  onClose: () => void;
+  onCopyAnswer: () => void;
+  onCopyCitations: () => void;
+  onReAsk: () => void;
+  onDelete: () => void;
+}) {
+  const wrapRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    if (!open) return;
+    function onDocPointer(event: globalThis.MouseEvent) {
+      if (wrapRef.current && !wrapRef.current.contains(event.target as Node)) {
+        onClose();
+      }
+    }
+    function onKey(event: globalThis.KeyboardEvent) {
+      if (event.key === "Escape") {
+        event.stopPropagation();
+        onClose();
+      }
+    }
+    const doc = window.document;
+    doc.addEventListener("mousedown", onDocPointer);
+    doc.addEventListener("keydown", onKey, true);
+    return () => {
+      doc.removeEventListener("mousedown", onDocPointer);
+      doc.removeEventListener("keydown", onKey, true);
+    };
+  }, [onClose, open]);
+
+  return (
+    <div className="h-turn-menu" ref={wrapRef}>
+      <button
+        aria-expanded={open}
+        aria-haspopup="menu"
+        aria-label="Question actions"
+        className="h-turn-menu-trigger"
+        onClick={onToggle}
+        type="button"
+      >
+        <icons.More />
+      </button>
+      {open ? (
+        <div className="h-turn-menu-panel" role="menu">
+          <button onClick={onCopyAnswer} role="menuitem" type="button">
+            Copy answer
+          </button>
+          <button onClick={onCopyCitations} role="menuitem" type="button">
+            Copy citations
+          </button>
+          <button onClick={onReAsk} role="menuitem" type="button">
+            Re-ask this question
+          </button>
+          <button
+            className="h-turn-menu-danger"
+            onClick={onDelete}
+            role="menuitem"
+            type="button"
+          >
+            Delete turn
+          </button>
+        </div>
+      ) : null}
+    </div>
+  );
+}
+
 function QACard({
   turn,
   streaming,
   highlightedCitationKey,
+  menuOpen,
   cardRef,
   onCitationClick,
   onUseFollowup,
   onReplayStream,
+  onMenuToggle,
+  onMenuClose,
+  onCopyAnswer,
+  onCopyCitations,
+  onReAsk,
+  onDeleteTurn,
 }: {
   turn: QATurn;
   streaming: boolean;
   highlightedCitationKey: string | null;
+  menuOpen: boolean;
   cardRef: (element: HTMLElement | null) => void;
   onCitationClick: (turnId: string, chunkId: string) => void;
   onUseFollowup: (question: string) => void;
   onReplayStream: (turnId: string) => void;
+  onMenuToggle: (turnId: string) => void;
+  onMenuClose: () => void;
+  onCopyAnswer: (turnId: string) => void;
+  onCopyCitations: (turnId: string) => void;
+  onReAsk: (turnId: string) => void;
+  onDeleteTurn: (turnId: string) => void;
 }) {
   const fullAnswerText = useMemo(
     () => stripReferencesBlock(turn.answer.answer),
@@ -883,9 +975,15 @@ function QACard({
     <article className={`h-qa-card${streaming ? " focal-glow streaming" : ""}`} ref={cardRef}>
       <div className="h-qa-head">
         <span className="h-qa-meta">{relativeTime(turn.askedAt)}</span>
-        <button aria-label="Question actions" type="button">
-          <icons.More />
-        </button>
+        <TurnActionsMenu
+          onClose={onMenuClose}
+          onCopyAnswer={() => onCopyAnswer(turn.id)}
+          onCopyCitations={() => onCopyCitations(turn.id)}
+          onDelete={() => onDeleteTurn(turn.id)}
+          onReAsk={() => onReAsk(turn.id)}
+          onToggle={() => onMenuToggle(turn.id)}
+          open={menuOpen}
+        />
       </div>
       <h3>{turn.question}</h3>
       <Hairline />
@@ -998,6 +1096,7 @@ function Conversation({
   askFocused,
   highlightedCitationKey,
   streamingTurnId,
+  openMenuTurnId,
   onQuestionChange,
   onAsk,
   onFocusChange,
@@ -1005,6 +1104,12 @@ function Conversation({
   onCitationClick,
   onReplayStream,
   registerTurnRef,
+  onMenuToggle,
+  onMenuClose,
+  onCopyAnswer,
+  onCopyCitations,
+  onReAsk,
+  onDeleteTurn,
 }: {
   document: DocumentRecord | null;
   indexRecord: IndexRecord | null;
@@ -1018,6 +1123,7 @@ function Conversation({
   askFocused: boolean;
   highlightedCitationKey: string | null;
   streamingTurnId: string | null;
+  openMenuTurnId: string | null;
   onQuestionChange: (value: string) => void;
   onAsk: () => void;
   onFocusChange: (value: boolean) => void;
@@ -1025,6 +1131,12 @@ function Conversation({
   onCitationClick: (turnId: string, chunkId: string) => void;
   onReplayStream: (turnId: string) => void;
   registerTurnRef: (turnId: string, element: HTMLElement | null) => void;
+  onMenuToggle: (turnId: string) => void;
+  onMenuClose: () => void;
+  onCopyAnswer: (turnId: string) => void;
+  onCopyCitations: (turnId: string) => void;
+  onReAsk: (turnId: string) => void;
+  onDeleteTurn: (turnId: string) => void;
 }) {
   const canAsk = Boolean(isAuthenticated && document && indexRecord && indexState !== "loading" && indexState !== "error");
   const placeholder = !document
@@ -1077,7 +1189,14 @@ function Conversation({
                   cardRef={(element) => registerTurnRef(turn.id, element)}
                   highlightedCitationKey={highlightedCitationKey}
                   key={turn.id}
+                  menuOpen={openMenuTurnId === turn.id}
                   onCitationClick={onCitationClick}
+                  onCopyAnswer={onCopyAnswer}
+                  onCopyCitations={onCopyCitations}
+                  onDeleteTurn={onDeleteTurn}
+                  onMenuClose={onMenuClose}
+                  onMenuToggle={onMenuToggle}
+                  onReAsk={onReAsk}
                   onReplayStream={onReplayStream}
                   onUseFollowup={onPickStarter}
                   streaming={streamingTurnId === turn.id}
@@ -1649,6 +1768,7 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
   const [highlightedCitationKey, setHighlightedCitationKey] = useState<string | null>(null);
   const [streamingTurnId, setStreamingTurnId] = useState<string | null>(null);
   const [paletteOpen, setPaletteOpen] = useState(false);
+  const [openMenuTurnId, setOpenMenuTurnId] = useState<string | null>(null);
   const [mobileEvidenceOpen, setMobileEvidenceOpen] = useState<Record<string, boolean>>({});
   const evidenceRefs = useRef<Record<string, HTMLElement | null>>({});
   const turnRefs = useRef<Record<string, HTMLElement | null>>({});
@@ -1904,6 +2024,126 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
     turnRefs.current[turnId] = element;
   }
 
+  function handleMenuToggle(turnId: string) {
+    setOpenMenuTurnId((current) => (current === turnId ? null : turnId));
+  }
+
+  function handleMenuClose() {
+    setOpenMenuTurnId(null);
+  }
+
+  async function copyToClipboard(value: string): Promise<boolean> {
+    if (!value) {
+      return false;
+    }
+    try {
+      if (navigator.clipboard?.writeText) {
+        await navigator.clipboard.writeText(value);
+        return true;
+      }
+    } catch {
+      // fall through to the legacy path below
+    }
+    try {
+      const textarea = window.document.createElement("textarea");
+      textarea.value = value;
+      textarea.setAttribute("readonly", "");
+      textarea.style.position = "absolute";
+      textarea.style.left = "-9999px";
+      window.document.body.appendChild(textarea);
+      textarea.select();
+      const ok = window.document.execCommand("copy");
+      window.document.body.removeChild(textarea);
+      return ok;
+    } catch {
+      return false;
+    }
+  }
+
+  function handleCopyAnswer(turnId: string) {
+    setOpenMenuTurnId(null);
+    const turn = turns.find((candidate) => candidate.id === turnId);
+    if (!turn) {
+      return;
+    }
+    const text = stripReferencesBlock(turn.answer.answer);
+    void copyToClipboard(text).then((ok) => {
+      if (ok) {
+        notifySuccess("Answer copied", "The answer text is on your clipboard.");
+      } else {
+        notifyError("Couldn't copy the answer", "Clipboard access was blocked by the browser.");
+      }
+    });
+  }
+
+  function handleCopyCitations(turnId: string) {
+    setOpenMenuTurnId(null);
+    const turn = turns.find((candidate) => candidate.id === turnId);
+    if (!turn) {
+      return;
+    }
+    const details = turn.answer.citation_details?.length
+      ? turn.answer.citation_details
+      : turn.answer.evidence
+          .map((candidate, index) => {
+            const label = candidate.citation_label || `Source ${index + 1}`;
+            return `[${index + 1}] ${label}`;
+          })
+          .filter(Boolean);
+    if (!details.length) {
+      notifyError("No citations to copy", "This answer didn't surface any citations.");
+      return;
+    }
+    void copyToClipboard(details.join("\n")).then((ok) => {
+      if (ok) {
+        notifySuccess(
+          "Citations copied",
+          `${details.length} ${details.length === 1 ? "citation is" : "citations are"} on your clipboard.`,
+        );
+      } else {
+        notifyError("Couldn't copy citations", "Clipboard access was blocked by the browser.");
+      }
+    });
+  }
+
+  function handleReAskTurn(turnId: string) {
+    setOpenMenuTurnId(null);
+    const turn = turns.find((candidate) => candidate.id === turnId);
+    if (!turn) {
+      return;
+    }
+    setQuestion(turn.question);
+    window.setTimeout(() => {
+      const textarea = window.document.getElementById("ask-textarea");
+      if (textarea instanceof HTMLTextAreaElement) {
+        textarea.focus();
+        textarea.setSelectionRange(turn.question.length, turn.question.length);
+      }
+    }, 0);
+  }
+
+  function handleDeleteTurn(turnId: string) {
+    setOpenMenuTurnId(null);
+    const turn = turns.find((candidate) => candidate.id === turnId);
+    setTurns((current) => current.filter((candidate) => candidate.id !== turnId));
+    delete turnRefs.current[turnId];
+    if (turn) {
+      for (const candidate of turn.answer.evidence) {
+        delete evidenceRefs.current[candidate.chunk_id];
+      }
+    }
+    setStreamingTurnId((current) => (current === turnId ? null : current));
+    setHighlightedCitationKey((current) => (current?.startsWith(`${turnId}:`) ? null : current));
+    setMobileEvidenceOpen((current) => {
+      if (!(turnId in current)) {
+        return current;
+      }
+      const next = { ...current };
+      delete next[turnId];
+      return next;
+    });
+  }
+
   function handlePaletteSelectTurn(turnId: string) {
     const node = turnRefs.current[turnId];
     if (node) {
@@ -2011,10 +2251,17 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
           isAuthenticated={isAuthenticated}
           onAsk={handleAsk}
           onCitationClick={handleCitationClick}
+          onCopyAnswer={handleCopyAnswer}
+          onCopyCitations={handleCopyCitations}
+          onDeleteTurn={handleDeleteTurn}
           onFocusChange={setAskFocused}
+          onMenuClose={handleMenuClose}
+          onMenuToggle={handleMenuToggle}
           onPickStarter={setQuestion}
           onQuestionChange={setQuestion}
+          onReAsk={handleReAskTurn}
           onReplayStream={handleReplayStream}
+          openMenuTurnId={openMenuTurnId}
           pendingQuestion={pendingQuestion}
           question={question}
           registerTurnRef={registerTurnRef}
