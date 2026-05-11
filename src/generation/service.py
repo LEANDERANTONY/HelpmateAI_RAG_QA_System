@@ -88,6 +88,29 @@ def _normalize_support_status(value: object, *, supported: bool) -> str:
     return "supported" if supported else "unsupported"
 
 
+_SUPPORT_SUMMARY_DEFAULTS = {
+    "supported": "Cited evidence",
+    "partial": "Partial support",
+    "unsupported": "Source is silent",
+}
+
+
+def _normalize_support_summary(value: object, *, support_status: str) -> str:
+    """Sanitize the model's chip-friendly tagline. Caps at 5 words and 60 chars,
+    strips trailing punctuation, falls back to a status-appropriate default
+    when the model returns nothing usable."""
+    raw = str(value or "").strip().rstrip(".,;:!?")
+    raw = " ".join(raw.split())  # collapse whitespace
+    if raw:
+        words = raw.split(" ")
+        if len(words) > 5:
+            raw = " ".join(words[:5])
+        if len(raw) > 60:
+            raw = raw[:60].rstrip(" -—")
+        return raw
+    return _SUPPORT_SUMMARY_DEFAULTS.get(support_status, "Cited evidence")
+
+
 def _as_text_list(value: object) -> list[str]:
     if isinstance(value, list):
         return [str(item).strip() for item in value if str(item).strip()]
@@ -133,6 +156,7 @@ class AnswerGenerator:
                 evidence=[],
                 supported=False,
                 support_status="unsupported",
+                support_summary="No matching evidence",
                 cache_status=CacheStatus(),
                 model_name="fallback",
                 note="No evidence met the retrieval threshold.",
@@ -157,6 +181,7 @@ class AnswerGenerator:
             evidence=evidence,
             supported=supported,
             support_status="supported" if supported else "unsupported",
+            support_summary="Best local match" if supported else "Source is silent",
             cache_status=CacheStatus(),
             model_name="fallback",
             note="Returned a local grounded summary because a live model response was unavailable.",
@@ -175,6 +200,7 @@ class AnswerGenerator:
                 evidence=evidence,
                 supported=False,
                 support_status="unsupported",
+                support_summary="Off-topic evidence",
                 cache_status=CacheStatus(),
                 model_name="retrieval_guardrail",
                 note="Retrieved evidence was too weak or irrelevant to justify answer generation.",
@@ -220,6 +246,7 @@ class AnswerGenerator:
         references_block = ""
         supported = bool(payload.get("supported", False))
         support_status = _normalize_support_status(payload.get("support_status"), supported=supported)
+        support_summary_raw = payload.get("support_summary")
         answer_text = str(payload.get("answer", "")).strip() or "Unsupported by the retrieved evidence."
         reason_text = str(payload.get("reason", "")).strip() or None
         if supported and _uses_inferential_supported_language(answer_text):
@@ -267,6 +294,7 @@ class AnswerGenerator:
             evidence=evidence,
             supported=supported,
             support_status=support_status,
+            support_summary=_normalize_support_summary(support_summary_raw, support_status=support_status),
             cache_status=CacheStatus(),
             model_name=self.settings.answer_model,
             citation_details=citation_details,

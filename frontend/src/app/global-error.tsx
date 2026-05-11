@@ -62,7 +62,7 @@ export default function GlobalErrorPage({ error, reset }: GlobalErrorPageProps) 
               margin: "10px 0 8px",
             }}
           >
-            We couldn't load the app.
+            We couldn&apos;t load the app.
           </h1>
           <p
             style={{

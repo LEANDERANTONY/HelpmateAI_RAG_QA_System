@@ -204,6 +204,7 @@ class AnswerResult:
     evidence: list[RetrievalCandidate]
     supported: bool = True
     support_status: str = "supported"
+    support_summary: str = ""
     cache_status: CacheStatus = field(default_factory=CacheStatus)
     model_name: str = ""
     note: str | None = None
@@ -221,6 +222,7 @@ class AnswerResult:
             "evidence": [candidate.to_dict() for candidate in self.evidence],
             "supported": self.supported,
             "support_status": self.support_status,
+            "support_summary": self.support_summary,
             "cache_status": self.cache_status.to_dict(),
             "model_name": self.model_name,
             "note": self.note,

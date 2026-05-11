@@ -900,9 +900,8 @@ function QACard({
         <span className="h-model">
           {streaming
             ? "Streaming response"
-            : turn.answer.cache_status.answer_cache_hit
-              ? "Cache hit"
-              : turn.answer.model_name || "Fresh answer"}
+            : turn.answer.support_summary?.trim() ||
+              (turn.answer.cache_status.answer_cache_hit ? "Cache hit" : "")}
         </span>
       </div>
       {streaming ? (

@@ -41,6 +41,7 @@ export type AnswerResult = {
   evidence: RetrievalCandidate[];
   supported: boolean;
   support_status: "supported" | "partial" | "unsupported";
+  support_summary: string;
   cache_status: {
     index_reused: boolean;
     answer_cache_hit: boolean;
