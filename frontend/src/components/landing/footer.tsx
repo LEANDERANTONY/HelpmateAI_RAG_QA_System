@@ -5,7 +5,7 @@ export function LandingFooter() {
         <div className="l-foot-brand">
           <div className="word">Helpmate AI</div>
           <div className="tag">
-            Document QA you can verify. Built for the questions where the
+            Document answers you can verify. Built for the questions where the
             answer matters more than the wait.
           </div>
           <div className="by">Built by Leander Antony A</div>

@@ -18,15 +18,15 @@ const CLAIMS = [
   {
     n: "01",
     tag: "Shows the source",
-    head: "Every claim carries the chunk it came from.",
-    body: "Click a citation pill and the right rail jumps to the exact paragraph — verbatim, with the page and section that contained it. No interpretive layer between the answer and the source text.",
+    head: "Every claim carries the passage it came from.",
+    body: "Click a citation pill and the evidence column jumps to the exact paragraph — verbatim, with the page and section it came from. Nothing rewritten, nothing summarized.",
     Vis: ClaimVis1,
   },
   {
     n: "02",
     tag: "Knows when to abstain",
-    head: "Three honest answer states, not just one.",
-    body: "The eval rubric grades for support, not fluency. So the workspace's answers are typed: supported when the source covers it, partial when it covers some of it, abstained when it doesn't cover it at all.",
+    head: "Three honest kinds of answer, not just one.",
+    body: "Answers come in three flavors: supported when the source covers it, partial when it covers some of it, abstained when it doesn't cover it at all. We grade for whether the evidence actually supports the claim, not how confident the sentence sounds.",
     Vis: ClaimVis2,
   },
   {
@@ -46,11 +46,11 @@ export function LandingClaims() {
       <div className="l-sec-inner">
         <div className="l-sec-head l-claims-head">
           <div className="eyebrow">What you get</div>
-          <h2>Three behaviors most assistants don&rsquo;t ship.</h2>
+          <h2>Three behaviors most assistants skip.</h2>
           <p>
-            Helpmate answers your questions about a document, but the shape
-            of the answer is the product. Three claims, each visible in the
-            workspace from the first response.
+            Helpmate answers your questions about a document, but the way it
+            answers is what matters. You&rsquo;ll see all three behaviors in
+            your first response.
           </p>
         </div>
 
