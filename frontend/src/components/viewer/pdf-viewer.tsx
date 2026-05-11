@@ -171,8 +171,15 @@ export function PdfViewer({
         if (matches && matches.length > 0) {
           try {
             state.viewer.scrollPageIntoView({ pageNumber: idx + 1 });
+            // PDF.js dispatches updatefindmatchescount progressively
+            // during a scan — the first dispatch with total=0 sets the
+            // no-match banner, then a later dispatch with total>0 lands
+            // here. Clear the stale banner now that the scroll succeeded.
+            // Unnoticeable on short PDFs; visible on long contracts where
+            // the scan takes long enough for the user to read the banner.
+            setBanner(null);
           } catch {
-            /* fall through to banner */
+            /* scroll failure leaves any prior banner intact */
           }
           return;
         }
