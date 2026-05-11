@@ -21,7 +21,13 @@ import {
   stripReferencesBlock,
   uniqueCitationTargets,
 } from "@/lib/citations";
-import { useMobileSnap, useReadModeActions, useReadModeStatus } from "@/lib/read-mode-state";
+import {
+  useMobileSnap,
+  useReadModeActions,
+  useReadModeStatus,
+  useReadModeStore,
+  type ReadModeChunk,
+} from "@/lib/read-mode-state";
 import { useMediaQuery } from "@/lib/use-media-query";
 import type {
   AnswerResult,
@@ -330,6 +336,52 @@ function candidateKind(candidate: RetrievalCandidate) {
     metadataText(candidate, "content_type") ||
     metadataText(candidate, "section_kind") ||
     "chunk"
+  );
+}
+
+// Build the Read Mode store's chunk payload from a RetrievalCandidate.
+// Used by both the "Open in source" entry path and the in-Read-Mode
+// jump paths (auto-jump on new answer, citation pill click).
+function buildReadModeChunk(
+  candidate: RetrievalCandidate,
+  fileName: string,
+): ReadModeChunk {
+  return {
+    chunkId: candidate.chunk_id,
+    pageLabel: metadataText(candidate, "page_label"),
+    chunkText: candidate.text,
+    documentId: metadataText(candidate, "document_id"),
+    fileName,
+  };
+}
+
+// Read Mode banner shown above the chat input when the most recent
+// answer abstained. Self-contained: returns null outside Read Mode or
+// when the latest answer has evidence, so callers can render this
+// unconditionally without their own branching.
+//
+// We don't auto-clear this banner on a timer — it sits until the user
+// asks another question (the next runAsk replaces `lastAnswer`). That
+// matches the spec's "Source not yanked" intent: the abstention signal
+// should be visible as long as the unsupported answer is the working
+// context.
+function ReadModeAbstentionBanner({ answer }: { answer: AnswerResult | null }) {
+  const mode = useReadModeStatus();
+  if (mode !== "read" || !answer) {
+    return null;
+  }
+  // Treat both `support_status === 'unsupported'` and the empty-evidence
+  // edge case as "abstained" — the latter shouldn't happen for an
+  // unsupported answer from the backend, but the guard makes the banner
+  // resilient if it ever does.
+  const abstained = answer.support_status === "unsupported" || answer.evidence.length === 0;
+  if (!abstained) {
+    return null;
+  }
+  return (
+    <div className="h-abstention-banner" role="status">
+      This answer was abstained — no evidence to show. Source stays put.
+    </div>
   );
 }
 
@@ -1156,6 +1208,9 @@ function Conversation({
               visible={Boolean(indexRecord && turns.length === 0 && !pendingQuestion)}
             />
             <div className="h-ask-group">
+              <ReadModeAbstentionBanner
+                answer={turns.length > 0 ? turns[turns.length - 1].answer : null}
+              />
               <AskBlock
                 askFocused={askFocused}
                 canAsk={canAsk}
@@ -1230,17 +1285,9 @@ function EvidenceCard({
 }) {
   const strength = candidateStrength(candidate);
   // useReadModeActions only — never re-renders this card from state changes.
-  // Building the ReadModeChunk at click time (not on render) keeps the
-  // payload's identity stable across re-renders we don't care about.
   const { enterReadMode } = useReadModeActions();
   const handleOpenInSource = () => {
-    enterReadMode({
-      chunkId: candidate.chunk_id,
-      pageLabel: metadataText(candidate, "page_label"),
-      chunkText: candidate.text,
-      documentId: metadataText(candidate, "document_id"),
-      fileName,
-    });
+    enterReadMode(buildReadModeChunk(candidate, fileName));
   };
   return (
     <article
@@ -1963,6 +2010,18 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
       setMobileEvidenceOpen((current) => ({ ...current, [turn.id]: false }));
       setAnswerState("ready");
       setStreamingTurnId(turn.id);
+      // Auto-jump the source viewer to the first evidence of the new
+      // answer when in Read Mode. setCurrentChunk is a no-op outside
+      // read mode (per store logic), so calling it unconditionally is
+      // safe. Abstained answers (no evidence) leave the viewer alone —
+      // ReadModeAbstentionBanner surfaces the "no evidence" signal
+      // above the chat input instead.
+      const firstEvidence = response.answer.evidence?.[0];
+      if (firstEvidence && document) {
+        useReadModeStore
+          .getState()
+          .setCurrentChunk(buildReadModeChunk(firstEvidence, document.file_name));
+      }
       const dur = streamingDuration(stripReferencesBlock(response.answer.answer));
       if (streamTimer.current) {
         clearTimeout(streamTimer.current);
@@ -2017,6 +2076,24 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
   }
 
   function handleCitationClick(turnId: string, chunkId: string) {
+    // Branch on Read Mode WITHOUT subscribing — this function is called
+    // from event handlers, not render, so a one-shot getState() read
+    // keeps AppWorkspace out of the mode-flip subscription tree.
+    const readModeActive = useReadModeStore.getState().mode === "read";
+    if (readModeActive) {
+      // Read Mode citation behavior: scroll the source viewer to the
+      // clicked chunk. The evidence rail is hidden so there's nothing
+      // to flash, and the user is already looking at the source.
+      const targetTurn = turns.find((t) => t.id === turnId);
+      const candidate = targetTurn?.answer.evidence.find((c) => c.chunk_id === chunkId);
+      if (candidate && document) {
+        useReadModeStore
+          .getState()
+          .setCurrentChunk(buildReadModeChunk(candidate, document.file_name));
+      }
+      return;
+    }
+    // Normal mode: existing rail-flash behavior.
     setAskFocused(false);
     setHighlightedChunkId(chunkId);
     setHighlightedCitationKey(`${turnId}:${chunkId}`);
