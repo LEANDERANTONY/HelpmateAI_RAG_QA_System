@@ -3790,18 +3790,132 @@ input[type="file"]:disabled::file-selector-button {
   }
 }
 
-/* === Mobile overlay (<=900px) === */
+/* === Mobile Read Mode — vaul bottom sheet (<=900px) ===
+   The source pane on desktop is unused on mobile; instead the
+   <MobileSourceSheet> renders a portaled drawer outside .h-shell.
+   The chat-side adjustments here pull the chat input above the sheet
+   based on the current snap so the user can still see it. */
 @media (max-width: 900px) {
+  /* The desktop source pane is JS-branched away on mobile, but make
+     defensive: hide it if it somehow renders. */
   .h-shell[data-read-mode="read"] .h-source-pane {
-    position: fixed;
-    inset: 0;
-    z-index: 100;
+    display: none;
   }
+
   /* Hide the mobile evidence accordions and the mobile doc bar while
      Read Mode is the foreground experience. They reappear on exit. */
   .h-shell[data-read-mode="read"] .h-mobile-thread-evidence,
   .h-shell[data-read-mode="read"] .h-mobile-docbar {
     display: none;
+  }
+
+  /* Sheet height as a fraction of viewport, one variable per snap.
+     CSS calc reads this to keep the chat input above the sheet edge. */
+  .h-shell[data-read-mode="read"][data-mobile-snap="full"] {
+    --mobile-sheet-fraction: 1;
+  }
+  .h-shell[data-read-mode="read"][data-mobile-snap="split"] {
+    --mobile-sheet-fraction: 0.55;
+  }
+  .h-shell[data-read-mode="read"][data-mobile-snap="compact"] {
+    --mobile-sheet-fraction: 0.25;
+  }
+
+  /* Lift the chat input above the sheet. On a sticky-bottom input,
+     `bottom: Xdvh` parks it Xdvh from the viewport bottom. */
+  .h-shell[data-read-mode="read"] .h-ask-group {
+    bottom: calc(100dvh * var(--mobile-sheet-fraction, 0));
+    transition: bottom var(--duration-base) var(--ease-out);
+  }
+
+  /* At FULL the chat is fully hidden — the source claims the whole
+     screen. Hide the conversation column AND the input so taps don't
+     accidentally land on them through the sheet. */
+  .h-shell[data-read-mode="read"][data-mobile-snap="full"] .h-conv,
+  .h-shell[data-read-mode="read"][data-mobile-snap="full"] .h-ask-group {
+    display: none;
+  }
+}
+
+/* === Mobile sheet — vaul Drawer.Content === */
+.h-mobile-sheet {
+  background: var(--bg-page);
+  border-radius: 18px 18px 0 0;
+  /* vaul writes its own transform/height for snap animation; we layer
+     a subtle hairline + shadow above so the sheet's top edge reads
+     as a panel rather than blending into the chat behind. */
+  box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.35);
+  display: flex;
+  flex-direction: column;
+  /* Vaul positions to bottom and sets inline height per snap; we just
+     ensure the content stretches to fill it. */
+  height: 100%;
+  overflow: hidden;
+  /* Above the topbar (z=30) and command palette overlays. */
+  z-index: 80;
+}
+
+.h-mobile-sheet-handle-zone {
+  align-items: flex-start;
+  cursor: grab;
+  display: flex;
+  flex: 0 0 auto;
+  justify-content: center;
+  /* Spec: 44×44 invisible hit target around the visible 36×4 pill. */
+  padding: 14px 0 6px;
+  touch-action: none;
+}
+
+.h-mobile-sheet-handle-zone:active {
+  cursor: grabbing;
+}
+
+.h-mobile-sheet-handle {
+  background: var(--fg-3);
+  border-radius: 4px;
+  height: 4px;
+  opacity: 0.6;
+  width: 36px;
+}
+
+.h-mobile-sheet-chrome {
+  align-items: center;
+  border-bottom: 1px solid var(--hairline);
+  display: flex;
+  flex: 0 0 auto;
+  gap: 10px;
+  padding: 6px 14px 12px;
+}
+
+.h-mobile-sheet-chrome-spacer {
+  flex: 1;
+}
+
+.h-mobile-sheet-close {
+  /* Larger hit target on touch — overrides the 30×30 desktop sizing. */
+  height: 36px;
+  width: 36px;
+}
+
+/* When the sheet is at FULL on mobile, kill the rounded top corners so
+   it reads as a full-screen surface. */
+.h-mobile-sheet[data-mobile-snap="full"] {
+  border-radius: 0;
+}
+
+/* Snap-position animation. vaul handles the transform itself via
+   framer-motion; we override it to use our easing token. The 280ms /
+   ease-out timing matches the rest of the workspace's motion language. */
+.h-mobile-sheet {
+  transition-duration: 280ms;
+  transition-timing-function: var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .h-mobile-sheet,
+  .h-mobile-sheet * {
+    animation: none !important;
+    transition: none !important;
   }
 }
 

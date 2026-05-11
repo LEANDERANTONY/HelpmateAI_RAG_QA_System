@@ -4,32 +4,33 @@
 //
 // Read Mode is a layout transition the workspace enters when a user clicks
 // "Open in source" on an evidence card. While in Read Mode:
-//   • The chat / answer column collapses to ~45% width
+//   • The chat / answer column collapses to ~45% width (desktop)
 //   • A new source-viewer pane occupies the remaining ~55% (min 700px)
 //   • The doc strip and evidence rail are hidden
-//   • The doc name relocates to the topbar
 //
-// On mobile (<=900px) Read Mode becomes a full-screen overlay so the source
-// fills the viewport — there's no two-pane to coexist with.
+// On mobile (<=900px) the source is a draggable bottom sheet (vaul) with
+// three snap points: FULL (100%), SPLIT (55%, default), COMPACT (25%, used
+// when the soft keyboard is up).
 //
 // State shape:
 //   • mode: 'normal' | 'read'
 //   • currentChunk: the source position the viewer should land on
+//   • mobileSnap: 'full' | 'split' | 'compact' — bottom-sheet posture
+//   • keyboardActive: true when soft keyboard is up (drives snap to COMPACT)
 //
-// Why Zustand and not context+reducer?
-// Stage 3b/3c bolts more consumers onto this slice (SourcePane, citation
-// pills nested in every answer, Topbar, EvidenceCards). Context fans out
-// re-renders to every consumer on every state change; Zustand's selectors
-// let each consumer subscribe to just the slice it needs. EvidenceCards
-// using `useReadModeActions()` never re-render from state changes at all.
+// Mobile state machine:
+//   FULL  ↔ drag ↔  SPLIT
+//                     ↕  (input focus / blur, or visualViewport size delta)
+//                  COMPACT
+//
+// Drag is constrained to FULL↔SPLIT — drag-to-COMPACT is intercepted in
+// the MobileSourceSheet and bounces back to SPLIT. COMPACT is reached
+// only via keyboard.
 //
 // Consumer pattern:
-//   const mode = useReadModeStatus();                   // re-renders on mode flips
-//   const chunk = useCurrentChunk();                    // re-renders on chunk changes
-//   const { enterReadMode } = useReadModeActions();     // never re-renders from state
-//
-// Or use the lower-level selector form for ad-hoc slices:
-//   const fileName = useReadModeStore(s => s.currentChunk?.fileName);
+//   const mode = useReadModeStatus();
+//   const snap = useMobileSnap();
+//   const { enterReadMode, setMobileSnap } = useReadModeActions();
 //
 // Out of scope:
 //   • Persistence across reloads — session-local on purpose (spec).
@@ -42,38 +43,69 @@ export type ReadModeChunk = {
   chunkId: string;
   pageLabel: string;
   chunkText: string;
-  // Useful for the viewer chrome / topbar slot:
   documentId: string;
   fileName: string;
 };
 
 export type ReadModeStatus = "normal" | "read";
+export type MobileSnap = "full" | "split" | "compact";
 
 type ReadModeState = {
   mode: ReadModeStatus;
   currentChunk: ReadModeChunk | null;
+  mobileSnap: MobileSnap;
+  keyboardActive: boolean;
   enterReadMode: (chunk: ReadModeChunk) => void;
   exitReadMode: () => void;
   setCurrentChunk: (chunk: ReadModeChunk) => void;
+  setMobileSnap: (snap: MobileSnap) => void;
+  setKeyboardActive: (active: boolean) => void;
 };
 
 export const useReadModeStore = create<ReadModeState>((set) => ({
   mode: "normal",
   currentChunk: null,
-  enterReadMode: (chunk) => set({ mode: "read", currentChunk: chunk }),
+  // SPLIT is the default working posture on mobile — chat exposed in the
+  // top ~45%, source viewer in the bottom ~55%.
+  mobileSnap: "split",
+  keyboardActive: false,
+  enterReadMode: (chunk) =>
+    // Always re-enter at SPLIT so the user doesn't land in COMPACT (which
+    // would imply keyboard) or FULL (which hides the chat). Keyboard
+    // detection then transitions to COMPACT if needed.
+    set({ mode: "read", currentChunk: chunk, mobileSnap: "split", keyboardActive: false }),
   // Clear currentChunk on exit so re-entry never shows stale state — spec
   // says no scroll restoration, so there's nothing worth keeping.
   exitReadMode: () => set({ mode: "normal", currentChunk: null }),
   // setCurrentChunk is the auto-jump path (new answer, citation pill in
-  // read mode). It's a no-op when called from normal mode because there's
-  // no viewer to scroll — the normal-mode citation path uses the evidence
+  // read mode). No-op when called from normal mode because there's no
+  // viewer to scroll — the normal-mode citation path uses the evidence
   // rail flash instead.
   setCurrentChunk: (chunk) =>
     set((state) => (state.mode === "read" ? { currentChunk: chunk } : state)),
+  setMobileSnap: (snap) => set({ mobileSnap: snap }),
+  setKeyboardActive: (active) =>
+    set((state) => {
+      if (state.keyboardActive === active) {
+        return state;
+      }
+      // Sync mobileSnap with keyboard state: keyboard up → COMPACT,
+      // keyboard down → SPLIT (unless user dragged to FULL, which only
+      // happens when keyboard is down anyway).
+      if (active) {
+        return { keyboardActive: true, mobileSnap: "compact" };
+      }
+      // Keyboard just dismissed — return to SPLIT regardless of prior
+      // FULL/COMPACT. If the user was at FULL before opening the keyboard,
+      // they're now back at SPLIT, which matches the spec.
+      return { keyboardActive: false, mobileSnap: "split" };
+    }),
 }));
 
-// Convenience selectors. These are the recommended consumption points
-// because each subscribes to exactly one slice — re-renders stay narrow.
+// Convenience selectors — each subscribes to one slice so re-renders stay
+// narrow. EvidenceCards using only `useReadModeActions()` never re-render
+// from state changes; SourcePane reading `useCurrentChunk()` re-renders
+// only when the chunk changes.
 
 export function useReadModeStatus(): ReadModeStatus {
   return useReadModeStore((state) => state.mode);
@@ -83,18 +115,28 @@ export function useCurrentChunk(): ReadModeChunk | null {
   return useReadModeStore((state) => state.currentChunk);
 }
 
+export function useMobileSnap(): MobileSnap {
+  return useReadModeStore((state) => state.mobileSnap);
+}
+
+export function useKeyboardActive(): boolean {
+  return useReadModeStore((state) => state.keyboardActive);
+}
+
 // useShallow keeps the actions object reference-stable across renders. Without
-// it, picking three actions in one selector would return a new object every
+// it, picking multiple actions in one selector would return a new object every
 // time the store updates, causing consumers to re-render unnecessarily.
 export function useReadModeActions(): Pick<
   ReadModeState,
-  "enterReadMode" | "exitReadMode" | "setCurrentChunk"
+  "enterReadMode" | "exitReadMode" | "setCurrentChunk" | "setMobileSnap" | "setKeyboardActive"
 > {
   return useReadModeStore(
     useShallow((state) => ({
       enterReadMode: state.enterReadMode,
       exitReadMode: state.exitReadMode,
       setCurrentChunk: state.setCurrentChunk,
+      setMobileSnap: state.setMobileSnap,
+      setKeyboardActive: state.setKeyboardActive,
     })),
   );
 }

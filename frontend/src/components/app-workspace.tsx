@@ -10,6 +10,7 @@ import type {
 
 import { AuthSidebar } from "@/components/auth-sidebar";
 import { ErrorState } from "@/components/error-state";
+import { MobileSourceSheet } from "@/components/viewer/mobile-source-sheet";
 import { SourcePane } from "@/components/viewer/source-pane";
 import { askQuestion, buildIndex, getCurrentWorkspace, getStarterQuestions, uploadDocument } from "@/lib/api";
 import { ApiError } from "@/lib/api-errors";
@@ -20,7 +21,8 @@ import {
   stripReferencesBlock,
   uniqueCitationTargets,
 } from "@/lib/citations";
-import { useReadModeActions, useReadModeStatus } from "@/lib/read-mode-state";
+import { useMobileSnap, useReadModeActions, useReadModeStatus } from "@/lib/read-mode-state";
+import { useMediaQuery } from "@/lib/use-media-query";
 import type {
   AnswerResult,
   DocumentBundleResponse,
@@ -2318,13 +2320,19 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
   );
 }
 
-// Owns the `data-read-mode` attribute on .h-shell and the global ESC handler.
-// Subscribes to `mode` via `useReadModeStatus()` so this is the only place
-// that re-renders on mode flips — child components reading mode use their
-// own selector subscriptions and stay independent.
+// Owns the `data-read-mode` / `data-mobile-snap` attributes on .h-shell,
+// the global ESC handler, and the keyboard-detection listeners that drive
+// the mobile snap state machine.
+//
+// Subscribes to `mode` + `mobileSnap` only — both narrow selectors so this
+// component re-renders solely on those two slices changing. Children that
+// care about other state (currentChunk, etc.) read it directly.
 function WorkspaceShellChrome({ children }: { children: ReactNode }) {
   const mode = useReadModeStatus();
-  const { exitReadMode } = useReadModeActions();
+  const mobileSnap = useMobileSnap();
+  const { exitReadMode, setKeyboardActive } = useReadModeActions();
+
+  // ESC to exit Read Mode.
   useEffect(() => {
     if (mode !== "read") {
       return;
@@ -2341,23 +2349,82 @@ function WorkspaceShellChrome({ children }: { children: ReactNode }) {
     return () => window.document.removeEventListener("keydown", onKeyDown);
   }, [mode, exitReadMode]);
 
+  // Keyboard detection — two independent signals feed the same store
+  // action. setKeyboardActive is idempotent on equality, so either path
+  // can win without conflict.
+  //
+  //  1. Focus capture on #ask-textarea — fires synchronously when the
+  //     chat input gains / loses focus, BEFORE the OS keyboard animates
+  //     in. This is the "preemptive" path that snaps the sheet to
+  //     COMPACT before the keyboard appears, avoiding chrome jitter.
+  //
+  //  2. visualViewport resize — fires AFTER the keyboard animates.
+  //     Catches cases where focus events don't fire (hardware keyboards,
+  //     OS voice input, OS-surfaced keyboards). The 100px threshold
+  //     ignores normal URL-bar collapse on scroll.
+  useEffect(() => {
+    if (mode !== "read") {
+      return;
+    }
+    function onFocusChange(event: FocusEvent) {
+      const target = event.target;
+      if (!(target instanceof HTMLElement)) return;
+      if (target.id !== "ask-textarea") return;
+      setKeyboardActive(event.type === "focusin");
+    }
+    document.addEventListener("focusin", onFocusChange);
+    document.addEventListener("focusout", onFocusChange);
+
+    let removeViewport: (() => void) | null = null;
+    if (typeof window !== "undefined" && window.visualViewport) {
+      const vv = window.visualViewport;
+      const onResize = () => {
+        const gap = window.innerHeight - vv.height;
+        setKeyboardActive(gap > 100);
+      };
+      vv.addEventListener("resize", onResize);
+      removeViewport = () => vv.removeEventListener("resize", onResize);
+    }
+
+    return () => {
+      document.removeEventListener("focusin", onFocusChange);
+      document.removeEventListener("focusout", onFocusChange);
+      if (removeViewport) removeViewport();
+    };
+  }, [mode, setKeyboardActive]);
+
   return (
-    <div className="h-shell" data-read-mode={mode}>
+    <div
+      className="h-shell"
+      data-read-mode={mode}
+      // data-mobile-snap is only meaningful on mobile + read mode, but we
+      // write it unconditionally to keep CSS selectors simple. Desktop CSS
+      // ignores it.
+      data-mobile-snap={mobileSnap}
+    >
       {children}
     </div>
   );
 }
 
-// Renders nothing in normal mode. In read mode, mounts the SourcePane inside
-// `.h-frame`. CSS positions it as a grid column on desktop or as a fixed
-// full-screen overlay on mobile based on viewport.
+// Branches the source viewer based on viewport: desktop two-pane embeds
+// <SourcePane> in the .h-frame grid column; mobile (<=900px) renders the
+// vaul-based bottom sheet via portal.
+//
+// The viewport branch uses a JS media query because vaul portals outside
+// .h-frame and we can't CSS-toggle a portal in/out. Returning null while
+// the media query is still resolving avoids a flash of the desktop pane
+// on mobile — safe because SourcePaneMount is only reached after user
+// interaction (post-hydration), so the matchMedia subscription has
+// already fired its first tick by then.
 function SourcePaneMount() {
-  // Subscribes only to `mode` so this component re-renders solely on mode
-  // flips, not on currentChunk changes. The SourcePane child reads
-  // currentChunk via its own selector when it does mount.
   const mode = useReadModeStatus();
+  const isMobile = useMediaQuery("(max-width: 900px)");
   if (mode !== "read") {
     return null;
   }
-  return <SourcePane />;
+  if (isMobile === null) {
+    return null;
+  }
+  return isMobile ? <MobileSourceSheet /> : <SourcePane />;
 }
