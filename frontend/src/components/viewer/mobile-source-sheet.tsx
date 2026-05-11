@@ -139,6 +139,16 @@ export function MobileSourceSheet() {
           data-mobile-snap={mobileSnap}
           aria-label="Source viewer"
         >
+          {/* Vaul (via radix Dialog under the hood) emits a console
+              warning when Drawer.Content has neither a Title nor a
+              Description. Both are screen-reader-only here because
+              the visible chrome already conveys the same info via
+              the page-pill and close button. */}
+          <Drawer.Title className="h-sr-only">Source viewer</Drawer.Title>
+          <Drawer.Description className="h-sr-only">
+            Drag the handle to resize. Use the close button to exit Read Mode.
+          </Drawer.Description>
+
           {/* Drag handle — 36×4 pill centered at the top, with a 44×44
               invisible hit target via padding. vaul recognises the handle
               by data attribute and only initiates drag from this region
