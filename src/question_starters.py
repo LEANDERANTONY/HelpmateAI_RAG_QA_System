@@ -16,6 +16,11 @@ QUESTION_STARTERS = {
         "What are the most important findings or claims in this paper?",
         "What limitations, challenges, or future directions does this paper discuss?",
     ],
+    "framework_document": [
+        "What are the core functions or pillars defined in this framework?",
+        "Who is the intended audience and how is this framework meant to be applied?",
+        "What risks, controls, or principles does the framework call out?",
+    ],
     "generic_longform": [
         "What are the key ideas or themes in this document?",
         "What important obligations, constraints, or conclusions does the document contain?",

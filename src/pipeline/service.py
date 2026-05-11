@@ -16,6 +16,7 @@ from src.sections import build_sections
 from src.sections.profiles import enrich_section_profiles
 from src.sections.repair import StructureRepairService
 from src.schemas import AnswerResult, CacheStatus, DocumentRecord, IndexRecord, RetrievalCandidate, RetrievalResult, RunTraceRecord
+from src.structure.classifier import DocumentClassifierService
 from src.topology import DocumentTopologyService, SynopsisSemanticsService
 from src.traces import build_run_trace_store
 
@@ -31,6 +32,7 @@ class HelpmatePipeline:
         self.topology_service = DocumentTopologyService()
         self.synopsis_semantics_service = SynopsisSemanticsService(self.settings)
         self.structure_repair_service = StructureRepairService(self.settings)
+        self.document_classifier_service = DocumentClassifierService(self.settings)
         self.document_landmark_service = DocumentLandmarkService(self.settings)
         self.chunk_semantics_service = ChunkSemanticsService(self.settings)
         self.run_trace_store = build_run_trace_store(self.settings)
@@ -82,6 +84,11 @@ class HelpmatePipeline:
         sections = build_sections(document)
         sections, repair_decision = self.structure_repair_service.repair_if_needed(document, sections)
         sections = enrich_section_profiles(sections)
+        # Refine the document's genre with an LLM read of the first few pages
+        # before landmark / chunk-semantics services consume the label. The
+        # keyword classifier in ingest provides the fast initial guess; this
+        # service can override it when the model is confident.
+        self.document_classifier_service.refine_document_style(document, sections)
         chunks = chunk_document(document, self.settings.chunk_size, self.settings.chunk_overlap)
         self._apply_section_metadata_to_chunks(chunks, sections)
         chunks = self.document_landmark_service.annotate_chunks(document, chunks)

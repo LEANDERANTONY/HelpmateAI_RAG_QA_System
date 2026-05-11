@@ -194,8 +194,9 @@ def infer_document_style(pages: list[dict[str, object]], outline: list[dict[str,
     thesis_score = 0
     research_score = 0
     policy_score = 0
+    framework_score = 0
 
-    if any(term in combined for term in ("thesis report", "dissertation", "research aim", "research objectives", "final remarks", "appendix")):
+    if any(term in combined for term in ("thesis report", "dissertation", "research aim", "research objectives", "final remarks")):
         thesis_score += 4
     if any(term in combined for term in ("chapter 1", "chapter 2", "chapter 3", "methodological perspective")):
         thesis_score += 2
@@ -214,10 +215,23 @@ def infer_document_style(pages: list[dict[str, object]], outline: list[dict[str,
     if any(term in combined for term in ("policy wording", "claims procedure", "exclusion", "benefit", "room rent")):
         policy_score += 2
 
+    if any(term in combined for term in (
+        "risk management framework", "governance framework", "control framework",
+        "trust framework", "responsible ai", "nist ", "iso/iec", "iso ",
+        "cybersecurity framework", "compliance framework",
+    )):
+        framework_score += 4
+    if any(term in combined for term in (
+        "framework", "principles", "guideline", "guidelines", "standard ",
+        "core function", "control objective", "trustworthy", "stakeholder",
+    )):
+        framework_score += 2
+
     scores = {
         "policy_document": policy_score,
         "thesis_document": thesis_score,
         "research_paper": research_score,
+        "framework_document": framework_score,
     }
     best_style, best_score = max(scores.items(), key=lambda item: item[1])
     return best_style if best_score >= 2 else "generic_longform"
