@@ -2159,6 +2159,18 @@ input[type="file"]:disabled::file-selector-button {
   grid-template-columns: 240px 1fr 360px;
   min-height: 0;
   width: 100%;
+  /* Animate the 3-col → 2-col grid reshape when entering Read Mode.
+     Modern browsers (Chrome 110+, Safari 16+, Firefox 107+) interpolate
+     grid-template-columns; older ones snap, which is fine. The
+     transition pairs with .h-source-pane's translate-X entry so the
+     chat column "slides aside" while the source pane appears. */
+  transition: grid-template-columns var(--duration-base) var(--ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .h-frame {
+    transition: none;
+  }
 }
 
 .h-frame > * {
@@ -3944,6 +3956,36 @@ input[type="file"]:disabled::file-selector-button {
   /* PDF.js positions pages absolutely inside .pdfViewer; the container
      just needs to be a scrollable box. */
   position: relative;
+  /* Smooth scroll when navigating between chunks. scroll-behavior is a
+     standard CSS property; pdfjs's scrollPageIntoView() ultimately sets
+     scrollTop on this container, which honours the smooth behaviour. */
+  scroll-behavior: smooth;
+  /* Thin custom scrollbar so the right edge of the viewer reads as
+     workspace chrome rather than OS-default thumb chunkiness. */
+  scrollbar-color: var(--fg-4) transparent;
+  scrollbar-width: thin;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .h-pdf-container {
+    scroll-behavior: auto;
+  }
+}
+
+.h-pdf-container::-webkit-scrollbar {
+  width: 10px;
+}
+
+.h-pdf-container::-webkit-scrollbar-thumb {
+  background: rgba(160, 178, 218, 0.18);
+  border: 2px solid transparent;
+  background-clip: padding-box;
+  border-radius: 999px;
+}
+
+.h-pdf-container::-webkit-scrollbar-thumb:hover {
+  background: rgba(160, 178, 218, 0.3);
+  background-clip: padding-box;
 }
 
 .h-pdf-container:focus {
@@ -3960,8 +4002,30 @@ input[type="file"]:disabled::file-selector-button {
 }
 
 .h-pdf-container .pdfViewer .page {
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  /* Subtle 1px border + soft drop shadow so the white page reads as a
+     panel sitting on the dark backdrop, not a stark cutout. */
+  border: 1px solid rgba(255, 255, 255, 0.08);
+  border-radius: 4px;
+  box-shadow: 0 6px 16px -8px rgba(0, 0, 0, 0.6);
   margin: 8px auto;
+}
+
+/* Find-highlight override. PDF.js paints `.textLayer .highlight` for
+   every match and adds `.selected` on the currently focused match. The
+   default is yellow (good on white pages, fine in light themes) but we
+   tint with our accent so the highlight reads as part of the
+   workspace's visual language, not the browser's. */
+.h-pdf-container .textLayer .highlight {
+  background: var(--accent-soft);
+  border-radius: 2px;
+  /* Slight horizontal padding so multi-line highlights don't look
+     pinched at line breaks. */
+  padding: 0 1px;
+}
+
+.h-pdf-container .textLayer .highlight.selected {
+  background: var(--accent-tint);
+  box-shadow: 0 0 0 1px var(--accent-strong);
 }
 
 /* Loading overlay sits above the container until pagesinit fires.

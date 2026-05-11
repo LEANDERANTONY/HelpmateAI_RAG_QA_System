@@ -380,7 +380,8 @@ function ReadModeAbstentionBanner({ answer }: { answer: AnswerResult | null }) {
   }
   return (
     <div className="h-abstention-banner" role="status">
-      This answer was abstained — no evidence to show. Source stays put.
+      Helpmate didn&apos;t find evidence for this question — the source view
+      stays on your last passage.
     </div>
   );
 }

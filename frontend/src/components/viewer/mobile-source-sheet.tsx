@@ -23,7 +23,7 @@
 // dismissible={false} prevents drag-to-dismiss. The X button is the only
 // way to exit Read Mode on mobile, per spec.
 
-import { useCallback, useMemo } from "react";
+import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Drawer } from "vaul";
 
 import { PdfViewer } from "@/components/viewer/pdf-viewer";
@@ -34,6 +34,7 @@ import {
   useReadModeActions,
   type MobileSnap,
 } from "@/lib/read-mode-state";
+import { parsePageLabel } from "@/lib/search-anchor";
 
 // Numeric snap fractions vaul understands. Order matters — vaul resolves
 // the nearest snap on release based on the array index, so [0.25, 0.55, 1]
@@ -63,6 +64,26 @@ export function MobileSourceSheet() {
   const mobileSnap = useMobileSnap();
   const keyboardActive = useKeyboardActive();
   const { exitReadMode, setMobileSnap } = useReadModeActions();
+
+  // Live page tracking for the page-pill, same chunkId-keyed pattern as
+  // SourcePane so a chunk switch naturally resets without an effect.
+  const [pageState, setPageState] = useState<{ chunkId: string; page: number } | null>(null);
+  const visiblePage =
+    pageState && pageState.chunkId === currentChunk?.chunkId ? pageState.page : null;
+  const handlePageChange = (page: number) => {
+    if (!currentChunk) return;
+    setPageState({ chunkId: currentChunk.chunkId, page });
+  };
+
+  // Focus the close button on mount for keyboard users. On mobile this
+  // mostly affects external-keyboard users — soft keyboards don't have
+  // a meaningful focus ring on the button — but it keeps the a11y
+  // behavior consistent with the desktop pane.
+  const closeBtnRef = useRef<HTMLButtonElement | null>(null);
+  useEffect(() => {
+    const t = window.setTimeout(() => closeBtnRef.current?.focus(), 50);
+    return () => window.clearTimeout(t);
+  }, []);
 
   // Derive vaul's controlled snap value from our string snap. Memo-ing so
   // vaul's deps don't churn on unrelated re-renders.
@@ -133,12 +154,17 @@ export function MobileSourceSheet() {
           <header className="h-mobile-sheet-chrome">
             <span
               className="h-source-page-pill"
-              title={`Hint: ${currentChunk.pageLabel}`}
+              title={
+                visiblePage === null
+                  ? `Hint: ${currentChunk.pageLabel}`
+                  : `Currently on Page ${visiblePage} (hint: ${currentChunk.pageLabel})`
+              }
             >
-              {currentChunk.pageLabel || "Document"}
+              Page {visiblePage ?? parsePageLabel(currentChunk.pageLabel)}
             </span>
             <div className="h-mobile-sheet-chrome-spacer" aria-hidden />
             <button
+              ref={closeBtnRef}
               type="button"
               className="h-source-close h-mobile-sheet-close"
               onClick={exitReadMode}
@@ -154,6 +180,7 @@ export function MobileSourceSheet() {
               chunkId={currentChunk.chunkId}
               pageLabel={currentChunk.pageLabel}
               chunkText={currentChunk.chunkText}
+              onPageChange={handlePageChange}
               onDownloadOriginal={() => {
                 window.open(
                   `/api/documents/${currentChunk.documentId}/file?download=1`,

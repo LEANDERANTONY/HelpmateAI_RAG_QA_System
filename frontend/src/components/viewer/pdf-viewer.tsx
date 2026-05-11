@@ -56,6 +56,11 @@ type PdfViewerProps = {
   // Optional: caller can pass a "download original" affordance for the
   // 415 banner (legacy DOCX without rendition).
   onDownloadOriginal?: () => void;
+  // Optional: notify the parent when the visible page changes (manual
+  // scroll, find-driven navigation, or auto-jump). Used to keep the
+  // page-pill in the surrounding chrome live rather than stuck on the
+  // hint page.
+  onPageChange?: (pageNumber: number) => void;
 };
 
 // Tightened from anything[] for safety — we only access the fields
@@ -100,6 +105,7 @@ export function PdfViewer({
   pageLabel,
   chunkText,
   onDownloadOriginal,
+  onPageChange,
 }: PdfViewerProps) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const viewerElRef = useRef<HTMLDivElement | null>(null);
@@ -112,6 +118,13 @@ export function PdfViewer({
   const chunkRef = useRef({ pageLabel, chunkText, chunkId });
   useEffect(() => {
     chunkRef.current = { pageLabel, chunkText, chunkId };
+  });
+
+  // Same ref trick for the onPageChange callback so the pagechanging
+  // listener can call the latest prop without re-registration churn.
+  const onPageChangeRef = useRef(onPageChange);
+  useEffect(() => {
+    onPageChangeRef.current = onPageChange;
   });
 
   const [loadState, setLoadState] = useState<LoadState>("idle");
@@ -273,8 +286,18 @@ export function PdfViewer({
         handleFindResults(payload.matchesCount);
       };
 
+      // pagechanging fires whenever the viewer's currentPageNumber
+      // changes — from user scroll, find-driven scroll, or our own
+      // scrollPageIntoView. The payload's pageNumber is 1-based.
+      const onPageChanging = (payload: { pageNumber: number }) => {
+        if (cancelled) return;
+        const cb = onPageChangeRef.current;
+        if (cb) cb(payload.pageNumber);
+      };
+
       eventBus.on("pagesinit", onPagesInit);
       eventBus.on("updatefindmatchescount", onMatches);
+      eventBus.on("pagechanging", onPageChanging);
 
       stateRef.current = {
         pdfjs,
@@ -382,14 +405,17 @@ function renderBanner(
   if (kind === "no-match") {
     return (
       <div className="h-pdf-banner h-pdf-banner-soft" role="status">
-        Couldn&apos;t locate exact passage on Page {hintPage} or nearby.
+        Showing Page {hintPage}. We couldn&apos;t pinpoint the exact passage —
+        try scrolling a page or two in either direction.
       </div>
     );
   }
   if (kind === "needs-rendition") {
     return (
       <div className="h-pdf-banner h-pdf-banner-warn" role="alert">
-        <span>Viewer needs a PDF rendition for this DOCX.</span>
+        <span>
+          This document can&apos;t be viewed inline. Download the original to read it.
+        </span>
         {onDownloadOriginal ? (
           <button type="button" className="h-pdf-banner-action" onClick={onDownloadOriginal}>
             Download original
@@ -401,20 +427,22 @@ function renderBanner(
   if (kind === "missing") {
     return (
       <div className="h-pdf-banner h-pdf-banner-warn" role="alert">
-        Source no longer available — workspace may have expired.
+        We can&apos;t find this source anymore. The workspace may have expired —
+        reload the page to start fresh.
       </div>
     );
   }
   if (kind === "auth") {
     return (
       <div className="h-pdf-banner h-pdf-banner-warn" role="alert">
-        Session expired. Reload the page to continue reading.
+        Your session timed out. Reload the page to continue reading.
       </div>
     );
   }
   return (
     <div className="h-pdf-banner h-pdf-banner-warn" role="alert">
-      Couldn&apos;t load source PDF{detail ? `: ${detail}` : ""}.
+      The source PDF didn&apos;t load{detail ? ` (${detail})` : ""}.
+      Try closing and reopening Read Mode.
     </div>
   );
 }

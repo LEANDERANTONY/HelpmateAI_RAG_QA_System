@@ -19,8 +19,11 @@
 // plumbing without the actual PDF.js viewer. Stage 3b replaces the body
 // with the PDF.js mount; the chrome stays put.
 
+import { useEffect, useRef, useState } from "react";
+
 import { PdfViewer } from "@/components/viewer/pdf-viewer";
 import { useCurrentChunk, useReadModeActions } from "@/lib/read-mode-state";
+import { parsePageLabel } from "@/lib/search-anchor";
 
 export function SourcePane() {
   // Narrow subscriptions: re-render when the chunk changes (auto-jump on
@@ -29,6 +32,33 @@ export function SourcePane() {
   // churn between renders.
   const currentChunk = useCurrentChunk();
   const { exitReadMode } = useReadModeActions();
+
+  // Track the viewer's actually-visible page so the page-pill reflects
+  // where the user is, not the original hint. We key the value on the
+  // current chunkId so a chunk switch naturally resets to null without
+  // an effect — set-state-in-effect rule false-positives on the
+  // alternative pattern. The pill falls back to the hint page label
+  // until pdfjs reports the first pagechanging event.
+  const [pageState, setPageState] = useState<{ chunkId: string; page: number } | null>(null);
+  const visiblePage =
+    pageState && pageState.chunkId === currentChunk?.chunkId ? pageState.page : null;
+  const handlePageChange = (page: number) => {
+    if (!currentChunk) return;
+    setPageState({ chunkId: currentChunk.chunkId, page });
+  };
+
+  // Focus management — when the pane mounts (Read Mode entered),
+  // move keyboard focus to the close button so users have an obvious
+  // exit route. We use a ref + effect (not autoFocus) so re-entry
+  // after exit re-focuses too.
+  const closeBtnRef = useRef<HTMLButtonElement | null>(null);
+  useEffect(() => {
+    // Tiny delay so the slide-in animation can start before focus
+    // jumps — instant focus during the transform was causing the
+    // ring to flash mid-animation.
+    const t = window.setTimeout(() => closeBtnRef.current?.focus(), 50);
+    return () => window.clearTimeout(t);
+  }, []);
 
   // Defensive empty frame — shouldn't happen because the reducer requires
   // a chunk on `enter`, but the type is nullable so we don't crash if a
@@ -70,10 +100,18 @@ export function SourcePane() {
           </span>
         </div>
         <div className="h-source-chrome-spacer" aria-hidden />
-        <span className="h-source-page-pill" title={`Hint: ${currentChunk.pageLabel}`}>
-          {currentChunk.pageLabel || "Document"}
+        <span
+          className="h-source-page-pill"
+          title={
+            visiblePage === null
+              ? `Hint: ${currentChunk.pageLabel}`
+              : `Currently on Page ${visiblePage} (hint: ${currentChunk.pageLabel})`
+          }
+        >
+          Page {visiblePage ?? parsePageLabel(currentChunk.pageLabel)}
         </span>
         <button
+          ref={closeBtnRef}
           type="button"
           className="h-source-close"
           aria-label="Exit Read Mode"
@@ -89,6 +127,7 @@ export function SourcePane() {
           chunkId={currentChunk.chunkId}
           pageLabel={currentChunk.pageLabel}
           chunkText={currentChunk.chunkText}
+          onPageChange={handlePageChange}
           onDownloadOriginal={() => {
             // Surface the original file as a download. The /file endpoint
             // serves the source format (PDF or DOCX) when ?download=1.
