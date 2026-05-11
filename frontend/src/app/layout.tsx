@@ -21,12 +21,6 @@ const geistMono = Geist_Mono({
   weight: ["400", "500"],
 });
 
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
-  weight: ["400", "500"],
-});
-
 export const metadata: Metadata = {
   title: "HelpmateAI",
   description:
