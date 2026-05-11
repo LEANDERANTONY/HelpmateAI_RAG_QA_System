@@ -3163,34 +3163,6 @@ input[type="file"]:disabled::file-selector-button {
   white-space: nowrap;
 }
 
-.h-replay {
-  align-items: center;
-  align-self: flex-start;
-  background: transparent;
-  border: 1px solid var(--border);
-  border-radius: 999px;
-  color: var(--fg-3);
-  cursor: pointer;
-  display: inline-flex;
-  font-family: var(--font-mono);
-  font-size: 10.5px;
-  gap: 6px;
-  letter-spacing: 0.08em;
-  margin-top: 4px;
-  padding: 5px 12px;
-  text-transform: uppercase;
-  transition: all var(--duration-base) var(--ease-out);
-}
-
-.h-replay:hover {
-  border-color: var(--accent-tint);
-  color: var(--accent);
-}
-
-.h-replay svg {
-  opacity: 0.85;
-}
-
 .h-debug-strip {
   border-top: 1px solid var(--hairline);
   color: var(--fg-3);

@@ -944,7 +944,6 @@ function QACard({
   cardRef,
   onCitationClick,
   onUseFollowup,
-  onReplayStream,
   onMenuToggle,
   onMenuClose,
   onCopyAnswer,
@@ -959,7 +958,6 @@ function QACard({
   cardRef: (element: HTMLElement | null) => void;
   onCitationClick: (turnId: string, chunkId: string) => void;
   onUseFollowup: (question: string) => void;
-  onReplayStream: (turnId: string) => void;
   onMenuToggle: (turnId: string) => void;
   onMenuClose: () => void;
   onCopyAnswer: (turnId: string) => void;
@@ -1059,15 +1057,6 @@ function QACard({
               ))}
             </div>
           </div>
-          <button
-            aria-label="Replay streaming animation"
-            className="h-replay"
-            onClick={() => onReplayStream(turn.id)}
-            type="button"
-          >
-            <icons.Refresh size={12} />
-            <span>Replay stream</span>
-          </button>
         </>
       ) : null}
     </article>
@@ -1111,7 +1100,6 @@ function Conversation({
   onFocusChange,
   onPickStarter,
   onCitationClick,
-  onReplayStream,
   registerTurnRef,
   onMenuToggle,
   onMenuClose,
@@ -1138,7 +1126,6 @@ function Conversation({
   onFocusChange: (value: boolean) => void;
   onPickStarter: (question: string) => void;
   onCitationClick: (turnId: string, chunkId: string) => void;
-  onReplayStream: (turnId: string) => void;
   registerTurnRef: (turnId: string, element: HTMLElement | null) => void;
   onMenuToggle: (turnId: string) => void;
   onMenuClose: () => void;
@@ -1206,7 +1193,6 @@ function Conversation({
                   onMenuClose={onMenuClose}
                   onMenuToggle={onMenuToggle}
                   onReAsk={onReAsk}
-                  onReplayStream={onReplayStream}
                   onUseFollowup={onPickStarter}
                   streaming={streamingTurnId === turn.id}
                   turn={turn}
@@ -2201,22 +2187,6 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
     return () => doc.removeEventListener("keydown", onKeyDown);
   }, []);
 
-  function handleReplayStream(turnId: string) {
-    if (streamTimer.current) {
-      clearTimeout(streamTimer.current);
-    }
-    const turn = turns.find((candidate) => candidate.id === turnId);
-    if (!turn) {
-      return;
-    }
-    setStreamingTurnId(turnId);
-    const dur = streamingDuration(stripReferencesBlock(turn.answer.answer));
-    streamTimer.current = setTimeout(() => {
-      setStreamingTurnId((current) => (current === turnId ? null : current));
-      streamTimer.current = null;
-    }, dur);
-  }
-
   return (
     <div className="h-shell">
       <Topbar
@@ -2270,7 +2240,6 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
           onPickStarter={setQuestion}
           onQuestionChange={setQuestion}
           onReAsk={handleReAskTurn}
-          onReplayStream={handleReplayStream}
           openMenuTurnId={openMenuTurnId}
           pendingQuestion={pendingQuestion}
           question={question}
