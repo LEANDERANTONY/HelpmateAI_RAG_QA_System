@@ -539,7 +539,6 @@ function DocStrip({
         <div className="h-indexing">
           <div className="h-progress" />
           <p>Preparing document...</p>
-          <span>Index progress is not streamed by the backend yet.</span>
         </div>
       ) : (
         <div>
