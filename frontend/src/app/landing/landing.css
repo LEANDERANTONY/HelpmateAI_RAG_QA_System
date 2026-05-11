@@ -1,0 +1,1364 @@
+/* ================================================================
+   Landing component styles — Phase 2 (chrome + static hero).
+   Source: design_system/landing/specs/spec-sheet.md §4.1, §4.2, §4.7
+           and design_system/landing/src/landing-refresh.html.
+
+   All selectors are scoped under `.l-shell` so this file can never
+   leak into the workspace. Tokens live in globals.css under
+   `.h-shell`; the landing root composes both: `<div class="h-shell
+   l-shell">`.
+
+   Aurora drift animation + reduced-motion gating land in Phase 3
+   together with the validation strip. The static aurora layers
+   A + B are baked into the hero background here.
+   ================================================================ */
+
+.l-shell {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+}
+
+.l-shell > main {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+}
+
+.l-shell a {
+  color: inherit;
+  text-decoration: none;
+}
+
+/* Specificity fix — Phase 6.1.
+   .l-cta and .l-hero-cta are <a> elements and inherit color
+   from the .l-shell a rule above ((0,1,1) > (0,1,0)), which made
+   the dark `--accent-fg` declared on the bare class lose the
+   cascade and render the topbar + hero pills as white-on-green
+   (≈1.65:1 contrast, fails WCAG AA). Scoping both selectors
+   under .l-shell bumps specificity to (0,2,0) and wins.
+   .l-final .btn is already (0,2,0) via its own descendant
+   selector, so it isn't repeated here. */
+.l-shell .l-cta,
+.l-shell .l-hero-cta {
+  color: var(--accent-fg);
+}
+
+.l-shell .eyebrow {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+}
+
+/* ================================================================
+   Topbar — chrome.md §"Topbar — desktop (≥ 901px)"
+   ================================================================ */
+.l-topbar {
+  flex: 0 0 56px;
+  height: 56px;
+  display: flex;
+  align-items: center;
+  border-bottom: 1px solid var(--hairline);
+  background: var(--bg-page);
+}
+.l-topbar-inner {
+  width: 100%;
+  max-width: 1280px;
+  margin: 0 auto;
+  padding: 0 32px;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+}
+.l-brand {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.l-brand-mark {
+  width: 22px;
+  height: 22px;
+  border-radius: 6px;
+  background: linear-gradient(135deg, var(--accent) 0%, #4ec594 100%);
+  display: grid;
+  place-items: center;
+  color: var(--accent-fg);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 13px;
+  box-shadow:
+    0 0 18px rgba(127, 224, 176, 0.35),
+    inset 0 1px 0 rgba(255, 255, 255, 0.3);
+}
+.l-wordmark {
+  font-family: var(--font-display);
+  font-size: 16px;
+  font-weight: 600;
+  color: var(--fg);
+  letter-spacing: -0.01em;
+}
+.l-nav {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin: 0 auto;
+}
+.l-nav a {
+  padding: 8px 14px;
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--fg-2);
+  border-radius: 999px;
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out);
+}
+.l-nav a:hover {
+  color: var(--fg);
+  background: rgba(255, 255, 255, 0.03);
+}
+.l-cta {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  background: var(--accent);
+  color: var(--accent-fg);
+  border: none;
+  border-radius: var(--radius);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  /* focal-glow primitive — same recipe as .l-hero-cta + .l-final .btn
+     per spec-sheet §5.4. Both transitions on --duration-base; hover
+     adds the 1px inset white ring + 32px accent glow. */
+  transition:
+    background var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+.l-cta:hover {
+  background: var(--accent-strong);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+    0 0 32px var(--accent-glow);
+}
+
+/* ================================================================
+   Burger + mobile menu — chrome.md §"Topbar — mobile (≤ 900px)".
+   The burger button is hidden at desktop and replaces the topbar
+   CTA at ≤ 900px. The dropdown panel is fixed below the 56px
+   topbar, near-opaque dark with backdrop blur, links sized for
+   44+ touch targets, body scroll lock + ESC + tap-outside dismiss
+   are handled in topbar.tsx.
+   ================================================================ */
+.l-burger {
+  display: none; /* mobile-only; revealed in the @media block */
+  width: 44px;
+  height: 44px;
+  margin-left: auto;
+  padding: 0;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  color: var(--fg-2);
+  cursor: pointer;
+  align-items: center;
+  justify-content: center;
+  flex-direction: column;
+  gap: 4px;
+  transition:
+    background var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out);
+}
+.l-burger:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: var(--border-strong);
+}
+.l-burger .bar {
+  display: block;
+  width: 16px;
+  height: 1.5px;
+  background: currentColor;
+  border-radius: 1px;
+}
+
+.l-mobile-menu {
+  position: fixed;
+  inset: 56px 0 0 0; /* below the 56px topbar */
+  z-index: 100;
+  display: flex;
+  flex-direction: column;
+  padding: 32px 24px;
+  background: rgba(2, 4, 9, 0.97);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  overflow-y: auto;
+}
+.l-mobile-menu-inner {
+  width: 100%;
+  max-width: 480px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 24px;
+}
+.l-mobile-menu nav {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+.l-mobile-menu nav a {
+  display: flex;
+  align-items: center;
+  min-height: 44px;
+  padding: 12px 16px;
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 500;
+  color: var(--fg);
+  border-radius: var(--radius);
+  transition: background var(--duration-fast) var(--ease-out);
+}
+.l-mobile-menu nav a:hover {
+  background: rgba(255, 255, 255, 0.04);
+}
+.l-mobile-menu .l-cta {
+  margin-top: 16px;
+  justify-content: center;
+  min-height: 44px;
+  padding: 14px 24px;
+  font-size: 15px;
+}
+
+/* ================================================================
+   Hero — spec-sheet §4.2. Static aurora (Layers A + B) only;
+   pseudo-element drift comes in Phase 3.
+   ================================================================ */
+.l-hero {
+  position: relative;
+  flex: 0 0 auto;
+  min-height: 640px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 120px 32px;
+  overflow: hidden;
+  background:
+    radial-gradient(
+      ellipse 600px 800px at 0% 50%,
+      rgba(127, 224, 176, 0.18) 0%,
+      rgba(127, 224, 176, 0.04) 30%,
+      transparent 60%
+    ),
+    radial-gradient(
+      ellipse 600px 800px at 100% 50%,
+      rgba(127, 224, 176, 0.18) 0%,
+      rgba(127, 224, 176, 0.04) 30%,
+      transparent 60%
+    );
+}
+.l-hero-inner {
+  position: relative;
+  z-index: 1;
+  max-width: 840px;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+}
+.l-hero h1 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 88px;
+  line-height: 1.05;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  text-wrap: balance;
+}
+.l-hero p {
+  margin: 24px 0 0;
+  font-family: var(--font-body);
+  font-size: 18px;
+  line-height: 1.5;
+  color: var(--fg-2);
+  max-width: 560px;
+  text-wrap: pretty;
+}
+.l-hero-cta {
+  margin-top: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  background: var(--accent);
+  color: var(--accent-fg);
+  border: none;
+  border-radius: var(--radius-lg);
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+    0 6px 24px rgba(127, 224, 176, 0.10);
+  transition:
+    background var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+.l-hero-cta:hover {
+  background: var(--accent-strong);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+    0 0 32px var(--accent-glow);
+}
+.l-hero-cta .arrow {
+  font-weight: 500;
+  transform: translateY(-1px);
+}
+
+/* ================================================================
+   Aurora drift — spec-sheet §5.1.
+   Two pseudo-elements layered on top of the hero's static A + B
+   gradients. Always rendered (so the second-layer rays show even
+   when motion is off), animation only fires on viewports >900px
+   AND when the user hasn't requested reduced motion. The two
+   layers counter-phase via animation-delay: -9s.
+   ================================================================ */
+.l-hero::before,
+.l-hero::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+.l-hero::before {
+  background: radial-gradient(
+    ellipse 500px 700px at 8% 45%,
+    rgba(127, 224, 176, 0.10) 0%,
+    transparent 55%
+  );
+}
+.l-hero::after {
+  background: radial-gradient(
+    ellipse 500px 700px at 92% 55%,
+    rgba(9, 188, 138, 0.08) 0%,
+    transparent 55%
+  );
+}
+
+@keyframes aurora-drift {
+  0% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(20px, -10px, 0);
+  }
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+}
+
+@media (min-width: 901px) and (prefers-reduced-motion: no-preference) {
+  .l-hero::before,
+  .l-hero::after {
+    animation: aurora-drift 18s ease-in-out infinite;
+  }
+  .l-hero::after {
+    animation-delay: -9s;
+  }
+}
+
+/* ================================================================
+   Section frame — spec-sheet §6. Used by validation, claims, and
+   carousel. No nested cards; sections separate with a top hairline
+   and 80px vertical padding.
+   ================================================================ */
+.l-sec {
+  position: relative;
+  padding: 80px 32px;
+  border-top: 1px solid var(--hairline);
+}
+.l-sec-inner {
+  width: 100%;
+  max-width: 920px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+}
+.l-sec-inner.narrow {
+  max-width: 840px;
+}
+.l-sec-inner.wide {
+  max-width: 1080px;
+}
+.l-sec-head {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+}
+.l-sec-head .eyebrow {
+  color: var(--fg-3);
+}
+.l-sec-head h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 36px;
+  line-height: 1.2;
+  letter-spacing: -0.015em;
+  color: var(--fg);
+  max-width: 720px;
+  text-wrap: balance;
+}
+.l-sec-head p {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.6;
+  color: var(--fg-2);
+  max-width: 640px;
+  text-wrap: pretty;
+}
+
+/* ================================================================
+   Validation strip — spec-sheet §4.3. Three stat columns + 64px
+   subtle hairline + three vendor rows. Helpmate row gets the .us
+   modifier (full-white vendor, accent-colored result). Real vendor
+   names locked in Phase 0 question 2.
+   ================================================================ */
+.l-val-stats {
+  margin: 48px auto 0;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  gap: 96px;
+}
+.l-val-stat {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+}
+.l-val-stat .num {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  font-size: 56px;
+  letter-spacing: -0.02em;
+  color: var(--accent);
+  line-height: 1;
+}
+.l-val-stat .num.muted {
+  color: var(--fg);
+}
+.l-val-stat .lbl {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+  text-align: center;
+}
+.l-val-rule {
+  width: 64px;
+  height: 1px;
+  background: var(--hairline);
+  margin: 40px auto;
+}
+.l-val-rows {
+  display: flex;
+  flex-direction: column;
+  max-width: 520px;
+  width: 100%;
+  margin: 0 auto;
+}
+.l-val-row {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 24px;
+  padding: 14px 0;
+  border-top: 1px solid var(--hairline);
+}
+.l-val-row:first-child {
+  border-top: none;
+}
+.l-val-row .vendor {
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--fg-2);
+}
+.l-val-row.us .vendor {
+  color: var(--fg);
+}
+.l-val-row .result {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--fg-2);
+}
+.l-val-row.us .result {
+  color: var(--accent);
+}
+.l-val-foot {
+  margin: 32px auto 0;
+  max-width: 560px;
+  font-family: var(--font-body);
+  font-size: 12px;
+  line-height: 1.55;
+  color: var(--fg-3);
+  text-align: center;
+}
+
+/* ================================================================
+   Editorial claims — spec-sheet §4.4 + §5.3. Two-column grid: left
+   rail of three claim rows, right column pinned at top: 30vh with
+   three absolute-positioned visual frames cross-fading on
+   IntersectionObserver state. Inactive rows dim to 0.55 (the
+   editorial pattern Claude Design added during v2 review). Mobile
+   drops the pin and renders visuals inline below each text block.
+   ================================================================ */
+
+/* override .l-sec-head's centered alignment so the section head
+   anchors to the left rail's reading axis */
+.l-claims-head {
+  align-items: flex-start;
+  text-align: left;
+  max-width: 720px;
+}
+.l-claims-head h2 {
+  max-width: 100%;
+}
+
+.l-claim-grid {
+  margin-top: 48px;
+  display: grid;
+  grid-template-columns: 1.3fr 1fr;
+  gap: 80px;
+  align-items: flex-start;
+}
+.l-claims-rail {
+  display: flex;
+  flex-direction: column;
+}
+.l-claim-row {
+  padding: 80px 0;
+  border-top: 1px solid var(--hairline);
+  transition: opacity var(--duration-base) var(--ease-out);
+}
+.l-claim-row:first-child {
+  border-top: 1px solid var(--hairline);
+}
+.l-claim-row:not(.is-active) {
+  opacity: 0.55;
+}
+.l-claim-text {
+  display: flex;
+  flex-direction: column;
+  gap: 16px;
+  max-width: 480px;
+}
+.l-claim-text .eyebrow {
+  color: var(--fg-3);
+}
+.l-claim-text .eyebrow .num {
+  color: var(--accent);
+  margin-right: 12px;
+}
+.l-claim-text h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 26px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+}
+.l-claim-text p {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 16px;
+  line-height: 1.65;
+  color: var(--fg-2);
+  max-width: 480px;
+  text-wrap: pretty;
+}
+
+/* inline visuals only render at mobile widths */
+.l-claim-vis-inline {
+  display: none;
+}
+
+/* sticky right column */
+.l-claim-sticky {
+  position: sticky;
+  top: 30vh;
+  align-self: start;
+  height: 280px;
+}
+.l-claim-stack {
+  position: relative;
+  width: 100%;
+  height: 100%;
+}
+.l-claim-frame {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  opacity: 0;
+  transition: opacity var(--duration-base) var(--ease-out);
+  pointer-events: none;
+}
+.l-claim-frame.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* progress ticks under the sticky stack — three 28x2 hairlines,
+   active fills with --accent and a soft glow */
+.l-claim-progress {
+  position: absolute;
+  left: 0;
+  bottom: -36px;
+  display: flex;
+  gap: 6px;
+}
+.l-claim-tick {
+  width: 28px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--hairline);
+  transition: background var(--duration-base) var(--ease-out);
+}
+.l-claim-tick.is-active {
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent-glow);
+}
+
+/* ================================================================
+   Citation pill — workspace spec-sheet §3.2 (summary tier:
+   3px 10px padding, 11px font, 6px radius). Per Phase 4 user note,
+   summary tier reads best in claim 01's editorial visual; the
+   prototype's looser "999px radius / inline tier" was overridden.
+   ================================================================ */
+.l-shell .cite-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px 10px;
+  background: var(--accent-soft);
+  color: var(--accent);
+  border: 1px solid var(--accent-tint);
+  border-radius: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  vertical-align: baseline;
+  white-space: nowrap;
+  cursor: pointer;
+}
+.l-shell .cite-pill.ringed {
+  background: var(--accent-tint);
+  box-shadow: 0 0 0 2px var(--accent);
+}
+
+/* ================================================================
+   Claim 01 visual — citation pill in answer prose + chunk preview
+   evidence card with the workspace evidence-strength block
+   (spec-sheet §3.3: square block + tracked mono label).
+   ================================================================ */
+.l-claim1 {
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  align-items: flex-start;
+  width: 100%;
+}
+.l-claim1 .prose {
+  font-family: var(--font-body);
+  font-size: 14px;
+  line-height: 1.65;
+  color: var(--fg-2);
+  max-width: 320px;
+}
+.l-claim1 .evi {
+  align-self: stretch;
+  max-width: 340px;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 14px;
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+.l-claim1 .evi .head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+}
+.l-claim1 .evi .head .eyebrow {
+  color: var(--fg-3);
+}
+.l-claim1 .evi .strength {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--accent);
+}
+.l-claim1 .evi .strength::before {
+  content: "";
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  background: currentColor;
+  box-shadow: 0 0 6px currentColor;
+}
+.l-claim1 .evi .preview {
+  font-family: var(--font-body);
+  font-size: 12.5px;
+  line-height: 1.55;
+  color: var(--fg-2);
+  max-height: 4.4em;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(180deg, #000 60%, transparent 100%);
+  mask-image: linear-gradient(180deg, #000 60%, transparent 100%);
+}
+
+/* ================================================================
+   Claim 02 visual — three answer-state pips. Glow on active two,
+   muted on abstained per the spec's "three honest states" framing.
+   ================================================================ */
+.l-pip-stack {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+.l-pip-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+.l-pip-row .dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  background: currentColor;
+  box-shadow: 0 0 8px currentColor;
+}
+.l-pip-row .lbl {
+  font-family: var(--font-mono);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+.l-pip-row.supported {
+  color: var(--accent);
+}
+.l-pip-row.partial {
+  color: var(--warning);
+}
+.l-pip-row.abstained {
+  color: var(--fg-3);
+}
+.l-pip-row.abstained .dot {
+  box-shadow: none;
+}
+
+/* ================================================================
+   Claim 03 visual — "Open in source" mono link + page-range stripe
+   with the active range glowing on --accent.
+   ================================================================ */
+.l-claim3 {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  max-width: 320px;
+}
+.l-claim3 .link {
+  font-family: var(--font-mono);
+  font-size: 13px;
+  color: var(--fg-2);
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding-bottom: 12px;
+  border-bottom: 1px solid var(--hairline);
+}
+.l-claim3 .link .file {
+  color: var(--fg-3);
+}
+.l-claim3 .pages {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--fg-3);
+  letter-spacing: 0.06em;
+}
+.l-claim3 .pages .stripe {
+  flex: 1;
+  height: 4px;
+  border-radius: 2px;
+  background: rgba(255, 255, 255, 0.04);
+  position: relative;
+  overflow: hidden;
+}
+.l-claim3 .pages .stripe::after {
+  content: "";
+  position: absolute;
+  left: 32%;
+  width: 18%;
+  top: 0;
+  bottom: 0;
+  background: var(--accent);
+  box-shadow: 0 0 6px var(--accent-glow);
+  border-radius: 2px;
+}
+
+/* prefers-reduced-motion: snap state changes per spec §5.3 */
+@media (prefers-reduced-motion: reduce) {
+  .l-claim-row,
+  .l-claim-frame,
+  .l-claim-tick {
+    transition: none;
+  }
+}
+
+/* ================================================================
+   Flow carousel — spec-sheet §4.5 + §5.2. Minimal token swap of
+   the existing 4-step section (Phase 0 question 3 default). Tab
+   pill row + grid-overlap cross-fade so all four steps share the
+   same grid cell and the container naturally sizes to the tallest
+   child (no JS measurement needed). 300ms cross-fade. Auto-advance
+   default OFF.
+   ================================================================ */
+.l-flow-tabs {
+  align-self: center;
+  margin-top: 40px;
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 6px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+}
+.l-flow-tab {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 9px 16px;
+  font-family: var(--font-body);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--fg-2);
+  background: transparent;
+  border: none;
+  border-radius: 999px;
+  cursor: pointer;
+  transition:
+    color var(--duration-fast) var(--ease-out),
+    background var(--duration-fast) var(--ease-out),
+    box-shadow var(--duration-fast) var(--ease-out);
+}
+.l-flow-tab .num {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  color: var(--fg-3);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+.l-flow-tab:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--fg);
+}
+.l-flow-tab.active {
+  background: var(--accent-soft);
+  color: var(--accent);
+  box-shadow: 0 0 0 1px var(--accent-tint);
+}
+.l-flow-tab.active .num {
+  color: var(--accent);
+}
+
+/* Grid-overlap pattern: every .l-flow-step occupies grid-area 1/1,
+   so the parent's grid cell naturally sizes to the largest child.
+   Mockups all share aspect-ratio 91/54, so the four steps have
+   identical heights and the cross-fade has no layout shift. */
+.l-flow-active {
+  margin-top: 56px;
+  display: grid;
+}
+.l-flow-step {
+  grid-area: 1 / 1;
+  display: grid;
+  grid-template-columns: 1.4fr 1fr;
+  gap: 64px;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 300ms var(--ease-out);
+  pointer-events: none;
+}
+.l-flow-step.is-active {
+  opacity: 1;
+  pointer-events: auto;
+}
+.l-flow-mockup {
+  width: 100%;
+  /* match workspace screenshot native 910×540 so sidebar labels
+     don't crop under background-size: cover */
+  aspect-ratio: 91 / 54;
+  background-color: rgba(0, 0, 0, 0.2);
+  background-size: cover;
+  background-position: center center;
+  background-repeat: no-repeat;
+  border-radius: var(--radius-lg);
+  box-shadow:
+    0 32px 64px -32px rgba(0, 0, 0, 0.7),
+    0 0 0 1px var(--hairline);
+}
+.l-flow-claim .step {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent);
+  margin-bottom: 16px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+.l-flow-claim h3 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 26px;
+  line-height: 1.25;
+  letter-spacing: -0.01em;
+  color: var(--fg);
+}
+.l-flow-claim p {
+  margin: 14px 0 0;
+  font-family: var(--font-body);
+  font-size: 15px;
+  line-height: 1.65;
+  color: var(--fg-2);
+  max-width: 360px;
+  text-wrap: pretty;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .l-flow-step {
+    transition: none;
+  }
+}
+
+/* ================================================================
+   Final CTA — spec-sheet §4.6, with Phase 5 user overrides:
+     • workspace-indexing.png as the background (locked v2)
+     • mask softened to rgba(0,0,0,0.6) at 18% / 75% — the user's
+       Phase 5 recap deliberately deviated from the prototype's
+       "black at 14% / 80%" to keep the CTA prose dominant.
+   ================================================================ */
+.l-final {
+  position: relative;
+  flex: 0 0 auto;
+  min-height: 560px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* 120px top, 32px horizontal, 0 bottom — the masked mockup bleeds
+     directly into the footer's top hairline per final-cta.md narrative.
+     The 0 bottom padding overrides spec-sheet §4.6's "120px 32px"
+     shorthand, which was a copy of the standard pattern that doesn't
+     fit this section's "no fence between proof and footer" intent. */
+  padding: 120px 32px 0;
+  overflow: hidden;
+  border-top: 1px solid var(--hairline);
+}
+.l-final-bg {
+  position: absolute;
+  inset: 0;
+  background-size: cover;
+  background-position: center 40%;
+  background-repeat: no-repeat;
+  filter: brightness(0.55) saturate(0.92);
+  -webkit-mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.6) 18%,
+    rgba(0, 0, 0, 0.6) 75%,
+    transparent 100%
+  );
+  mask-image: linear-gradient(
+    to bottom,
+    transparent 0%,
+    rgba(0, 0, 0, 0.6) 18%,
+    rgba(0, 0, 0, 0.6) 75%,
+    transparent 100%
+  );
+}
+
+/* On wide monitors the cover-sized mockup feels too sprawling.
+   Above 1280px we cap the mockup to 70vw centered, and add a
+   second horizontal mask whose fade stops align with the mockup's
+   rendered edges (15%/85% of viewport). mask-composite: intersect
+   combines the vertical fade and the horizontal fade so the
+   mockup bleeds into bg-page on all four edges. Mobile + tablet
+   keep the full-width cover behaviour. */
+@media (min-width: 1280px) {
+  .l-final-bg {
+    background-size: 70vw auto;
+    -webkit-mask-image:
+      linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(0, 0, 0, 0.6) 18%,
+        rgba(0, 0, 0, 0.6) 75%,
+        transparent 100%
+      ),
+      linear-gradient(
+        to right,
+        transparent 15%,
+        rgba(0, 0, 0, 1) 25%,
+        rgba(0, 0, 0, 1) 75%,
+        transparent 85%
+      );
+    -webkit-mask-composite: source-in;
+    mask-image:
+      linear-gradient(
+        to bottom,
+        transparent 0%,
+        rgba(0, 0, 0, 0.6) 18%,
+        rgba(0, 0, 0, 0.6) 75%,
+        transparent 100%
+      ),
+      linear-gradient(
+        to right,
+        transparent 15%,
+        rgba(0, 0, 0, 1) 25%,
+        rgba(0, 0, 0, 1) 75%,
+        transparent 85%
+      );
+    mask-composite: intersect;
+  }
+}
+/* accent wash so the green palette stays readable through the
+   desaturated mockup */
+.l-final-wash {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    ellipse 800px 500px at 50% 50%,
+    rgba(127, 224, 176, 0.10) 0%,
+    transparent 60%
+  );
+  pointer-events: none;
+}
+.l-final-inner {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 640px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  text-align: center;
+  gap: 16px;
+}
+.l-final .eyebrow {
+  color: var(--fg-3);
+}
+.l-final h2 {
+  margin: 0;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 44px;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+  color: var(--fg);
+  text-wrap: balance;
+}
+.l-final p {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 17px;
+  line-height: 1.55;
+  color: var(--fg-2);
+  max-width: 520px;
+  text-wrap: pretty;
+}
+.l-final .btn {
+  margin-top: 24px;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 28px;
+  background: var(--accent);
+  color: var(--accent-fg);
+  border: none;
+  border-radius: var(--radius-lg);
+  font-family: var(--font-body);
+  font-size: 16px;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+    0 6px 24px rgba(127, 224, 176, 0.18);
+  transition:
+    background var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+.l-final .btn:hover {
+  background: var(--accent-strong);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.06) inset,
+    0 0 32px var(--accent-glow);
+}
+
+/* ================================================================
+   Footer — chrome.md §"Footer". 3-column grid: brand | resources |
+   socials. Phantom links from the prototype dropped per Phase 0
+   nav-audit; only links pointing at real destinations ship.
+   ================================================================ */
+.l-foot {
+  flex: 0 0 auto;
+  border-top: 1px solid var(--hairline);
+  padding: 48px 32px 40px;
+  background: var(--bg-page);
+}
+.l-foot-inner {
+  max-width: 1280px;
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: 2fr 1fr 1fr;
+  gap: 48px;
+  align-items: flex-start;
+}
+.l-foot-brand .word {
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--fg);
+  margin-bottom: 12px;
+}
+.l-foot-brand .tag {
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--fg-2);
+  max-width: 320px;
+  line-height: 1.5;
+}
+.l-foot-brand .by {
+  margin-top: 24px;
+  font-family: var(--font-mono);
+  font-size: 11.5px;
+  color: var(--fg-3);
+}
+.l-foot-col .head {
+  font-family: var(--font-mono);
+  font-size: 11px;
+  font-weight: 500;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--fg-3);
+  margin-bottom: 16px;
+}
+.l-foot-col a {
+  display: block;
+  padding: 6px 0;
+  font-family: var(--font-body);
+  font-size: 14px;
+  color: var(--fg-2);
+  transition: color var(--duration-fast) var(--ease-out);
+}
+.l-foot-col a:hover {
+  color: var(--fg);
+}
+
+/* ================================================================
+   Mobile — converted from prototype's .l-shell.mobile artboard
+   selectors into viewport queries. Spec uses 900px as the desktop
+   threshold; under that, we collapse nav, shrink hero type, and
+   stack the footer columns.
+   ================================================================ */
+@media (max-width: 900px) {
+  .l-topbar-inner {
+    padding: 0 16px;
+    gap: 12px;
+  }
+  .l-nav {
+    display: none;
+  }
+  /* topbar CTA hides on mobile — moves into the burger dropdown.
+     Mobile menu's .l-cta is outside .l-topbar so this selector
+     doesn't touch it. */
+  .l-topbar .l-cta {
+    display: none;
+  }
+  .l-burger {
+    display: inline-flex;
+  }
+
+  .l-hero {
+    min-height: 480px;
+    padding: 80px 24px;
+    background:
+      radial-gradient(
+        ellipse 320px 460px at 0% 50%,
+        rgba(127, 224, 176, 0.20) 0%,
+        rgba(127, 224, 176, 0.05) 30%,
+        transparent 60%
+      ),
+      radial-gradient(
+        ellipse 320px 460px at 100% 50%,
+        rgba(127, 224, 176, 0.20) 0%,
+        rgba(127, 224, 176, 0.05) 30%,
+        transparent 60%
+      );
+  }
+  .l-hero h1 {
+    font-size: 48px;
+  }
+  .l-hero p {
+    font-size: 16px;
+    margin-top: 20px;
+  }
+  .l-hero-cta {
+    margin-top: 32px;
+    padding: 12px 22px;
+    font-size: 15px;
+  }
+
+  /* Section frame + validation strip — mobile */
+  .l-sec {
+    padding: 56px 24px;
+  }
+  .l-sec-head h2 {
+    font-size: 26px;
+  }
+  .l-sec-head p {
+    font-size: 14px;
+  }
+  .l-val-stats {
+    flex-direction: column;
+    align-items: center;
+    gap: 32px;
+    margin-top: 32px;
+  }
+  .l-val-stat .num {
+    font-size: 44px;
+  }
+  .l-val-rule {
+    margin: 32px auto;
+  }
+
+  /* Editorial claims — mobile fallback. Drop sticky pin, render
+     visuals inline below each claim's text, no opacity dim
+     (every claim is "active" since there's no scroll-pinning to
+     drive state). */
+  .l-claims-head {
+    align-items: flex-start;
+  }
+  .l-claim-grid {
+    grid-template-columns: 1fr;
+    gap: 0;
+    margin-top: 32px;
+  }
+  .l-claim-row {
+    padding: 32px 0;
+  }
+  .l-claim-row:not(.is-active) {
+    opacity: 1;
+  }
+  .l-claim-sticky {
+    display: none;
+  }
+  .l-claim-vis-inline {
+    display: flex;
+    margin-top: 24px;
+    min-height: 120px;
+  }
+  .l-claim-text h3 {
+    font-size: 20px;
+  }
+  .l-claim-text p {
+    font-size: 14px;
+  }
+
+  /* Flow carousel — mobile */
+  .l-flow-tabs {
+    align-self: flex-start;
+    margin-top: 32px;
+    padding: 4px;
+    gap: 2px;
+    max-width: 100%;
+    overflow-x: auto;
+    /* hide scrollbar on touch overflow */
+    scrollbar-width: none;
+  }
+  .l-flow-tabs::-webkit-scrollbar {
+    display: none;
+  }
+  /* tab pill touch target ≥ 44 tall — Phase 6 polish */
+  .l-flow-tab {
+    padding: 10px 14px;
+    font-size: 12px;
+    min-height: 44px;
+    flex: 0 0 auto;
+  }
+  .l-flow-active {
+    margin-top: 32px;
+  }
+  .l-flow-step {
+    grid-template-columns: 1fr;
+    gap: 24px;
+  }
+  .l-flow-claim h3 {
+    font-size: 20px;
+  }
+
+  /* Final CTA — mobile */
+  .l-final {
+    min-height: 440px;
+    padding: 80px 24px;
+  }
+  .l-final h2 {
+    font-size: 28px;
+  }
+  .l-final p {
+    font-size: 15px;
+  }
+
+  .l-foot {
+    padding: 32px 24px;
+  }
+  .l-foot-inner {
+    grid-template-columns: 1fr;
+    gap: 28px;
+  }
+  /* footer link touch target ≥ 44 tall — Phase 6 polish */
+  .l-foot-col a {
+    display: flex;
+    align-items: center;
+    min-height: 44px;
+    padding: 12px 0;
+  }
+}

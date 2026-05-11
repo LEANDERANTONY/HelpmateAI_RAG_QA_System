@@ -1717,3 +1717,83 @@ input[type="file"]:disabled::file-selector-button {
     padding: 1.15rem;
   }
 }
+
+/* ================================================================
+   Landing design system — Phase 1 (tokens + atmosphere baseline)
+   Source: design_system/landing/specs/spec-sheet.md §2 + §3
+   Scope: descendants of .h-shell only, so the existing workspace
+   token system at :root is not touched. The workspace pass will
+   adopt .h-shell on its own roots in a later iteration.
+   ================================================================ */
+.h-shell {
+  /* Surfaces */
+  --bg-page:      #04070f;
+  --bg-card:      rgba(10, 14, 22, 0.72);
+  --bg-card-2:    rgba(20, 26, 40, 0.70);
+  --bg-input:     rgba(10, 14, 22, 0.85);
+  --bg-chip:      rgba(255, 255, 255, 0.04);
+
+  /* Borders */
+  --border:        rgba(160, 178, 218, 0.12);
+  --border-strong: rgba(160, 178, 218, 0.20);
+  --hairline:      rgba(160, 178, 218, 0.07);
+
+  /* Ink */
+  --fg:   #f5f8ff;
+  --fg-2: #c7cfdf;
+  --fg-3: #8a93a8;
+  --fg-4: #5e6677;
+
+  /* Accent (green) — six values from workspace spec-sheet §2.4 plus
+     the seventh, --accent-deep, introduced this pass for the aurora
+     core and any deep-glow accent that needs to read on --bg-page. */
+  --accent:        #7fe0b0;
+  --accent-strong: #98ecc1;
+  --accent-soft:   rgba(127, 224, 176, 0.10);
+  --accent-tint:   rgba(127, 224, 176, 0.14);
+  --accent-glow:   rgba(127, 224, 176, 0.40);
+  --accent-fg:     #04241a;
+  --accent-deep:   rgba(9, 188, 138, 0.12);
+
+  /* State */
+  --warning: #ffcb94;
+  --danger:  #ff8b8b;
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius:    10px;
+  --radius-lg: 14px;
+  --radius-xl: 20px;
+
+  /* Motion */
+  --ease-out:      cubic-bezier(0.16, 1, 0.30, 1);
+  --duration-fast: 150ms;
+  --duration-base: 240ms;
+
+  /* Type — reuses next/font CSS variables from layout.tsx. */
+  --font-display: var(--font-space-grotesk), system-ui, sans-serif;
+  --font-body:    var(--font-dm-sans),       system-ui, sans-serif;
+  --font-mono:    var(--font-geist-mono),    ui-monospace, "SF Mono", monospace;
+
+  /* Atmosphere baseline — three layered radial gradients on
+     --bg-page. The hero composes its own aurora on top of this. */
+  background:
+    radial-gradient(circle at 50% 30%,
+      rgba(127, 224, 176, 0.04) 0%, transparent 60%),
+    radial-gradient(1200px 700px at 50% -10%,
+      rgba(127, 224, 176, 0.05), transparent 60%),
+    radial-gradient(900px 600px at 100% 100%,
+      rgba(127, 224, 176, 0.03), transparent 60%),
+    var(--bg-page);
+  color: var(--fg);
+  font-family: var(--font-body);
+
+  /* Structural rules so .h-shell fills the body and lets sections
+     stack top-to-bottom in flow. Workspace will inherit the same
+     once it adopts .h-shell. */
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  width: 100%;
+}
