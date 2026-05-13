@@ -602,6 +602,12 @@
   color: var(--fg-2);
   max-width: 480px;
   text-wrap: pretty;
+  /* Justify with hyphenation: pretty alone left ragged lines that read
+     as inconsistent against the rigid claim-stack rhythm. Hyphens-auto
+     gives the justify algorithm enough flexibility to avoid awkward
+     word-spacing gaps. */
+  text-align: justify;
+  hyphens: auto;
 }
 
 /* inline visuals only render at mobile widths */
@@ -1027,6 +1033,10 @@
   color: var(--fg-2);
   max-width: 360px;
   text-wrap: pretty;
+  /* Justify with hyphenation — matches the claim-text treatment so the
+     two body-paragraph surfaces have consistent typography. */
+  text-align: justify;
+  hyphens: auto;
 }
 
 @media (prefers-reduced-motion: reduce) {
