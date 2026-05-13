@@ -340,18 +340,56 @@ Current benchmark read:
 
 ## UI And Product Surface
 
-The current product surface is centered on the `Next.js + FastAPI` workspace.
+The current product surface is centered on the `Next.js + FastAPI` workspace, plus a Next.js marketing landing that shares the same Vercel deployment.
 
-The active app now carries:
+The active app carries:
 
 - upload and ask workflows
 - Google/Supabase sign-in
 - one active document per user with resumable `24h` sliding retention
-- starter-question guidance tied to the active document
-- answer support states, citations, and evidence panels
+- LLM-generated starter questions per active document
+- answer support states, `support_summary` qualifiers, and per-turn citation pills
+- a three-zone workspace shell with the document strip on the left, the chat / answer column in the center, and the evidence rail on the right
+- a Read Mode posture that opens the cited PDF side-by-side with the answer on desktop and as a draggable bottom sheet on mobile
 - direct-to-API upload support for larger files
-- cleaner landing and workspace presentation
-- a credible deployed product boundary rather than only an internal prototype shell
+- a credible deployed product boundary at `app.helpmateai.xyz` with the same code serving the apex landing at `helpmateai.xyz`
+
+The workspace and the landing share a unified design-token system scoped under `.h-shell`, with the landing route group adding a `.l-shell` scope for marketing-specific styling. A host-based rewrite in `next.config.ts` redirects apex requests to `/landing/*` so a single Vercel project handles both surfaces.
+
+### Source Viewer Endpoint
+
+`GET /documents/{document_id}/file` serves the document for in-app rendering and direct download:
+
+- auth-gated by the standard Supabase JWT pattern
+- streams the file via Starlette's `FileResponse` with HTTP `Range` support for PDF.js progressive rendering
+- defaults to `Content-Disposition: inline` and returns the viewable PDF rendition
+- under `?download=1`, returns the original source format (PDF or DOCX) as an attachment
+- returns `415 Unsupported Media Type` when a legacy DOCX record lacks a rendition, so the frontend can fall back to a "download to view" affordance
+
+The endpoint is the only non-trivial binary-data path in the API. Caddy passes range headers through unchanged.
+
+### DOCX Rendition Pipeline
+
+DOCX uploads run through a LibreOffice headless conversion at ingest to produce a PDF rendition the viewer can render:
+
+- the conversion utility lives at `src/ingest/docx_to_pdf.py` and shells out to `libreoffice --headless --convert-to pdf` with a configurable timeout
+- the Docker base image installs `libreoffice-core` and `libreoffice-writer` (roughly 400MB), not the full LibreOffice suite, to keep the production image lean
+- conversion failure is tolerant: a corrupted DOCX still indexes from extracted text and only loses the inline viewer
+- uploaded files are renamed to `{document_id}{ext}` on disk for collision-safe storage and a `viewable_pdf_path` field on the document record points at the rendition
+- the retention sweeper whitelists both the source and the rendition
+
+PDF uploads alias their source path as the viewable, so the runtime path is identical for both formats from the viewer's perspective.
+
+### Frontend Error Handling
+
+The frontend ships a structured error pipeline that turns transport, auth, and validation failures into actionable toasts rather than generic stack traces or silent dropouts:
+
+- a typed `ApiError` class with `status`, `detail`, `retriable`, and `retryAfterSeconds` flows from the central fetch wrapper
+- a status × operation message map returns `{title, body, action}` for every reasonable combination, so a 5xx during upload reads differently from a 404 on `/qa`
+- `sonner`-based toasts surface transient errors; an inline `<ErrorState>` covers the only persistent case (an index-failed workspace)
+- React error boundaries at `src/app/error.tsx` and `src/app/global-error.tsx` cover render-time crashes
+- retries are wired through closures so each catch carries the original action back, including the original question for ask-retries
+- offline detection uses `navigator.onLine` so a connection failure is named correctly rather than reported as a 5xx
 
 ## Current Strengths
 

@@ -22,6 +22,7 @@ Most RAG demos retrieve the top chunks and hope the answer model can stitch them
 | Section-scoped questions drift into the wrong chapter or policy region. | A bounded orchestrator can resolve explicit local scope to validated section IDs, with deterministic safety checks. |
 | The right chunk appears in top-k but not at rank 1. | A spread-triggered, reorder-only evidence selector can promote stronger evidence without pruning away support. |
 | Most RAG demos can't tell you *why* they picked their reranker, chunk size, or thresholds. | Every architectural choice is documented in ADRs and validated by ablation studies under `docs/evals/reports/`. |
+| You see a citation like "Section 4.2, p. 26" but verifying it means downloading the PDF and finding the page yourself. | Read Mode opens the source PDF side-by-side with the answer, scrolled to the cited page with the chunk passage highlighted. PDF and DOCX uploads behave uniformly through an at-ingest rendition. |
 
 ## Product Preview
 
@@ -80,7 +81,7 @@ Full protocol details live in [final_eval_protocol.md](docs/evals/final_eval_pro
 
 ## How It Is Built
 
-The retrieval core lives in `src/` and stays framework-agnostic. `backend/` exposes it through FastAPI upload, index, status, and ask endpoints. `frontend/` ships the Next.js workspace UI. `deploy/vps/` contains the Docker Compose and Caddy deployment path for the API, while the public app is split between landing, workspace, and backend surfaces.
+The retrieval core lives in `src/` and stays framework-agnostic. `backend/` exposes it through FastAPI upload, index, status, ask, and source-file endpoints. `frontend/` ships the Next.js workspace UI and the marketing landing as a single Vercel deployment; a host-based rewrite in `next.config.ts` serves the apex `helpmateai.xyz` from a `/landing` route group while `app.helpmateai.xyz` continues to serve the workspace. `deploy/vps/` contains the Docker Compose and Caddy deployment path for the API, and the backend image bakes in `libreoffice-core` + `libreoffice-writer` for the DOCX → PDF rendition pipeline used by the in-app source viewer.
 
 Built with Next.js, FastAPI, `pypdf`, `pdfplumber`, `python-docx`, ChromaDB, OpenAI, sentence-transformers, scikit-learn, optional Supabase persistence, optional hosted Chroma-compatible storage, Docker, and `uv`.
 

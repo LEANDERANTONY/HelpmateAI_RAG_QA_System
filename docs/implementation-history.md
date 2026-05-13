@@ -445,18 +445,101 @@ Improvement:
 - the useful policy-indexing ideas now live in this branch with focused tests
 - ADR and devlog history preserve the reason for the decision instead of hiding it inside an abandoned branch
 
+## 25. Workspace Rebuild As A Three-Zone Study Room And Atmospheric Landing Launch
+
+Change:
+
+- rebuilt the workspace as a three-zone shell (document strip / chat-and-answer column / evidence rail) bound to a unified `.h-shell` token system
+- replaced template follow-up chips with LLM-generated starter questions per document
+- added an LLM-derived `support_summary` qualifier next to every answer's support state
+- wired the per-turn actions menu (copy, cite, re-ask, delete) and trimmed the account popover to just the session row
+- replaced the Framer-hosted marketing site with a Next.js landing inside the same Vercel project, served at the apex via a host-based rewrite in `next.config.ts`
+- shipped an atmospheric editorial design with teal aurora hero, sticky-pinned editorial claims, a four-step flow carousel, and a validation strip that puts the differentiator metrics directly under the hero
+
+Challenge:
+
+- removing the legacy Framer site without breaking DNS or losing the marketing surface required adding `helpmateai.xyz` as a Vercel production domain before the DNS cutover, then switching the apex `A` records once the deployment was verified on a stable preview URL
+
+Improvement:
+
+- one Vercel project now serves both surfaces, so visual polish on one carries over to the other through the shared `.h-shell` token system
+- the validation panel is the differentiator surface, not a footnote, because the held-out eval result is the thing competitor stacks cannot match by tuning alone
+
+## 26. In-App Source Viewer With PDF.js And LibreOffice DOCX Rendition
+
+Change:
+
+- added `GET /documents/{id}/file` as an auth-gated source-file endpoint with HTTP Range support for PDF.js streaming, plus `?download=1` for returning the original format
+- renamed uploads to `{document_id}{ext}` on disk and added a `viewable_pdf_path` field on the document record
+- introduced a LibreOffice headless conversion at ingest so DOCX uploads produce a PDF rendition the viewer can render uniformly
+- built Read Mode as a layout posture: desktop two-pane chat + source, mobile Vaul bottom sheet with three snap points
+- shipped the PDF.js viewer with a lazy-loaded module facade, Supabase bearer-token auth, and a hint-page + ±3 page window strategy for locating the cited passage
+
+Challenge:
+
+- the find pipeline can land on the wrong page when chunker boundaries cross PDF pages, especially after LibreOffice pagination drift; the `±3` window with a strict fallback prevents misleading far-page jumps while still tolerating real drift
+- the Docker image grows roughly 400MB and the build adds 30-45 seconds for the LibreOffice apt install, but the trade-off is uniform PDF-and-DOCX viewer experience
+
+Improvement:
+
+- the verification loop is now fully visible inside the workspace: pill flash on the evidence card, then "Open in source" opens the PDF on the cited page with the chunk passage highlighted
+- the abstention story (ADR-011) is more credible because users can confirm by sight rather than by trust
+- ADR-014 captures the decision in detail, including rejected alternatives (Tier-1 new-tab viewer, Tier-3 bbox-precise highlights via Docling)
+
+## 27. Production-Grade Error Handling Pipeline
+
+Change:
+
+- added a typed `ApiError` class with `status`, `detail`, `retriable`, and `retryAfterSeconds` thrown from the central fetch wrapper
+- built a status × operation message map that returns `{title, body, action}` for every reasonable combination of upload, index, ask, load, and default operations across the relevant HTTP status buckets
+- mounted `sonner` toasts themed against the workspace tokens, with retry buttons only when the error is retriable and a callback is supplied
+- added React error boundaries at `src/app/error.tsx` and `src/app/global-error.tsx` for render-time crashes
+- distinguished offline from unreachable via `navigator.onLine`, parsed HTTP-date `Retry-After`, and passed through `AbortError` so request cancellation is not misclassified
+
+Challenge:
+
+- the first round of copy was generic; iterating the 4xx upload fallback through the `design:ux-copy` skill tightened it to something the user can act on rather than something that explains an HTTP status
+- range requests issued by PDF.js bypass the loader's refresh-and-retry path, so token-expiry mid-read surfaces as a generic transport error rather than the auth-specific banner
+
+Improvement:
+
+- every failure mode the workspace can hit now has a copy entry that names what the user can do
+- the new error boundary covers the previously catastrophic case where a render error left a white screen with no recovery affordance
+
+## 28. Production Deploy Of helpmateai.xyz
+
+Change:
+
+- cut `helpmateai.xyz` over from Framer hosting to the same Next.js Vercel deployment that serves `app.helpmateai.xyz`
+- moved the host-based rewrite from the default `afterFiles` bucket to `beforeFiles` so the apex `/` is rewritten to `/landing` before page routing fires
+- switched the rewrite source from a catch-all `:path*` to explicit per-route entries so `/_next/static/*` and `/favicon.ico` are not mangled on the apex
+- rerouted the Read Mode PDF fetch from a relative `/api/documents/{id}/file` path to the absolute `API_BASE_URL` prefix in production, because the Vercel-edge to Cloudflare proxy chain triggers Cloudflare's bot challenge on data-center origins
+- verified the deployed surface against the Vercel MCP project record and confirmed all production aliases (apex, `www`, `app`, stable preview) resolve to the same deployment
+
+Challenge:
+
+- the first attempted deploy failed at GHCR login with a transient network timeout that looked like a permissions failure; a retry on the next push succeeded without any settings change
+- the Vercel-edge to Cloudflare bot challenge is not a code bug but a production-only failure mode that does not appear in dev or preview deployments
+
+Improvement:
+
+- a single-project deploy now serves the apex, `www`, and `app` subdomains in one build, with the host-based rewrite handling the routing distinction
+- the silent-failure path in the PDF viewer where `loadPdfjs()` rejected without setting a banner now surfaces a transport banner so an empty pane is no longer possible
+
 ## Current Position
 
 The architecture is now in a different phase than the one this document began with.
 
 The main transitions are complete:
 
-- the product surface is deployed on `Next.js + FastAPI`
+- the product surface is deployed on `Next.js + FastAPI` with a single Vercel deployment serving both the apex landing and the `app` workspace
 - the retrieval stack defaults are benchmark-backed rather than mostly intuition-backed
 - the selector story is resolved in favor of reorder-only selection
 - the external OpenAI and Vectara comparisons have been rerun on the stabilized stack
 - smart section profiles and orchestrated scope now have branch validation for local chapter/section questions, lean RAGAS regression against `main`, and lean vendor comparison
 - ephemeral run traces are now the preferred workflow-memory layer, not a long-term user-memory system
+- the verification loop is now fully visible end-to-end inside the workspace via Read Mode and the source-file endpoint, with DOCX rendition unifying the experience across formats
+- the frontend ships a structured error pipeline that surfaces every transport, auth, and validation failure as an actionable toast rather than a stack trace or silent dropout
 
 So the next justified work is no longer "make the stack real." It is:
 
@@ -464,3 +547,4 @@ So the next justified work is no longer "make the stack real." It is:
 - add answer-quality coverage for the newer report-generation datasets
 - add gold-answer coverage for a selected benchmark subset
 - revisit external vendor comparisons only after materially new architecture changes
+- close the download-auth follow-up on the source viewer (the "Download Original" buttons need a `fetch + Blob + anchor[download]` refactor so the bearer token flows, since `window.open` cannot attach an `Authorization` header)

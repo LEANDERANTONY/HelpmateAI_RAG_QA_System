@@ -8,6 +8,115 @@ Historical note:
 - later entries add quality-control, benchmarking, and document-intelligence work on top of that baseline
 - the project is still evolving, so later entries refine earlier architectural assumptions without erasing them
 
+## Day 31: Production Deploy And Read Mode Routing Fixes
+
+- Cut the `helpmateai.xyz` apex over from a Framer-hosted marketing site to a single Next.js Vercel deployment that serves both the apex landing and `app.helpmateai.xyz` workspace through a host-based Next rewrite.
+- Moved the host rewrite from the default `afterFiles` bucket to `beforeFiles`. The first production attempt served the workspace at the apex because `app/page.tsx` matched `/` before the host rule could redirect to `/landing`.
+- Switched the rewrite source from a catch-all `:path*` to explicit per-route entries for `/` and `/privacy-policy` so static assets like `/_next/static/*` and `/favicon.ico` are not mangled.
+- Rerouted the Read Mode PDF fetch and the Download Original buttons from a relative `/api/documents/{id}/file` path to the absolute `API_BASE_URL` prefix. The proxy chain through Vercel's edge to `api.helpmateai.xyz` was being challenged by Cloudflare's bot protection on data-center origins, so PDF.js was receiving the JS challenge page instead of a PDF stream.
+- Verified the deployed surface against the Vercel MCP project record and confirmed all production aliases (apex, `www`, `app`, stable preview) resolve to the same deployment.
+- Tightened the validation strip H2 and the body paragraph typography on the editorial claims and flow carousel to match the rest of the marketing surface.
+
+Challenges:
+
+- the first push hit a transient GHCR network timeout on the GH Actions runner that initially looked like a permissions failure; the retry on the next push succeeded without any settings change
+- the Vercel-edge to Cloudflare bot challenge is not a code bug but a real production-only failure mode that does not appear in dev or preview deployments
+
+Improvements:
+
+- single-project deploy now serves the apex, `www`, and `app` subdomains in one build, with the host-based rewrite handling the routing distinction
+- the Download Original buttons are documented as a known follow-up because `window.open` cannot attach a bearer token and will 401 until a `fetch + Blob + anchor[download]` refactor lands
+- the silent-failure path in the PDF viewer where `loadPdfjs()` rejected without setting a banner now surfaces a transport banner so an empty pane is no longer possible
+
+## Day 30: Production-Grade Error Handling Pipeline
+
+- Added a typed `ApiError` class with `status`, `detail`, `retriable`, and `retryAfterSeconds` thrown from the central fetch wrapper.
+- Built a status × operation message map (`messageForApiError`) that returns `{title, body, action}` for every reasonable combination of operation (`upload`, `index`, `ask`, `load`, `default`) and status bucket (`0` offline, `401`/`403`, `404`, `408`/`504`, `429`, other `4xx` with backend detail, `5xx`).
+- Mounted `sonner` in the root layout and themed it against the workspace tokens, with `notifyApiError(err, op, {onRetry})` rendering a retry button only when the error is retriable and a callback is supplied.
+- Replaced the floating `ErrorBanner` with toasts for transient failures and a new inline `<ErrorState>` for the only persistent case, an index-failed workspace.
+- Added `src/app/error.tsx` for route-level render errors and `src/app/global-error.tsx` for root-layout errors that need their own `<html>` and `<body>`.
+- Plumbed retries via closures so each catch passes the original action back; ask retry captures the submitted question rather than the current textarea contents.
+- Parsed `Retry-After` for `429` responses, including the HTTP-date format on top of integer seconds.
+- Distinguished offline from unreachable server via `navigator.onLine` and a transparent passthrough for `AbortError` so request cancellation is not classified as a network failure.
+- Surface workspace-restore failures through the same toast pipeline; the previous silent `catch {}` left users without a hint when their session failed to load.
+
+Challenges:
+
+- the first round of message copy was readable but generic; iterating on the 4xx upload fallback through the `design:ux-copy` skill gave a tighter "It may be too large, the wrong type, or damaged — try another PDF or DOCX."
+- range requests issued by PDF.js during streaming bypass the loader's refresh-and-retry path; a token that expires mid-read surfaces as a generic transport error rather than the auth-specific banner
+
+Improvements:
+
+- every failure mode the workspace can hit now has a copy entry that names what the user can do rather than the HTTP status it received
+- the new error boundary covers the previously catastrophic case where a React render error left a white screen with no recovery affordance
+
+## Day 29: In-App Source Viewer With PDF.js And DOCX Rendition
+
+- Added the `GET /documents/{id}/file` endpoint that serves the source PDF inline for the viewer and the original DOCX or PDF for download via `?download=1`. The endpoint is auth-gated by the same Supabase pattern as the rest of the API and supports HTTP `Range` requests so PDF.js can stream-render large files.
+- Renamed uploads on disk to `{document_id}{ext}` so collision-safe storage holds for repeated uploads against the same workspace, and gave each document record a `viewable_pdf_path` field. PDF uploads alias their source as the viewable. DOCX uploads invoke `libreoffice --headless --convert-to pdf` at ingest to produce a sibling rendition, with the conversion failure path tolerated so a corrupted DOCX still indexes from text and only loses the inline viewer.
+- Built Read Mode as a layout posture, not a per-citation modal. On desktop the workspace collapses to a chat-and-source two-pane shell with the doc strip and evidence rail hidden; on mobile the source becomes a `vaul` draggable bottom sheet with three snap points (`FULL`, `SPLIT`, `COMPACT`). `COMPACT` is reserved for keyboard-up state and is never reachable by drag.
+- Wrapped `pdfjs-dist` with a lazy loader that copies the worker via a postinstall script and attaches a Supabase bearer token to the initial `getDocument` plus one-shot refresh-and-retry on `401`.
+- Wrote the find pipeline as a hint-page + window strategy: parse the chunk's `pageLabel` as a fast-scroll hint, dispatch a `find` with the chunk's anchor prefix, and pick the match closest to the hint inside a `±3` page ring; fall back to a soft "Showing Page N" banner when nothing matches in the window.
+- Auto-jumped the source viewer to the first evidence of every new answer while in Read Mode, and branched citation pill clicks so the same pill flashes the evidence card in normal mode and scrolls the viewer in Read Mode.
+- Polished the chrome with a live page-pill that updates as the user scrolls, a centered filename, and a focal-glow close button focused on entry for keyboard users. Added page navigation (prev / next / editable page-pill) and a collapsible chat drawer so the PDF can take center stage on wide viewports.
+- Tinted the find highlight in `--accent-soft` instead of PDF.js's default yellow, cleared a stale no-match banner on progressive find scans, and forwarded scroll-to-match through PDF.js's own viewport centering.
+
+Challenges:
+
+- `loadPdfjs()` originally caught its failures but never set a banner kind, so a bundler or worker failure produced a black pane with no message; the first round surfaced this as a silent error path that needed an explicit transport banner
+- mobile drag-to-COMPACT had to be intercepted in the snap handler because `vaul` does not natively support snap-point exclusions
+- the find pipeline can land on the wrong page when the chunker straddles a page boundary; the `±3` window with a strict fallback prevents misleading far-page jumps
+
+Improvements:
+
+- the verification loop is now visible end-to-end: pill flashes the evidence card; "Open in source" opens the same passage inside the PDF with the highlight already painted on the correct page
+- the workspace ships with native PDF and DOCX both behaving identically from the viewer's perspective; the conversion step is invisible to the user
+- the ±3 ring tolerates the page drift introduced by LibreOffice DOCX→PDF conversion while keeping search scoped to the chunk's neighborhood
+
+## Day 28: Landing Page Launch With Atmospheric Editorial Design
+
+- Replaced the Framer-hosted marketing site with a Next.js landing route group inside the same workspace project. A host-based rewrite in `next.config.ts` serves `/landing/*` only when the request host is `helpmateai.xyz`; `app.helpmateai.xyz` continues to serve the workspace at `/`.
+- Designed the landing as a single dark canvas with teal aurora glow flanking the hero, no nested cards, and section breaks built from hairlines and breathing room rather than rounded panels. The aurora drift animation is gated behind `(min-width: 901px) and (prefers-reduced-motion: no-preference)`.
+- Wrote the editorial claims as a sticky-pinned visual on desktop and inline cards on mobile, driven by an `IntersectionObserver`-backed `useActiveClaim` hook. The three claims cover the proof loop: shows the source, knows when to abstain, stays inside the document.
+- Built the validation strip as the differentiator panel directly under the hero: `0%` false support, `100%` abstention on unanswerable, `94%` cited the correct paragraph, plus a three-row vendor comparison against OpenAI File Search and Vectara on the same 150-question suite.
+- Added a four-step flow carousel (Upload → Understand → Find evidence → Cite answer) with grid-overlap cross-fades so tab switches never produce a layout jump. Step 04 uses a real Read Mode capture as its mockup so the verification posture is visible above the fold of that section.
+- Added a privacy policy page inside the landing route group with the same dark-green chrome and justified body type so it reads as part of the marketing surface, not a generic legal scaffold.
+- Did a copy pass that stripped RAG and UI jargon ("chunks", "evidence column rail", "interpretive layer", "answer states") in favor of plainer language while keeping the punchy editorial lines ("Citations, not citations-shaped marketing.", "It will not paraphrase the internet at you.") intact.
+- Fixed a CTA contrast regression where `.l-shell a { color: inherit }` had higher specificity than `.l-cta { color: var(--accent-fg) }`, leaving the topbar and hero pill text near-white on green; scoped both selectors under `.l-shell` to bump specificity.
+
+Challenges:
+
+- the host rewrite was set in the default `afterFiles` bucket, which only runs after the file-system match — the workspace `app/page.tsx` matched `/` first and the rewrite never fired until it was moved to `beforeFiles` (see Day 31)
+- the original carousel reused the same `workspace-flagship.png` for two consecutive steps because Read Mode didn't exist yet to generate a distinct visual; Step 04 now uses a dedicated Read Mode capture
+- a Vaul `modal={false}` sheet positions itself through transforms and requires `position: fixed` on the sheet element, which was not set during initial scaffolding and put the sheet off-screen on first paint
+
+Improvements:
+
+- the marketing surface and the workspace now share the same design tokens (`--accent`, `--accent-fg`, `--accent-deep`, hairlines, motion), which means visual polish on one carries over to the other
+- the validation panel is the headline differentiator panel, not a footnote, because the eval result is the only thing competitors cannot match by simply tuning their stack
+
+## Day 27: Workspace UI Rebuild As A Three-Zone Document Study Room
+
+- Rebuilt the workspace as a three-zone study room with a document strip on the left, the chat/answer column in the center, and the evidence rail on the right. The shell binds to `.h-shell` with a unified token system (`--bg-page`, `--bg-card`, `--accent`, `--accent-fg`, `--accent-deep`) that the landing will later inherit.
+- Replaced template follow-up chips with LLM-generated starter questions per document, so the empty-state cues reflect the actual content rather than a hardcoded prompt list.
+- Added an LLM-derived `support_summary` qualifier on every answer that explains in one sentence why support landed where it did (supported, partial, abstained). The qualifier is shown alongside the answer instead of replacing the explicit support state.
+- Wired the per-turn actions menu (copy, cite, re-ask, delete) into each Q&A card so the conversation surface treats every turn as an addressable record.
+- Tightened the ask card with a sticky position, an inline `ASK` label inside the textarea, and a `box-shadow` mask over older Q&A cards as the user scrolls so the current question always reads as the live surface.
+- Trimmed the account popover to just the session row by dropping the Storage, Mode, and Auth tiles, since none of them were actionable for the current product stage.
+- Hid the answer-status note for `SUPPORTED` answers because it was always the same boilerplate and bloated the card; partial and abstained still keep their notes.
+- Wired the real Helpmate AI brand mark across the workspace and the new landing, with the topbar wordmark switched to the display font and the empty-state hero trimmed to a tighter tagline.
+- Added a `framework_document` style classifier in the indexing layer with an LLM-backed fallback for documents that escape the deterministic classifier, and logged the chosen style at INFO so the indexing path is observable in production logs without grep-ing for traces.
+
+Challenges:
+
+- the previous workspace shell had picked up too much chrome (replay-stream button, follow-up chips, storage tile) over time; stripping it required walking each affordance and asking whether it earned its place
+- the support summary needed to be visible without overwhelming the support state — it ends up as a one-sentence qualifier in `--fg-3` next to the state badge
+
+Improvements:
+
+- the three-zone layout makes the verification flow visible at a glance: the doc the user uploaded, the conversation in the center, and the cited evidence on the right — Read Mode (Day 29) is a natural extension of this posture
+- the `support_summary` field gives downstream evals a clean signal about whether the answer model recognized the support boundary even when the verifier later corrected the state
+
 ## Day 26: Smart Indexing, Orchestrated Scope, And Ephemeral Run Traces
 
 - Added generic section profiling at indexing time:

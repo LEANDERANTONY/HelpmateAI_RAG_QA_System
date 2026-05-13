@@ -1,46 +1,44 @@
 # Deployment
 
-HelpmateAI now deploys cleanly as a split product:
+HelpmateAI deploys as a single Vercel project serving both the marketing landing and the product workspace, plus a `FastAPI` backend on a Docker VPS:
 
-- Framer for the marketing front door
-- `Next.js` for the product workspace
-- `FastAPI` for uploads, indexing, QA, citations, and evidence
+- `Next.js` on Vercel for the landing (`helpmateai.xyz`) and the workspace (`app.helpmateai.xyz`)
+- `FastAPI` on a Linux VPS behind Caddy for uploads, indexing, QA, citations, evidence, and the source-file endpoint
 
-Current recommended production shape:
+Current production shape:
 
-- `helpmateai.xyz` -> Framer
-- `app.helpmateai.xyz` -> `Next.js`
-- `api.helpmateai.xyz` -> `FastAPI`
+- `helpmateai.xyz` -> Vercel (Next.js apex; serves `/landing/*` via a host-based rewrite in `next.config.ts`)
+- `app.helpmateai.xyz` -> Vercel (Next.js workspace; same project)
+- `api.helpmateai.xyz` -> VPS (Caddy reverse-proxies TLS to the API container on port `8001`)
 
-The current live stack follows this split:
+The live stack:
 
-- Cloudflare manages DNS and TLS in front of the domain
-- Vercel serves the product workspace
-- a Linux VPS serves the `FastAPI` backend behind Caddy
+- Cloudflare manages DNS and TLS in front of the apex and `api` subdomain
+- Vercel serves the unified `Next.js` build; the same deployment routes apex requests to the landing and `app.*` requests to the workspace
+- a Linux VPS runs the `FastAPI` backend container plus LibreOffice for DOCX → PDF rendition at ingest
 
 ## Recommended Hosting
 
-- Framer for the landing page
-- Vercel for [frontend](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\frontend)
-- a Linux VPS for the FastAPI backend
+- Vercel for [frontend](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\frontend) (single project handles both the apex and the `app` subdomain via host-based rewrites)
+- a Linux VPS for the FastAPI backend container
 
 The repo includes:
 
-- [Dockerfile](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\Dockerfile) for backend deployment
+- [Dockerfile](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\Dockerfile) for backend deployment, which installs `libreoffice-core` and `libreoffice-writer` for the DOCX rendition path
 - [deploy/vps/docker-compose.yml](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\deploy\vps\docker-compose.yml) for the standard VPS deployment
 - [deploy/vps/Caddyfile](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\deploy\vps\Caddyfile) for TLS and reverse proxying on a VPS
+- [.github/workflows/deploy.yml](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\.github\workflows\deploy.yml) builds the backend image on every `main` push and SSHes to the VPS to pull + recreate the container
 
 ## Deployment Flow
 
-1. Deploy the FastAPI backend first.
-2. Confirm the backend health endpoint returns `ok`.
-3. Deploy the `Next.js` frontend.
-4. Point the frontend at the backend using either:
-   - same-origin `/api` rewrites for normal API calls
-   - or a direct `NEXT_PUBLIC_API_BASE_URL=https://api.yourdomain.com`
-5. For larger browser uploads, set `NEXT_PUBLIC_UPLOAD_API_BASE_URL=https://api.yourdomain.com` so file uploads bypass the Vercel body-size limit.
-6. Update Framer CTA buttons such as `Open workspace` and `Get started` to point to `https://app.yourdomain.com`.
-7. Test upload, indexing, QA, citations, and evidence on the deployed URLs.
+1. Deploy the FastAPI backend first. The build action pushes to GHCR and the VPS pulls + recreates via `docker compose`.
+2. Confirm the backend health endpoint returns `ok` and that `supported_upload_types` includes `.docx` (the LibreOffice install is required for DOCX rendition).
+3. Push to `main`. Vercel auto-deploys the Next.js build to the production target; the GH Actions workflow handles the VPS deploy.
+4. In the Vercel project, add `helpmateai.xyz` (apex) and `app.helpmateai.xyz` to the production domain list, plus the matching DNS records at the registrar (apex `A` record at Vercel's anycast IP; `CNAME` for `www` and `app`).
+5. The same Next.js build serves both surfaces. The host rewrite in `next.config.ts` runs `beforeFiles` so the apex `/` is rewritten to `/landing` before page routing fires; `app.helpmateai.xyz/` continues to match `app/page.tsx` (the workspace).
+6. For larger browser uploads, set `NEXT_PUBLIC_UPLOAD_API_BASE_URL=https://api.yourdomain.com` so file uploads bypass the Vercel body-size limit.
+7. Set the API URL on Vercel (`API_REWRITE_TARGET=https://api.yourdomain.com`) and confirm the workspace's API client uses the absolute URL in production. The Read Mode PDF viewer also calls the backend directly via `API_BASE_URL` rather than the relative `/api/*` proxy — this matters in production because the Vercel-edge to Cloudflare proxy chain triggers Cloudflare's bot challenge on data-center origins and breaks the PDF stream. Browser-direct calls to `api.helpmateai.xyz` pass through cleanly.
+8. Test upload, indexing, QA, citations, evidence, and Read Mode (including DOCX → PDF rendition + source viewer) on the deployed URLs.
 
 ## Backend Environment
 

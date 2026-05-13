@@ -1,5 +1,15 @@
 # Frontend Reference
 
+Status note (May 2026): the frontend rebuild has shipped. The landing live at `helpmateai.xyz` and the workspace at `app.helpmateai.xyz` diverged from the Framer Portfolite reference captured below into a custom atmospheric editorial design with shared `.h-shell` design tokens. The shipped state is documented in:
+
+- `docs/adr/ADR-014-in-app-source-viewer-with-pdfjs-and-docx-rendition.md` for Read Mode and the source viewer
+- `docs/history/DEVLOG.md` Day 27 (workspace rebuild) and Day 28 (landing launch)
+- `docs/implementation-history.md` chapters 25 and 26
+
+This file is retained as the original design reference and rationale; it describes the structural patterns we wanted to borrow from a published Framer template before the in-house design diverged. Read it as a planning artifact, not a current-state reference.
+
+---
+
 This document captures the current design reference for the custom frontend and marketing split.
 
 ## Primary Reference

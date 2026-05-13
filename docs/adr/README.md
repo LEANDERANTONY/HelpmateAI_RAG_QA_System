@@ -17,6 +17,7 @@ Current ADRs:
 - `ADR-011-partial-grounded-answers-and-support-guardrail-eval.md`
 - `ADR-012-smart-section-profiles-and-orchestrated-scope.md`
 - `ADR-013-ephemeral-workflow-run-traces.md`
+- `ADR-014-in-app-source-viewer-with-pdfjs-and-docx-rendition.md`
 
 Usage notes:
 
@@ -59,3 +60,8 @@ Current state note:
   - each uncached QA run now writes an ephemeral run trace
   - traces store decision metadata, candidate IDs/scores/previews, and support/citation outcomes
   - traces follow the same workspace retention window locally and in Supabase
+- the newest product-surface change is:
+  - an in-app source viewer (Read Mode) replaces the dead "Open in source" link with a layout posture that puts the chat and the PDF side-by-side on desktop and as a draggable bottom sheet on mobile
+  - DOCX uploads now produce a viewable PDF rendition at ingest via LibreOffice, so the viewer experience is uniform across formats
+  - a new `GET /documents/{id}/file` endpoint serves the rendition inline (with HTTP Range support for PDF.js streaming) and the original source under `?download=1`
+  - the viewer uses a hint-page + ±3 page window strategy to locate the cited passage, falling back to a soft banner rather than a far-page jump when the chunk's anchor text cannot be matched
