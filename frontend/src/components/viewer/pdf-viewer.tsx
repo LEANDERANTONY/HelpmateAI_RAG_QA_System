@@ -359,7 +359,13 @@ export const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>(function Pd
         pdfjs = await loadPdfjs();
       } catch (err) {
         if (cancelled) return;
+        // Without a banner kind, loadState="error" hides the loading
+        // skeleton but renders nothing in its place — the user sees a
+        // black void. Categorize as "transport" so the generic "The
+        // source PDF didn't load" banner surfaces with the actual
+        // error in parens.
         setLoadState("error");
+        setBanner("transport");
         setErrorDetail(err instanceof Error ? err.message : "PDF.js failed to load");
         return;
       }
