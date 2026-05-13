@@ -4083,7 +4083,14 @@ input[type="file"]:disabled::file-selector-button {
   position: fixed;
   inset: auto 0 0 0;
   height: 100dvh;
-  overflow: hidden;
+  /* overflow: visible (not hidden) so the drag handle stays visible
+     when it renders above the sheet's bounding box. The fixed-bottom
+     + transform render quirk pulls children up by ~30px on certain
+     viewports; with overflow:hidden the drag pill ends up outside
+     the box and gets clipped, leaving only the page nav and X visible
+     in the chrome. The PDF container inside the sheet has its own
+     overflow:auto for scroll, so it doesn't bleed out. */
+  overflow: visible;
   /* Above the topbar (z=30) and command palette overlays. */
   z-index: 80;
 }

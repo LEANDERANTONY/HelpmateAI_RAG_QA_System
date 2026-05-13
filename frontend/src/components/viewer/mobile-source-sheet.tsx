@@ -31,7 +31,6 @@ import { PdfViewer, type PdfViewerHandle } from "@/components/viewer/pdf-viewer"
 import { API_BASE_URL } from "@/lib/api";
 import {
   useCurrentChunk,
-  useKeyboardActive,
   useMobileSnap,
   useReadModeActions,
   type MobileSnap,
@@ -64,7 +63,6 @@ function fractionToSnap(value: number | string | null): MobileSnap | null {
 export function MobileSourceSheet() {
   const currentChunk = useCurrentChunk();
   const mobileSnap = useMobileSnap();
-  const keyboardActive = useKeyboardActive();
   const { exitReadMode, setMobileSnap } = useReadModeActions();
 
   // Live page tracking for the page-pill, same chunkId-keyed pattern as
@@ -98,6 +96,33 @@ export function MobileSourceSheet() {
   useEffect(() => {
     const t = window.setTimeout(() => closeBtnRef.current?.focus(), 50);
     return () => window.clearTimeout(t);
+  }, []);
+
+  // Radix Dialog (vaul's underlying primitive) marks siblings of the
+  // portal as `aria-hidden="true"` whenever the dialog is open — even
+  // when we pass `modal={false}`. This breaks soft-keyboard input on
+  // textareas in those siblings: iOS Chrome and some Android browsers
+  // refuse to surface the keyboard when the focused input is inside
+  // an aria-hidden subtree (the assumption being it's a screen-reader
+  // hint that nothing in there should receive input).
+  // We can't tell Radix not to do this, but we can strip the attr
+  // back off whenever it appears. Cheap MutationObserver scoped to
+  // the workspace MAIN; lives as long as the sheet does.
+  useEffect(() => {
+    const main = document.querySelector("main.workspace-page");
+    if (!(main instanceof HTMLElement)) return;
+    const strip = () => {
+      if (main.getAttribute("aria-hidden") === "true") {
+        main.removeAttribute("aria-hidden");
+      }
+    };
+    strip();
+    const observer = new MutationObserver(strip);
+    observer.observe(main, {
+      attributes: true,
+      attributeFilter: ["aria-hidden"],
+    });
+    return () => observer.disconnect();
   }, []);
 
   // Measure the rendering offset between the sheet's bounding box and
@@ -166,26 +191,19 @@ export function MobileSourceSheet() {
       if (next === null) {
         return;
       }
-      // Drag-to-COMPACT guard: COMPACT is reserved for keyboard-driven
-      // transitions. If the user manually drags down to COMPACT and the
-      // keyboard isn't up, snap them back to SPLIT. We defer the
-      // bounce-back to the next tick — without the defer, vaul ignores
-      // the prop change because it just committed its internal
-      // activeSnapPointIndex to compact in the same event-loop tick.
-      // The result of the synchronous-bounce path is a wedged state:
-      // React thinks we're at split (so CSS expands the conv), vaul
-      // thinks we're at compact (so the sheet stays low), and the user
-      // sees a fat dead-zone between them. The timeout punts the prop
-      // change to the next microtask cycle so vaul has finished
-      // settling and will respond to the new activeSnapPoint by
-      // animating back up.
-      if (next === "compact" && !keyboardActive) {
-        window.setTimeout(() => setMobileSnap("split"), 0);
-        return;
-      }
+      // Accept all three snaps from vaul directly. Earlier the handler
+      // bounced drag-to-compact back to split (compact was reserved
+      // for keyboard-up); that produced a visible mid-animation
+      // dead-zone — React state at split (conv expanded to 45% chat),
+      // vaul mid-flight back from compact to split, so a 249px gap
+      // briefly opened between conv.bottom and the sheet's visual top.
+      // The simpler model: whatever vaul lands on becomes the new
+      // state, conv resizes via --mobile-sheet-fraction, no gap.
+      // Keyboard-driven compact still works because setKeyboardActive
+      // in the store forces mobileSnap to compact directly.
       setMobileSnap(next);
     },
-    [keyboardActive, setMobileSnap],
+    [setMobileSnap],
   );
 
   // Defensive — shouldn't render with no chunk, but the store type allows it.
