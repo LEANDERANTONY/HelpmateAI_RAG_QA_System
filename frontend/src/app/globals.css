@@ -4184,6 +4184,12 @@ input[type="file"]:disabled::file-selector-button {
   flex: 0 0 auto;
   gap: 12px;
   padding: 14px 18px;
+  /* Anchor for the absolutely-positioned .h-source-meta so the
+     filename can sit centered above the PDF regardless of whether
+     the chat panel is expanded or collapsed. Without this the
+     filename hugs the left edge and gets visually crowded by the
+     chat-collapse strip in collapsed posture. */
+  position: relative;
 }
 
 .h-source-back {
@@ -4212,10 +4218,31 @@ input[type="file"]:disabled::file-selector-button {
 }
 
 .h-source-meta {
+  /* Centered above the PDF — the meta is taken OUT of the flex flow
+     and absolutely positioned at chrome center. The back button (mobile
+     only) and right-side controls (PageNav + close) continue to flow
+     normally in the flex; the spacer pushes the right group to the
+     edge. Result: filename stays centered whether chat is at 45% or
+     collapsed to 48px, because center-of-chrome moves with the source
+     pane's column width. */
+  align-items: center;
   display: flex;
   flex-direction: column;
   gap: 2px;
+  left: 50%;
+  /* min(360px, 40%) — the absolute clamp matches the filename's own
+     ellipsis max-width; the percentage guard prevents overlap with
+     PageNav at the narrowest desktop widths (~700px source floor). */
+  max-width: min(360px, 40%);
   min-width: 0;
+  position: absolute;
+  transform: translateX(-50%);
+}
+
+.h-source-meta .h-source-filename {
+  /* Override the left-aligned ellipsis default so a truncated filename
+     reads as centered, matching its container alignment. */
+  text-align: center;
 }
 
 @media (max-width: 900px) {
