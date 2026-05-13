@@ -35,6 +35,7 @@
 
 import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 
+import { API_BASE_URL } from "@/lib/api";
 import {
   loadPdfDocument,
   loadPdfjs,
@@ -447,7 +448,14 @@ export const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>(function Pd
       };
 
       try {
-        const pdf = await loadPdfDocument(`/api/documents/${documentId}/file`);
+        // Use absolute API_BASE_URL (https://api.helpmateai.xyz in prod,
+        // /api in dev) so PDF.js fetches the source directly from the API
+        // hostname. The /api/* proxy via Next.js rewrites routes Vercel-
+        // edge → Cloudflare in production, which triggers Cloudflare's
+        // bot challenge on data-center IPs and breaks the PDF stream.
+        // Browser-direct hits to api.helpmateai.xyz pass Cloudflare with
+        // the user's residential IP + UA + Bearer token.
+        const pdf = await loadPdfDocument(`${API_BASE_URL}/documents/${documentId}/file`);
         if (cancelled) {
           pdf.destroy();
           return;
