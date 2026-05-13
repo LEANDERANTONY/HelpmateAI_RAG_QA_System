@@ -19,7 +19,7 @@ const CLAIMS = [
     n: "01",
     tag: "Shows the source",
     head: "Every claim carries the passage it came from.",
-    body: "Click a citation pill and the evidence column jumps to the exact paragraph — verbatim, with the page and section it came from. Nothing rewritten, nothing summarized.",
+    body: "Click a citation pill and the evidence column jumps to the exact paragraph — verbatim, with the page and section it came from. Click 'Open in source' to see the same passage in the actual PDF, highlighted on its page.",
     Vis: ClaimVis1,
   },
   {

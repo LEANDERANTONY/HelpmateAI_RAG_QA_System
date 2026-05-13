@@ -35,8 +35,8 @@ const FLOW_STEPS = [
     n: "04",
     tab: "Cite answer",
     head: "Citations, not citations-shaped marketing.",
-    body: "Every claim in the answer carries an inline pill. Click it and the evidence column jumps to the exact paragraph it came from. Click again and you land on that page in the source PDF.",
-    img: "/landing/workspace-flagship.png",
+    body: "Every claim in the answer carries an inline pill. Click it to jump the evidence column to the cited paragraph. Click 'Open in source' to see the document itself beside the answer, scrolled to that page with the passage highlighted.",
+    img: "/landing/workspace-readmode.png",
   },
 ] as const;
 
