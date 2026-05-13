@@ -19,9 +19,10 @@
 // plumbing without the actual PDF.js viewer. Stage 3b replaces the body
 // with the PDF.js mount; the chrome stays put.
 
-import { useEffect, useRef, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
-import { PdfViewer } from "@/components/viewer/pdf-viewer";
+import { PageNav } from "@/components/viewer/page-nav";
+import { PdfViewer, type PdfViewerHandle } from "@/components/viewer/pdf-viewer";
 import { useCurrentChunk, useReadModeActions } from "@/lib/read-mode-state";
 import { parsePageLabel } from "@/lib/search-anchor";
 
@@ -46,6 +47,21 @@ export function SourcePane() {
     if (!currentChunk) return;
     setPageState({ chunkId: currentChunk.chunkId, page });
   };
+
+  // Total page count comes from pdfjs once it parses the doc. Held in
+  // local state so PageNav can render "N / total" reactively (the
+  // imperative pageCount() on the viewer ref doesn't trigger re-render).
+  const [totalPages, setTotalPages] = useState(0);
+  const handleTotalPagesChange = useCallback((count: number) => {
+    setTotalPages(count);
+  }, []);
+
+  // Imperative ref into the viewer for parent-driven scroll. PageNav
+  // calls scrollToPage; we don't expose anything else.
+  const viewerRef = useRef<PdfViewerHandle | null>(null);
+  const handleJumpToPage = useCallback((pageNumber: number) => {
+    viewerRef.current?.scrollToPage(pageNumber);
+  }, []);
 
   // Focus management — when the pane mounts (Read Mode entered),
   // move keyboard focus to the close button so users have an obvious
@@ -100,16 +116,11 @@ export function SourcePane() {
           </span>
         </div>
         <div className="h-source-chrome-spacer" aria-hidden />
-        <span
-          className="h-source-page-pill"
-          title={
-            visiblePage === null
-              ? `Hint: ${currentChunk.pageLabel}`
-              : `Currently on Page ${visiblePage} (hint: ${currentChunk.pageLabel})`
-          }
-        >
-          Page {visiblePage ?? parsePageLabel(currentChunk.pageLabel)}
-        </span>
+        <PageNav
+          currentPage={visiblePage ?? parsePageLabel(currentChunk.pageLabel)}
+          totalPages={totalPages}
+          onJump={handleJumpToPage}
+        />
         <button
           ref={closeBtnRef}
           type="button"
@@ -123,11 +134,13 @@ export function SourcePane() {
 
       <div className="h-source-body">
         <PdfViewer
+          ref={viewerRef}
           documentId={currentChunk.documentId}
           chunkId={currentChunk.chunkId}
           pageLabel={currentChunk.pageLabel}
           chunkText={currentChunk.chunkText}
           onPageChange={handlePageChange}
+          onTotalPagesChange={handleTotalPagesChange}
           onDownloadOriginal={() => {
             // Surface the original file as a download. The /file endpoint
             // serves the source format (PDF or DOCX) when ?download=1.

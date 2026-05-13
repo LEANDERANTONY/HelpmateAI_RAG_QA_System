@@ -55,11 +55,17 @@ type ReadModeState = {
   currentChunk: ReadModeChunk | null;
   mobileSnap: MobileSnap;
   keyboardActive: boolean;
+  // Desktop-only: whether the chat panel is collapsed to its 48px
+  // strip-affordance state, giving the PDF center stage. No effect on
+  // mobile, where the FULL snap is the equivalent posture.
+  chatCollapsed: boolean;
   enterReadMode: (chunk: ReadModeChunk) => void;
   exitReadMode: () => void;
   setCurrentChunk: (chunk: ReadModeChunk) => void;
   setMobileSnap: (snap: MobileSnap) => void;
   setKeyboardActive: (active: boolean) => void;
+  setChatCollapsed: (collapsed: boolean) => void;
+  toggleChatCollapsed: () => void;
 };
 
 export const useReadModeStore = create<ReadModeState>((set) => ({
@@ -69,11 +75,20 @@ export const useReadModeStore = create<ReadModeState>((set) => ({
   // top ~45%, source viewer in the bottom ~55%.
   mobileSnap: "split",
   keyboardActive: false,
+  // Desktop chat panel starts expanded; collapse is a deliberate
+  // user action.
+  chatCollapsed: false,
   enterReadMode: (chunk) =>
-    // Always re-enter at SPLIT so the user doesn't land in COMPACT (which
-    // would imply keyboard) or FULL (which hides the chat). Keyboard
-    // detection then transitions to COMPACT if needed.
-    set({ mode: "read", currentChunk: chunk, mobileSnap: "split", keyboardActive: false }),
+    // Always re-enter at SPLIT (mobile) and expanded (desktop) so the
+    // user doesn't land in COMPACT, FULL, or collapsed-chat by accident
+    // from a previous session. Spec: no posture memory across entries.
+    set({
+      mode: "read",
+      currentChunk: chunk,
+      mobileSnap: "split",
+      keyboardActive: false,
+      chatCollapsed: false,
+    }),
   // Clear currentChunk on exit so re-entry never shows stale state — spec
   // says no scroll restoration, so there's nothing worth keeping.
   exitReadMode: () => set({ mode: "normal", currentChunk: null }),
@@ -84,6 +99,8 @@ export const useReadModeStore = create<ReadModeState>((set) => ({
   setCurrentChunk: (chunk) =>
     set((state) => (state.mode === "read" ? { currentChunk: chunk } : state)),
   setMobileSnap: (snap) => set({ mobileSnap: snap }),
+  setChatCollapsed: (collapsed) => set({ chatCollapsed: collapsed }),
+  toggleChatCollapsed: () => set((state) => ({ chatCollapsed: !state.chatCollapsed })),
   setKeyboardActive: (active) =>
     set((state) => {
       if (state.keyboardActive === active) {
@@ -123,12 +140,22 @@ export function useKeyboardActive(): boolean {
   return useReadModeStore((state) => state.keyboardActive);
 }
 
+export function useChatCollapsed(): boolean {
+  return useReadModeStore((state) => state.chatCollapsed);
+}
+
 // useShallow keeps the actions object reference-stable across renders. Without
 // it, picking multiple actions in one selector would return a new object every
 // time the store updates, causing consumers to re-render unnecessarily.
 export function useReadModeActions(): Pick<
   ReadModeState,
-  "enterReadMode" | "exitReadMode" | "setCurrentChunk" | "setMobileSnap" | "setKeyboardActive"
+  | "enterReadMode"
+  | "exitReadMode"
+  | "setCurrentChunk"
+  | "setMobileSnap"
+  | "setKeyboardActive"
+  | "setChatCollapsed"
+  | "toggleChatCollapsed"
 > {
   return useReadModeStore(
     useShallow((state) => ({
@@ -137,6 +164,8 @@ export function useReadModeActions(): Pick<
       setCurrentChunk: state.setCurrentChunk,
       setMobileSnap: state.setMobileSnap,
       setKeyboardActive: state.setKeyboardActive,
+      setChatCollapsed: state.setChatCollapsed,
+      toggleChatCollapsed: state.toggleChatCollapsed,
     })),
   );
 }

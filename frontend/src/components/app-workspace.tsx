@@ -10,6 +10,7 @@ import type {
 
 import { AuthSidebar } from "@/components/auth-sidebar";
 import { ErrorState } from "@/components/error-state";
+import { ChatCollapseToggle } from "@/components/viewer/chat-collapse-toggle";
 import { MobileSourceSheet } from "@/components/viewer/mobile-source-sheet";
 import { SourcePane } from "@/components/viewer/source-pane";
 import { askQuestion, buildIndex, getCurrentWorkspace, getStarterQuestions, uploadDocument } from "@/lib/api";
@@ -22,6 +23,7 @@ import {
   uniqueCitationTargets,
 } from "@/lib/citations";
 import {
+  useChatCollapsed,
   useMobileSnap,
   useReadModeActions,
   useReadModeStatus,
@@ -1198,6 +1200,10 @@ function Conversation({
 
   return (
     <main className="h-conv">
+      {/* Lives inside .h-conv so CSS can position it relative to the
+          chat aside. Renders nothing outside Read Mode; in Read Mode
+          it's the toggle affordance for the 48px collapsed posture. */}
+      <ChatCollapseToggle />
       <div className="h-conv-inner">
         {!document ? (
           <EmptyHero isAuthenticated={isAuthenticated} />
@@ -2408,9 +2414,15 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
 function WorkspaceShellChrome({ children }: { children: ReactNode }) {
   const mode = useReadModeStatus();
   const mobileSnap = useMobileSnap();
-  const { exitReadMode, setKeyboardActive } = useReadModeActions();
+  const chatCollapsed = useChatCollapsed();
+  const { exitReadMode, setKeyboardActive, toggleChatCollapsed } = useReadModeActions();
 
-  // ESC to exit Read Mode.
+  // ESC to exit Read Mode + Cmd/Ctrl+\ to toggle chat collapse.
+  // Bundled in one listener so registration overhead stays minimal.
+  // Matches VS Code's Cmd+\ sidebar-toggle convention; we don't use
+  // backslash for anything else in the workspace, so there's no
+  // conflict with the Cmd+K palette listener (which lives separately
+  // and is registered unconditionally).
   useEffect(() => {
     if (mode !== "read") {
       return;
@@ -2421,11 +2433,16 @@ function WorkspaceShellChrome({ children }: { children: ReactNode }) {
         // happens to be open — Read Mode exit takes priority.
         event.stopPropagation();
         exitReadMode();
+        return;
+      }
+      if ((event.metaKey || event.ctrlKey) && event.key === "\\") {
+        event.preventDefault();
+        toggleChatCollapsed();
       }
     }
     window.document.addEventListener("keydown", onKeyDown);
     return () => window.document.removeEventListener("keydown", onKeyDown);
-  }, [mode, exitReadMode]);
+  }, [mode, exitReadMode, toggleChatCollapsed]);
 
   // Keyboard detection — two independent signals feed the same store
   // action. setKeyboardActive is idempotent on equality, so either path
@@ -2479,6 +2496,10 @@ function WorkspaceShellChrome({ children }: { children: ReactNode }) {
       // write it unconditionally to keep CSS selectors simple. Desktop CSS
       // ignores it.
       data-mobile-snap={mobileSnap}
+      // data-chat-collapsed is only meaningful on desktop + read mode; the
+      // CSS rule scopes itself to (min-width: 901px) + read mode. Mobile
+      // CSS ignores it.
+      data-chat-collapsed={chatCollapsed ? "true" : "false"}
     >
       {children}
     </div>

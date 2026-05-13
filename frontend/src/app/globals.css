@@ -4364,3 +4364,205 @@ input[type="file"]:disabled::file-selector-button {
     transition: none !important;
   }
 }
+
+/* ============================================================ */
+/*  PAGE NAV — prev / N-of-total editable pill / next           */
+/*  Composite control in the source chrome on both desktop and  */
+/*  mobile. Renders only after pdfjs reports totalPages > 0.    */
+/* ============================================================ */
+
+.h-source-pagenav {
+  align-items: center;
+  display: flex;
+  gap: 4px;
+}
+
+.h-source-pagenav-step {
+  align-items: center;
+  background: transparent;
+  border: 1px solid var(--hairline);
+  border-radius: 6px;
+  color: var(--fg-2);
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 14px;
+  /* 28×28 base; the wider :hover area below makes the affordance
+     feel clickable without inflating the visible chrome. */
+  height: 28px;
+  justify-content: center;
+  line-height: 1;
+  padding: 0;
+  transition: border-color var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out);
+  width: 28px;
+}
+
+.h-source-pagenav-step:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--accent);
+}
+
+.h-source-pagenav-step:disabled {
+  cursor: not-allowed;
+  opacity: 0.35;
+}
+
+.h-source-pagenav-pill {
+  background: var(--bg-chip);
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  color: var(--fg-2);
+  cursor: pointer;
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  padding: 4px 12px;
+  transition: border-color var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out);
+  white-space: nowrap;
+}
+
+.h-source-pagenav-pill:hover {
+  border-color: var(--accent);
+  color: var(--fg);
+}
+
+.h-source-pagenav-input {
+  background: var(--bg-input);
+  border: 1px solid var(--accent);
+  border-radius: 999px;
+  color: var(--fg);
+  font-family: var(--font-mono);
+  font-size: 11px;
+  letter-spacing: 0.04em;
+  outline: none;
+  padding: 4px 12px;
+  /* Match the visible width of the pill at typical page counts (5
+     chars = "9/200" or so). Centered to mirror the pill's centered
+     text feel. */
+  text-align: center;
+  width: 72px;
+}
+
+/* Mobile chrome: slightly larger hit targets for touch. The visible
+   buttons stay similar in size; the padding around them grows. */
+@media (max-width: 900px) {
+  .h-source-pagenav-step {
+    height: 32px;
+    width: 32px;
+    font-size: 16px;
+  }
+  .h-source-pagenav-pill,
+  .h-source-pagenav-input {
+    font-size: 12px;
+    padding: 5px 14px;
+  }
+}
+
+/* ============================================================ */
+/*  CHAT COLLAPSE — desktop-only 48px drawer strip              */
+/*  Toggled by ChatCollapseToggle. Collapsed grid shifts the    */
+/*  chat column to a 48px strip; expanded restores 45/55.       */
+/* ============================================================ */
+
+/* Anchor for the absolutely-positioned toggle button. The base
+   .h-conv rule doesn't set position; we add it scoped to Read Mode
+   so the rest of the workspace's positioning isn't affected. */
+.h-shell[data-read-mode="read"] .h-conv {
+  position: relative;
+}
+
+/* Collapsed grid — desktop only. The mobile breakpoint already has
+   its own .h-frame override (flex column), and data-chat-collapsed
+   has no meaning there. */
+@media (min-width: 901px) {
+  .h-shell[data-read-mode="read"][data-chat-collapsed="true"] .h-frame {
+    grid-template-columns: 48px minmax(0, 1fr);
+  }
+  /* Hide chat content when collapsed — only the toggle remains
+     visible. The starter chips, ask group, and Q&A list all disappear
+     into the strip. Re-expand restores them instantly. */
+  .h-shell[data-read-mode="read"][data-chat-collapsed="true"] .h-conv-inner {
+    display: none;
+  }
+}
+
+/* The toggle button itself. Two visual states share the same DOM:
+   - Expanded (default): 24px-wide pinstripe at the right edge of
+     .h-conv. Hover bumps opacity so it's discoverable but doesn't
+     compete with chat content.
+   - Collapsed: stretches to cover the full 48px strip, with the
+     "CHAT" rotated label visible below the chevron. */
+.h-chat-collapse-toggle {
+  align-items: center;
+  background: transparent;
+  border: 0;
+  border-left: 1px solid transparent;
+  color: var(--fg-3);
+  cursor: pointer;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  /* Anchored top→bottom on the right edge of .h-conv. Width grows
+     in the collapsed state to absorb the column. */
+  inset: 0 0 0 auto;
+  justify-content: center;
+  padding: 0;
+  position: absolute;
+  transition: background-color var(--duration-fast) var(--ease-out),
+              border-color var(--duration-fast) var(--ease-out),
+              width var(--duration-base) var(--ease-out);
+  width: 24px;
+  z-index: 5;
+}
+
+.h-chat-collapse-toggle:hover {
+  background: var(--bg-chip);
+  border-left-color: var(--hairline);
+}
+
+.h-chat-collapse-toggle[data-collapsed="true"] {
+  background: var(--bg-page);
+  border-left: 1px solid var(--hairline);
+  /* When collapsed, fills the entire 48px column — the whole strip
+     is the click target, per spec. */
+  inset: 0;
+  width: 100%;
+}
+
+.h-chat-collapse-glyph {
+  color: var(--fg-3);
+  font-size: 14px;
+  line-height: 1;
+  transition: color var(--duration-fast) var(--ease-out);
+}
+
+.h-chat-collapse-toggle:hover .h-chat-collapse-glyph {
+  color: var(--fg);
+}
+
+.h-chat-collapse-label {
+  color: var(--fg-3);
+  font-family: var(--font-mono);
+  font-size: 10px;
+  letter-spacing: 0.12em;
+  /* Vertical orientation so the label reads naturally on the thin
+     strip. writing-mode + rotate keeps the text bottom-up. */
+  writing-mode: vertical-rl;
+  transform: rotate(180deg);
+}
+
+/* Mobile: the toggle is meaningless on mobile (FULL snap is the
+   equivalent) — hide it entirely so it doesn't paint behind the
+   sheet. */
+@media (max-width: 900px) {
+  .h-chat-collapse-toggle {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .h-chat-collapse-toggle {
+    transition: none;
+  }
+}

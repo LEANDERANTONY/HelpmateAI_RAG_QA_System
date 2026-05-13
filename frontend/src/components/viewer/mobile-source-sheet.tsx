@@ -26,7 +26,8 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from "react";
 import { Drawer } from "vaul";
 
-import { PdfViewer } from "@/components/viewer/pdf-viewer";
+import { PageNav } from "@/components/viewer/page-nav";
+import { PdfViewer, type PdfViewerHandle } from "@/components/viewer/pdf-viewer";
 import {
   useCurrentChunk,
   useKeyboardActive,
@@ -74,6 +75,19 @@ export function MobileSourceSheet() {
     if (!currentChunk) return;
     setPageState({ chunkId: currentChunk.chunkId, page });
   };
+
+  // Total page count from pdfjs (held in state so PageNav re-renders
+  // when pdfjs finishes parsing).
+  const [totalPages, setTotalPages] = useState(0);
+  const handleTotalPagesChange = useCallback((count: number) => {
+    setTotalPages(count);
+  }, []);
+
+  // Imperative ref into the viewer for page nav.
+  const viewerRef = useRef<PdfViewerHandle | null>(null);
+  const handleJumpToPage = useCallback((pageNumber: number) => {
+    viewerRef.current?.scrollToPage(pageNumber);
+  }, []);
 
   // Focus the close button on mount for keyboard users. On mobile this
   // mostly affects external-keyboard users — soft keyboards don't have
@@ -162,16 +176,11 @@ export function MobileSourceSheet() {
               meta block here; chat behind the sheet shows the doc strip
               context). */}
           <header className="h-mobile-sheet-chrome">
-            <span
-              className="h-source-page-pill"
-              title={
-                visiblePage === null
-                  ? `Hint: ${currentChunk.pageLabel}`
-                  : `Currently on Page ${visiblePage} (hint: ${currentChunk.pageLabel})`
-              }
-            >
-              Page {visiblePage ?? parsePageLabel(currentChunk.pageLabel)}
-            </span>
+            <PageNav
+              currentPage={visiblePage ?? parsePageLabel(currentChunk.pageLabel)}
+              totalPages={totalPages}
+              onJump={handleJumpToPage}
+            />
             <div className="h-mobile-sheet-chrome-spacer" aria-hidden />
             <button
               ref={closeBtnRef}
@@ -186,11 +195,13 @@ export function MobileSourceSheet() {
 
           <div className="h-source-body">
             <PdfViewer
+              ref={viewerRef}
               documentId={currentChunk.documentId}
               chunkId={currentChunk.chunkId}
               pageLabel={currentChunk.pageLabel}
               chunkText={currentChunk.chunkText}
               onPageChange={handlePageChange}
+              onTotalPagesChange={handleTotalPagesChange}
               onDownloadOriginal={() => {
                 window.open(
                   `/api/documents/${currentChunk.documentId}/file?download=1`,

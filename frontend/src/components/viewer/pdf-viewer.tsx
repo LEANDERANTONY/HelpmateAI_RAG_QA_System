@@ -33,7 +33,7 @@
 //   • findController.pageMatches is populated AFTER 'updatefindmatchescount'
 //     fires with a non-zero total. Empty arrays during the scan.
 
-import { useCallback, useEffect, useRef, useState } from "react";
+import { forwardRef, useCallback, useEffect, useImperativeHandle, useRef, useState } from "react";
 
 import {
   loadPdfDocument,
@@ -61,6 +61,20 @@ type PdfViewerProps = {
   // page-pill in the surrounding chrome live rather than stuck on the
   // hint page.
   onPageChange?: (pageNumber: number) => void;
+  // Optional: notify the parent when pdfjs knows the document's total
+  // page count (fired once at pagesinit). Lets the chrome's page-nav
+  // controls render "N / total" instead of N alone, and gate disabled
+  // states for prev/next.
+  onTotalPagesChange?: (totalPages: number) => void;
+};
+
+// Imperative handle exposed via forwardRef. Lets parent chrome
+// (SourcePane / MobileSourceSheet) drive scroll without re-running
+// the find pipeline — manual page nav must not fight the anchor
+// highlight from the chunk-driven find.
+export type PdfViewerHandle = {
+  scrollToPage: (pageNumber: number) => void;
+  pageCount: () => number;
 };
 
 // Tightened from anything[] for safety — we only access the fields
@@ -163,14 +177,18 @@ function scrollToMatchOnPage(
   state.eventBus.on("textlayerrendered", onRendered);
 }
 
-export function PdfViewer({
-  documentId,
-  chunkId,
-  pageLabel,
-  chunkText,
-  onDownloadOriginal,
-  onPageChange,
-}: PdfViewerProps) {
+export const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>(function PdfViewer(
+  {
+    documentId,
+    chunkId,
+    pageLabel,
+    chunkText,
+    onDownloadOriginal,
+    onPageChange,
+    onTotalPagesChange,
+  },
+  ref,
+) {
   const containerRef = useRef<HTMLDivElement | null>(null);
   const viewerElRef = useRef<HTMLDivElement | null>(null);
   const stateRef = useRef<PdfState | null>(null);
@@ -190,6 +208,33 @@ export function PdfViewer({
   useEffect(() => {
     onPageChangeRef.current = onPageChange;
   });
+
+  const onTotalPagesChangeRef = useRef(onTotalPagesChange);
+  useEffect(() => {
+    onTotalPagesChangeRef.current = onTotalPagesChange;
+  });
+
+  // Imperative handle for parent-driven scroll. Critically, scrollToPage
+  // ONLY moves the viewport — it must not dispatch find or touch chunk
+  // state. Manual page nav and the anchor-driven find pipeline operate
+  // independently; the anchor highlight stays painted wherever the last
+  // find dispatch left it.
+  useImperativeHandle(
+    ref,
+    () => ({
+      scrollToPage(pageNumber: number) {
+        const state = stateRef.current;
+        if (!state || !state.pagesReady) return;
+        const total = state.viewer.pagesCount || 1;
+        const clamped = Math.max(1, Math.min(pageNumber, total));
+        state.viewer.currentPageNumber = clamped;
+      },
+      pageCount() {
+        return stateRef.current?.viewer.pagesCount ?? 0;
+      },
+    }),
+    [],
+  );
 
   const [loadState, setLoadState] = useState<LoadState>("idle");
   const [banner, setBanner] = useState<BannerKind>(null);
@@ -344,6 +389,12 @@ export function PdfViewer({
           stateRef.current.pagesReady = true;
         }
         setLoadState("ready");
+        // Notify parent of total page count so its chrome can render
+        // the page-nav controls. Fires exactly once per document load.
+        const total = stateRef.current?.viewer.pagesCount ?? 0;
+        if (total > 0) {
+          onTotalPagesChangeRef.current?.(total);
+        }
         // First navigation uses the chunk that was set when the viewer
         // was constructed. Subsequent navigations are driven by effect 2.
         navigateToCurrent();
@@ -463,7 +514,7 @@ export function PdfViewer({
       {loadState === "loading" ? <PdfLoadingSkeleton /> : null}
     </div>
   );
-}
+});
 
 function renderBanner(
   kind: BannerKind,
