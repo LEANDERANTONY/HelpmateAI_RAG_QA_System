@@ -61,11 +61,25 @@ export async function loadPdfjs(): Promise<PdfjsModule> {
     return loadPromise;
   }
   loadPromise = (async () => {
-    const [core, viewer] = await Promise.all([
-      import("pdfjs-dist"),
-      import("pdfjs-dist/web/pdf_viewer.mjs"),
-    ]);
+    // CRITICAL ordering: pdfjs-dist/web/pdf_viewer.mjs destructures
+    // AbortException (and other symbols) from `globalThis.pdfjsLib` at
+    // module evaluation time. If we Promise.all the two imports, the
+    // viewer module can evaluate before the core sets up the global,
+    // and the destructure throws:
+    //
+    //   Cannot destructure property 'AbortException' of
+    //   'globalThis.pdfjsLib' as it is undefined.
+    //
+    // Dev hides this because Turbopack happens to satisfy the imports
+    // in an order where pdfjsLib is in place; production's chunk-split
+    // module-eval order exposes the race. Fix: import core first,
+    // assign the global, THEN import the viewer.
+    const core = await import("pdfjs-dist");
+    // The viewer's expected global is `pdfjsLib` on `globalThis`.
+    // Type assertion because TS doesn't know about this contract.
+    (globalThis as unknown as { pdfjsLib: typeof core }).pdfjsLib = core;
     core.GlobalWorkerOptions.workerSrc = WORKER_SRC;
+    const viewer = await import("pdfjs-dist/web/pdf_viewer.mjs");
     const merged: PdfjsModule = {
       getDocument: core.getDocument,
       EventBus: viewer.EventBus,
