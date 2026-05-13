@@ -9,21 +9,36 @@ const nextConfig: NextConfig = {
     proxyClientMaxBodySize: "50mb",
   },
   async rewrites() {
-    return [
-      {
-        source: "/api/:path*",
-        destination: `${apiRewriteTarget}/:path*`,
-      },
-      // Host-based: when the request hostname is helpmateai.xyz (the
-      // marketing apex), serve the landing route group from /landing/*.
-      // The workspace at app.helpmateai.xyz is unaffected — this rule
-      // only fires when the Host header matches the apex domain.
-      {
-        source: "/:path*",
-        has: [{ type: "host", value: "helpmateai.xyz" }],
-        destination: "/landing/:path*",
-      },
-    ];
+    // beforeFiles runs BEFORE the file-system / page routing check, so
+    // host-based rewrites can override the default route match. With the
+    // default `afterFiles` bucket, `app/page.tsx` (the workspace) matches
+    // `/` first and the rewrite never fires.
+    //
+    // Explicit per-route rules instead of a catch-all `/:path*` source
+    // because a catch-all would also rewrite `/_next/static/*`,
+    // `/favicon.ico`, `/apple-icon.png`, etc., breaking Vercel's static
+    // serving. The landing only has two URLs — list them.
+    return {
+      beforeFiles: [
+        {
+          source: "/",
+          has: [{ type: "host", value: "helpmateai.xyz" }],
+          destination: "/landing",
+        },
+        {
+          source: "/privacy-policy",
+          has: [{ type: "host", value: "helpmateai.xyz" }],
+          destination: "/landing/privacy-policy",
+        },
+      ],
+      afterFiles: [
+        {
+          source: "/api/:path*",
+          destination: `${apiRewriteTarget}/:path*`,
+        },
+      ],
+      fallback: [],
+    };
   },
 };
 
