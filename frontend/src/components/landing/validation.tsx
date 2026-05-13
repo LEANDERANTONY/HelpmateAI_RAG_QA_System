@@ -26,7 +26,7 @@ export function LandingValidation() {
           <div className="eyebrow">
             Validation · 150-question held-out suite
           </div>
-          <h2>Zero unsupported answers across the evaluation.</h2>
+          <h2>Zero unsupported answers across the evaluation</h2>
           <p>
             We graded every answer for whether the cited evidence actually
             supports the claim. The numbers below are the full run, not a

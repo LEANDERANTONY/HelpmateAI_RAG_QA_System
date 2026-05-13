@@ -18,21 +18,21 @@ const CLAIMS = [
   {
     n: "01",
     tag: "Shows the source",
-    head: "Every claim carries the passage it came from.",
+    head: "Every claim carries the passage it came from",
     body: "Click a citation pill and the evidence column jumps to the exact paragraph — verbatim, with the page and section it came from. Click 'Open in source' to see the same passage in the actual PDF, highlighted on its page.",
     Vis: ClaimVis1,
   },
   {
     n: "02",
     tag: "Knows when to abstain",
-    head: "Three honest kinds of answer, not just one.",
+    head: "Three honest kinds of answer, not just one",
     body: "Answers come in three flavors: supported when the source covers it, partial when it covers some of it, abstained when it doesn't cover it at all. We grade for whether the evidence actually supports the claim, not how confident the sentence sounds.",
     Vis: ClaimVis2,
   },
   {
     n: "03",
     tag: "Stays inside the document",
-    head: "It will not paraphrase the internet at you.",
+    head: "It will not paraphrase the internet at you",
     body: "Helpmate reads only what you've uploaded. No outside knowledge slipped in, no “as a general rule” answers, no quietly-helpful guesses. If the document doesn't say it, neither does Helpmate.",
     Vis: ClaimVis3,
   },
@@ -46,7 +46,7 @@ export function LandingClaims() {
       <div className="l-sec-inner">
         <div className="l-sec-head l-claims-head">
           <div className="eyebrow">What you get</div>
-          <h2>Three behaviors most assistants skip.</h2>
+          <h2>Three behaviors most assistants skip</h2>
           <p>
             Helpmate answers your questions about a document, but the way it
             answers is what matters. You&rsquo;ll see all three behaviors in
