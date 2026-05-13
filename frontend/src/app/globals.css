@@ -1725,6 +1725,12 @@ input[type="file"]:disabled::file-selector-button {
   --ease-out: cubic-bezier(0.16, 1, 0.30, 1);
   --duration-fast: 150ms;
   --duration-base: 240ms;
+  /* Topbar height. Mobile @media overrides this to 48px below. Every
+     layout that needs to clear or fill the area beneath the topbar
+     (mobile docbar `top:`, mobile read mode conv `height: calc(...)`,
+     etc.) should reference `var(--topbar-height)` so a future redesign
+     of the topbar doesn't silently misalign downstream surfaces. */
+  --topbar-height: 56px;
   --font-display: var(--font-space-grotesk), system-ui, sans-serif;
   --font-body: var(--font-dm-sans), system-ui, sans-serif;
   --font-mono: var(--font-geist-mono), ui-monospace, "SF Mono", "Cascadia Code", "Roboto Mono", monospace;
@@ -1828,8 +1834,8 @@ input[type="file"]:disabled::file-selector-button {
   background: var(--bg-page);
   border-bottom: 1px solid var(--hairline);
   display: flex;
-  flex: 0 0 56px;
-  height: 56px;
+  flex: 0 0 var(--topbar-height);
+  height: var(--topbar-height);
   padding: 0;
   position: relative;
   z-index: 40;
@@ -3290,6 +3296,11 @@ input[type="file"]:disabled::file-selector-button {
 
 @media (max-width: 900px) {
   .h-shell {
+    /* Mobile topbar is shorter than desktop. Override the design-token
+       var here so every downstream rule (mobile docbar `top:`, read-mode
+       conv height calc, etc.) automatically picks up the smaller value
+       — no fan-out to chase if the topbar height changes again. */
+    --topbar-height: 48px;
     height: auto;
     min-height: 100vh;
     min-height: 100dvh;
@@ -3297,8 +3308,8 @@ input[type="file"]:disabled::file-selector-button {
   }
 
   .h-topbar {
-    height: 48px;
-    min-height: 48px;
+    height: var(--topbar-height);
+    min-height: var(--topbar-height);
     position: sticky;
     top: 0;
   }
@@ -3313,8 +3324,31 @@ input[type="file"]:disabled::file-selector-button {
     display: none;
   }
 
+  /* On mobile the account control collapses to just the avatar — drop
+     the chevron and the chevron-side padding so it reads as a tap target
+     for the circle alone (standard convention for compact navs). */
+  .h-account {
+    gap: 0;
+    padding: 0;
+    border-color: transparent;
+    background: transparent;
+  }
+
+  .h-account > svg {
+    display: none;
+  }
+
   .h-palette {
     flex: 0 0 auto;
+    /* Take the palette out of absolute centering on narrow screens —
+       at 425px the 280px-wide pill centered at calc(50% - 60px) lands
+       directly on top of the brand mark. Inline it as a flex item with
+       content-sized width instead. */
+    position: static;
+    left: auto;
+    transform: none;
+    min-width: 0;
+    max-width: none;
     margin-left: auto;
     padding: 7px 10px;
   }
@@ -3329,7 +3363,7 @@ input[type="file"]:disabled::file-selector-button {
     justify-content: space-between;
     padding: 10px 14px;
     position: sticky;
-    top: 48px;
+    top: var(--topbar-height);
     z-index: 30;
   }
 
@@ -3640,6 +3674,54 @@ input[type="file"]:disabled::file-selector-button {
   text-transform: uppercase;
 }
 
+/* Touch-friendly close button rendered next to the ESC kbd. Hidden on
+   desktop where the kbd hint suffices; the mobile media query swaps
+   them by hiding the kbd and showing this. */
+.h-palette-close {
+  align-items: center;
+  background: transparent;
+  border: 1px solid transparent;
+  border-radius: 999px;
+  color: var(--fg-3);
+  cursor: pointer;
+  display: none;
+  height: 32px;
+  justify-content: center;
+  padding: 0;
+  transition: background var(--duration-fast) var(--ease-out),
+    border-color var(--duration-fast) var(--ease-out),
+    color var(--duration-fast) var(--ease-out);
+  width: 32px;
+}
+
+.h-palette-close:hover,
+.h-palette-close:focus-visible {
+  background: var(--bg-card-2);
+  border-color: var(--border);
+  color: var(--fg);
+}
+
+@media (max-width: 900px) {
+  /* Phones don't have an Esc key — swap the kbd hint for a tap target
+     and drop the keyboard-only shortcut footer. The result rows are
+     buttons (PaletteResultRow) so tapping them already works for both
+     sections and actions. */
+  .h-palette-esc,
+  .h-palette-shortcut {
+    display: none;
+  }
+  .h-palette-close {
+    display: inline-flex;
+  }
+  .h-palette-overlay {
+    padding-top: 24px;
+  }
+  .h-palette-modal {
+    max-height: calc(100dvh - 48px);
+    width: calc(100vw - 16px);
+  }
+}
+
 .h-error-state {
   background: rgba(255, 139, 139, 0.08);
   border: 1px solid rgba(255, 139, 139, 0.20);
@@ -3815,9 +3897,14 @@ input[type="file"]:disabled::file-selector-button {
   }
 
   /* Hide the mobile evidence accordions and the mobile doc bar while
-     Read Mode is the foreground experience. They reappear on exit. */
+     Read Mode is the foreground experience. They reappear on exit.
+     The desktop-style doc strip (.h-doc — Document name, page count,
+     chunks, sections, embedding, status, Re-index, Replace document)
+     also drops out so the chat column above the sheet is just header
+     → ASK → answer thread, not a wall of metadata. */
   .h-shell[data-read-mode="read"] .h-mobile-thread-evidence,
-  .h-shell[data-read-mode="read"] .h-mobile-docbar {
+  .h-shell[data-read-mode="read"] .h-mobile-docbar,
+  .h-shell[data-read-mode="read"] .h-doc {
     display: none;
   }
 
@@ -3833,11 +3920,76 @@ input[type="file"]:disabled::file-selector-button {
     --mobile-sheet-fraction: 0.25;
   }
 
-  /* Lift the chat input above the sheet. On a sticky-bottom input,
-     `bottom: Xdvh` parks it Xdvh from the viewport bottom. */
+  /* Make the chat column a bounded scroll container that fills the
+     space between topbar and the sheet's visible top edge. Without
+     an explicit height the document is the scroller, and the ASK's
+     `position: sticky` doesn't pin against a visible top edge — it'd
+     only kick in after document scroll passes its natural position,
+     leaving the ASK floating mid-screen at first paint. With a
+     bounded height the ASK stickies to the top of the chat area
+     immediately and turns scroll within it.
+     The full `padding` shorthand is REQUIRED here — a deeper rule at
+     @media (max-width:540px) overrides padding-left/right back to 12px
+     on .h-conv. Repeating the long-hand axes pinned at higher
+     specificity prevents that bleed-through. The 14px left/right keeps
+     a comfortable mobile gutter; the 0 top and 0 bottom let the
+     ASK card sit flush against the topbar boundary and the sheet
+     edge, so there's no dead-zone framing the chat.
+     `var(--topbar-height)` reads the same value used by .h-topbar —
+     if the topbar ever changes height, the chat area follows
+     automatically. */
+  .h-shell[data-read-mode="read"] .h-conv {
+    overflow-y: auto;
+    height: calc(100dvh - var(--topbar-height) - 100dvh * var(--mobile-sheet-fraction, 0));
+    padding: 0 14px 0;
+    padding-left: 14px;
+    padding-right: 14px;
+    /* Match vaul's transform transition (500ms, its own cubic-bezier)
+       exactly. CSS height transitions ran 240ms with our --ease-out
+       previously, finishing well before vaul's sheet animation
+       settled — the conv would arrive at its new height and then sit
+       still for 260ms while the sheet animated, opening a transient
+       gap between conv.bottom and the sheet's visible top edge.
+       Mirroring vaul's curve keeps the two surfaces locked together
+       through the entire transition. */
+    transition: height 0.5s cubic-bezier(0.32, 0.72, 0, 1);
+  }
+
+  /* Small natural gap above the ASK so it doesn't crowd the topbar at
+     first paint — mirrors desktop's 48px but tighter for the mobile
+     budget. On scroll, the ASK eats this padding and pins flush at
+     the top, exactly the "no gap when scrolled" behavior the desktop
+     ships. */
+  .h-shell[data-read-mode="read"] .h-conv-inner {
+    padding-top: 16px;
+  }
+
+  /* Sticky-top, transparent wrapper. The visible "panel" is the
+     .h-ask card itself, which is already solid bg-page with a soft
+     box-shadow underneath — that card handles the occlusion of
+     scrolled-past turns, no enclosing rectangle. Matches the
+     desktop's refined look (the ask-group is transparent on
+     desktop too — see line ~2503 base rule). */
   .h-shell[data-read-mode="read"] .h-ask-group {
-    bottom: calc(100dvh * var(--mobile-sheet-fraction, 0));
-    transition: bottom var(--duration-base) var(--ease-out);
+    position: sticky;
+    top: 0;
+    bottom: auto;
+    margin-top: 0;
+    padding: 0;
+    background: transparent;
+    z-index: 25;
+  }
+
+  /* On mobile the source viewer lives inside the vaul sheet, not a
+     bordered desktop pane. The desktop's `#1c1d20` PDF-reader-chrome
+     backdrop creates a visible seam against the sheet's bg-page
+     (#04070f) — same dark range but slightly different value, so the
+     eye reads the gap between PDF pages as "empty padding" or "dead
+     zone". Falling back to transparent lets the sheet's own bg show
+     through the inter-page gaps and the area around shorter pages,
+     so the whole sheet reads as one continuous surface. */
+  .h-mobile-sheet .h-pdf-container {
+    background: transparent;
   }
 
   /* At FULL the chat is fully hidden — the source claims the whole
@@ -3850,13 +4002,74 @@ input[type="file"]:disabled::file-selector-button {
 }
 
 /* === Mobile sheet — vaul Drawer.Content === */
+.h-mobile-sheet,
+[data-vaul-drawer][data-vaul-drawer-direction="bottom"].h-mobile-sheet {
+  /* Force the sheet to span the full viewport regardless of snap.
+     Vaul otherwise rewrites `height` and `bottom` inline at smaller
+     snaps (at 25% it shrinks the sheet to ~140px and floats it 660px
+     above the viewport bottom), which leaves a strip of bg-page color
+     between the sheet's bottom edge and the actual viewport bottom —
+     the ::after pseudo vaul inserts extends the bg downward, so to
+     the eye it looks like dead padding eating into the PDF.
+     With height pinned to 100dvh and bottom: 0, vaul's `transform:
+     translateY(...)` alone slides the sheet to expose the snap-point
+     fraction, and the visible portion always reaches the viewport
+     bottom. The selectors stack vaul's attribute + our class so
+     specificity beats vaul's own inline rule. */
+  height: 100dvh !important;
+  bottom: 0 !important;
+}
+
 .h-mobile-sheet {
+  /* Token variables live on .h-shell, but vaul portals this sheet
+     into <body> — outside the shell's cascade scope. Redeclare the
+     palette we need here so every `var(--*)` reference inside the
+     sheet (chrome border, page-nav, close button, banners) resolves
+     instead of falling back to its CSS initial value. The hex codes
+     mirror the .h-shell definitions verbatim.
+     ⚠️  MAINTENANCE: this is a manual copy of the .h-shell token set.
+     If a token is added to .h-shell that needs to be available inside
+     the sheet (any new `var(--X)` reference in a rule that targets
+     `.h-mobile-sheet *`), add it here too — otherwise it resolves to
+     the CSS initial value and the sheet renders subtly broken
+     (transparent background, etc.). Keep this list narrow to the
+     tokens the sheet's subtree actually uses; do not blindly mirror
+     every token on .h-shell. */
+  --bg-page: #04070f;
+  --bg-card: rgba(10, 14, 22, 0.72);
+  --bg-card-2: rgba(20, 26, 40, 0.70);
+  --bg-chip: rgba(255, 255, 255, 0.04);
+  --border: rgba(160, 178, 218, 0.12);
+  --border-strong: rgba(160, 178, 218, 0.20);
+  --hairline: rgba(160, 178, 218, 0.07);
+  --fg: #f5f8ff;
+  --fg-2: #c7cfdf;
+  --fg-3: #8a93a8;
+  --fg-4: #5e6677;
+  --accent: #7fe0b0;
+  --accent-tint: rgba(127, 224, 176, 0.14);
+  --radius-sm: 6px;
+  --radius: 10px;
+  --radius-lg: 14px;
+  --ease-out: cubic-bezier(0.16, 1, 0.30, 1);
+  --duration-fast: 150ms;
+  --duration-base: 240ms;
+
   background: var(--bg-page);
+  color: var(--fg);
   border-radius: 18px 18px 0 0;
   /* vaul writes its own transform/height for snap animation; we layer
      a subtle hairline + shadow above so the sheet's top edge reads
      as a panel rather than blending into the chat behind. */
   box-shadow: 0 -8px 24px rgba(0, 0, 0, 0.35);
+  /* SPLIT and COMPACT don't need any top padding: the drag handle
+     naturally renders 33px above the sheet's visual top (a vaul +
+     position:fixed + transform quirk) which IS the desired pull-tab
+     placement at those snaps. At FULL the same -33px shift pushes the
+     handle off-screen above the device top, so we counter-shift only
+     in that state below. Real notched devices still get safe-area
+     padding here so the handle clears the status bar. */
+  padding-top: env(safe-area-inset-top, 0px);
   display: flex;
   flex-direction: column;
   /* vaul positions the sheet via transform: translate3d(0, Npx, 0) on a
@@ -3875,15 +4088,32 @@ input[type="file"]:disabled::file-selector-button {
   z-index: 80;
 }
 
+/* FULL-only compensation for the vaul/fixed-bottom render quirk. The
+   `--quirk-offset` variable is set at runtime by MobileSourceSheet's
+   sentinel measurement — it's the exact magnitude by which children
+   render above the sheet's reported top on the current device. On
+   hardware without the quirk it's 0px, so this rule effectively
+   becomes `padding-top: env(safe-area-inset-top, 0px)` (notch clear).
+   Hardcoded 33px would have been right for Chrome's iPhone emulator
+   and wrong on real iPhones — the runtime measurement gets it right
+   everywhere. */
+.h-mobile-sheet[data-mobile-snap="full"] {
+  padding-top: max(env(safe-area-inset-top, 0px), var(--quirk-offset, 0px));
+}
+
 .h-mobile-sheet-handle-zone {
   align-items: flex-start;
   cursor: grab;
   display: flex;
   flex: 0 0 auto;
   justify-content: center;
-  /* Spec: 44×44 invisible hit target around the visible 36×4 pill. */
-  padding: 14px 0 6px;
+  /* Compact vertical footprint — the visible pill is what the user
+     reads, the padding is just spillover hit area. The sheet's own
+     padding-top handles the safe-area-inset-top buffer (see
+     .h-mobile-sheet below) so we don't double-count it here. */
+  padding: 10px 0 8px;
   touch-action: none;
+  position: relative;
 }
 
 .h-mobile-sheet-handle-zone:active {
@@ -3891,11 +4121,24 @@ input[type="file"]:disabled::file-selector-button {
 }
 
 .h-mobile-sheet-handle {
-  background: var(--fg-3);
-  border-radius: 4px;
-  height: 4px;
-  opacity: 0.6;
-  width: 36px;
+  /* Resolves now that .h-mobile-sheet redeclares the token palette.
+     --fg-2 is #c7cfdf — bright enough to read against the dark sheet
+     background, and the dark outer ring keeps contrast on the rare
+     light PDF page peeking through near the top. */
+  background: var(--fg-2);
+  border-radius: 999px;
+  height: 5px;
+  opacity: 1;
+  width: 48px;
+  box-shadow: 0 0 0 1px rgba(0, 0, 0, 0.35), 0 2px 8px rgba(0, 0, 0, 0.25);
+  transition: width var(--duration-fast) var(--ease-out),
+    background-color var(--duration-fast) var(--ease-out);
+}
+
+.h-mobile-sheet-handle-zone:hover .h-mobile-sheet-handle,
+.h-mobile-sheet-handle-zone:active .h-mobile-sheet-handle {
+  background: var(--fg);
+  width: 56px;
 }
 
 .h-mobile-sheet-chrome {
@@ -3904,17 +4147,40 @@ input[type="file"]:disabled::file-selector-button {
   display: flex;
   flex: 0 0 auto;
   gap: 10px;
-  padding: 6px 14px 12px;
+  /* PageNav centers; close button absolute-positions to the right
+     edge. position:relative anchors the absolute child. */
+  justify-content: center;
+  padding: 2px 14px 8px;
+  position: relative;
 }
 
+/* Spacer is unused now that the chrome centers PageNav with the close
+   button absolute-positioned — keep it as a no-op for backward compat
+   in case any other surface still renders it. */
 .h-mobile-sheet-chrome-spacer {
-  flex: 1;
+  display: none;
 }
 
 .h-mobile-sheet-close {
-  /* Larger hit target on touch — overrides the 30×30 desktop sizing. */
+  /* Larger hit target on touch — overrides the 30×30 desktop sizing.
+     Absolute anchor on the right keeps PageNav optically centered. */
+  position: absolute;
+  right: 10px;
+  top: 50%;
+  transform: translateY(-50%);
   height: 36px;
   width: 36px;
+  color: var(--fg);
+}
+
+.h-mobile-sheet-close svg {
+  /* The CloseGlyph path is a stroke-only X — without these, SVG
+     defaults take over (fill: currentColor or black, no stroke) and
+     the X disappears against the dark sheet. */
+  stroke: currentColor;
+  stroke-width: 2;
+  stroke-linecap: round;
+  fill: none;
 }
 
 /* When the sheet is at FULL on mobile, kill the rounded top corners so
@@ -3957,6 +4223,13 @@ input[type="file"]:disabled::file-selector-button {
 }
 
 .h-pdf-container {
+  /* Dark-gray "PDF reader chrome" backdrop for the desktop source
+     pane, where the container sits inside a bordered panel and the
+     gray gives the pages a clear surrounding ribbon. The mobile
+     sheet media query (below) drops this in favour of transparent
+     so the sheet's own bg-page shows through — the dark gray was
+     creating a visible seam between the PDF-area dark and the
+     sheet's bg-page dark, which read to users as "empty padding". */
   background: #1c1d20;
   /* PDF.js's PDFViewer constructor validates that its `container` arg
      is absolutely positioned and throws "The `container` must be

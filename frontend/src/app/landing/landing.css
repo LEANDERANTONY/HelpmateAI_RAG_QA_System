@@ -226,6 +226,9 @@
 .l-mobile-menu nav a {
   display: flex;
   align-items: center;
+  /* Center the link label across the menu width — left-aligned reads
+     like a settings list, centered reads like a landing nav. */
+  justify-content: center;
   min-height: 44px;
   padding: 12px 16px;
   font-family: var(--font-body);
@@ -233,6 +236,7 @@
   font-weight: 500;
   color: var(--fg);
   border-radius: var(--radius);
+  text-align: center;
   transition: background var(--duration-fast) var(--ease-out);
 }
 .l-mobile-menu nav a:hover {
@@ -1438,9 +1442,26 @@
   .l-foot {
     padding: 32px 24px;
   }
+  /* Brand stays on top spanning both columns; Resources and Socials
+     then sit side-by-side on the second row, flush to the outer edges
+     of the footer so the two headings frame the width instead of
+     stacking into a single tall list. */
   .l-foot-inner {
-    grid-template-columns: 1fr;
-    gap: 28px;
+    grid-template-columns: 1fr 1fr;
+    grid-template-areas:
+      "brand brand"
+      "resources socials";
+    gap: 28px 16px;
+  }
+  .l-foot-brand {
+    grid-area: brand;
+  }
+  .l-foot-col:nth-of-type(2) {
+    grid-area: resources;
+  }
+  .l-foot-col:nth-of-type(3) {
+    grid-area: socials;
+    text-align: right;
   }
   /* footer link touch target ≥ 44 tall — Phase 6 polish */
   .l-foot-col a {
@@ -1448,5 +1469,10 @@
     align-items: center;
     min-height: 44px;
     padding: 12px 0;
+  }
+  /* Right-side column needs flex-end on its links so the touch-target
+     flex layout doesn't override the parent's text-align. */
+  .l-foot-col:nth-of-type(3) a {
+    justify-content: flex-end;
   }
 }

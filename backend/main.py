@@ -481,12 +481,36 @@ def get_document_file(
     document = _require_document_for_user(document_id, user)
     base_headers = {"Cache-Control": "private, max-age=3600"}
 
+    def _resolve_with_fallback(stored: str) -> Path:
+        """Resolve a stored absolute path with a uploads_dir fallback.
+
+        Document records carry the absolute path of the file at the time
+        of upload. When the same Supabase project is shared across
+        machines (e.g. prod VPS + a local dev box), the stored path
+        becomes meaningless on the other machine — the file exists, but
+        at the local `uploads_dir/{document_id}{ext}` instead.
+
+        Files are renamed to `{document_id}{ext}` at upload time
+        (collision-safe storage), so the local path is fully predictable
+        from the document_id + the stored path's extension. Falling
+        back to it here also makes the system tolerant of legitimate
+        prod migrations where the uploads volume is remounted at a new
+        absolute path.
+        """
+        primary = Path(stored)
+        if primary.exists() and primary.is_file():
+            return primary
+        fallback = settings.uploads_dir / f"{document.document_id}{primary.suffix}"
+        if fallback.exists() and fallback.is_file():
+            return fallback
+        raise HTTPException(
+            status_code=404, detail="Document file is missing on disk."
+        )
+
     if download:
         # Download always serves the ORIGINAL source format. A user who
         # uploaded a DOCX should get their DOCX back, not the PDF rendition.
-        source_path = Path(document.source_path)
-        if not source_path.exists() or not source_path.is_file():
-            raise HTTPException(status_code=404, detail="Document file is missing on disk.")
+        source_path = _resolve_with_fallback(document.source_path)
         media_type = _INLINE_MEDIA_TYPES.get(
             source_path.suffix.lower(), "application/octet-stream"
         )
@@ -500,9 +524,7 @@ def get_document_file(
     # Inline branch: prefer the viewable PDF, fall back to source for legacy
     # records (pre-Stage-2 documents have viewable_pdf_path=None).
     viewable_raw = getattr(document, "viewable_pdf_path", None) or document.source_path
-    viewable_path = Path(viewable_raw)
-    if not viewable_path.exists() or not viewable_path.is_file():
-        raise HTTPException(status_code=404, detail="Document file is missing on disk.")
+    viewable_path = _resolve_with_fallback(viewable_raw)
 
     if viewable_path.suffix.lower() != ".pdf":
         # Inline rendering needs a PDF rendition. This only fires for legacy

@@ -100,6 +100,62 @@ export function MobileSourceSheet() {
     return () => window.clearTimeout(t);
   }, []);
 
+  // Measure the rendering offset between the sheet's bounding box and
+  // where its first child actually paints. On most devices this is 0
+  // (children render where CSS says they should). On Chrome's iPhone
+  // DevTools emulator — and possibly some real-device combinations of
+  // `position: fixed; bottom: 0; height: 100dvh` + vaul's transform —
+  // children render ~30+px ABOVE the sheet's reported top, pushing the
+  // drag handle off-screen at FULL.
+  //
+  // Rather than hardcoding the compensation, we insert a 1px sentinel
+  // as the sheet's first child, measure its real position, and store
+  // the magnitude as a CSS variable. Hardware that doesn't have the
+  // quirk reports 0 and pays nothing; hardware that does gets exact
+  // compensation. Re-runs on viewport resize / orientation change.
+  useEffect(() => {
+    // Drawer.Content portals into <body> after the component mounts;
+    // the element may not be in the DOM yet on the first useEffect
+    // run. rAF + querySelector picks it up reliably without coupling
+    // to vaul's ref-forwarding quirks. The portaled sheet is unique
+    // by class so a single selector finds it.
+    const measure = () => {
+      const sheet = document.querySelector(".h-mobile-sheet");
+      if (!(sheet instanceof HTMLElement)) return;
+      const sentinel = document.createElement("div");
+      sentinel.style.cssText =
+        "position:relative;width:0;height:1px;margin:0;padding:0;visibility:hidden;pointer-events:none";
+      sheet.insertBefore(sentinel, sheet.firstChild);
+      const sheetTop = sheet.getBoundingClientRect().top;
+      const sentinelTop = sentinel.getBoundingClientRect().top;
+      sentinel.remove();
+      // Negative offset means the sentinel (and any flex-flow children
+      // following it) render above the sheet's reported top — exactly
+      // the quirk we want to counter. Clamp to 0 so we never apply
+      // negative padding when the quirk is absent.
+      const offset = Math.max(0, sheetTop - sentinelTop);
+      // Set on documentElement (not the sheet itself) because vaul
+      // rewrites the sheet's inline style on every snap/drag update,
+      // wiping any custom properties we set there. The :root inherits
+      // down to the portaled sheet via the normal CSS cascade.
+      document.documentElement.style.setProperty(
+        "--quirk-offset",
+        `${offset}px`,
+      );
+    };
+
+    // First measurement on the next frame so the portal has flushed.
+    const raf = window.requestAnimationFrame(measure);
+    // Orientation flips and dvh changes (Safari URL bar) can shift the
+    // quirk magnitude. Re-measure on resize.
+    const onResize = () => measure();
+    window.addEventListener("resize", onResize);
+    return () => {
+      window.cancelAnimationFrame(raf);
+      window.removeEventListener("resize", onResize);
+    };
+  }, []);
+
   // Derive vaul's controlled snap value from our string snap. Memo-ing so
   // vaul's deps don't churn on unrelated re-renders.
   const activeSnapPoint = useMemo(() => snapToFraction(mobileSnap), [mobileSnap]);
@@ -112,11 +168,19 @@ export function MobileSourceSheet() {
       }
       // Drag-to-COMPACT guard: COMPACT is reserved for keyboard-driven
       // transitions. If the user manually drags down to COMPACT and the
-      // keyboard isn't up, snap them back to SPLIT. The visual flicker
-      // is brief (vaul will animate to 0.55) and matches the spec's
-      // "Cannot drag to COMPACT" rule.
+      // keyboard isn't up, snap them back to SPLIT. We defer the
+      // bounce-back to the next tick — without the defer, vaul ignores
+      // the prop change because it just committed its internal
+      // activeSnapPointIndex to compact in the same event-loop tick.
+      // The result of the synchronous-bounce path is a wedged state:
+      // React thinks we're at split (so CSS expands the conv), vaul
+      // thinks we're at compact (so the sheet stays low), and the user
+      // sees a fat dead-zone between them. The timeout punts the prop
+      // change to the next microtask cycle so vaul has finished
+      // settling and will respond to the new activeSnapPoint by
+      // animating back up.
       if (next === "compact" && !keyboardActive) {
-        setMobileSnap("split");
+        window.setTimeout(() => setMobileSnap("split"), 0);
         return;
       }
       setMobileSnap(next);
@@ -164,12 +228,43 @@ export function MobileSourceSheet() {
             Drag the handle to resize. Use the close button to exit Read Mode.
           </Drawer.Description>
 
-          {/* Drag handle — 36×4 pill centered at the top, with a 44×44
-              invisible hit target via padding. vaul recognises the handle
-              by data attribute and only initiates drag from this region
-              (rather than the whole sheet body, which would interfere
-              with PDF.js's own scroll/touch). */}
-          <div className="h-mobile-sheet-handle-zone" data-vaul-drag-handle>
+          {/* Drag handle — pill centered at the top, with a generous hit
+              target via padding. vaul recognises the handle by data
+              attribute and only initiates drag from this region (rather
+              than the whole sheet body, which would interfere with
+              PDF.js's own scroll/touch).
+              We also wrap it in a role="button" with onClick to toggle
+              FULL↔SPLIT. Users on a phone often discover this affordance
+              by tap before they discover the drag, and from the FULL
+              posture the drag-down gesture is awkward (the handle is
+              right under the status bar) — tapping is the escape hatch.
+              The click handler is suppressed if the user actually
+              dragged (vaul fires its own pointer pipeline; a real tap
+              ends with a click event, a drag does not). */}
+          <div
+            className="h-mobile-sheet-handle-zone"
+            data-vaul-drag-handle
+            role="button"
+            tabIndex={0}
+            aria-label={
+              mobileSnap === "full"
+                ? "Drag or tap to reduce sheet height"
+                : "Drag or tap to expand sheet height"
+            }
+            onClick={() => {
+              // Toggle FULL ↔ SPLIT. Ignore COMPACT — that's a
+              // keyboard-driven posture; tapping the handle while
+              // COMPACT should return to SPLIT (most useful for the
+              // user) rather than jump to FULL.
+              setMobileSnap(mobileSnap === "full" ? "split" : "full");
+            }}
+            onKeyDown={(event) => {
+              if (event.key === "Enter" || event.key === " ") {
+                event.preventDefault();
+                setMobileSnap(mobileSnap === "full" ? "split" : "full");
+              }
+            }}
+          >
             <div className="h-mobile-sheet-handle" aria-hidden />
           </div>
 

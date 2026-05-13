@@ -106,6 +106,14 @@ const icons = {
       </svg>
     );
   },
+  Close({ size = 14 }: IconProps) {
+    return (
+      <svg aria-hidden="true" height={size} viewBox="0 0 24 24" width={size}>
+        <path d="M6 6 18 18" />
+        <path d="M18 6 6 18" />
+      </svg>
+    );
+  },
   Doc({ size = 14 }: IconProps) {
     return (
       <svg aria-hidden="true" height={size} viewBox="0 0 24 24" width={size}>
@@ -1382,7 +1390,11 @@ function EvidenceRail({
   highlightedCitationKey: string | null;
   onDebugToggle: () => void;
   onEvidenceTagClick: (turnId: string, chunkId: string) => void;
-  registerEvidenceRef: (chunkId: string, element: HTMLElement | null) => void;
+  registerEvidenceRef: (
+    chunkId: string,
+    surface: "desktop" | "mobile",
+    element: HTMLElement | null,
+  ) => void;
 }) {
   const groups = [...turns].reverse();
   const evidenceCount = groups.reduce((total, turn) => total + turn.answer.evidence.length, 0);
@@ -1415,7 +1427,7 @@ function EvidenceRail({
               <p className="h-evi-group-head">Q · {relativeTime(turn.askedAt)} · {turn.question.slice(0, 54)}</p>
               {turn.answer.evidence.map((candidate, index) => (
                 <EvidenceCard
-                  cardRef={(element) => registerEvidenceRef(candidate.chunk_id, element)}
+                  cardRef={(element) => registerEvidenceRef(candidate.chunk_id, "desktop", element)}
                   candidate={candidate}
                   debugOpen={debugOpen}
                   fileName={document?.file_name ?? "Document"}
@@ -1438,7 +1450,7 @@ function EvidenceRail({
 }
 
 function MobileEvidence({
-  turn,
+  turns,
   fileName,
   open,
   debugOpen,
@@ -1446,8 +1458,9 @@ function MobileEvidence({
   highlightedCitationKey,
   onToggle,
   onEvidenceTagClick,
+  registerEvidenceRef,
 }: {
-  turn: QATurn;
+  turns: QATurn[];
   open: boolean;
   debugOpen: boolean;
   highlightedChunkId: string | null;
@@ -1455,28 +1468,60 @@ function MobileEvidence({
   onToggle: () => void;
   onEvidenceTagClick: (turnId: string, chunkId: string) => void;
   fileName: string;
+  registerEvidenceRef: (
+    chunkId: string,
+    surface: "desktop" | "mobile",
+    element: HTMLElement | null,
+  ) => void;
 }) {
+  // Single combined evidence panel for the whole session — mirrors the
+  // desktop right-rail (which lists all turns' evidence grouped by Q).
+  // Newest turn first so the most relevant chunks are at the top of the
+  // expanded list. Header shows total chunk count across all turns.
+  const groups = [...turns].reverse();
+  const evidenceCount = groups.reduce(
+    (total, turn) => total + turn.answer.evidence.length,
+    0,
+  );
+  if (groups.length === 0) return null;
   return (
     <div className="h-mobile-evidence">
-      <button className={`h-mobile-evidence-toggle ${open ? "open" : ""}`} onClick={onToggle} type="button">
-        <span>{open ? "Hide" : "Show"} evidence ({turn.answer.evidence.length})</span>
+      <button
+        className={`h-mobile-evidence-toggle ${open ? "open" : ""}`}
+        onClick={onToggle}
+        type="button"
+      >
+        <span>
+          {open ? "Hide" : "Show"} evidence ({evidenceCount})
+        </span>
         <icons.Chevron />
       </button>
       {open ? (
         <div className="h-mobile-evidence-list">
-          {turn.answer.evidence.map((candidate, index) => (
-            <EvidenceCard
-              cardRef={() => undefined}
-              candidate={candidate}
-              debugOpen={debugOpen}
-              fileName={fileName}
-              highlighted={highlightedChunkId === candidate.chunk_id}
-              index={index}
-              key={candidate.chunk_id}
-              onTagClick={onEvidenceTagClick}
-              tagRinged={highlightedCitationKey === `${turn.id}:${candidate.chunk_id}`}
-              turnId={turn.id}
-            />
+          {groups.map((turn) => (
+            <section className="h-evi-group" key={turn.id}>
+              <p className="h-evi-group-head">
+                Q · {relativeTime(turn.askedAt)} · {turn.question.slice(0, 54)}
+              </p>
+              {turn.answer.evidence.map((candidate, index) => (
+                <EvidenceCard
+                  cardRef={(element) =>
+                    registerEvidenceRef(candidate.chunk_id, "mobile", element)
+                  }
+                  candidate={candidate}
+                  debugOpen={debugOpen}
+                  fileName={fileName}
+                  highlighted={highlightedChunkId === candidate.chunk_id}
+                  index={index}
+                  key={`${turn.id}-${candidate.chunk_id}`}
+                  onTagClick={onEvidenceTagClick}
+                  tagRinged={
+                    highlightedCitationKey === `${turn.id}:${candidate.chunk_id}`
+                  }
+                  turnId={turn.id}
+                />
+              ))}
+            </section>
           ))}
         </div>
       ) : null}
@@ -1775,7 +1820,21 @@ function CommandPalette({
             type="text"
             value={query}
           />
-          <kbd>ESC</kbd>
+          {/* Two close affordances, swapped by CSS at the mobile
+              breakpoint: the ESC kbd reminds desktop users of the
+              shortcut (no actual click handler needed — the global
+              keydown listener handles Esc), while the X button gives
+              touch users an explicit tap target since phones have no
+              Escape key. */}
+          <kbd className="h-palette-esc">ESC</kbd>
+          <button
+            aria-label="Close search"
+            className="h-palette-close"
+            onClick={onClose}
+            type="button"
+          >
+            <icons.Close size={16} />
+          </button>
         </div>
         <div className="h-palette-results">
           {results.length === 0 ? (
@@ -1837,7 +1896,11 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
   const [streamingTurnId, setStreamingTurnId] = useState<string | null>(null);
   const [paletteOpen, setPaletteOpen] = useState(false);
   const [openMenuTurnId, setOpenMenuTurnId] = useState<string | null>(null);
-  const [mobileEvidenceOpen, setMobileEvidenceOpen] = useState<Record<string, boolean>>({});
+  // Single boolean for the combined mobile evidence panel (was a
+  // per-turn Record when each turn had its own dropdown). A new
+  // session starts with the panel closed; clicking a citation pill or
+  // landing a new answer auto-opens it.
+  const [mobileEvidenceOpen, setMobileEvidenceOpen] = useState(false);
   const evidenceRefs = useRef<Record<string, HTMLElement | null>>({});
   const turnRefs = useRef<Record<string, HTMLElement | null>>({});
   const flashTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -1864,7 +1927,7 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
       clearTimeout(streamTimer.current);
       streamTimer.current = null;
     }
-    setMobileEvidenceOpen({});
+    setMobileEvidenceOpen(false);
     setIndexState(bundle.index ? "ready" : "idle");
     setUploadState("ready");
   }
@@ -2014,7 +2077,10 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
       };
       setAnswer(response.answer);
       setTurns((current) => [...current, turn]);
-      setMobileEvidenceOpen((current) => ({ ...current, [turn.id]: false }));
+      // Keep the combined panel closed by default on a fresh answer —
+      // citation-pill clicks (and a manual tap) are the explicit
+      // open paths.
+      setMobileEvidenceOpen(false);
       setAnswerState("ready");
       setStreamingTurnId(turn.id);
       // Auto-jump the source viewer to the first evidence of the new
@@ -2104,9 +2170,13 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
     setAskFocused(false);
     setHighlightedChunkId(chunkId);
     setHighlightedCitationKey(`${turnId}:${chunkId}`);
-    setMobileEvidenceOpen((current) => ({ ...current, [turnId]: true }));
+    setMobileEvidenceOpen(true);
+    // setTimeout(0) lets React commit the mobile combined-panel render
+    // so the relevant mobile card mounts and registers its ref before
+    // we scroll. The visibility-aware lookup picks the visible surface
+    // (mobile when this expansion is on, desktop on wider viewports).
     window.setTimeout(() => {
-      evidenceRefs.current[chunkId]?.scrollIntoView({
+      getVisibleEvidenceElement(chunkId)?.scrollIntoView({
         block: "center",
         behavior: "smooth",
       });
@@ -2114,8 +2184,32 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
     clearFlashLater();
   }
 
-  function registerEvidenceRef(chunkId: string, element: HTMLElement | null) {
-    evidenceRefs.current[chunkId] = element;
+  // Desktop evidence rail and the mobile "Show evidence" dropdown both
+  // render their own EvidenceCard instances for the same chunkId. Keyed
+  // by `${chunkId}:${surface}` so both can register independently and
+  // we can pick the visible one at scroll time. (Desktop cards exist
+  // even on mobile viewports — `.h-evi` is `display:none` but still
+  // mounted — so we need offsetParent to decide which to scroll to.)
+  function registerEvidenceRef(
+    chunkId: string,
+    surface: "desktop" | "mobile",
+    element: HTMLElement | null,
+  ) {
+    evidenceRefs.current[`${chunkId}:${surface}`] = element;
+  }
+
+  function getVisibleEvidenceElement(chunkId: string): HTMLElement | null {
+    // Prefer mobile first — when the mobile dropdown is open it's the
+    // one the user just expanded and is looking at. Falls through to
+    // desktop on wider viewports where mobile chrome is CSS-hidden.
+    for (const surface of ["mobile", "desktop"] as const) {
+      const el = evidenceRefs.current[`${chunkId}:${surface}`];
+      // offsetParent is null when the element OR any ancestor has
+      // display:none — exactly the signal we want for "is this card
+      // actually on screen right now".
+      if (el && el.offsetParent !== null) return el;
+    }
+    return null;
   }
 
   function registerTurnRef(turnId: string, element: HTMLElement | null) {
@@ -2227,19 +2321,14 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
     delete turnRefs.current[turnId];
     if (turn) {
       for (const candidate of turn.answer.evidence) {
-        delete evidenceRefs.current[candidate.chunk_id];
+        delete evidenceRefs.current[`${candidate.chunk_id}:desktop`];
+        delete evidenceRefs.current[`${candidate.chunk_id}:mobile`];
       }
     }
     setStreamingTurnId((current) => (current === turnId ? null : current));
     setHighlightedCitationKey((current) => (current?.startsWith(`${turnId}:`) ? null : current));
-    setMobileEvidenceOpen((current) => {
-      if (!(turnId in current)) {
-        return current;
-      }
-      const next = { ...current };
-      delete next[turnId];
-      return next;
-    });
+    // No per-turn state to clean for the combined panel — the
+    // remaining turns keep their own evidence in the same drawer.
   }
 
   function handlePaletteSelectTurn(turnId: string) {
@@ -2253,7 +2342,7 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
     setHighlightedChunkId(section.chunkId);
     setHighlightedCitationKey(null);
     window.setTimeout(() => {
-      evidenceRefs.current[section.chunkId]?.scrollIntoView({
+      getVisibleEvidenceElement(section.chunkId)?.scrollIntoView({
         behavior: "smooth",
         block: "center",
       });
@@ -2370,24 +2459,17 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
           <SourcePaneMount />
         </div>
         <div className="h-mobile-thread-evidence">
-          {turns.map((turn) => (
-            <MobileEvidence
-              debugOpen={debugOpen}
-              fileName={document?.file_name ?? "Document"}
-              highlightedChunkId={highlightedChunkId}
-              highlightedCitationKey={highlightedCitationKey}
-              key={turn.id}
-              onEvidenceTagClick={handleCitationClick}
-              onToggle={() =>
-                setMobileEvidenceOpen((current) => ({
-                  ...current,
-                  [turn.id]: !current[turn.id],
-                }))
-              }
-              open={Boolean(mobileEvidenceOpen[turn.id])}
-              turn={turn}
-            />
-          ))}
+          <MobileEvidence
+            debugOpen={debugOpen}
+            fileName={document?.file_name ?? "Document"}
+            highlightedChunkId={highlightedChunkId}
+            highlightedCitationKey={highlightedCitationKey}
+            onEvidenceTagClick={handleCitationClick}
+            onToggle={() => setMobileEvidenceOpen((current) => !current)}
+            open={mobileEvidenceOpen}
+            registerEvidenceRef={registerEvidenceRef}
+            turns={turns}
+          />
         </div>
         <CommandPalette
           documentLoaded={Boolean(document)}

@@ -89,6 +89,10 @@ type PdfState = {
   eventBus: InstanceType<PdfjsModule["EventBus"]>;
   findController: InstanceType<PdfjsModule["PDFFindController"]>;
   pagesReady: boolean;
+  // Tracks container width changes (mobile snap, orientation, desktop
+  // pane resize) so we can re-apply the page-width fit. Disconnected
+  // alongside the viewer in the effect's cleanup.
+  resizeObserver: ResizeObserver;
 };
 
 type LoadState = "idle" | "loading" | "ready" | "error";
@@ -406,6 +410,13 @@ export const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>(function Pd
         if (stateRef.current) {
           stateRef.current.pagesReady = true;
         }
+        // Fit pages to the container width so PDFs don't overflow
+        // horizontally on narrow viewports. "page-width" is a PDF.js
+        // sentinel — assigning to currentScaleValue re-derives the
+        // numeric scale from the container's current width, so we can
+        // re-apply on resize (orientation change, sheet snap change,
+        // window resize) to keep the fit fresh.
+        viewer.currentScaleValue = "page-width";
         setLoadState("ready");
         // Notify parent of total page count so its chrome can render
         // the page-nav controls. Fires exactly once per document load.
@@ -439,12 +450,36 @@ export const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>(function Pd
       eventBus.on("updatefindmatchescount", onMatches);
       eventBus.on("pagechanging", onPageChanging);
 
+      // Re-fit pages whenever the container resizes — mobile sheet snap
+      // changes (compact/split/full), orientation flips, or desktop pane
+      // drags. Without this, the first fit on pagesinit becomes stale
+      // and pages either overflow or leave a gap. Coalesced by rAF so a
+      // burst of resize events only triggers one rescale.
+      let rescaleScheduled = false;
+      const rescaleToFit = () => {
+        if (rescaleScheduled) return;
+        rescaleScheduled = true;
+        window.requestAnimationFrame(() => {
+          rescaleScheduled = false;
+          const state = stateRef.current;
+          if (!state?.pagesReady) return;
+          try {
+            state.viewer.currentScaleValue = "page-width";
+          } catch {
+            /* viewer may be mid-teardown */
+          }
+        });
+      };
+      const resizeObserver = new ResizeObserver(rescaleToFit);
+      resizeObserver.observe(container);
+
       stateRef.current = {
         pdfjs,
         viewer,
         eventBus,
         findController,
         pagesReady: false,
+        resizeObserver,
       };
 
       try {
@@ -480,6 +515,7 @@ export const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>(function Pd
       cancelled = true;
       const state = stateRef.current;
       if (state) {
+        state.resizeObserver.disconnect();
         // Detach the document — pdfjs's viewer accepts null at runtime to
         // release its internal references and trigger the worker to free
         // the parsed PDF. The TS types declare the param non-null, so we
