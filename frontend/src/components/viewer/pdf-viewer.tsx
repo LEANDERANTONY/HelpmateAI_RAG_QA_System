@@ -228,6 +228,17 @@ export const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>(function Pd
         const total = state.viewer.pagesCount || 1;
         const clamped = Math.max(1, Math.min(pageNumber, total));
         state.viewer.currentPageNumber = clamped;
+        // Optimistic page-pill update. scroll-behavior:smooth on the
+        // PDF container causes pdfjs to coalesce pagechanging events —
+        // a click during an in-flight smooth scroll lands the
+        // currentPageNumber setter (PDF moves) but the event for the
+        // intermediate page doesn't fire until the scroll settles,
+        // and rapid clicks can drop intermediate events entirely.
+        // Firing onPageChange synchronously here keeps the page-pill
+        // in sync with the click. If pagechanging fires later for
+        // the same page, setVisiblePage is called with the identical
+        // value — idempotent, no double-render.
+        onPageChangeRef.current?.(clamped);
       },
       pageCount() {
         return stateRef.current?.viewer.pagesCount ?? 0;
