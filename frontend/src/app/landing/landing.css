@@ -1576,6 +1576,15 @@
   font-size: 14px;
   font-weight: 500;
   text-decoration: none;
+  /* Chrome's modern <button> rendering applies a dark "ButtonFace"
+     background (rgb(28, 30, 31)) when the inherited color-scheme is
+     "dark" — even author !important is ignored. appearance:none alone
+     doesn't fix it; we need to also opt this button out of the dark
+     color-scheme so Chrome treats it as a normal styleable control
+     and lets our `var(--bg-page)` background actually paint. */
+  appearance: none;
+  -webkit-appearance: none;
+  color-scheme: light;
   transition:
     background var(--duration-base) var(--ease-out),
     border-color var(--duration-base) var(--ease-out),
@@ -1630,7 +1639,10 @@
    solid-filled Pro card (any inside-tint here would compete with that). */
 .l-pricing-card:not(.is-featured) {
   border-color: var(--accent);
-  box-shadow: 0 0 32px var(--accent-glow);
+  /* Tight glow: 18px blur at ~28% alpha keeps the halo inside the
+     gap between cards. The earlier 32px / 40% halo bled across card
+     boundaries and made adjacent cards look like one wash of mint. */
+  box-shadow: 0 0 18px rgba(127, 224, 176, 0.28);
 }
 
 /* Free + Business CTAs go mint-filled so the row carries three high-
@@ -1651,13 +1663,18 @@
 }
 
 .l-pricing-card.is-featured {
-  /* Same gradient recipe as the workspace's accent-button (globals.css
-     ~L2021). Direct-color mode means we can carry --accent-fg-styled
-     type without translucency tricks. */
-  background: linear-gradient(135deg, var(--accent), #4ec594);
+  /* Toned-down mint gradient — same hue as --accent (#7fe0b0) but
+     pulled ~25% darker so the card stops feeling like a glow stick.
+     Reads as a confident sage-mint surface rather than electric or
+     "candy" bright. Still clearly the focal anchor against the dark
+     outer cards via the filled treatment + translateY. */
+  background: linear-gradient(135deg, #53b187, #317f60);
   border-color: transparent;
+  /* Tightened drop shadow: 28px blur instead of 48px, lower alpha,
+     so the Pro card's halo lands UNDER it rather than bleeding into
+     the neighbors. */
   box-shadow:
-    0 24px 48px -16px var(--accent-glow),
+    0 16px 28px -14px rgba(127, 224, 176, 0.28),
     0 0 0 1px rgba(255, 255, 255, 0.08) inset;
   transform: translateY(-6px);
 }
@@ -1668,18 +1685,24 @@
 .l-pricing-card.is-featured .l-pricing-blurb,
 .l-pricing-card.is-featured .l-pricing-price .per,
 .l-pricing-card.is-featured .l-pricing-features li {
-  /* Dark-on-light needs a softer "secondary" color than the dark theme's
-     --fg-3. Mix with the accent-fg base to keep readability without
-     hardcoding a new color token. */
+  /* Dark-on-light needs a softer "secondary" color than the dark
+     theme's --fg-3. Mix --accent-fg toward transparent for the
+     muted-secondary feel without inventing a new token. */
   color: color-mix(in srgb, var(--accent-fg) 78%, transparent);
 }
 .l-pricing-card.is-featured .l-pricing-features svg {
   color: var(--accent-fg);
 }
-/* Pro CTA punches through to the page background — using --bg-page
-   (#04070f) instead of --accent-fg (#04241a) makes it read as black
-   rather than deep-green: the button looks like a window cut into
-   the mint card, exposing the page below. Sharpens the focal punch. */
+/* Pro CTA + badge: deep black with mint text. The earlier mint-on-mint
+   button (matching Free/Business CTAs) flattened the focal hierarchy —
+   all three buttons reading as one accent stripe across the row, with
+   the Pro card's only distinguishing feature being its slightly
+   greener gradient. Black with mint text on the deep forest green
+   card gives the Pro CTA a genuine "window cut into the card,
+   exposing the deep page" feel — same trick that worked on the
+   original mint-filled treatment, now translated to the toned-down
+   gradient. The black button reads as the strongest visual command
+   in the row; mint text inside keeps it tied to the brand. */
 .l-pricing-card.is-featured .l-pricing-cta {
   background: var(--bg-page);
   color: var(--accent);
@@ -1692,10 +1715,6 @@
     0 0 24px rgba(0, 0, 0, 0.5);
 }
 .l-pricing-card.is-featured .l-pricing-badge {
-  /* Match the Get Pro CTA — same near-black bg punching through to the
-     page color, same mint text. Reads as a pair: the pill at the top
-     and the button mid-card are the two "anchor" elements on the Pro
-     card, both treated the same way. */
   background: var(--bg-page);
   color: var(--accent);
 }
