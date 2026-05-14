@@ -1,19 +1,21 @@
+"use client";
+
 // Pricing section — three tiers, middle "Pro" tier visually anchored
 // with the accent-filled treatment (matches the reference shot).
 //
-// Free + Business cards: dark canvas, mint border + soft outer glow,
-//                        mint-filled CTA. The interior stays neutral
-//                        dark — only the border-line and the halo
-//                        carry the accent, so the focal Pro card
-//                        doesn't have to fight any internal tint.
-// Pro card:              solid mint gradient fill, dark "punch-through"
-//                        anchors (the MOST POPULAR pill at the top and
-//                        the Get Pro button) both use --bg-page so they
-//                        read as windows cut into the mint card.
-//
-// CTAs across the row form an alternating contrast rhythm — green button
-// on dark card, dark button on green card, green button on dark card.
-// The middle one inverts the relationship without losing the focal lock.
+// Marked "use client" so we can read the signed-in Supabase user
+// inside the CTAs and bind the Lemon Squeezy checkout URL with that
+// user's id (via ?checkout[custom][user_id]=). Without that binding
+// the LS webhook can't reconcile the subscription back to the
+// account, so a signed-out customer would silently get the wrong
+// tier after payment. The pricing copy is tiny, so the cost of
+// client-rendering is negligible.
+
+import { useEffect, useState } from "react";
+
+import { getCheckoutUrl, isLemonSqueezyEnabled } from "@/lib/api";
+import { createClient } from "@/lib/supabase/client";
+import { isSupabaseConfigured } from "@/lib/supabase/config";
 
 const WORKSPACE_URL = "https://app.helpmateai.xyz";
 
@@ -112,8 +114,66 @@ function Check() {
   );
 }
 
+// Resolves the right CTA href + label per tier. Free always goes to
+// the workspace (sign-in flow). Business is a mailto. Pro routes to
+// Lemon Squeezy hosted checkout when (a) LS env vars are configured
+// AND (b) a Supabase user is signed in -- otherwise it falls back to
+// the workspace URL so the user signs in first; once they return to
+// the pricing page logged in, the Pro CTA flips to the LS URL.
+function resolveCta(
+  tier: Tier,
+  userId: string | null,
+): { href: string; label: string; disabled: boolean } {
+  if (tier.id === "business" || tier.id === "free") {
+    return { href: tier.cta.href, label: tier.cta.label, disabled: false };
+  }
+  // Pro tier: LS checkout if available, workspace sign-in URL otherwise.
+  if (!isLemonSqueezyEnabled()) {
+    return { href: tier.cta.href, label: "Coming soon", disabled: true };
+  }
+  if (!userId) {
+    return {
+      href: tier.cta.href,
+      label: "Sign in to subscribe",
+      disabled: false,
+    };
+  }
+  const checkoutUrl = getCheckoutUrl("pro", userId);
+  if (!checkoutUrl) {
+    return { href: tier.cta.href, label: "Coming soon", disabled: true };
+  }
+  return { href: checkoutUrl, label: tier.cta.label, disabled: false };
+}
+
 function PricingCard({ tier }: { tier: Tier }) {
   const isFeatured = Boolean(tier.featured);
+  // Read the signed-in user's id once on mount via the browser
+  // Supabase client. We don't subscribe to auth state changes here --
+  // the pricing page isn't long-lived and a user signing in mid-view
+  // would still click through to the workspace URL fallback, which
+  // bounces them through the OAuth flow + back here. Re-renders the
+  // CTA on the next mount.
+  const [userId, setUserId] = useState<string | null>(null);
+  useEffect(() => {
+    if (!isSupabaseConfigured()) return;
+    let cancelled = false;
+    const supabase = createClient();
+    supabase.auth
+      .getUser()
+      .then(({ data }) => {
+        if (cancelled) return;
+        setUserId(data.user?.id ?? null);
+      })
+      .catch(() => {
+        // Auth read failed (transient network / dev without supabase).
+        // Fall through to the signed-out CTA path.
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, []);
+  const cta = resolveCta(tier, userId);
+
   return (
     <article
       className={isFeatured ? "l-pricing-card is-featured" : "l-pricing-card"}
@@ -131,8 +191,16 @@ function PricingCard({ tier }: { tier: Tier }) {
         <span className="num">${tier.price}</span>
         <span className="per">/month</span>
       </p>
-      <a className="l-pricing-cta" href={tier.cta.href}>
-        {tier.cta.label}
+      <a
+        className="l-pricing-cta"
+        href={cta.disabled ? undefined : cta.href}
+        aria-disabled={cta.disabled || undefined}
+        // When LS isn't configured yet, the CTA renders as a static
+        // "Coming soon" label without a destination -- a11y peers
+        // call this the most honest fallback (no broken link, no
+        // misleading enabled state).
+      >
+        {cta.label}
       </a>
       <ul className="l-pricing-features">
         {tier.features.map((feature) => (

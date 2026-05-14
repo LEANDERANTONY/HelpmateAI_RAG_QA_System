@@ -172,4 +172,93 @@ export async function getWorkspaceQuota() {
   return request<import("@/lib/api-types").WorkspaceQuotaResponse>("/workspace/quota");
 }
 
+// ---------------------------------------------------------------------------
+// Lemon Squeezy checkout + customer portal helpers.
+//
+// Env vars (NEXT_PUBLIC_ prefix so Next.js inlines them into the JS
+// bundle at build time):
+//   NEXT_PUBLIC_LEMONSQUEEZY_STORE_ID — subdomain piece. "" disables.
+//   NEXT_PUBLIC_LEMONSQUEEZY_PRODUCT_VARIANT_PRO     — pro variant uuid
+//   NEXT_PUBLIC_LEMONSQUEEZY_PRODUCT_VARIANT_BUSINESS — business uuid
+//
+// When any of these are empty (the integration isn't live on this
+// deploy), getCheckoutUrl returns "" so the caller can render the CTA
+// as "Coming soon" / disabled.
+// ---------------------------------------------------------------------------
+
+const LEMONSQUEEZY_STORE_ID =
+  process.env.NEXT_PUBLIC_LEMONSQUEEZY_STORE_ID ?? "";
+const LEMONSQUEEZY_VARIANT_PRO =
+  process.env.NEXT_PUBLIC_LEMONSQUEEZY_PRODUCT_VARIANT_PRO ?? "";
+const LEMONSQUEEZY_VARIANT_BUSINESS =
+  process.env.NEXT_PUBLIC_LEMONSQUEEZY_PRODUCT_VARIANT_BUSINESS ?? "";
+
+/** True when the LS env vars are populated. Pricing CTAs gate on this
+ *  to render "Coming soon" copy when the integration hasn't shipped
+ *  to this deploy yet. */
+export function isLemonSqueezyEnabled(): boolean {
+  return Boolean(
+    LEMONSQUEEZY_STORE_ID &&
+      (LEMONSQUEEZY_VARIANT_PRO || LEMONSQUEEZY_VARIANT_BUSINESS),
+  );
+}
+
+/** Build a Lemon Squeezy hosted checkout URL for a tier, bound to the
+ *  supplied Supabase user_id via checkout[custom][user_id]. The
+ *  webhook handler reads that field out of meta.custom_data on
+ *  subscription_created and writes the matching subscriptions row.
+ *
+ *  Also passes `checkout[success_url]` so the user lands back on the
+ *  app with `?ls_checkout=success` — the workspace mount effect
+ *  refreshes the quota snapshot on that param so the tier badge
+ *  updates immediately after a successful payment.
+ *
+ *  Returns "" when the integration isn't configured on this build.
+ *  The pricing CTA renders "Coming soon" in that branch. */
+export function getCheckoutUrl(
+  tier: "pro" | "business",
+  userId: string,
+): string {
+  if (!LEMONSQUEEZY_STORE_ID) return "";
+  const variant =
+    tier === "pro"
+      ? LEMONSQUEEZY_VARIANT_PRO
+      : LEMONSQUEEZY_VARIANT_BUSINESS;
+  if (!variant) return "";
+  const base = `https://${LEMONSQUEEZY_STORE_ID}.lemonsqueezy.com/buy/${variant}`;
+  if (!userId) return base;
+  // LS expects checkout fields as URL-encoded query params; the
+  // bracket syntax is the documented form for nested fields.
+  const query = new URLSearchParams();
+  query.set("checkout[custom][user_id]", userId);
+  // Per-checkout success URL override. Build off the current origin
+  // so dev / staging / prod each land on themselves; the LS
+  // dashboard's default success URL is still honored when this
+  // parameter isn't sent.
+  if (typeof window !== "undefined" && window.location?.origin) {
+    const successUrl = new URL(window.location.origin);
+    // HelpmateAI's workspace IS the app root, so default the
+    // success-return path to `/` rather than `/workspace`. Preserve
+    // the current path so a click from the landing page returns to
+    // the landing page.
+    successUrl.pathname = window.location.pathname || "/";
+    successUrl.searchParams.set("ls_checkout", "success");
+    query.set("checkout[success_url]", successUrl.toString());
+  }
+  return `${base}?${query.toString()}`;
+}
+
+/** Hit the backend `/billing/portal` route to mint a one-time LS
+ *  customer portal URL. The portal lets the user update card details,
+ *  cancel, or resume the subscription. Caller typically window.locations
+ *  to the returned url after wrapping the call in a try/catch + toast.
+ *
+ *  Throws on 401 (sign in), 404 (no subscription), 503 (LS not
+ *  configured), 502 (LS upstream error). */
+export async function getCustomerPortalUrl(): Promise<{ url: string }> {
+  return request<{ url: string }>("/billing/portal", {
+    method: "POST",
+  });
+}
+
 export { API_BASE_URL, UPLOAD_API_BASE_URL };
