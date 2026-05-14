@@ -1476,3 +1476,238 @@
     justify-content: flex-end;
   }
 }
+
+/* ==================================================================
+   Pricing section — three tiers, middle "Pro" card visually anchored.
+
+   .l-pricing-grid     3-up grid on desktop, single column on mobile.
+   .l-pricing-card     dark canvas, mint border + soft outer glow.
+   .l-pricing-card.is-featured
+                       solid mint gradient fill, dark anchors (badge
+                       + button) punch through to --bg-page so they
+                       read as windows cut into the mint card.
+
+   CTA rhythm across the row: green button on dark card, dark button
+   on green card, green button on dark card. Middle card inverts the
+   contrast relationship without losing the focal lock.
+================================================================== */
+
+.l-pricing-grid {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 20px;
+  margin-top: 48px;
+  /* Pricing cards live in a wider section than the rest of the landing
+     so 3 columns at 300px-ish each have breathing room. The wrapping
+     section uses .l-sec-inner.wide (1080px max) so we stay inside the
+     existing reading-rhythm guide. */
+  align-items: stretch;
+}
+
+.l-pricing-card {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  padding: 28px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid var(--border);
+  transition:
+    background var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out),
+    transform var(--duration-base) var(--ease-out);
+}
+
+.l-pricing-card-head {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.l-pricing-name {
+  margin: 0;
+  font-family: var(--font-display);
+  font-size: 18px;
+  font-weight: 600;
+  color: var(--fg);
+  letter-spacing: -0.005em;
+}
+
+.l-pricing-blurb {
+  margin: 0;
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.55;
+  color: var(--fg-3);
+}
+
+.l-pricing-price {
+  display: flex;
+  align-items: baseline;
+  gap: 6px;
+  margin: 0;
+}
+.l-pricing-price .num {
+  font-family: var(--font-display);
+  font-size: 44px;
+  font-weight: 600;
+  line-height: 1;
+  letter-spacing: -0.025em;
+  color: var(--fg);
+}
+.l-pricing-price .per {
+  font-family: var(--font-body);
+  font-size: 13px;
+  color: var(--fg-3);
+}
+
+.l-pricing-cta {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 11px 14px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.03);
+  border: 1px solid var(--border);
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 14px;
+  font-weight: 500;
+  text-decoration: none;
+  transition:
+    background var(--duration-base) var(--ease-out),
+    border-color var(--duration-base) var(--ease-out),
+    box-shadow var(--duration-base) var(--ease-out);
+}
+.l-pricing-cta:hover {
+  background: rgba(255, 255, 255, 0.07);
+  border-color: var(--border-strong);
+}
+
+.l-pricing-features {
+  list-style: none;
+  margin: 4px 0 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.l-pricing-features li {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.5;
+  color: var(--fg-2);
+}
+.l-pricing-features svg {
+  flex-shrink: 0;
+  margin-top: 3px;
+  color: var(--accent);
+}
+
+.l-pricing-badge {
+  position: absolute;
+  top: -10px;
+  left: 50%;
+  transform: translateX(-50%);
+  padding: 4px 12px;
+  border-radius: 999px;
+  font-family: var(--font-body);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  white-space: nowrap;
+}
+
+/* Free + Business cards: mint accent border + soft outer glow, interior
+   stays neutral dark. Only the border-line and the halo carry mint, so
+   the type contrast stays crisp and the focal anchor remains on the
+   solid-filled Pro card (any inside-tint here would compete with that). */
+.l-pricing-card:not(.is-featured) {
+  border-color: var(--accent);
+  box-shadow: 0 0 32px var(--accent-glow);
+}
+
+/* Free + Business CTAs go mint-filled so the row carries three high-
+   contrast buttons instead of two ghosted outer ones. Contrast inverts
+   at the center — green on dark, dark on green, green on dark — which
+   keeps the Pro card the focal anchor while letting the outer cards
+   still earn the eye. */
+.l-pricing-card:not(.is-featured) .l-pricing-cta {
+  background: var(--accent);
+  color: var(--accent-fg);
+  border-color: transparent;
+}
+.l-pricing-card:not(.is-featured) .l-pricing-cta:hover {
+  background: var(--accent-strong);
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset,
+    0 0 24px var(--accent-glow);
+}
+
+.l-pricing-card.is-featured {
+  /* Same gradient recipe as the workspace's accent-button (globals.css
+     ~L2021). Direct-color mode means we can carry --accent-fg-styled
+     type without translucency tricks. */
+  background: linear-gradient(135deg, var(--accent), #4ec594);
+  border-color: transparent;
+  box-shadow:
+    0 24px 48px -16px var(--accent-glow),
+    0 0 0 1px rgba(255, 255, 255, 0.08) inset;
+  transform: translateY(-6px);
+}
+.l-pricing-card.is-featured .l-pricing-name,
+.l-pricing-card.is-featured .l-pricing-price .num {
+  color: var(--accent-fg);
+}
+.l-pricing-card.is-featured .l-pricing-blurb,
+.l-pricing-card.is-featured .l-pricing-price .per,
+.l-pricing-card.is-featured .l-pricing-features li {
+  /* Dark-on-light needs a softer "secondary" color than the dark theme's
+     --fg-3. Mix with the accent-fg base to keep readability without
+     hardcoding a new color token. */
+  color: color-mix(in srgb, var(--accent-fg) 78%, transparent);
+}
+.l-pricing-card.is-featured .l-pricing-features svg {
+  color: var(--accent-fg);
+}
+/* Pro CTA punches through to the page background — using --bg-page
+   (#04070f) instead of --accent-fg (#04241a) makes it read as black
+   rather than deep-green: the button looks like a window cut into
+   the mint card, exposing the page below. Sharpens the focal punch. */
+.l-pricing-card.is-featured .l-pricing-cta {
+  background: var(--bg-page);
+  color: var(--accent);
+  border-color: transparent;
+}
+.l-pricing-card.is-featured .l-pricing-cta:hover {
+  background: #000;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.1) inset,
+    0 0 24px rgba(0, 0, 0, 0.5);
+}
+.l-pricing-card.is-featured .l-pricing-badge {
+  /* Match the Get Pro CTA — same near-black bg punching through to the
+     page color, same mint text. Reads as a pair: the pill at the top
+     and the button mid-card are the two "anchor" elements on the Pro
+     card, both treated the same way. */
+  background: var(--bg-page);
+  color: var(--accent);
+}
+
+/* Mobile: collapse to a single column, drop the featured card's
+   translateY so it doesn't push down into the next card. */
+@media (max-width: 760px) {
+  .l-pricing-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+  .l-pricing-grid .l-pricing-card.is-featured {
+    transform: none;
+  }
+}
