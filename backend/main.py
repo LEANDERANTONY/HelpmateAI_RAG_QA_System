@@ -7,14 +7,16 @@ from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any
 
-from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
+from fastapi import Depends, FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse, RedirectResponse
+from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from pydantic import BaseModel
 
 from backend.auth import AuthenticatedUser, require_authenticated_user
 from backend.file_storage import FileStorage, build_file_storage
+from backend.quota import check_content_length_present, check_doc_count_cap, check_file_size_cap
 from backend.store import build_api_record_store
+from backend.tiers import TIER_LIMITS, resolve_user_tier
 from src.config import get_settings
 from src.evals.report_loader import get_latest_benchmark_report
 from src.pipeline import HelpmatePipeline
@@ -304,6 +306,31 @@ def _find_active_workspace_document(user: AuthenticatedUser) -> DocumentRecord |
     return primary
 
 
+def _count_active_documents(user: AuthenticatedUser) -> int:
+    """Number of un-expired documents owned by `user`.
+
+    Read-only: unlike _find_active_workspace_document this does NOT
+    side-effect (no cleanup of expired records). The quota gate calls
+    this BEFORE the existing-doc deletion in the upload flow, so a
+    user re-uploading their single workspace doc sees count=1 — the
+    gate uses >= comparison so cap=3 still allows the re-upload.
+
+    Reads through the store on every call. Fine at the current scale
+    (one workspace per user, dozens of users). If multi-doc lands
+    and per-user doc counts climb into the hundreds, consider an
+    indexed count query at the store layer.
+    """
+    active = 0
+    for document in _store().list_documents():
+        if _document_owner_id(document) != user.id:
+            continue
+        expires_at = _document_expires_at(document)
+        if expires_at is not None and expires_at <= _now():
+            continue
+        active += 1
+    return active
+
+
 def _require_document_for_user(document_id: str, user: AuthenticatedUser) -> DocumentRecord:
     document = _require_document(document_id)
     owner_id = _document_owner_id(document)
@@ -456,11 +483,59 @@ def health() -> HealthResponse:
 
 @app.post("/documents/upload", response_model=DocumentBundleResponse)
 async def upload_document(
+    request: Request,
     file: UploadFile = File(...),
     user: AuthenticatedUser = Depends(require_authenticated_user),
-) -> DocumentBundleResponse:
+) -> DocumentBundleResponse | JSONResponse:
     file_name = Path(file.filename or "document.pdf").name
     suffix = _validate_file_type(file_name)
+
+    # Tier-enforcement gates run BEFORE the existing-workspace deletion
+    # and before any file bytes touch disk / the pipeline, so a rejected
+    # upload leaves the user's existing workspace + storage untouched.
+    # Each check returns a JSONResponse on failure; we forward it directly.
+    tier = resolve_user_tier(user)
+    limits = TIER_LIMITS[tier]
+
+    # Gate 1 — Content-Length header must be present. Missing header
+    # signals chunked transfer-encoding (or a misbehaving client) and
+    # would let the file-size cap be trivially bypassed.
+    content_length_raw = request.headers.get("content-length")
+    try:
+        content_length = int(content_length_raw) if content_length_raw is not None else None
+    except ValueError:
+        content_length = None
+    header_response = check_content_length_present(
+        content_length=content_length,
+        tier=tier,
+        limits=limits,
+    )
+    if header_response is not None:
+        return header_response
+
+    # Gate 2 — file body size vs tier cap. UploadFile.size is the
+    # actual body size after multipart parsing, not the envelope-
+    # inflated Content-Length. See check_file_size_cap's docstring.
+    file_size = file.size or 0
+    size_response = check_file_size_cap(
+        file_size=file_size,
+        tier=tier,
+        limits=limits,
+    )
+    if size_response is not None:
+        return size_response
+
+    # Gate 3 — active document count vs tier cap. Counts BEFORE the
+    # existing-doc deletion below, so a re-upload of the user's single
+    # workspace doc sees count=1 (allowed under cap=3 for free).
+    count_response = check_doc_count_cap(
+        active_count=_count_active_documents(user),
+        tier=tier,
+        limits=limits,
+    )
+    if count_response is not None:
+        return count_response
+
     existing_document = _find_active_workspace_document(user)
     if existing_document is not None:
         _delete_workspace_records(existing_document)
