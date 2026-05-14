@@ -266,50 +266,26 @@ with check (
     )
 );
 
-create or replace function public.cleanup_expired_helpmate_workspaces()
-returns integer
-language plpgsql
-security definer
-set search_path = public
-as $$
-declare
-    deleted_count integer := 0;
-begin
-    delete from public.helpmate_run_traces
-    where expires_at is not null
-      and expires_at <= timezone('utc', now());
-
-    delete from public.helpmate_documents
-    where expires_at is not null
-      and expires_at <= timezone('utc', now());
-
-    get diagnostics deleted_count = row_count;
-    return deleted_count;
-end;
-$$;
-
-revoke all on function public.cleanup_expired_helpmate_workspaces() from public;
-grant execute on function public.cleanup_expired_helpmate_workspaces() to service_role;
-
-select public.cleanup_expired_helpmate_workspaces();
-
-do $$
-begin
-    if exists (
-        select 1
-        from cron.job
-        where jobname = 'cleanup-expired-helpmate-workspaces'
-    ) then
-        perform cron.unschedule('cleanup-expired-helpmate-workspaces');
-    end if;
-exception
-    when undefined_table then
-        null;
-end;
-$$;
-
-select cron.schedule(
-    'cleanup-expired-helpmate-workspaces',
-    '*/5 * * * *',
-    $$select public.cleanup_expired_helpmate_workspaces();$$
-);
+-- Note: the original version of this file shipped a SQL-only sweeper
+-- (cleanup_expired_helpmate_workspaces) plus a pg_cron job that ran it
+-- every 5 minutes. Both were removed in May 2026 (Supabase migration
+-- `drop_legacy_cleanup_rpc`) when Step 6 of the tier-enforcement series
+-- shipped a Python-based replacement in backend/maintenance.py.
+--
+-- The new sweeper:
+--   1. Does everything the SQL RPC did (DELETE expired rows in
+--      helpmate_documents + helpmate_run_traces)
+--   2. Also deletes the bucket objects in Supabase Storage (pure SQL
+--      cannot reach across to the Storage API — bucket objects would
+--      orphan under the SQL-only design)
+--   3. Is tier-aware (Free 30d / Pro 365d / Business unbounded) instead
+--      of the hardcoded 24h window the RPC inherited from
+--      _touch_document_workspace
+--   4. Cleans orphan upload files / index dirs / cache files on the VPS
+--
+-- The Python sweeper is scheduled via VPS crontab (every 10 minutes):
+--     */10 * * * * docker exec helpmate-api python -m backend.maintenance
+--
+-- If you ever need the SQL fallback again (e.g. a fresh project that
+-- hasn't deployed the Python container yet), the original definitions
+-- are preserved in git history of this file before commit 9a1028e.
