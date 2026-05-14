@@ -1,6 +1,6 @@
 """Pydantic LLM output models for schema-strict structured outputs.
 
-These ride on top of ``backend.openai_service.run_structured_prompt``
+These ride on top of ``src.openai_service.run_structured_prompt``
 and double as:
 
   1. The shape we hand to OpenAI's ``response_format`` so the API

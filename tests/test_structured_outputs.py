@@ -23,7 +23,7 @@ from dataclasses import dataclass
 from typing import Any
 import pytest
 
-from backend.openai_service import (
+from src.openai_service import (
     CostCollector,
     LLMCallRecord,
     OpenAIService,
@@ -34,7 +34,7 @@ from backend.openai_service import (
     _enforce_strict_schema,
     compute_cost_usd,
 )
-from backend.schemas import (
+from src.schemas_llm_outputs import (
     AnswerOutput,
     QueryRouterOutput,
     SupportStatusVerifierOutput,
@@ -523,7 +523,7 @@ def test_token_usage_extracts_from_object_with_attributes():
     class _Response:
         usage: _Usage
 
-    from backend.openai_service import _extract_token_usage
+    from src.openai_service import _extract_token_usage
 
     usage = _extract_token_usage(_Response(_Usage(prompt_tokens=42, completion_tokens=7)))
     assert usage.prompt_tokens == 42
@@ -543,7 +543,7 @@ def test_token_usage_extracts_from_dict_fallback():
         def __init__(self, usage: Any):
             self.usage = usage
 
-    from backend.openai_service import _extract_token_usage
+    from src.openai_service import _extract_token_usage
 
     response = _Response({"prompt_tokens": 11, "completion_tokens": 2})
     usage = _extract_token_usage(response)
@@ -552,7 +552,7 @@ def test_token_usage_extracts_from_dict_fallback():
 
 
 def test_token_usage_returns_zero_when_response_has_no_usage():
-    from backend.openai_service import _extract_token_usage
+    from src.openai_service import _extract_token_usage
 
     # A response without a ``usage`` attr should yield zero — most
     # commonly happens when a SDK upgrade restructures the shape.

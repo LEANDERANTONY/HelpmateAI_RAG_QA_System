@@ -10,19 +10,13 @@ Items 1 and 2 (wrapper + schemas) ship complete in this branch. Items 2 (call-si
 
 The new code is structurally complete and unit-tested. The "wiring up" is mechanical: imports + a thin replacement of existing direct OpenAI calls with the new wrapper.
 
-## 1. Move `backend/openai_service.py` and `backend/schemas.py` into `src/`
+## 1. Move `backend/openai_service.py` and `backend/schemas.py` into `src/` ✅ DONE
 
-Logical home is alongside the existing `src/schemas.py`. The temporary `backend/` location only exists because the implementation session could not write under `src/`.
+The files now live at:
+  * `src/openai_service.py` (was `backend/openai_service.py`)
+  * `src/schemas_llm_outputs.py` (was `backend/schemas.py` — renamed at move time to mirror AI Job Agent's naming and keep Pydantic models in their own file rather than mixing with the existing dataclasses in `src/schemas.py`)
 
-```bash
-git mv backend/openai_service.py src/openai_service.py
-# Merge backend/schemas.py into src/schemas.py — keep the Pydantic
-# models at the bottom of the file, after the existing dataclasses.
-cat backend/schemas.py >> src/schemas.py
-git rm backend/schemas.py
-```
-
-Then update the imports in `backend/nightly_eval.py`, `tests/test_structured_outputs.py`, and `tests/test_cost_tracking.py` from `backend.openai_service` → `src.openai_service`, and `backend.schemas` → `src.schemas`.
+All imports in `tests/test_structured_outputs.py` and `tests/test_cost_tracking.py` are updated. 61 tests still pass. Subsequent steps below use the new `src/` paths.
 
 ## 2. Migrate `src/generation/service.py` to the schema-strict path
 

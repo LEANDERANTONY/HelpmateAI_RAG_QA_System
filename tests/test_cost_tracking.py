@@ -21,7 +21,7 @@ from __future__ import annotations
 
 import pytest
 
-from backend.openai_service import (
+from src.openai_service import (
     CostCollector,
     LLMCallRecord,
     PRICING_PER_1M_TOKENS,
