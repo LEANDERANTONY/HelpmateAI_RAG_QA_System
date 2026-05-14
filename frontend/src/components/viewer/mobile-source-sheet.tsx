@@ -180,32 +180,54 @@ export function MobileSourceSheet() {
   }, []);
 
   // Defeat Radix FocusScope's focus trap (see item 3 in the leak list
-  // above). Radix binds a non-capture `focusin` listener on `document`
-  // that re-focuses the drawer root whenever focus lands outside the
-  // scope. We bind a capture-phase listener that runs first, and for
-  // focusin events targeting the chat textarea we call
-  // stopImmediatePropagation — so Radix's bubble-phase listener never
-  // fires for that target, and focus stays where the user put it.
+  // above). Radix binds TWO non-capture listeners on `document`:
   //
-  // We only intercept the textarea by id so all other focus movement
-  // (close button, page-nav input inside the drawer, PDF.js text
-  // layer) still flows normally and Radix's trap remains intact for
-  // anything that isn't the chat input.
+  //   • `focusin`  — re-focuses the scope's last-focused element when
+  //                  a focusin lands on anything outside the container.
+  //   • `focusout` — fires on the OLD focused element when focus
+  //                  leaves. If the relatedTarget (the new focused
+  //                  element) is outside the container, Radix re-focuses
+  //                  the scope's last-focused element.
   //
-  // Capture phase is REQUIRED — Radix's listener is bubble-phase, and
-  // capture-phase listeners on `document` always fire before bubble-
-  // phase listeners on `document` for the same event. Without capture
-  // we'd race Radix's handler order and lose.
+  // Both must be defeated, because the focusout path runs first in the
+  // browser's event sequence:
+  //   1. The old element (e.g. close button) fires focusout with
+  //      relatedTarget = textarea. Radix's focusout handler sees the
+  //      relatedTarget is outside its container and synchronously
+  //      re-focuses the close button.
+  //   2. By the time the textarea's focusin would fire, focus has
+  //      already been yanked back — the textarea never even becomes
+  //      activeElement long enough to register.
+  //
+  // Blocking only focusin (our earlier attempt) was a no-op for this
+  // path: the steal had already happened in focusout. We now block
+  // BOTH paths in capture phase, scoped to the chat textarea by id —
+  //   • focusin where event.target is the textarea
+  //   • focusout where event.relatedTarget is the textarea
+  // so any other focus movement (close button, page-nav input, PDF
+  // text layer, drag handle) still flows through Radix's trap intact.
+  //
+  // Capture phase is REQUIRED — Radix's listeners are bubble-phase,
+  // and document-level capture listeners always fire before document-
+  // level bubble listeners. stopImmediatePropagation in capture stops
+  // Radix's bubble listener from ever seeing the event.
   useEffect(() => {
     const intercept = (event: FocusEvent) => {
       const target = event.target;
-      if (target instanceof HTMLElement && target.id === "ask-textarea") {
+      const related = event.relatedTarget;
+      const targetIsTextarea =
+        target instanceof HTMLElement && target.id === "ask-textarea";
+      const relatedIsTextarea =
+        related instanceof HTMLElement && related.id === "ask-textarea";
+      if (targetIsTextarea || relatedIsTextarea) {
         event.stopImmediatePropagation();
       }
     };
     document.addEventListener("focusin", intercept, true);
+    document.addEventListener("focusout", intercept, true);
     return () => {
       document.removeEventListener("focusin", intercept, true);
+      document.removeEventListener("focusout", intercept, true);
     };
   }, []);
 
