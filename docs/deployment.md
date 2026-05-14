@@ -232,6 +232,37 @@ Recommended host cron entry for local-disk cleanup:
 */10 * * * * docker exec helpmate-api python -m backend.maintenance >> /var/log/helpmate-workspace-sweeper.log 2>&1
 ```
 
+### Nightly Evaluation Cron
+
+The `backend.nightly_eval` CLI runs the existing RAGAS, FinanceBench, and combined final-eval suites on a schedule and writes a structured JSON summary. This catches silent quality drift between releases (model upgrades, prompt edits, index changes) before users notice.
+
+Add this line to the VPS crontab — it runs at 03:30 UTC daily so it doesn't collide with the workspace sweeper or backend deploys:
+
+```cron
+30 3 * * * docker exec helpmate-api python -m backend.nightly_eval >> /var/log/helpmate-nightly-eval.log 2>&1
+```
+
+The script writes its structured summary to `data/nightly_eval/latest.json` inside the container. Trend tracking is just `jq` over the persisted summaries:
+
+```sh
+docker exec helpmate-api jq '.metrics' data/nightly_eval/latest.json
+```
+
+To enable regression-mail alerts, supply a baselines file and the strict-check flag:
+
+```cron
+30 3 * * * docker exec helpmate-api python -m backend.nightly_eval \
+    --baselines data/nightly_eval/baselines.json \
+    --check-thresholds \
+    >> /var/log/helpmate-nightly-eval.log 2>&1
+```
+
+`baselines.json` keys must match `TRACKED_METRICS` in `backend/nightly_eval.py` — currently `ragas_faithfulness`, `ragas_answer_relevancy`, `financebench_supported_rate`, and `final_eval_supported_rate`. A drop of more than 5% (configurable via `--regression-threshold-pct`) returns exit code 2, which is what triggers cron's MAILTO behavior.
+
+The script captures step-level failures into the `errors` array instead of aborting, so a transient OpenAI outage on the RAGAS step doesn't tank the whole nightly run. Hard failures (e.g. import errors) still surface through cron mail.
+
+We deliberately did NOT add a separate `nightly_eval_alerts` Supabase table — the JSON summary on disk plus the cron mail loop are enough for now, and adding a new table requires its own RLS policies and migration. Revisit this once you want to chart drift over time on the frontend.
+
 ### Docker Image And Build-Cache Cleanup
 
 Repeated backend rebuilds or image pulls can leave old untagged image layers and BuildKit cache on the VPS. Keep the current running backend image and named data volumes, but prune unused image/build artifacts after deploys.
