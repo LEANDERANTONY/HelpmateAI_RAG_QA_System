@@ -1,5 +1,7 @@
 from __future__ import annotations
 
+import logging
+import tempfile
 from functools import lru_cache
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -7,16 +9,20 @@ from typing import Any
 
 from fastapi import Depends, FastAPI, File, HTTPException, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import FileResponse
+from fastapi.responses import FileResponse, RedirectResponse
 from pydantic import BaseModel
 
 from backend.auth import AuthenticatedUser, require_authenticated_user
+from backend.file_storage import FileStorage, build_file_storage
 from backend.store import build_api_record_store
 from src.config import get_settings
 from src.evals.report_loader import get_latest_benchmark_report
 from src.pipeline import HelpmatePipeline
 from src.question_starters import get_question_starters
 from src.schemas import AnswerResult, DocumentRecord, IndexRecord
+
+
+logger = logging.getLogger(__name__)
 
 
 SUPPORTED_UPLOAD_TYPES = {".pdf", ".docx"}
@@ -132,6 +138,15 @@ def _store() -> Any:
     return build_api_record_store(_settings())
 
 
+@lru_cache
+def _file_storage() -> FileStorage:
+    # Selected by HELPMATE_FILE_STORAGE_BACKEND. Local is the default;
+    # supabase is the production target. See backend/file_storage.py for
+    # the strategy and the storage semantics of DocumentRecord.source_path
+    # / viewable_pdf_path under each backend.
+    return build_file_storage(_settings())
+
+
 def _require_document(document_id: str) -> DocumentRecord:
     document = _store().get_document(document_id)
     if document is None:
@@ -222,9 +237,43 @@ def _touch_document_workspace(document: DocumentRecord, user: AuthenticatedUser)
 def _delete_workspace_records(document: DocumentRecord) -> None:
     index_record = _store().get_index(document.document_id)
     if index_record is not None:
+        # pipeline.delete_workspace cleans up local files when source_path /
+        # viewable_pdf_path point at absolute filesystem paths. On the
+        # supabase backend those fields hold bucket keys instead, so the
+        # local unlinks become no-ops (Path("user-x/doc.pdf").exists() is
+        # False) — we follow up below with the storage-aware cleanup that
+        # actually removes the bucket objects.
         _pipeline().delete_workspace(document, index_record)
         _store().delete_index(document.document_id)
+    _delete_storage_files(document)
     _store().delete_document(document.document_id)
+
+
+def _delete_storage_files(document: DocumentRecord) -> None:
+    """Remove the source + viewable PDF from the configured FileStorage.
+
+    For the local backend the pipeline already unlinked these files; for
+    the supabase backend this is where the bucket objects actually get
+    deleted. Best-effort — we don't want a Supabase outage to block the
+    metadata cleanup, since orphaned bucket objects can be garbage-
+    collected by the maintenance sweeper later.
+    """
+    storage = _file_storage()
+    keys: set[str] = set()
+    if document.source_path:
+        keys.add(document.source_path)
+    if document.viewable_pdf_path:
+        keys.add(document.viewable_pdf_path)
+    for key in keys:
+        try:
+            storage.delete(key)
+        except Exception as exc:
+            logger.warning(
+                "FileStorage.delete failed for %s (%s): %s",
+                document.document_id,
+                key,
+                exc,
+            )
 
 
 def _cleanup_if_expired(document: DocumentRecord) -> bool:
@@ -269,6 +318,101 @@ def _save_touched_document(document: DocumentRecord, user: AuthenticatedUser) ->
     document = _touch_document_workspace(document, user)
     _store().save_document(document)
     return document
+
+
+def _materialize_uploads_to_storage(
+    document: DocumentRecord, user: AuthenticatedUser
+) -> None:
+    """Push the ingested local files into the configured FileStorage and
+    rewrite document.source_path / viewable_pdf_path to the returned storage
+    keys.
+
+    For the local backend this is a no-op — the pipeline has already
+    written files to `uploads_dir/{document_id}{ext}` which IS the canonical
+    storage location, and source_path already holds those absolute paths.
+
+    For the Supabase backend it uploads both files (source + viewable PDF
+    rendition) to the bucket under `{user_id}/{document_id}{ext}`, replaces
+    the path fields with the bucket keys, and removes the local copies so
+    the VPS uploads_dir stays effectively empty.
+
+    Called once at the end of the upload pipeline, after
+    `pipeline.ingest_document()` has produced both files. Idempotent in the
+    sense that if both fields already point at storage keys (e.g. on a
+    re-ingest that hit the no-op normalize_upload_paths fast path), the
+    re-upload is upsert-safe and the cleanup just no-ops.
+    """
+    settings = _settings()
+    if not settings.uses_supabase_storage:
+        return
+
+    storage = _file_storage()
+    source_local = Path(document.source_path)
+    viewable_raw = document.viewable_pdf_path
+
+    # Upload the source file.
+    if source_local.exists() and source_local.is_file():
+        source_key = storage.save_from_path(
+            owner_id=user.id,
+            document_id=document.document_id,
+            source=source_local,
+        )
+    else:
+        logger.warning(
+            "Source file missing for %s at %s — cannot materialize to "
+            "Supabase Storage. Document record will retain the local path.",
+            document.document_id,
+            source_local,
+        )
+        return
+
+    # Decide whether the viewable PDF is a distinct artifact (DOCX upload)
+    # or just an alias of the source (PDF upload).
+    viewable_key: str | None
+    viewable_local: Path | None = None
+    if viewable_raw:
+        viewable_local = Path(viewable_raw)
+        try:
+            same_file = viewable_local.resolve() == source_local.resolve()
+        except OSError:
+            same_file = viewable_raw == document.source_path
+        if same_file:
+            viewable_key = source_key
+            viewable_local = None  # No distinct cleanup needed.
+        elif viewable_local.exists() and viewable_local.is_file():
+            viewable_key = storage.save_from_path(
+                owner_id=user.id,
+                document_id=document.document_id,
+                source=viewable_local,
+            )
+        else:
+            # The pipeline reported a viewable path but the file isn't on
+            # disk — DOCX conversion likely failed silently. Drop the
+            # reference so the frontend falls through to the download
+            # affordance instead of 404'ing on a phantom key.
+            viewable_key = None
+            viewable_local = None
+    else:
+        viewable_key = None
+
+    document.source_path = source_key
+    document.viewable_pdf_path = viewable_key
+
+    # Clean up the local copies — they're now in Supabase. Best-effort:
+    # the upload already succeeded so a stray local file just wastes a
+    # bit of VPS disk until the workspace sweeper finds it.
+    for path in (source_local, viewable_local):
+        if path is None:
+            continue
+        try:
+            if path.exists():
+                path.unlink()
+        except OSError as exc:
+            logger.warning(
+                "Failed to remove local copy of %s after Supabase upload: %s",
+                path,
+                exc,
+            )
 
 
 def _sample_dir() -> Path:
@@ -320,12 +464,23 @@ async def upload_document(
     existing_document = _find_active_workspace_document(user)
     if existing_document is not None:
         _delete_workspace_records(existing_document)
+    # The bytes always land on local disk first because the ingestion
+    # pipeline (parsing, DOCX→PDF conversion via LibreOffice, chunking)
+    # needs a Path it can read with stdlib tooling. On the local backend
+    # this IS the canonical storage location; on the supabase backend
+    # we'll upload to the bucket and clean up locally via
+    # _materialize_uploads_to_storage below.
     target_path = _settings().uploads_dir / file_name
     target_path.write_bytes(await file.read())
     if target_path.suffix.lower() != suffix:
         raise HTTPException(status_code=400, detail="Uploaded file extension mismatch.")
 
     document = _pipeline().ingest_document(target_path)
+
+    # Hand the ingested files off to the configured storage backend.
+    # No-op for local; uploads to Supabase bucket and rewrites the
+    # source_path / viewable_pdf_path fields to bucket keys otherwise.
+    _materialize_uploads_to_storage(document, user)
 
     document = _save_touched_document(document, user)
     existing_index = _store().get_index(document.document_id)
@@ -363,6 +518,11 @@ def load_sample_document(
 
     document = _pipeline().ingest_document(sample_path)
     index_record = _pipeline().build_or_load_index(document)
+    # Sample documents go through the same storage materialization as
+    # uploads — on the supabase backend the sample's bytes end up in the
+    # user's per-bucket prefix, so they own their own copy and the read
+    # path doesn't have to special-case them.
+    _materialize_uploads_to_storage(document, user)
     document = _save_touched_document(document, user)
     _store().save_index(index_record)
     return DocumentBundleResponse(
@@ -454,7 +614,7 @@ def get_document_file(
     download: int = 0,
     user: AuthenticatedUser = Depends(require_authenticated_user),
 ):
-    """Stream the document file for inline viewing or download.
+    """Serve the document file for inline viewing or download.
 
     Two distinct files live behind a document_id once ingest finishes:
 
@@ -467,76 +627,95 @@ def get_document_file(
                       For DOCX uploads it's a LibreOffice-produced sibling
                       file. Returned for the default (inline) branch.
 
-    Backward compatibility: documents indexed before this field existed
-    don't carry `viewable_pdf_path`. For those we fall back to the source
-    file when its extension is `.pdf`; DOCX-only legacy records get a 415
-    on the inline path so the frontend can render a "download to view"
+    Backward compatibility: documents indexed before viewable_pdf_path
+    existed don't carry it. For those we fall back to the source file
+    when its extension is `.pdf`; DOCX-only legacy records get a 415 on
+    the inline path so the frontend can render a "download to view"
     affordance instead.
 
-    Range requests are handled by Starlette's FileResponse — it inspects
-    the request's Range header and responds with 206 Partial Content
-    plus the right Content-Range slice. PDF.js issues Range requests for
-    large PDFs and needs this to stream-render efficiently.
+    Storage backend behavior:
+      • LOCAL    Stream via Starlette's FileResponse. Range requests
+                 give 206 Partial Content automatically; PDF.js relies
+                 on this for incremental page rendering.
+      • SUPABASE Issue a 302 redirect to a short-lived signed URL on
+                 the Supabase Storage CDN. The browser fetches the PDF
+                 directly from Supabase with Range support — zero
+                 bytes pass through our VPS, and we burn no upstream
+                 bandwidth on PDF reads.
     """
     document = _require_document_for_user(document_id, user)
+    storage = _file_storage()
     base_headers = {"Cache-Control": "private, max-age=3600"}
 
-    def _resolve_with_fallback(stored: str) -> Path:
-        """Resolve a stored absolute path with a uploads_dir fallback.
-
-        Document records carry the absolute path of the file at the time
-        of upload. When the same Supabase project is shared across
-        machines (e.g. prod VPS + a local dev box), the stored path
-        becomes meaningless on the other machine — the file exists, but
-        at the local `uploads_dir/{document_id}{ext}` instead.
-
-        Files are renamed to `{document_id}{ext}` at upload time
-        (collision-safe storage), so the local path is fully predictable
-        from the document_id + the stored path's extension. Falling
-        back to it here also makes the system tolerant of legitimate
-        prod migrations where the uploads volume is remounted at a new
-        absolute path.
-        """
-        primary = Path(stored)
-        if primary.exists() and primary.is_file():
-            return primary
-        fallback = settings.uploads_dir / f"{document.document_id}{primary.suffix}"
-        if fallback.exists() and fallback.is_file():
-            return fallback
-        raise HTTPException(
-            status_code=404, detail="Document file is missing on disk."
-        )
-
+    # Pick the right storage key for this branch.
     if download:
         # Download always serves the ORIGINAL source format. A user who
         # uploaded a DOCX should get their DOCX back, not the PDF rendition.
-        source_path = _resolve_with_fallback(document.source_path)
+        key = document.source_path
+        force_download = True
+        download_filename: str | None = document.file_name
+    else:
+        # Inline branch: prefer the viewable PDF, fall back to source for
+        # legacy records (pre-Stage-2 docs have viewable_pdf_path=None).
+        key = getattr(document, "viewable_pdf_path", None) or document.source_path
+        force_download = False
+        download_filename = None
+        if Path(key).suffix.lower() != ".pdf":
+            # Inline rendering needs a PDF rendition. Only fires for legacy
+            # DOCX docs that predate viewable_pdf_path; the frontend reads
+            # 415 as "switch to download affordance".
+            raise HTTPException(
+                status_code=415,
+                detail="Inline viewing requires a PDF rendition; use ?download=1 to fetch the source.",
+            )
+
+    if not key:
+        raise HTTPException(status_code=404, detail="Document file is missing.")
+
+    # Supabase backend: 302 to a signed URL. The Supabase CDN handles
+    # Range requests natively, so PDF.js streaming Just Works.
+    signed_url = storage.get_signed_url(
+        key,
+        expires_in=3600,
+        download=force_download,
+        filename=download_filename,
+    )
+    if signed_url:
+        return RedirectResponse(
+            url=signed_url,
+            status_code=302,
+            headers=base_headers,
+        )
+
+    # Local backend: stream from disk. uploads_dir fallback handles the
+    # case where the stored absolute path is stale (Supabase metadata
+    # shared between a prod box and a dev box, or the uploads volume
+    # remounted at a new path) — we recompute the canonical path from
+    # document_id + suffix and try that.
+    primary = Path(key)
+    if primary.exists() and primary.is_file():
+        local_path = primary
+    else:
+        fallback = settings.uploads_dir / f"{document.document_id}{primary.suffix}"
+        if fallback.exists() and fallback.is_file():
+            local_path = fallback
+        else:
+            raise HTTPException(
+                status_code=404, detail="Document file is missing on disk."
+            )
+
+    if download:
         media_type = _INLINE_MEDIA_TYPES.get(
-            source_path.suffix.lower(), "application/octet-stream"
+            local_path.suffix.lower(), "application/octet-stream"
         )
         return FileResponse(
-            path=source_path,
+            path=local_path,
             media_type=media_type,
             filename=document.file_name,
             headers=base_headers,
         )
-
-    # Inline branch: prefer the viewable PDF, fall back to source for legacy
-    # records (pre-Stage-2 documents have viewable_pdf_path=None).
-    viewable_raw = getattr(document, "viewable_pdf_path", None) or document.source_path
-    viewable_path = _resolve_with_fallback(viewable_raw)
-
-    if viewable_path.suffix.lower() != ".pdf":
-        # Inline rendering needs a PDF rendition. This only fires for legacy
-        # DOCX documents that predate viewable_pdf_path; the frontend reads
-        # 415 as "switch to download affordance".
-        raise HTTPException(
-            status_code=415,
-            detail="Inline viewing requires a PDF rendition; use ?download=1 to fetch the source.",
-        )
-
     return FileResponse(
-        path=viewable_path,
+        path=local_path,
         media_type="application/pdf",
         headers={**base_headers, "Content-Disposition": "inline"},
     )

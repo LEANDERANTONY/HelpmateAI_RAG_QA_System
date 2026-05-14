@@ -97,6 +97,13 @@ class Settings:
     cache_dir: Path = field(default_factory=Path)
     state_store_backend: str = field(default_factory=lambda: _env_str("HELPMATE_STATE_STORE_BACKEND", "local").strip().lower())
     vector_store_backend: str = field(default_factory=lambda: _env_str("HELPMATE_VECTOR_STORE_BACKEND", "local").strip().lower())
+    # File storage backend for raw document bytes (PDF/DOCX). "local" keeps
+    # the existing behavior (VPS disk under uploads_dir); "supabase" sends
+    # uploads to Supabase Storage and serves reads via signed-URL redirects
+    # so PDF.js streams from the Supabase CDN. See backend/file_storage.py
+    # for the abstraction; selection happens via build_file_storage(settings).
+    file_storage_backend: str = field(default_factory=lambda: _env_str("HELPMATE_FILE_STORAGE_BACKEND", "local").strip().lower())
+    supabase_storage_bucket: str = field(default_factory=lambda: _env_str("HELPMATE_SUPABASE_STORAGE_BUCKET", "helpmate-documents"))
     cors_origins: tuple[str, ...] = field(
         default_factory=lambda: _env_list("HELPMATE_CORS_ORIGINS", ("*",)),
     )
@@ -225,6 +232,15 @@ class Settings:
     @property
     def uses_chroma_http(self) -> bool:
         return self.vector_store_backend in {"chroma_http", "chroma_cloud", "http"}
+
+    @property
+    def uses_supabase_storage(self) -> bool:
+        # True when DocumentRecord.source_path / viewable_pdf_path hold
+        # bucket-relative Supabase Storage keys rather than absolute
+        # filesystem paths. The /documents/{id}/file endpoint branches on
+        # this to decide between a streaming FileResponse (local) and a
+        # 302 redirect to a signed URL (supabase).
+        return self.file_storage_backend == "supabase"
 
 
 def get_settings() -> Settings:
