@@ -136,3 +136,37 @@ export function uniqueCitationTargets(
       return true;
     });
 }
+
+// Reduce a turn's retrieved evidence down to what we actually surface in
+// the UI's evidence panels (right rail on desktop, combined accordion on
+// mobile). Retrieval returns up to HELPMATE_FINAL_TOP_K (default 4)
+// chunks, and the generator promotes the LLM-selected 2 to the front but
+// still ships all four — so the rail used to render every retrieved
+// chunk, often four near-duplicates from the same page.
+//
+// Policy:
+//   • If the LLM cited specific [Source N] markers in the answer, show
+//     exactly those chunks (in citation order). Every card is then
+//     reachable via a matching inline pill, no orphans, no duplicates.
+//   • If no citations parsed (abstention or unsupported answer), fall
+//     back to the first `fallbackCount` retrieved chunks so the user
+//     still has something concrete to look at — set fallbackCount=2 for
+//     abstention panels so the user can see what the retriever thought
+//     was closest before deciding to abstain.
+//
+// Order matters: uniqueCitationTargets walks the answer in reading
+// order, so mapping back via evidenceIndex preserves the order the
+// reader would naturally encounter the chunks.
+export function visibleEvidence(
+  answerText: string,
+  evidence: RetrievalCandidate[],
+  { fallbackCount = 0 }: { fallbackCount?: number } = {},
+): RetrievalCandidate[] {
+  const targets = uniqueCitationTargets(answerText, evidence);
+  if (targets.length > 0) {
+    return targets
+      .map((target) => evidence[target.evidenceIndex])
+      .filter((candidate): candidate is RetrievalCandidate => Boolean(candidate));
+  }
+  return evidence.slice(0, fallbackCount);
+}

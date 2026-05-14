@@ -21,6 +21,7 @@ import {
   splitCitationSegments,
   stripReferencesBlock,
   uniqueCitationTargets,
+  visibleEvidence,
 } from "@/lib/citations";
 import {
   useChatCollapsed,
@@ -1430,7 +1431,22 @@ function EvidenceRail({
   ) => void;
 }) {
   const groups = [...turns].reverse();
-  const evidenceCount = groups.reduce((total, turn) => total + turn.answer.evidence.length, 0);
+  // Filter each turn's retrieved evidence down to just the chunks the LLM
+  // actually cited in the answer (with a fallback for abstentions). Memo
+  // computed once per render so the count badge below and the list
+  // section below share the same filtered set.
+  const groupsWithVisible = groups.map((turn) => ({
+    turn,
+    visible: visibleEvidence(turn.answer.answer, turn.answer.evidence, {
+      // On abstention show at least two retrieved chunks so the user
+      // sees what the retriever found before the model abstained.
+      fallbackCount: 2,
+    }),
+  }));
+  const evidenceCount = groupsWithVisible.reduce(
+    (total, entry) => total + entry.visible.length,
+    0,
+  );
 
   return (
     <aside className="h-evi">
@@ -1455,10 +1471,10 @@ function EvidenceRail({
               <div className="h-evi-skeleton" />
             </div>
           ) : null}
-          {groups.map((turn) => (
+          {groupsWithVisible.map(({ turn, visible }) => (
             <section className="h-evi-group" key={turn.id}>
               <p className="h-evi-group-head">Q · {relativeTime(turn.askedAt)} · {turn.question.slice(0, 54)}</p>
-              {turn.answer.evidence.map((candidate, index) => (
+              {visible.map((candidate, index) => (
                 <EvidenceCard
                   cardRef={(element) => registerEvidenceRef(candidate.chunk_id, "desktop", element)}
                   candidate={candidate}
@@ -1511,9 +1527,20 @@ function MobileEvidence({
   // desktop right-rail (which lists all turns' evidence grouped by Q).
   // Newest turn first so the most relevant chunks are at the top of the
   // expanded list. Header shows total chunk count across all turns.
+  //
+  // Visibility mirrors DesktopEvidence: keep only chunks the LLM
+  // actually cited (so every card has a matching inline pill), fall
+  // back to top-2 retrieved on abstention so the user still sees
+  // something concrete.
   const groups = [...turns].reverse();
-  const evidenceCount = groups.reduce(
-    (total, turn) => total + turn.answer.evidence.length,
+  const groupsWithVisible = groups.map((turn) => ({
+    turn,
+    visible: visibleEvidence(turn.answer.answer, turn.answer.evidence, {
+      fallbackCount: 2,
+    }),
+  }));
+  const evidenceCount = groupsWithVisible.reduce(
+    (total, entry) => total + entry.visible.length,
     0,
   );
   if (groups.length === 0) return null;
@@ -1531,12 +1558,12 @@ function MobileEvidence({
       </button>
       {open ? (
         <div className="h-mobile-evidence-list">
-          {groups.map((turn) => (
+          {groupsWithVisible.map(({ turn, visible }) => (
             <section className="h-evi-group" key={turn.id}>
               <p className="h-evi-group-head">
                 Q · {relativeTime(turn.askedAt)} · {turn.question.slice(0, 54)}
               </p>
-              {turn.answer.evidence.map((candidate, index) => (
+              {visible.map((candidate, index) => (
                 <EvidenceCard
                   cardRef={(element) =>
                     registerEvidenceRef(candidate.chunk_id, "mobile", element)
@@ -2116,13 +2143,22 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
       setMobileEvidenceOpen(false);
       setAnswerState("ready");
       setStreamingTurnId(turn.id);
-      // Auto-jump the source viewer to the first evidence of the new
-      // answer when in Read Mode. setCurrentChunk is a no-op outside
-      // read mode (per store logic), so calling it unconditionally is
-      // safe. Abstained answers (no evidence) leave the viewer alone —
-      // ReadModeAbstentionBanner surfaces the "no evidence" signal
-      // above the chat input instead.
-      const firstEvidence = response.answer.evidence?.[0];
+      // Auto-jump the source viewer to the most relevant evidence of
+      // the new answer when in Read Mode. setCurrentChunk is a no-op
+      // outside read mode (per store logic), so calling it
+      // unconditionally is safe. Abstained answers (no evidence) leave
+      // the viewer alone — ReadModeAbstentionBanner surfaces the
+      // "no evidence" signal above the chat input instead.
+      //
+      // Prefer the first chunk the LLM actually cited so the user
+      // lands on a chunk that backs the answer, not just the retriever's
+      // top-1. Falls back to the retriever's top-1 when no citations
+      // were parsed (e.g. unsupported answers we still want to anchor).
+      const firstEvidence = visibleEvidence(
+        response.answer.answer,
+        response.answer.evidence ?? [],
+        { fallbackCount: 1 },
+      )[0];
       if (firstEvidence && document) {
         useReadModeStore
           .getState()
