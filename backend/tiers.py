@@ -28,12 +28,25 @@ is how customers get angry. The matrix:
 """
 from __future__ import annotations
 
+from datetime import datetime, timezone
 from typing import Literal, TypedDict
 
 from backend.auth import AuthenticatedUser
 
 
 Tier = Literal["free", "pro", "business"]
+
+
+# Subscription statuses that still grant tier access while
+# `current_period_end > now`. "expired" / "paused" / unknown statuses
+# always resolve to Free.
+_PAID_STATUSES_DURING_PERIOD: frozenset[str] = frozenset(
+    {"active", "cancelled", "past_due"}
+)
+# Tier values we accept from the subscription row. Anything else
+# (typo, future tier we haven't shipped yet) resolves to Free
+# defensively.
+_PAID_TIERS: frozenset[str] = frozenset({"pro", "business"})
 
 
 class TierLimits(TypedDict):
@@ -117,23 +130,67 @@ TIER_LIMITS: dict[Tier, TierLimits] = {
 def resolve_user_tier(user: AuthenticatedUser) -> Tier:
     """Resolve the active subscription tier for an authenticated user.
 
-    Returns "free" for every user in this PR — intentionally. When
-    payment integration ships (Stripe / Supabase subscriptions table /
-    however we decide), swap the body of this function to read the
-    user's actual subscription. Every quota gate already routes
-    through this helper so there is exactly one place to flip when
-    payments go live.
+    Consults `backend.subscriptions.get_active_subscription`, which
+    reads from the Supabase ``subscriptions`` table populated by the
+    Lemon Squeezy webhook handler. The read is LRU-cached for up to
+    60 seconds so this function never blocks on a network round-trip
+    -- it sits on every quota gate's hot path (/qa, /documents/upload,
+    /workspace/quota).
 
-    The `user` argument is currently unused. We accept it (and
-    reference its id below) so the signature is stable across the
-    payment cutover — call sites pass `user` today, and they'll keep
-    passing `user` tomorrow without any churn.
+    Tier resolution rules:
+
+      * No user / no user.id: "free".
+      * No subscription row: "free".
+      * subscription row with status in {"active", "cancelled",
+        "past_due"} AND current_period_end > now: return the
+        subscription's tier. "cancelled" still grants access during
+        the paid period; "past_due" is the LS dunning window.
+      * Anything else (status="expired" / "paused",
+        current_period_end in the past, unknown tier value): "free".
+
+    Lazy import of `backend.subscriptions` so anything importing
+    `backend.tiers` (e.g. quota.py) doesn't drag the subscription
+    backend in if it's never actually resolving a user. Same pattern
+    AI Job Agent uses for symmetry.
     """
-    # Touch user.id so the intent of "we'll read this later" is
-    # explicit. The leading underscore signals 'intentionally unused'
-    # to readers and to most lint configs.
-    _user_id = user.id
-    return "free"
+    if user is None:
+        return "free"
+    user_id = getattr(user, "id", None)
+    if not user_id:
+        return "free"
+
+    # Local import avoids a hard cycle in test collection.
+    from backend.subscriptions import get_active_subscription
+
+    sub = get_active_subscription(str(user_id))
+    if sub is None:
+        return "free"
+
+    if sub.tier not in _PAID_TIERS:
+        # Defensive: the table has a CHECK constraint that limits
+        # this to {"pro", "business"}, but if the constraint is ever
+        # relaxed or a future migration adds a tier we haven't
+        # shipped frontend support for, fall back to Free rather
+        # than letting an unrecognized string flow into TIER_LIMITS as
+        # a KeyError at gate-check time.
+        return "free"
+
+    if sub.status not in _PAID_STATUSES_DURING_PERIOD:
+        return "free"
+
+    period_end = sub.current_period_end
+    if period_end is None:
+        # No period boundary on the row -- conservatively downgrade.
+        # An active subscription should always have a
+        # current_period_end set by the webhook; missing values
+        # indicate a bug we'd rather catch on the free side than the
+        # paid side.
+        return "free"
+
+    if period_end <= datetime.now(timezone.utc):
+        return "free"
+
+    return "pro" if sub.tier == "pro" else "business"
 
 
 __all__ = [
