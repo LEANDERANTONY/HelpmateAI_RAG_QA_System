@@ -43,6 +43,8 @@ QuotaErrorCode = Literal[
     "file_too_large",
     "doc_count_cap",
     "question_quota_exhausted",
+    "premium_unavailable",
+    "premium_quota_exhausted",
 ]
 
 
@@ -186,6 +188,64 @@ def check_question_quota(
         limit=cap,
         current=questions_used,
     )
+
+
+def check_premium_quota(
+    *,
+    premium_used: int,
+    tier: Tier,
+    limits: TierLimits | None = None,
+) -> JSONResponse | None:
+    """402 reject when the user can't request a premium answer this turn.
+
+    Two distinct failure modes share this helper, both returning 402
+    but with different `code` fields so the frontend toast can render
+    different copy:
+
+      premium_unavailable        — tier has no premium model at all
+                                   (free). Trying to use premium=true
+                                   here is a hard "upgrade to unlock".
+      premium_quota_exhausted    — tier has the feature, but the user
+                                   has burned through this month's
+                                   premium credits.
+
+    The check runs BEFORE the standard question-quota check in /qa so
+    a premium-only failure is reported clearly. If the standard quota
+    is ALSO exhausted, the standard check fires after this one passes;
+    each gate has its own structured response.
+    """
+    if limits is None:
+        limits = TIER_LIMITS[tier]
+    premium_model = limits["premium_model"]
+    cap = limits["premium_answers_per_month"]
+
+    if premium_model is None:
+        return quota_error_response(
+            status_code=402,
+            code="premium_unavailable",
+            detail=(
+                "Premium answers (GPT-5.5) aren't available on your tier. "
+                "Upgrade to Pro to unlock."
+            ),
+            tier=tier,
+            limit=0,
+            current=premium_used,
+        )
+
+    if premium_used >= cap:
+        return quota_error_response(
+            status_code=402,
+            code="premium_quota_exhausted",
+            detail=(
+                f"You've used all {cap} premium answers this month. "
+                "Quota resets on the 1st (UTC) — or upgrade for more."
+            ),
+            tier=tier,
+            limit=cap,
+            current=premium_used,
+        )
+
+    return None
 
 
 def check_doc_count_cap(

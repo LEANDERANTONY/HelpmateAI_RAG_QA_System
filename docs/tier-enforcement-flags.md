@@ -161,9 +161,77 @@ merging the series.
    `lambda *_args, **_kwargs:` for forward-compat with future signature
    changes too.
 
-## Step 5 — Premium answers + frontend toggle
+## Step 5 — Premium answers + frontend toggle (PR: feat/premium-answers)
 
-(to be filled in as we ship)
+1. **Premium increments BOTH counters per spec.** Brief recommended
+   "clearer to BOTH count toward standard AND charge a premium credit,
+   since the underlying call still happens" — followed verbatim. A
+   pro user with 25/25 premium and 500/500 standard would hit the
+   premium-cap rejection first. A pro user with 25/25 premium and
+   495/500 standard who asks 5 premium questions ends at 500/500
+   standard AND 30/25 premium — wait, no: each premium call
+   increments standard once. So 5 premium calls = 5 std + 5 premium,
+   ending at 500/500 + 30/25. The premium cap fires first AND the
+   standard cap fires at the same boundary. Both fields rendered to
+   the user in the toast give the full picture.
+
+2. **Two distinct 402 codes for premium.** `premium_unavailable` (tier
+   has no premium_model — free) and `premium_quota_exhausted` (tier
+   supports it but user is at cap). Frontend toast can branch copy:
+   the former wants an upgrade CTA, the latter wants "resets on the
+   1st" copy. Both share the same JSONResponse shape from quota.py.
+
+3. **Gate order in /qa**: premium check (when premium=true) → standard
+   question quota → pipeline → increment(s). Premium-only failure
+   surfaces clearly; if both quotas are exhausted, the user sees the
+   premium message first because it gates first.
+
+4. **Premium toggle resets after each submission.** Captured into a
+   local `useThisTurnPremium` variable, store cleared immediately so
+   the next question defaults back to standard. Spec: "opt-in
+   per-question, not sticky."
+
+5. **Frontend trusts nothing.** `premium: true` from a free-tier client
+   is rejected backend-side with `premium_unavailable`. The toggle is
+   disabled in the UI for free users (defense-in-depth + correct UX),
+   but the gate is the authority. The disabled state pulls from
+   `quotaSnapshot.premium_available` which the backend computes from
+   `TIER_LIMITS[tier]["premium_model"] is not None`.
+
+6. **/workspace/quota is a fresh read every call** — no in-process
+   cache. Frontend calls it on workspace mount + after every /qa
+   (success or failure). One counter read + one doc-count scan per
+   call; trivial cost. If usage explodes, the doc-count scan is the
+   first to optimize via a `count(*) where user_id = ?` query at the
+   store layer.
+
+7. **`quotaSnapshot=null` before first fetch.** Toggle renders disabled
+   until quota resolves. Brief implication: the user can't enter
+   Read Mode and immediately request premium — there's a one-render
+   delay. Acceptable; quota fetch is sub-100ms.
+
+8. **Documents.used in /workspace/quota uses `_count_active_documents`**
+   — same read-only scan as the upload doc-count gate. If multi-doc
+   workspaces ship and per-user counts climb, this and the upload
+   gate both want the same store-level optimization.
+
+9. **`UPGRADE_URL` is hard-coded to `https://helpmateai.xyz/landing#pricing`.**
+   Lives in `backend/quota.py`. If we ever rename the domain or split
+   pricing onto its own page, change here only.
+
+10. **Frontend tests deferred.** No unit tests on the toggle component
+    yet — the workspace currently has no React-component test
+    infrastructure (Jest/Vitest not configured). Manual smoke test
+    only. Adding component tests is a follow-up that should land
+    before next significant Read Mode work.
+
+11. **`refreshStarters` and `refreshQuota` are component-scope
+    functions called from a useEffect — neither in deps.** Existing
+    pattern for refreshStarters silently passed lint; refreshQuota
+    triggered the rule. Added an eslint-disable-next-line at the deps
+    array with rationale comment. The cleaner fix (useCallback wrap)
+    is deferred; it's a refactor of the existing pattern, not a Step
+    5 concern.
 
 ## Step 6 — Retention TTL sweeper
 

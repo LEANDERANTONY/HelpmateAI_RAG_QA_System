@@ -2580,6 +2580,59 @@ input[type="file"]:disabled::file-selector-button {
   padding-top: 8px;
 }
 
+/* Premium toggle — opt-in for gpt-5.5 answers on paid tiers.
+   Disabled state (free tier or pre-quota-fetch) renders dimmer and
+   without a count badge, with the upgrade tooltip on hover. Active
+   state (user toggled on, will submit premium=true on next Ask) gets
+   the accent border + tint. */
+.h-premium-toggle {
+  align-items: center;
+  background: transparent;
+  border: 1px solid var(--hairline);
+  border-radius: 999px;
+  color: var(--fg-3);
+  cursor: pointer;
+  display: inline-flex;
+  font-family: inherit;
+  font-size: 12px;
+  font-weight: 500;
+  gap: 6px;
+  /* margin-left auto so it sits next to the Generate button on the
+     right side of the row, after the help text on the left. */
+  margin-left: auto;
+  padding: 6px 12px;
+  transition: border-color var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out),
+              background-color var(--duration-fast) var(--ease-out);
+}
+
+.h-premium-toggle:hover:not(:disabled) {
+  border-color: var(--accent);
+  color: var(--fg);
+}
+
+.h-premium-toggle.active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+  color: var(--accent-strong);
+}
+
+.h-premium-toggle:disabled {
+  cursor: not-allowed;
+  opacity: 0.45;
+}
+
+.h-premium-count {
+  color: var(--fg-4);
+  font-family: var(--font-mono);
+  font-size: 10.5px;
+  letter-spacing: 0.04em;
+}
+
+.h-premium-toggle.active .h-premium-count {
+  color: var(--accent-strong);
+}
+
 .h-help {
   align-items: center;
   color: var(--fg-3);

@@ -15,9 +15,11 @@ from pydantic import BaseModel
 from backend.auth import AuthenticatedUser, require_authenticated_user
 from backend.file_storage import FileStorage, build_file_storage
 from backend.quota import (
+    UPGRADE_URL,
     check_content_length_present,
     check_doc_count_cap,
     check_file_size_cap,
+    check_premium_quota,
     check_question_quota,
 )
 from backend.quota_store import QuotaStore, build_quota_store
@@ -82,6 +84,37 @@ class CurrentWorkspaceResponse(BaseModel):
     index: dict[str, Any] | None = None
 
 
+class QuotaCountInfo(BaseModel):
+    """`used` is the current value, `limit` is the cap. -1 limit
+    signals "no practical cap" (the soft ceiling at 1000 docs is
+    reported as 1000, never -1 — only retention uses -1)."""
+
+    used: int
+    limit: int
+
+
+class WorkspaceQuotaResponse(BaseModel):
+    """Snapshot of the signed-in user's quota state.
+
+    The frontend uses this to:
+      • drive the Premium toggle (disable when premium_available=False,
+        show used/limit when True)
+      • populate per-quota indicators (questions remaining etc.)
+      • render upgrade prompts pointing at upgrade_url
+
+    period_start is the first-of-month UTC date for the current
+    counter window — useful for "resets in N days" copy.
+    """
+
+    tier: str
+    period_start: str
+    questions: QuotaCountInfo
+    premium: QuotaCountInfo
+    premium_available: bool
+    documents: QuotaCountInfo
+    upgrade_url: str
+
+
 class StarterQuestionsResponse(BaseModel):
     document_id: str
     document_style: str
@@ -91,6 +124,12 @@ class StarterQuestionsResponse(BaseModel):
 class AskRequest(BaseModel):
     document_id: str
     question: str
+    # Opt-in per-question. When True and the tier supports it
+    # (premium_model in TIER_LIMITS), /qa routes to gpt-5.5 and
+    # decrements both the standard and premium counters. Never
+    # trust this flag from the client — the backend re-validates
+    # tier eligibility on every call (free tier always rejects).
+    premium: bool = False
 
 
 class AskResponse(BaseModel):
@@ -634,6 +673,48 @@ def get_current_workspace(
     )
 
 
+@app.get("/workspace/quota", response_model=WorkspaceQuotaResponse)
+def get_workspace_quota(
+    user: AuthenticatedUser = Depends(require_authenticated_user),
+) -> WorkspaceQuotaResponse:
+    """Per-user quota snapshot for the current calendar month.
+
+    Read by the frontend on workspace mount and after each /qa
+    response to keep the Premium toggle's used/limit indicator in
+    sync. Returns the user's tier so the UI can disable premium for
+    free users without a second lookup.
+
+    No quota gate runs here — pure read. Cheap and safe to call
+    frequently (single counter read + single doc-count scan).
+    """
+    tier = resolve_user_tier(user)
+    limits = TIER_LIMITS[tier]
+    counter = _quota_store().get_counter(user.id)
+    # current_period_start lives in quota_store; the counter row
+    # exists at most one per (user, period_start). Surface the
+    # period date so the frontend can render "resets on X".
+    from backend.quota_store import current_period_start
+
+    return WorkspaceQuotaResponse(
+        tier=tier,
+        period_start=current_period_start().isoformat(),
+        questions=QuotaCountInfo(
+            used=counter.questions,
+            limit=limits["questions_per_month"],
+        ),
+        premium=QuotaCountInfo(
+            used=counter.premium,
+            limit=limits["premium_answers_per_month"],
+        ),
+        premium_available=limits["premium_model"] is not None,
+        documents=QuotaCountInfo(
+            used=_count_active_documents(user),
+            limit=limits["doc_cap"],
+        ),
+        upgrade_url=UPGRADE_URL,
+    )
+
+
 @app.post("/documents/{document_id}/index", response_model=DocumentBundleResponse)
 def build_or_load_index(
     document_id: str,
@@ -820,24 +901,35 @@ def answer_question(
     if not question:
         raise HTTPException(status_code=400, detail="Question cannot be empty.")
 
-    # Monthly question quota — pre-check + post-increment-on-success.
+    # Quota gates run BEFORE the pipeline so we never pay OpenAI/Chroma
+    # cost just to deny the answer.
     #
-    # Pre-check is a read-only count: if the user is already at their
-    # tier's cap we reject 402 without running the pipeline (no point
-    # paying OpenAI/Chroma cost just to deny the answer).
+    # Pre-check is read-only; post-increment uses the atomic RPC (on
+    # Supabase) so two concurrent /qa requests can't both squeeze
+    # through the pre-check at N-1 and both run pipeline. Pipeline
+    # failures propagate before the increment runs — a failed answer
+    # doesn't consume the user's quota.
     #
-    # Post-increment uses the atomic RPC (`increment_question_counter`)
-    # on the Supabase backend so two concurrent /qa requests can't
-    # both squeeze through the pre-check at N-1 and both run — the
-    # second atomic increment returns N+1 and we never run pipeline.
-    #
-    # Order: pre-check → pipeline → atomic increment. Pipeline failures
-    # propagate before the increment runs, so a failed answer doesn't
-    # consume the user's quota. See docs/tier-enforcement-flags.md for
-    # the small race window we accept on the local backend.
+    # Branch order:
+    #   1. If premium=True, check premium-availability + premium quota
+    #      FIRST. A free-tier user opting into premium gets a clear
+    #      "premium unavailable" 402, not a "question quota" 402.
+    #   2. Either way, the standard question quota also applies. Brief:
+    #      "BOTH count toward standard AND charge a premium credit,
+    #      since the underlying call still happens."
     tier = resolve_user_tier(user)
     limits = TIER_LIMITS[tier]
     counter = _quota_store().get_counter(user.id)
+
+    if payload.premium:
+        premium_response = check_premium_quota(
+            premium_used=counter.premium,
+            tier=tier,
+            limits=limits,
+        )
+        if premium_response is not None:
+            return premium_response
+
     quota_response = check_question_quota(
         questions_used=counter.questions,
         tier=tier,
@@ -846,20 +938,34 @@ def answer_question(
     if quota_response is not None:
         return quota_response
 
-    # Tier-aware model selection: free → gpt-5.4-nano, paid →
-    # gpt-5.4-mini. The pipeline's cache key incorporates the active
-    # model so a free-tier nano answer doesn't get served to a
-    # pro-tier user (and vice versa).
+    # Tier-aware model selection. Premium opt-in routes to the tier's
+    # premium_model (gpt-5.5) when available; otherwise the tier's
+    # default answer_model (free → nano, pro/business → mini). The
+    # pipeline's cache key incorporates the active model so the same
+    # question never shares a cached answer across model variants.
+    active_model = (
+        limits["premium_model"] if payload.premium and limits["premium_model"]
+        else limits["answer_model"]
+    )
     answer: AnswerResult = _pipeline().answer_question(
         document,
         index_record,
         question,
-        model_override=limits["answer_model"],
+        model_override=active_model,
     )
+
     # Increment AFTER successful generation. Pipeline raised → we
-    # return here via the exception path with no increment; user is
-    # not charged for a failed answer.
+    # return here via the exception path with no increment.
+    #
+    # Premium calls increment BOTH counters (per spec): the standard
+    # question counter still ticks because the LLM call happened, AND
+    # the premium counter gets one charge for using the upgraded
+    # model. This makes total spend transparent on a single counter
+    # while still letting the premium cap function as the smaller
+    # bound on premium-model use specifically.
     _quota_store().increment_questions(user.id)
+    if payload.premium:
+        _quota_store().increment_premium(user.id)
 
     _save_touched_document(document, user)
     return AskResponse(answer=answer.to_dict())

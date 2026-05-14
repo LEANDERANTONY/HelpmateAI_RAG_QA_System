@@ -140,14 +140,36 @@ export async function getStarterQuestions(documentId: string) {
   return request<StarterQuestionsResponse>(`/documents/${documentId}/starters`);
 }
 
-export async function askQuestion(documentId: string, question: string) {
+export async function askQuestion(
+  documentId: string,
+  question: string,
+  options: { premium?: boolean } = {},
+) {
+  // `premium` opts the request into the paid-tier gpt-5.5 model.
+  // The backend re-validates tier eligibility — sending premium=true
+  // as a free user returns 402 premium_unavailable.
+  const body: { document_id: string; question: string; premium?: boolean } = {
+    document_id: documentId,
+    question,
+  };
+  if (options.premium) {
+    body.premium = true;
+  }
   return request<{ answer: import("@/lib/api-types").AnswerResult }>("/qa", {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
     },
-    body: JSON.stringify({ document_id: documentId, question }),
+    body: JSON.stringify(body),
   });
+}
+
+export async function getWorkspaceQuota() {
+  // Per-user quota snapshot for the current calendar month. Read on
+  // workspace mount + after each /qa response so the Premium toggle's
+  // used/limit indicator stays in sync. Cheap call (one counter read
+  // + one doc-count scan) — safe to refetch frequently.
+  return request<import("@/lib/api-types").WorkspaceQuotaResponse>("/workspace/quota");
 }
 
 export { API_BASE_URL, UPLOAD_API_BASE_URL };

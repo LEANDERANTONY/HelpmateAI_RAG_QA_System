@@ -93,3 +93,23 @@ export type SampleDocument = {
   description: string;
   size_bytes: number;
 };
+
+// Tier-enforcement quota snapshot returned by GET /workspace/quota.
+// Backend canonical shape: backend/main.py::WorkspaceQuotaResponse.
+export type QuotaCountInfo = {
+  used: number;
+  limit: number;
+};
+
+export type WorkspaceQuotaResponse = {
+  tier: "free" | "pro" | "business";
+  period_start: string; // ISO date, first-of-month UTC
+  questions: QuotaCountInfo;
+  premium: QuotaCountInfo;
+  // True when the user's tier has a premium_model configured.
+  // The frontend disables the Premium toggle when False and
+  // surfaces the upgrade_url instead.
+  premium_available: boolean;
+  documents: QuotaCountInfo;
+  upgrade_url: string;
+};

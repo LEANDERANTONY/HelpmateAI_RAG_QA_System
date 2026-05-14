@@ -13,7 +13,14 @@ import { ErrorState } from "@/components/error-state";
 import { ChatCollapseToggle } from "@/components/viewer/chat-collapse-toggle";
 import { MobileSourceSheet } from "@/components/viewer/mobile-source-sheet";
 import { SourcePane } from "@/components/viewer/source-pane";
-import { askQuestion, buildIndex, getCurrentWorkspace, getStarterQuestions, uploadDocument } from "@/lib/api";
+import {
+  askQuestion,
+  buildIndex,
+  getCurrentWorkspace,
+  getStarterQuestions,
+  getWorkspaceQuota,
+  uploadDocument,
+} from "@/lib/api";
 import { ApiError } from "@/lib/api-errors";
 import type { AuthUserSummary } from "@/lib/auth";
 import { notifyApiError, notifyError, notifySuccess } from "@/lib/toast";
@@ -38,6 +45,7 @@ import type {
   DocumentRecord,
   IndexRecord,
   RetrievalCandidate,
+  WorkspaceQuotaResponse,
 } from "@/lib/api-types";
 
 type AsyncState = "idle" | "loading" | "ready" | "error";
@@ -747,19 +755,43 @@ function AskBlock({
   canAsk,
   isLoading,
   askFocused,
+  premiumActive,
+  quotaSnapshot,
   onQuestionChange,
   onAsk,
   onFocusChange,
+  onPremiumToggle,
 }: {
   question: string;
   placeholder: string;
   canAsk: boolean;
   isLoading: boolean;
   askFocused: boolean;
+  premiumActive: boolean;
+  quotaSnapshot: WorkspaceQuotaResponse | null;
   onQuestionChange: (value: string) => void;
   onAsk: () => void;
   onFocusChange: (value: boolean) => void;
+  onPremiumToggle: (next: boolean) => void;
 }) {
+  // Premium toggle gating:
+  //   premium_available=false   → disabled with upgrade tooltip; never
+  //                               flips, never fires onPremiumToggle.
+  //   premium_available=true    → enabled. If the user is already at
+  //                               their premium cap we still let them
+  //                               toggle on so they see the 402 toast
+  //                               (better feedback than silently
+  //                               disabling). The backend rejects, the
+  //                               toggle resets, the indicator updates.
+  //   quotaSnapshot=null        → before the first quota fetch
+  //                               resolves; render disabled to avoid
+  //                               flicker.
+  const premiumAvailable = quotaSnapshot?.premium_available ?? false;
+  const premiumUsed = quotaSnapshot?.premium.used ?? 0;
+  const premiumLimit = quotaSnapshot?.premium.limit ?? 0;
+  const premiumTooltip = premiumAvailable
+    ? `Premium answers (GPT-5.5) — ${premiumUsed} of ${premiumLimit} used this month`
+    : "Premium answers (GPT-5.5) are a paid feature. Upgrade to unlock.";
   function handleKeyDown(event: ReactKeyboardEvent<HTMLTextAreaElement>) {
     if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
       event.preventDefault();
@@ -820,6 +852,30 @@ function AskBlock({
           <kbd>⌘↵</kbd>
           <span>to submit</span>
         </span>
+        <button
+          type="button"
+          className={`h-premium-toggle${premiumActive ? " active" : ""}`}
+          // Disabled at the HTML level when premium isn't available so
+          // keyboard users can tab past it without entering a dead
+          // toggle state. The title attribute carries the upgrade
+          // copy for both desktop hover and screen reader announce.
+          disabled={!premiumAvailable}
+          aria-pressed={premiumActive}
+          title={premiumTooltip}
+          onClick={() => {
+            if (premiumAvailable) {
+              onPremiumToggle(!premiumActive);
+            }
+          }}
+        >
+          <span aria-hidden>★</span>
+          <span>Premium</span>
+          {premiumAvailable ? (
+            <span className="h-premium-count" aria-hidden>
+              {premiumUsed}/{premiumLimit}
+            </span>
+          ) : null}
+        </button>
         <button
           className="h-btn h-btn-primary"
           disabled={!canAsk || !question.trim() || isLoading}
@@ -1194,11 +1250,14 @@ function Conversation({
   highlightedCitationKey,
   streamingTurnId,
   openMenuTurnId,
+  premiumActive,
+  quotaSnapshot,
   onQuestionChange,
   onAsk,
   onFocusChange,
   onPickStarter,
   onCitationClick,
+  onPremiumToggle,
   registerTurnRef,
   onMenuToggle,
   onMenuClose,
@@ -1220,11 +1279,14 @@ function Conversation({
   highlightedCitationKey: string | null;
   streamingTurnId: string | null;
   openMenuTurnId: string | null;
+  premiumActive: boolean;
+  quotaSnapshot: WorkspaceQuotaResponse | null;
   onQuestionChange: (value: string) => void;
   onAsk: () => void;
   onFocusChange: (value: boolean) => void;
   onPickStarter: (question: string) => void;
   onCitationClick: (turnId: string, chunkId: string) => void;
+  onPremiumToggle: (next: boolean) => void;
   registerTurnRef: (turnId: string, element: HTMLElement | null) => void;
   onMenuToggle: (turnId: string) => void;
   onMenuClose: () => void;
@@ -1266,9 +1328,12 @@ function Conversation({
                 isLoading={answerState === "loading"}
                 onAsk={onAsk}
                 onFocusChange={onFocusChange}
+                onPremiumToggle={onPremiumToggle}
                 onQuestionChange={onQuestionChange}
                 placeholder={placeholder}
+                premiumActive={premiumActive}
                 question={question}
+                quotaSnapshot={quotaSnapshot}
               />
             </div>
             {indexState === "loading" ? (
@@ -1961,6 +2026,12 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
   // session starts with the panel closed; clicking a citation pill or
   // landing a new answer auto-opens it.
   const [mobileEvidenceOpen, setMobileEvidenceOpen] = useState(false);
+  // Premium opt-in toggle for the next /qa call. Resets to false
+  // after each submission — premium is explicit per-question, not
+  // sticky. quotaSnapshot drives the toggle's enabled state + the
+  // "X / Y this month" indicator.
+  const [premiumActive, setPremiumActive] = useState(false);
+  const [quotaSnapshot, setQuotaSnapshot] = useState<WorkspaceQuotaResponse | null>(null);
   const evidenceRefs = useRef<Record<string, HTMLElement | null>>({});
   const turnRefs = useRef<Record<string, HTMLElement | null>>({});
   const flashTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -2001,6 +2072,22 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
     }
   }
 
+  async function refreshQuota() {
+    // Best-effort refresh — a quota fetch failure doesn't block the
+    // user from asking. The toggle falls back to its disabled state
+    // when quotaSnapshot is null, which is the safe default.
+    if (!isAuthenticated) {
+      setQuotaSnapshot(null);
+      return;
+    }
+    try {
+      const snapshot = await getWorkspaceQuota();
+      setQuotaSnapshot(snapshot);
+    } catch {
+      setQuotaSnapshot(null);
+    }
+  }
+
   useEffect(() => {
     let cancelled = false;
 
@@ -2018,6 +2105,8 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
         setIndexState(workspace.index ? "ready" : "idle");
         setUploadState("ready");
         await refreshStarters(workspace.document.document_id);
+        // Initial quota fetch for the Premium toggle / indicator.
+        void refreshQuota();
       } catch (loadError) {
         if (!cancelled) {
           setStarters([]);
@@ -2037,6 +2126,11 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
     return () => {
       cancelled = true;
     };
+    // refreshQuota and refreshStarters are component-scope functions that
+    // close over isAuthenticated; including them in deps would re-fire
+    // this effect on every render. The effect's actual triggers are
+    // already captured below.
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [document, isAuthenticated]);
 
   useEffect(() => {
@@ -2126,9 +2220,19 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
     setError(null);
     setAnswerState("loading");
     setPendingQuestion(submittedQuestion);
+    // Capture premium opt-in for this turn and clear the toggle so
+    // the next question defaults back to standard. The backend
+    // re-validates eligibility — a free user with premium=true
+    // gets a 402 here regardless of the UI state.
+    const useThisTurnPremium = premiumActive;
+    setPremiumActive(false);
 
     try {
-      const response = await askQuestion(document!.document_id, submittedQuestion);
+      const response = await askQuestion(
+        document!.document_id,
+        submittedQuestion,
+        { premium: useThisTurnPremium },
+      );
       const turn: QATurn = {
         id: makeTurnId(),
         question: submittedQuestion,
@@ -2181,6 +2285,11 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
       });
     } finally {
       setPendingQuestion(null);
+      // Refresh quota whether the call succeeded or failed — a 402
+      // means a counter changed (or that the user is at the cap and
+      // the toast can render fresh numbers), a 200 means the counter
+      // ticked. Either way the toggle indicator needs the latest.
+      void refreshQuota();
     }
   }
 
@@ -2499,11 +2608,14 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
             onMenuClose={handleMenuClose}
             onMenuToggle={handleMenuToggle}
             onPickStarter={setQuestion}
+            onPremiumToggle={setPremiumActive}
             onQuestionChange={setQuestion}
             onReAsk={handleReAskTurn}
             openMenuTurnId={openMenuTurnId}
             pendingQuestion={pendingQuestion}
+            premiumActive={premiumActive}
             question={question}
+            quotaSnapshot={quotaSnapshot}
             registerTurnRef={registerTurnRef}
             starters={starters}
             streamingTurnId={streamingTurnId}
