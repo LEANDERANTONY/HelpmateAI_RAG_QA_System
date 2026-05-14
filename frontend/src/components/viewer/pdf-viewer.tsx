@@ -54,9 +54,6 @@ type PdfViewerProps = {
   chunkId: string;
   pageLabel: string;
   chunkText: string;
-  // Optional: caller can pass a "download original" affordance for the
-  // 415 banner (legacy DOCX without rendition).
-  onDownloadOriginal?: () => void;
   // Optional: notify the parent when the visible page changes (manual
   // scroll, find-driven navigation, or auto-jump). Used to keep the
   // page-pill in the surrounding chrome live rather than stuck on the
@@ -188,7 +185,6 @@ export const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>(function Pd
     chunkId,
     pageLabel,
     chunkText,
-    onDownloadOriginal,
     onPageChange,
     onTotalPagesChange,
   },
@@ -554,7 +550,7 @@ export const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>(function Pd
     navigateToCurrent();
   }, [chunkId, navigateToCurrent]);
 
-  const bannerNode = renderBanner(banner, errorDetail, pageLabel, onDownloadOriginal);
+  const bannerNode = renderBanner(banner, errorDetail, pageLabel);
 
   return (
     <div className="h-pdf-viewer" data-state={loadState}>
@@ -581,7 +577,6 @@ function renderBanner(
   kind: BannerKind,
   detail: string,
   pageLabel: string,
-  onDownloadOriginal: (() => void) | undefined,
 ) {
   if (kind === null) return null;
   const hintPage = parsePageLabel(pageLabel);
@@ -594,16 +589,14 @@ function renderBanner(
     );
   }
   if (kind === "needs-rendition") {
+    // Legacy DOCX uploads that don't have a PDF rendition can't be shown
+    // inline. We don't offer a download here — the user uploaded the
+    // file themselves, so they already have it. The cited passages are
+    // still available as text inside the evidence cards.
     return (
       <div className="h-pdf-banner h-pdf-banner-warn" role="alert">
-        <span>
-          This document can&apos;t be viewed inline. Download the original to read it.
-        </span>
-        {onDownloadOriginal ? (
-          <button type="button" className="h-pdf-banner-action" onClick={onDownloadOriginal}>
-            Download original
-          </button>
-        ) : null}
+        This document can&apos;t be viewed inline. The cited passages still
+        appear as text in the evidence cards.
       </div>
     );
   }

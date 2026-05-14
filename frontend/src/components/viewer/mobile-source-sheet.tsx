@@ -28,7 +28,6 @@ import { Drawer } from "vaul";
 
 import { PageNav } from "@/components/viewer/page-nav";
 import { PdfViewer, type PdfViewerHandle } from "@/components/viewer/pdf-viewer";
-import { API_BASE_URL } from "@/lib/api";
 import {
   useCurrentChunk,
   useMobileSnap,
@@ -422,17 +421,6 @@ export function MobileSourceSheet() {
               chunkText={currentChunk.chunkText}
               onPageChange={handlePageChange}
               onTotalPagesChange={handleTotalPagesChange}
-              onDownloadOriginal={() => {
-                // NOTE: window.open can't attach a Bearer token, so this
-                // will 401 in production. Follow-up: switch to fetch +
-                // Blob + anchor[download]. URL uses API_BASE_URL so it
-                // goes browser-direct in prod (avoids the Cloudflare
-                // bot-challenge that the /api/* proxy route triggers).
-                window.open(
-                  `${API_BASE_URL}/documents/${currentChunk.documentId}/file?download=1`,
-                  "_blank",
-                );
-              }}
             />
           </div>
         </Drawer.Content>

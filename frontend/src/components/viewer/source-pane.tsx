@@ -23,7 +23,6 @@ import { useCallback, useEffect, useRef, useState } from "react";
 
 import { PageNav } from "@/components/viewer/page-nav";
 import { PdfViewer, type PdfViewerHandle } from "@/components/viewer/pdf-viewer";
-import { API_BASE_URL } from "@/lib/api";
 import { useCurrentChunk, useReadModeActions } from "@/lib/read-mode-state";
 import { parsePageLabel } from "@/lib/search-anchor";
 
@@ -142,16 +141,6 @@ export function SourcePane() {
           chunkText={currentChunk.chunkText}
           onPageChange={handlePageChange}
           onTotalPagesChange={handleTotalPagesChange}
-          onDownloadOriginal={() => {
-            // Surface the original file as a download. The /file endpoint
-            // serves the source format (PDF or DOCX) when ?download=1.
-            // NOTE: window.open can't attach a Bearer token, so this will
-            // 401 in production. Follow-up: switch to fetch + Blob +
-            // anchor[download] pattern so the Authorization header flows.
-            // URL prefix uses API_BASE_URL (browser-direct in prod) to
-            // avoid the Cloudflare bot-challenge on the /api proxy route.
-            window.open(`${API_BASE_URL}/documents/${currentChunk.documentId}/file?download=1`, "_blank");
-          }}
         />
       </div>
     </section>
