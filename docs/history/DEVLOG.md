@@ -8,6 +8,55 @@ Historical note:
 - later entries add quality-control, benchmarking, and document-intelligence work on top of that baseline
 - the project is still evolving, so later entries refine earlier architectural assumptions without erasing them
 
+## Day 33: Lemon Squeezy Subscription Scaffold
+
+- Added `subscriptions` + `subscription_webhook_log` Supabase tables, owned + RLS-protected per `user_id`, with a `processor` column reserved so a future Stripe or Razorpay row can sit in the same shape (see `docs/supabase-subscriptions.sql`).
+- Wrote `backend/subscriptions.py` with a `get_active_subscription(user_id)` reader keyed by an LRU cache that expires on the calendar-minute bucket — `resolve_user_tier` sits on the hot path of `/qa`, `/documents/upload`, and `/workspace/quota`, so a Supabase round-trip per gate would shred P95. The minute-bucket TTL means a fresh subscription is visible within at most 60 seconds without the webhook having to invalidate anything (it does invalidate anyway for a sharper cutover).
+- Wired `backend/webhooks/lemonsqueezy.py` to verify LS HMAC-SHA256 signatures with `hmac.compare_digest`, parse the event envelope, idempotency-check via `subscription_webhook_log`, and map each event to a status: `subscription_created` / `_updated` / `_resumed` / `_unpaused` / `_payment_success` / `_payment_recovered` → `active`; `_cancelled` → `cancelled` (tier retained until `current_period_end`); `_expired` → `expired`; `_paused` → `paused`; `_payment_failed` → `past_due` (tier retained during dunning). Unknown events log + return 200 so LS doesn't retry.
+- `resolve_user_tier` now consults the table: paid tier returned only when `status ∈ {active, cancelled, past_due}` AND `current_period_end > now`. Defensive `_PAID_TIERS` whitelist ensures a future migration that adds an unknown tier doesn't `KeyError` at gate-check time.
+- Frontend pricing CTAs in `landing-page.tsx` route to LS hosted checkout with `?checkout[custom][user_id]=<supabase uid>` so the webhook can attribute the resulting subscription to the right user. When `NEXT_PUBLIC_LEMONSQUEEZY_*` env vars are absent, the Pro CTA renders "Coming soon" and Business falls back to the existing `mailto:` — the branch is shippable into `main` before LS KYC clears.
+- Documented setup, event mapping, idempotency model, and the local-webhook-signing recipe in `docs/lemon-squeezy.md`. `.env.example` ships the seven new env vars (5 backend + 2 frontend variant IDs + the upgrade URL).
+
+Deferred to a follow-up PR once LS KYC and live variant IDs are in place:
+
+- "Manage Subscription" button on the workspace shell (paid tiers only) that hits `POST /billing/portal` to mint a customer-portal URL. The route exists; the UI affordance is staged behind the same env-gating pattern as the checkout CTA.
+- Post-checkout quota refresh — after LS redirects back from hosted checkout, the workspace should call `/workspace/quota` proactively so the user sees their new `pro` tier without a full reload. The hook point is the same `refreshQuota` callback already used by `/qa` success paths.
+- A "you're on Pro now" toast on the first `/workspace/quota` response that flips from `free` to a paid tier, so the post-checkout transition is acknowledged inline.
+
+Status: ready to ship behind env flags. The scaffold sits on `feat/lemonsqueezy-integration` and merges cleanly into `main` because both the backend (503 when secret missing) and the frontend (Coming soon CTA) gracefully degrade in the absence of LS credentials. The architectural rationale for picking LS (Merchant of Record vs Stripe/Razorpay direct, processor-neutral schema, migration path) is captured in ADR-017.
+
+## Day 32: Tier Enforcement End-To-End
+
+- Introduced a tier-resolution shim at `backend/tiers.py::resolve_user_tier(user)` plus a `TIER_LIMITS` matrix keyed by `Tier = Literal["free", "pro", "business"]`. The matrix is the single source of truth for doc cap, file-size cap, monthly question quota, premium answer quota, retention window, and default + premium model names (see commit `97be986`). Every paid surface routes through this shim — the payment integration on Day 33 only had to change `resolve_user_tier`, not the gate call sites.
+- Added upload quota gates for file size and active-document count (commit `be34366`). `check_file_size_cap` runs against `UploadFile.size` (the post-multipart-parse body size) rather than the `Content-Length` header so a user's 25 MB file at the 25 MB Free cap returns 200, not 413 from the multipart envelope overhead. Doc-count is enforced even though the current single-workspace model never reaches it — when multi-doc workspaces ship, the gate activates without further wiring.
+- Wired monthly `/qa` question quota with an atomic increment RPC (commit `8c3036d`). The Supabase `increment_question_counter(p_user_id)` function does `INSERT ... ON CONFLICT DO UPDATE ... RETURNING` so two concurrent requests deterministically produce N+1 and N+2. Increment fires AFTER successful pipeline completion, so a failed `/qa` doesn't burn a question and the user can retry without a refund path.
+- Made the answer model tier-aware (commit `1e65ef6`). `/qa` now passes `model_override=TIER_LIMITS[tier]["answer_model"]` into `generate_answer`, and the answer cache key now includes the model name so a Free `nano` answer can't be served back to a Pro user asking the same question. `settings.answer_model` stays as the fallback for eval scripts and unauthenticated contexts.
+- Shipped premium answers and the `/workspace/quota` endpoint (commit `7f80076`). Pro and Business can opt-in per-question to `gpt-5.5` via a frontend toggle; premium calls increment BOTH counters per spec, with two distinct 402 codes (`premium_unavailable` for Free, `premium_quota_exhausted` for Pro/Business at cap) so the toast can branch copy. The toggle resets after each submission — premium is per-question, not sticky.
+- Replaced the workspace TTL sweeper with a tier-aware Python implementation (commit `56b4896`). `_touch_document_workspace` now writes a tier-dependent `expires_at`; Business strips the field entirely (sentinel-free "never delete"). The sweeper routes deletions through `FileStorage` so Supabase Storage bucket objects get cleaned along with the Postgres rows — the previous SQL-only `pg_cron` sweep was a no-op for the bucket and would have leaked orphans.
+- Caught a security gap during the rollout: the first iteration of the quota RPC migration revoked EXECUTE from `public` and `authenticated` but missed `anon` — Supabase grants `anon` EXECUTE on public-schema functions by default, so an unauthenticated caller with the public anon key could have invoked `increment_question_counter(p_user_id='<victim>')` to burn another user's quota. Closed in commit `9a1028e` (Supabase migration `revoke_anon_quota_rpcs`, applied `20260514154130`, and backported into `docs/supabase-quota-counters.sql` so a fresh-DB redeploy is secure out of the box). All three of `public`, `authenticated`, and `anon` are now revoked; only `service_role` retains EXECUTE.
+- Followed up with a docs cleanup (commit `daed0db`) that dropped the stale SQL-only retention sweeper section from `docs/retention.md`; the Python sweeper is now the single documented path.
+
+Status: deployed to production. The 6 feature commits + 2 fixups are live on `app.helpmateai.xyz` and have been running clean against real traffic since the cutover.
+
+Why now:
+
+- the COGS math on unlimited `gpt-5.5` per anonymous user was not sustainable at any usage scale a portfolio-grade landing surface could realistically attract
+- the v1 plan caps a free user at the same model envelope a serious eval run would burn, while paid tiers unlock the higher-cost premium answer path without giving any non-paying user a way to grind it
+- shipping the gates as flagged code that all currently resolve to `free` lets the payment scaffold (Day 33) land as a one-function change in `resolve_user_tier` rather than a sprawling per-gate retrofit
+
+Challenges:
+
+- the atomic-RPC pattern was chosen over a Python read-modify-write because two `/qa` calls at cap-1 racing against a non-atomic store can both pre-check pass and both run pipeline, producing N+1 answers on a cap of N; the SQL upsert closes that window cleanly
+- the anon EXECUTE gap is the kind of mistake that doesn't surface in dev (no anon traffic against your local dev instance) and would only have shown up against production traffic; the post-merge audit caught it before any real harm
+- the sweeper had to delete bucket objects + DB rows in the right order — `pipeline.delete_workspace` runs FIRST (it may need local files during teardown), then `FileStorage` cleanup, so a Supabase bucket key isn't yanked out from under a local cache invalidation pass
+
+Improvements:
+
+- every paid surface is now gated through a single resolver, which means the Lemon Squeezy work on Day 33 was a four-PR scaffold rather than a per-gate retrofit
+- the quota counter is atomic and tamper-proof at the RPC boundary; client-side calls fail with permission-denied regardless of whose UUID they pass
+- the retention sweeper handles Supabase Storage cleanup natively, which closes the orphan-object race the SQL `pg_cron` pattern had against the bucket
+- the design decisions are now documented in ADR-015 (tier shim) and ADR-016 (atomic quota increment + the anon EXECUTE hotfix) so the next person who looks at this stack in 6 months has the rationale, not just the code
+
 ## Day 31: Production Deploy And Read Mode Routing Fixes
 
 - Cut the `helpmateai.xyz` apex over from a Framer-hosted marketing site to a single Next.js Vercel deployment that serves both the apex landing and `app.helpmateai.xyz` workspace through a host-based Next rewrite.
