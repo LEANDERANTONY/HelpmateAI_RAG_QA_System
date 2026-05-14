@@ -98,31 +98,70 @@ export function MobileSourceSheet() {
     return () => window.clearTimeout(t);
   }, []);
 
-  // Radix Dialog (vaul's underlying primitive) marks siblings of the
-  // portal as `aria-hidden="true"` whenever the dialog is open — even
-  // when we pass `modal={false}`. This breaks soft-keyboard input on
-  // textareas in those siblings: iOS Chrome and some Android browsers
-  // refuse to surface the keyboard when the focused input is inside
-  // an aria-hidden subtree (the assumption being it's a screen-reader
-  // hint that nothing in there should receive input).
-  // We can't tell Radix not to do this, but we can strip the attr
-  // back off whenever it appears. Cheap MutationObserver scoped to
-  // the workspace MAIN; lives as long as the sheet does.
+  // Radix Dialog (vaul's underlying primitive) layers two non-modal
+  // leaks on top of the page even when we pass `modal={false}`, and
+  // both must be cleaned up for the chat textarea to remain typeable
+  // while the sheet is open:
+  //
+  //   1. `aria-hidden="true"` on the portal's siblings — including
+  //      <main class="workspace-page">. iOS Chrome and some Android
+  //      browsers refuse to surface the soft keyboard for inputs
+  //      inside an aria-hidden subtree (treating it as a screen-reader
+  //      signal that nothing in there should receive input).
+  //
+  //   2. `[data-radix-focus-guard]` sentinel elements at the top and
+  //      bottom of <body>. These are part of Radix's FocusScope: they
+  //      capture focus on focus-in events and redirect it back into
+  //      the dialog. Even when the scope is supposed to be untrapped
+  //      (modal=false), the guards remain, and any attempt to focus
+  //      the chat textarea is yanked back to the sheet's close button
+  //      synchronously. With the guards removed, `ta.focus()` works
+  //      and the user can type freely.
+  //
+  // A single MutationObserver on <body> covers both: it strips
+  // aria-hidden from any sibling that gets it (covers the workspace
+  // MAIN) and removes any focus-guard span that gets inserted.
   useEffect(() => {
-    const main = document.querySelector("main.workspace-page");
-    if (!(main instanceof HTMLElement)) return;
-    const strip = () => {
-      if (main.getAttribute("aria-hidden") === "true") {
+    const stripGuards = () => {
+      document
+        .querySelectorAll("[data-radix-focus-guard]")
+        .forEach((el) => el.remove());
+    };
+    const stripAriaHidden = () => {
+      const main = document.querySelector("main.workspace-page");
+      if (main && main.getAttribute("aria-hidden") === "true") {
         main.removeAttribute("aria-hidden");
       }
     };
-    strip();
-    const observer = new MutationObserver(strip);
-    observer.observe(main, {
+    const cleanup = () => {
+      stripGuards();
+      stripAriaHidden();
+    };
+    cleanup();
+    const observer = new MutationObserver(cleanup);
+    observer.observe(document.body, {
+      childList: true,
+      subtree: false,
       attributes: true,
       attributeFilter: ["aria-hidden"],
     });
-    return () => observer.disconnect();
+    // Workspace MAIN gets aria-hidden via Radix's `hideOthers` utility
+    // — observe its attributes too since it isn't a direct body child.
+    const main = document.querySelector("main.workspace-page");
+    const mainObserver =
+      main instanceof HTMLElement
+        ? new MutationObserver(stripAriaHidden)
+        : null;
+    if (main instanceof HTMLElement && mainObserver) {
+      mainObserver.observe(main, {
+        attributes: true,
+        attributeFilter: ["aria-hidden"],
+      });
+    }
+    return () => {
+      observer.disconnect();
+      mainObserver?.disconnect();
+    };
   }, []);
 
   // Measure the rendering offset between the sheet's bounding box and
