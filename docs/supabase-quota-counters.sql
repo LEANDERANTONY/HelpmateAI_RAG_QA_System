@@ -101,15 +101,23 @@ end;
 $$;
 
 -- Restrict execution to service_role. The RPC takes user_id as a
--- parameter (not auth.uid()), so granting EXECUTE to `authenticated`
--- would let any signed-in user call:
+-- parameter (not auth.uid()), so any role that can EXECUTE would let
+-- a caller burn another user's quota by passing a victim's id:
 --     supabase.rpc('increment_question_counter', {p_user_id: '<victim>'})
--- and burn another user's quota. The backend uses the service_role
--- key (HELPMATE_SUPABASE_SERVICE_ROLE_KEY) so it can call these
--- functions while client-side calls cannot.
+-- The backend uses the service_role key (HELPMATE_SUPABASE_SERVICE_ROLE_KEY)
+-- so it can call these functions while client-side calls cannot.
+--
+-- Supabase grants EXECUTE on public-schema functions to anon and
+-- authenticated by default, so all three of `public`, `authenticated`,
+-- AND `anon` must be revoked. (The first iteration of this migration
+-- missed `anon` and was patched by 20260514_revoke_anon_quota_rpcs;
+-- this file now includes the full revoke set so a fresh-DB redeploy
+-- is secure out of the box.)
 revoke all on function public.increment_question_counter(uuid) from public;
 revoke all on function public.increment_question_counter(uuid) from authenticated;
+revoke all on function public.increment_question_counter(uuid) from anon;
 revoke all on function public.increment_premium_counter(uuid) from public;
 revoke all on function public.increment_premium_counter(uuid) from authenticated;
+revoke all on function public.increment_premium_counter(uuid) from anon;
 grant execute on function public.increment_question_counter(uuid) to service_role;
 grant execute on function public.increment_premium_counter(uuid) to service_role;

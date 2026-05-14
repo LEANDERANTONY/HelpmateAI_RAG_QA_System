@@ -106,6 +106,14 @@ merging the series.
    client-side calls fail with permission-denied. If we ever want to
    expose this to authenticated clients (we shouldn't), add a
    `p_user_id = auth.uid()` check inside the function.
+   **[Partial gap caught post-merge, fixed]** The original migration
+   revoked from `public` and `authenticated` but missed `anon` — which
+   Supabase grants EXECUTE on public-schema functions by default. An
+   unauthenticated caller could have hit the same victim-quota-burn
+   attack via the public anon key. Closed by Supabase migration
+   `revoke_anon_quota_rpcs` (applied 20260514154130) AND backported
+   into `docs/supabase-quota-counters.sql` so a fresh-DB redeploy is
+   secure out of the box.
 
 6. **Return-type annotation `-> AskResponse | JSONResponse` on /qa**,
    same caveat as Step 2's upload handler. FastAPI handles it at
