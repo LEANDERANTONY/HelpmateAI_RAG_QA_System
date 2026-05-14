@@ -175,6 +175,32 @@ def _upload_local_to_storage(
         return None
 
 
+def _canonical_local_paths(
+    document: DocumentRecord, uploads_dir: Path
+) -> list[Path]:
+    """Compute the canonical local file paths for a document.
+
+    After ingest, files were renamed to `{document_id}{ext}` under
+    `uploads_dir` (see HelpmatePipeline.normalize_upload_paths). So even
+    when a DocumentRecord's source_path / viewable_pdf_path now hold
+    Supabase bucket keys, we can still recompute where the original
+    local copy lived: extension is whatever's at the end of the bucket
+    key (`.pdf` or `.docx`), and the stem is the document_id.
+
+    Returns a deduplicated list of Path candidates (source and viewable
+    if they have different suffixes; usually one path for PDF uploads
+    and two for DOCX uploads).
+    """
+    suffixes: set[str] = set()
+    for key in (document.source_path, document.viewable_pdf_path):
+        if not key:
+            continue
+        ext = Path(key).suffix.lower()
+        if ext:
+            suffixes.add(ext)
+    return [uploads_dir / f"{document.document_id}{ext}" for ext in suffixes]
+
+
 def migrate_one(
     *,
     document: DocumentRecord,
@@ -183,19 +209,30 @@ def migrate_one(
     cleanup_local: bool,
     counters: MigrationCounters,
     store: Any,
+    uploads_dir: Path,
 ) -> None:
     """Migrate a single DocumentRecord. Updates counters in place."""
     print(f"\n[{document.document_id}] {document.file_name}")
 
     # Already-migrated detection. We treat the source as authoritative —
     # if source_path is already a bucket key, the record was migrated on
-    # a prior run and we leave it alone (still attempt local cleanup if
-    # requested).
+    # a prior run. The upload step is a no-op; the cleanup step still
+    # runs if requested because we can derive the canonical local path
+    # from {uploads_dir}/{document_id}{ext}.
     if _is_bucket_key(document.source_path):
         print("  [ok] source_path is already a bucket key — skipping upload.")
         counters.already_migrated += 1
-        # No local cleanup possible if source_path is the bucket key
-        # itself — we don't know where the original local file lived.
+        if cleanup_local and apply:
+            for path in _canonical_local_paths(document, uploads_dir):
+                if path.exists():
+                    try:
+                        path.unlink()
+                        counters.cleaned_locals += 1
+                        print(f"  [del] removed local: {path}")
+                    except OSError as exc:
+                        logger.warning(
+                            "  ! failed to remove local %s: %s", path, exc
+                        )
         return
 
     owner_id = _owner_id_of(document)
@@ -361,6 +398,7 @@ def main() -> int:
                     cleanup_local=args.cleanup_local,
                     counters=counters,
                     store=store,
+                    uploads_dir=settings.uploads_dir,
                 )
             else:
                 # Dry-run path doesn't need a real storage client; the
@@ -372,6 +410,7 @@ def main() -> int:
                     cleanup_local=False,
                     counters=counters,
                     store=store,
+                    uploads_dir=settings.uploads_dir,
                 )
         except Exception as exc:
             counters.errors += 1
