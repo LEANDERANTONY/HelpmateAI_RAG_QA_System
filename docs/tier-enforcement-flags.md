@@ -115,6 +115,7 @@ merging the series.
    even though it's in `Settings`.** I added the new
    `HELPMATE_SUPABASE_QUOTA_COUNTERS_TABLE` for completeness; didn't
    backfill the missing one for run_traces (out of this PR's scope).
+   **[Resolved]** Backfilled in `chore/tier-enforcement-followups`.
 
 ## Step 4 — Tier-aware answer model (PR: feat/tier-aware-model)
 
@@ -218,6 +219,9 @@ merging the series.
 9. **`UPGRADE_URL` is hard-coded to `https://helpmateai.xyz/landing#pricing`.**
    Lives in `backend/quota.py`. If we ever rename the domain or split
    pricing onto its own page, change here only.
+   **[Resolved]** `chore/tier-enforcement-followups` reads the URL
+   from `HELPMATE_UPGRADE_URL` (default `https://helpmateai.xyz/pricing`,
+   matching the production landing where pricing is at `/pricing`).
 
 10. **Frontend tests deferred.** No unit tests on the toggle component
     yet — the workspace currently has no React-component test

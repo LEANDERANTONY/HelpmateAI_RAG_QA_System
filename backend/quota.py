@@ -10,7 +10,7 @@ render it without per-endpoint special cases:
       "tier":        "free" | "pro" | "business",
       "limit":       <int>,
       "current":     <int>,
-      "upgrade_url": "https://helpmateai.xyz/landing#pricing"
+      "upgrade_url": "https://helpmateai.xyz/pricing"
     }
 
 `quota_error_response` is the only way these errors get built in
@@ -28,6 +28,7 @@ short-circuit if a response comes back.
 from __future__ import annotations
 
 import logging
+import os
 from typing import Literal
 
 from fastapi.responses import JSONResponse
@@ -48,7 +49,11 @@ QuotaErrorCode = Literal[
 ]
 
 
-UPGRADE_URL = "https://helpmateai.xyz/landing#pricing"
+# Where 402 / 413 quota responses point clients to upgrade. Read once
+# at import time from HELPMATE_UPGRADE_URL so prod/staging/dev can each
+# point at the right surface; the default matches the production
+# landing page which serves pricing directly at /pricing.
+UPGRADE_URL = os.getenv("HELPMATE_UPGRADE_URL", "https://helpmateai.xyz/pricing")
 
 
 def quota_error_response(
