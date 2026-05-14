@@ -24,7 +24,7 @@ from backend.quota import (
 )
 from backend.quota_store import QuotaStore, build_quota_store
 from backend.store import build_api_record_store
-from backend.tiers import TIER_LIMITS, resolve_user_tier
+from backend.tiers import RETENTION_UNBOUNDED, TIER_LIMITS, resolve_user_tier
 from src.config import get_settings
 from src.evals.report_loader import get_latest_benchmark_report
 from src.pipeline import HelpmatePipeline
@@ -258,7 +258,33 @@ def _now() -> datetime:
 
 
 def _retention_delta():
+    """Legacy fallback delta — the ephemeral-workspace clock from the
+    env var. Used by callers that don't have a user (eval scripts,
+    sample-loader paths). The user-driven /qa + upload paths use
+    `_retention_delta_for_user` instead, which picks the per-tier
+    duration. See docs/tier-enforcement-flags.md.
+    """
     return timedelta(hours=_settings().workspace_retention_hours)
+
+
+def _retention_delta_for_user(user: AuthenticatedUser) -> timedelta | None:
+    """Per-tier retention duration applied at workspace-touch time.
+
+    Returns None for unbounded retention (Business tier) — callers
+    interpret None as "don't set expires_at", which keeps the sweeper
+    from ever deleting the workspace on age grounds.
+
+    Falls back to the env-var ephemeral delta only as a defensive
+    catch — every tier in TIER_LIMITS has retention_days set, so the
+    fallback path is unreachable under normal config.
+    """
+    tier = resolve_user_tier(user)
+    days = TIER_LIMITS[tier]["retention_days"]
+    if days == RETENTION_UNBOUNDED:
+        return None
+    if days <= 0:
+        return _retention_delta()
+    return timedelta(days=days)
 
 
 def _parse_timestamp(value: str | None) -> datetime | None:
@@ -279,11 +305,31 @@ def _document_expires_at(document: DocumentRecord) -> datetime | None:
 
 
 def _touch_document_workspace(document: DocumentRecord, user: AuthenticatedUser) -> DocumentRecord:
+    """Stamp owner + activity + (tier-aware) expires_at on the document.
+
+    Retention is per-tier from Step 6:
+      Free      → 30 days of inactivity before the sweeper deletes
+      Pro       → 365 days
+      Business  → unbounded (expires_at field is REMOVED entirely so
+                  the sweeper's `expires_at < now` check never fires)
+
+    Removing the field for Business — rather than setting a far-future
+    sentinel — keeps the sweep query simple and means a tier downgrade
+    later (Business → Pro) doesn't strand a 9999-year deadline on the
+    record. The next touch under the new tier resets the field cleanly.
+    """
     metadata = dict(document.metadata or {})
     now = _now()
     metadata[WORKSPACE_OWNER_KEY] = user.id
     metadata[WORKSPACE_LAST_ACTIVITY_KEY] = now.isoformat()
-    metadata[WORKSPACE_EXPIRES_AT_KEY] = (now + _retention_delta()).isoformat()
+    delta = _retention_delta_for_user(user)
+    if delta is None:
+        # Unbounded retention (Business). Strip any stale expires_at
+        # left over from a previous touch under a different tier so
+        # the sweeper treats this as never-expires.
+        metadata.pop(WORKSPACE_EXPIRES_AT_KEY, None)
+    else:
+        metadata[WORKSPACE_EXPIRES_AT_KEY] = (now + delta).isoformat()
     document.metadata = metadata
     return document
 

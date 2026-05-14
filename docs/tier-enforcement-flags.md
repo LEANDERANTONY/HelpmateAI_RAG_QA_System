@@ -233,6 +233,60 @@ merging the series.
     is deferred; it's a refactor of the existing pattern, not a Step
     5 concern.
 
-## Step 6 — Retention TTL sweeper
+## Step 6 — Retention TTL sweeper (PR: feat/tier-retention)
 
-(to be filled in as we ship)
+1. **One `expires_at` field, tier-based duration.** Re-interpreted the
+   brief's "they coexist" pragmatically: the per-tier retention
+   REPLACES the 24h delta inside `_touch_document_workspace` rather
+   than adding a parallel `_workspace_hard_expires_at` field. The
+   sweeper's existing "delete when `expires_at < now`" check works
+   unchanged. `workspace_retention_hours` env var stays in Settings
+   as a fallback for non-tiered callers (eval scripts via
+   `_retention_delta()` without a user).
+
+2. **Business tier removes `expires_at` from metadata entirely.**
+   Sentinel-free design: rather than a far-future timestamp (year
+   9999) that could outlive the tier sentinel constant, the field is
+   stripped on touch. The sweeper's `expires_at is None` short-circuit
+   handles "never delete" naturally. Tier downgrade (Business → Pro)
+   resets the field cleanly on the next touch.
+
+3. **Sweeper now routes deletions through FileStorage.** The existing
+   `pipeline.delete_workspace` unlinks LOCAL paths only, which is a
+   no-op for Supabase bucket keys. Added an inline
+   `_delete_storage_files(storage, document)` helper in
+   `backend/maintenance.py` that mirrors `main.py::_delete_storage_files`.
+   Two near-identical helpers; if a third caller appears, factor into
+   `backend/file_storage.py`.
+
+4. **`pipeline.delete_workspace` runs BEFORE FileStorage cleanup.** The
+   pipeline may need local files during teardown (cache invalidation,
+   run-trace bookkeeping) — running storage cleanup first would yank
+   them out from under it on the local backend. Order matters; the
+   test verifies it indirectly via mock-call sequence.
+
+5. **`_retention_delta_for_user` has a defensive fallback** to the env
+   var when `retention_days <= 0` (excluding the -1 RETENTION_UNBOUNDED
+   sentinel which is handled earlier). Unreachable under current
+   TIER_LIMITS (free/pro have positive day counts, business is -1),
+   but keeps the function total for future tiers that might land with
+   a quirky retention spec.
+
+6. **Sweeper tests mock the entire dependency tree.** `build_*`
+   factories monkey-patched at the maintenance-module level rather
+   than constructing real stores — the real LocalApiRecordStore +
+   LocalFileStorage need on-disk state that's painful to set up just
+   to verify which methods got called. Trade-off: tests don't catch
+   integration drift between the sweeper and the real stores. Tier 1
+   tests (run_traces sweep, cache file sweep) elsewhere in the suite
+   exercise those code paths against real impls.
+
+7. **Pre-existing sweep summary fields kept**: orphan_uploads_deleted,
+   orphan_index_dirs_deleted, etc. The new tier-retention behavior
+   changes WHEN `expired_workspaces_deleted` fires (longer windows)
+   but not WHAT the summary contains. Telemetry stays compatible.
+
+8. **No frontend change for Step 6.** Retention is a backend concern;
+   the user-visible signal is "your workspace expired" via the
+   existing 410 path in `_require_document_for_user`. The longer
+   windows just mean fewer expirations.

@@ -1,11 +1,13 @@
 from __future__ import annotations
 
 import json
+import logging
 import shutil
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
 
+from backend.file_storage import build_file_storage
 from backend.store import (
     WORKSPACE_EXPIRES_AT_KEY,
     build_api_record_store,
@@ -14,6 +16,9 @@ from src.config import Settings, get_settings
 from src.pipeline import HelpmatePipeline
 from src.schemas import DocumentRecord
 from src.traces import build_run_trace_store
+
+
+logger = logging.getLogger(__name__)
 
 
 @dataclass
@@ -45,11 +50,44 @@ def _safe_resolve(path: str | Path) -> Path:
     return Path(path).expanduser().resolve(strict=False)
 
 
+def _delete_storage_files(storage, document: DocumentRecord) -> None:
+    """Delete the document's source + viewable PDF via the configured
+    FileStorage backend. Local backend already cleaned the files
+    during pipeline.delete_workspace, so this is a no-op there.
+    Supabase backend needs this to remove the bucket objects.
+
+    Best-effort: a FileStorage outage shouldn't block the metadata
+    cleanup. Orphaned bucket objects can be cleaned up on a future
+    sweep. Mirrors main.py::_delete_storage_files (which runs during
+    the user-driven delete path)."""
+    keys: set[str] = set()
+    if document.source_path:
+        keys.add(document.source_path)
+    viewable = getattr(document, "viewable_pdf_path", None)
+    if viewable:
+        keys.add(viewable)
+    for key in keys:
+        try:
+            storage.delete(key)
+        except Exception as exc:
+            logger.warning(
+                "Sweeper FileStorage.delete failed for %s (%s): %s",
+                document.document_id,
+                key,
+                exc,
+            )
+
+
 def sweep_local_workspace_storage(settings: Settings | None = None) -> SweepSummary:
     settings = settings or get_settings()
     store = build_api_record_store(settings)
     trace_store = build_run_trace_store(settings)
     pipeline = HelpmatePipeline(settings)
+    # FileStorage handles bucket-object cleanup on the supabase
+    # backend. pipeline.delete_workspace unlinks LOCAL paths but is
+    # a no-op for bucket-keyed source_paths, so we route through the
+    # storage abstraction explicitly below.
+    file_storage = build_file_storage(settings)
     now = datetime.now(timezone.utc)
     summary = SweepSummary()
 
@@ -57,10 +95,19 @@ def sweep_local_workspace_storage(settings: Settings | None = None) -> SweepSumm
     active_fingerprints: set[str] = set()
 
     for document in store.list_documents():
+        # expires_at is set by _touch_document_workspace using the
+        # owner's tier retention (free 30d / pro 365d / business
+        # unbounded → field omitted). The sweep treats missing
+        # expires_at as "never delete" — Business-tier records flow
+        # through to the active-set whitelist below.
         expires_at = _document_expires_at(document)
         index_record = store.get_index(document.document_id)
         if expires_at is not None and expires_at <= now:
             pipeline.delete_workspace(document, index_record)
+            # Storage cleanup AFTER pipeline.delete_workspace because
+            # the pipeline path may still need to read local files
+            # during teardown (cache invalidation, run-trace cleanup).
+            _delete_storage_files(file_storage, document)
             if index_record is not None:
                 store.delete_index(document.document_id)
             store.delete_document(document.document_id)
