@@ -762,7 +762,11 @@ function AskBlock({
   function handleKeyDown(event: ReactKeyboardEvent<HTMLTextAreaElement>) {
     if ((event.metaKey || event.ctrlKey) && event.key === "Enter") {
       event.preventDefault();
-      if (canAsk && question.trim()) {
+      // Mirror the submit-button guard: don't fire ⌘↵ while a previous
+      // QA is still streaming. Without this the textarea (now enabled
+      // during isLoading so users can compose their next question)
+      // would let keyboard-submit slip past the loading gate.
+      if (canAsk && question.trim() && !isLoading) {
         onAsk();
       }
     }
@@ -772,13 +776,42 @@ function AskBlock({
     <div className={`h-ask ${askFocused ? "focal-glow" : ""} ${isLoading ? "loading" : ""}`}>
       <p className="h-ask-label">Ask</p>
       <textarea
-        disabled={!canAsk || isLoading}
+        // Intentionally NOT disabled during isLoading. The submit
+        // button below is disabled while streaming, but the textarea
+        // stays editable so the user can compose their next question
+        // in the same gesture flow — important on mobile, where iOS
+        // refuses to surface the soft keyboard for a `disabled` input
+        // (so tapping the field during streaming was a silent no-op).
+        // Concurrent submits are prevented by the button's disabled
+        // gate plus the matching isLoading check in handleKeyDown.
+        disabled={!canAsk}
         id="ask-textarea"
         onBlur={() => onFocusChange(false)}
         onChange={(event) => onQuestionChange(event.target.value)}
         onFocus={() => onFocusChange(true)}
         onKeyDown={handleKeyDown}
-        placeholder={isLoading ? "Generating answer..." : placeholder}
+        // iOS Safari only surfaces the soft keyboard when a `.focus()`
+        // call lands inside a user-gesture window (touchstart →
+        // touchend). In Read Mode the textarea is rendered inside a
+        // `position: sticky` + `overflow: auto` chain that confuses
+        // iOS's tap → focus routing: the tap fires touchstart on a
+        // higher-stack element (sheet chrome at compact, answer card
+        // at split) and the textarea never gets the default focus
+        // dispatch. Adding an explicit onTouchStart handler forces
+        // focus on the textarea synchronously inside the gesture
+        // window, regardless of where the browser's hit-test thinks
+        // the touch landed. The user already aimed for the textarea
+        // (it's what they're tapping on), so this matches intent. On
+        // desktop / pointer-only devices this never fires.
+        onTouchStart={(event) => {
+          event.currentTarget.focus();
+        }}
+        // Always show the normal placeholder. The button label (spinner
+        // + "Generating") is enough loading feedback; using the
+        // placeholder slot for status text falsely signals that the
+        // field is locked, which contradicts the now-enabled-during-
+        // loading behavior above.
+        placeholder={placeholder}
         value={question}
       />
       <div className="h-ask-row">

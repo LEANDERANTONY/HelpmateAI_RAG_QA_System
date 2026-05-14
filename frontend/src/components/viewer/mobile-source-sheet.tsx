@@ -98,10 +98,10 @@ export function MobileSourceSheet() {
     return () => window.clearTimeout(t);
   }, []);
 
-  // Radix Dialog (vaul's underlying primitive) layers two non-modal
+  // Radix Dialog (vaul's underlying primitive) layers THREE non-modal
   // leaks on top of the page even when we pass `modal={false}`, and
-  // both must be cleaned up for the chat textarea to remain typeable
-  // while the sheet is open:
+  // all three must be cleaned up for the chat textarea to remain
+  // typeable while the sheet is open:
   //
   //   1. `aria-hidden="true"` on the portal's siblings — including
   //      <main class="workspace-page">. iOS Chrome and some Android
@@ -118,9 +118,24 @@ export function MobileSourceSheet() {
   //      synchronously. With the guards removed, `ta.focus()` works
   //      and the user can type freely.
   //
-  // A single MutationObserver on <body> covers both: it strips
-  // aria-hidden from any sibling that gets it (covers the workspace
-  // MAIN) and removes any focus-guard span that gets inserted.
+  //   3. The Radix FocusScope `focusin` listener on `document`. This
+  //      is the one that actually does the trap — when focus lands on
+  //      an element outside the scope (our chat textarea), the listener
+  //      fires `focus(lastFocusedInsideScope)` and yanks focus back to
+  //      the drawer root within the same tick. We observed it live in
+  //      DevTools: `focusin → textarea` is immediately followed by
+  //      `focus → DIV.h-mobile-sheet`. Stripping the guard sentinels
+  //      (item 2) doesn't help here because the listener is bound to
+  //      `document`, not the guards. The third effect below installs
+  //      a capture-phase focusin interceptor on `document` that runs
+  //      before Radix's listener and stops propagation specifically
+  //      for the chat textarea — so Radix never sees the event and
+  //      never bounces focus back.
+  //
+  // A single MutationObserver on <body> covers items 1 and 2: it
+  // strips aria-hidden from any sibling that gets it (covers the
+  // workspace MAIN) and removes any focus-guard span that gets
+  // inserted.
   useEffect(() => {
     const stripGuards = () => {
       document
@@ -161,6 +176,36 @@ export function MobileSourceSheet() {
     return () => {
       observer.disconnect();
       mainObserver?.disconnect();
+    };
+  }, []);
+
+  // Defeat Radix FocusScope's focus trap (see item 3 in the leak list
+  // above). Radix binds a non-capture `focusin` listener on `document`
+  // that re-focuses the drawer root whenever focus lands outside the
+  // scope. We bind a capture-phase listener that runs first, and for
+  // focusin events targeting the chat textarea we call
+  // stopImmediatePropagation — so Radix's bubble-phase listener never
+  // fires for that target, and focus stays where the user put it.
+  //
+  // We only intercept the textarea by id so all other focus movement
+  // (close button, page-nav input inside the drawer, PDF.js text
+  // layer) still flows normally and Radix's trap remains intact for
+  // anything that isn't the chat input.
+  //
+  // Capture phase is REQUIRED — Radix's listener is bubble-phase, and
+  // capture-phase listeners on `document` always fire before bubble-
+  // phase listeners on `document` for the same event. Without capture
+  // we'd race Radix's handler order and lose.
+  useEffect(() => {
+    const intercept = (event: FocusEvent) => {
+      const target = event.target;
+      if (target instanceof HTMLElement && target.id === "ask-textarea") {
+        event.stopImmediatePropagation();
+      }
+    };
+    document.addEventListener("focusin", intercept, true);
+    return () => {
+      document.removeEventListener("focusin", intercept, true);
     };
   }, []);
 
