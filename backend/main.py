@@ -13,6 +13,7 @@ from fastapi.responses import FileResponse, JSONResponse, RedirectResponse
 from pydantic import BaseModel
 
 from backend.auth import AuthenticatedUser, require_authenticated_user
+from backend.billing_routes import router as billing_router
 from backend.file_storage import FileStorage, build_file_storage
 from backend.quota import (
     UPGRADE_URL,
@@ -168,6 +169,14 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
+
+# Mount the Lemon Squeezy billing routes (POST /webhooks/lemonsqueezy +
+# POST /billing/portal). Defined in backend/billing_routes.py so the
+# webhook signature verification + customer-portal API helpers stay
+# out of this 600-line main module. Both routes degrade gracefully
+# (503) when HELPMATE_LEMONSQUEEZY_* env vars are unset, so this
+# mount is safe in environments without LS configured.
+app.include_router(billing_router)
 
 
 @lru_cache
