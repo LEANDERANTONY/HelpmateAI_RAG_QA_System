@@ -225,7 +225,12 @@ export function getCheckoutUrl(
       ? LEMONSQUEEZY_VARIANT_PRO
       : LEMONSQUEEZY_VARIANT_BUSINESS;
   if (!variant) return "";
-  const base = `https://${LEMONSQUEEZY_STORE_ID}.lemonsqueezy.com/buy/${variant}`;
+  // Lemon Squeezy hosted-checkout URL path is `/checkout/buy/<variant>`
+  // per the official docs. An earlier draft of this scaffold used
+  // `/buy/<variant>` which is a non-checkout endpoint and would have
+  // broken every paid conversion at launch (Codex P1 finding on
+  // PR #4, May 2026).
+  const base = `https://${LEMONSQUEEZY_STORE_ID}.lemonsqueezy.com/checkout/buy/${variant}`;
   if (!userId) return base;
   // LS expects checkout fields as URL-encoded query params; the
   // bracket syntax is the documented form for nested fields.
