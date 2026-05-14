@@ -215,17 +215,41 @@ class HelpmatePipeline:
         del document_id
         return self.retriever.retrieve(fingerprint=fingerprint, question=question)
 
-    def generate_answer(self, document_id: str, question: str, retrieval_result: RetrievalResult) -> AnswerResult:
+    def generate_answer(
+        self,
+        document_id: str,
+        question: str,
+        retrieval_result: RetrievalResult,
+        *,
+        model_override: str | None = None,
+    ) -> AnswerResult:
         del document_id
-        return self.generator.generate(question=question, retrieval_result=retrieval_result)
+        return self.generator.generate(
+            question=question,
+            retrieval_result=retrieval_result,
+            model_override=model_override,
+        )
 
-    def answer_question(self, document: DocumentRecord, index_record: IndexRecord, question: str) -> AnswerResult:
+    def answer_question(
+        self,
+        document: DocumentRecord,
+        index_record: IndexRecord,
+        question: str,
+        *,
+        model_override: str | None = None,
+    ) -> AnswerResult:
+        # The cache key must include the actual model used — otherwise a
+        # free-tier nano answer would be served to a pro-tier user who
+        # asked the same question, sandbagging the paid tier's quality.
+        # Resolve once and reuse for both the cache key and the
+        # downstream generator call.
+        active_model = model_override or self.settings.answer_model
         cache_key = self.answer_cache.build_key(
             fingerprint=document.fingerprint,
             question=question,
             retrieval_version=self.settings.retrieval_version,
             generation_version=self.settings.generation_version,
-            model_name=self.settings.answer_model,
+            model_name=active_model,
         )
         cached = self.answer_cache.get(cache_key)
         if cached is not None:
@@ -234,7 +258,12 @@ class HelpmatePipeline:
 
         retrieval_result = self.retrieve_evidence(document.document_id, document.fingerprint, question)
         retrieval_result = self.evidence_selector.select(question, retrieval_result)
-        answer = self.generate_answer(document.document_id, question, retrieval_result)
+        answer = self.generate_answer(
+            document.document_id,
+            question,
+            retrieval_result,
+            model_override=model_override,
+        )
         if not answer.supported and self.retriever.should_recover_after_abstention(question, retrieval_result):
             recovered_retrieval = self.retriever.recover_after_abstention(
                 fingerprint=document.fingerprint,
@@ -243,7 +272,12 @@ class HelpmatePipeline:
             )
             if recovered_retrieval.retrieval_plan.get("abstention_recovery_applied"):
                 retrieval_result = self.evidence_selector.select(question, recovered_retrieval)
-                answer = self.generate_answer(document.document_id, question, retrieval_result)
+                answer = self.generate_answer(
+            document.document_id,
+            question,
+            retrieval_result,
+            model_override=model_override,
+        )
                 if answer.supported:
                     verifier_status, verifier_reason = self.generator.verify_support_status(
                         question=question,

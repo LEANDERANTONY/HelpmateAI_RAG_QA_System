@@ -116,9 +116,50 @@ merging the series.
    `HELPMATE_SUPABASE_QUOTA_COUNTERS_TABLE` for completeness; didn't
    backfill the missing one for run_traces (out of this PR's scope).
 
-## Step 4 — Tier-aware answer model
+## Step 4 — Tier-aware answer model (PR: feat/tier-aware-model)
 
-(to be filled in as we ship)
+1. **`settings.answer_model` is preserved as the fallback.** Per brief —
+   eval scripts and any unauthenticated context still resolve to the env
+   var. The `/qa` handler is the one place that overrides it (passing
+   `TIER_LIMITS[tier]["answer_model"]`). When payment integration ships,
+   only `resolve_user_tier` changes; this plumbing keeps working.
+
+2. **Cache key includes the active model.** Without this, a free-tier
+   nano answer would be served to a pro-tier user asking the same
+   question (sandbagging the paid tier). The cache key formula is
+   `(fingerprint, question, retrieval_version, generation_version,
+   model_name)` — `model_name` now reflects the override when present.
+   Side effect: free + pro have separate cache namespaces, so cache
+   hit rates per tier are independent. Worth tracking when telemetry
+   lands.
+
+3. **`AnswerGenerator.verify_supported_answer` was NOT updated to use
+   model_override.** It still reads `self.settings.answer_model` directly
+   (line 319 in src/generation/service.py). The verifier is a separate
+   guardrail concern — its purpose is to double-check the primary
+   answer's claim of support; using the SAME tier-specific model would
+   defeat the verifier's independent-second-opinion purpose. If we ever
+   want tier-aware verification (e.g., business gets a smarter
+   verifier), that's a follow-up.
+
+4. **Recovery-path `generate_answer` calls also receive model_override.**
+   The pipeline's abstention-recovery branch (when initial answer is
+   unsupported, retrieval is re-tried, generation runs again) passes
+   model_override through too — otherwise the second-attempt answer
+   would silently degrade to settings.answer_model.
+
+5. **`verify_support_status` (separate from `verify_supported_answer`)
+   keys off `support_status_verifier_model`** — not `answer_model`. So
+   it's unaffected by the model_override plumbing. The two verifier
+   methods have confusingly similar names; might be worth renaming in
+   a future cleanup PR.
+
+6. **One existing test broke and was fixed**:
+   `test_run_traces.py::test_recovery_verifier_can_keep_recovered_answer_as_partial`
+   was monkey-patching `generate_answer` with `lambda *_:` which didn't
+   accept the new `model_override=` keyword arg. Updated to
+   `lambda *_args, **_kwargs:` for forward-compat with future signature
+   changes too.
 
 ## Step 5 — Premium answers + frontend toggle
 

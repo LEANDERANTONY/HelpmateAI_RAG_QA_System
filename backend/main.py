@@ -846,10 +846,15 @@ def answer_question(
     if quota_response is not None:
         return quota_response
 
+    # Tier-aware model selection: free → gpt-5.4-nano, paid →
+    # gpt-5.4-mini. The pipeline's cache key incorporates the active
+    # model so a free-tier nano answer doesn't get served to a
+    # pro-tier user (and vice versa).
     answer: AnswerResult = _pipeline().answer_question(
         document,
         index_record,
         question,
+        model_override=limits["answer_model"],
     )
     # Increment AFTER successful generation. Pipeline raised → we
     # return here via the exception path with no increment; user is

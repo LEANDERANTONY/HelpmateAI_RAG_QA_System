@@ -164,7 +164,14 @@ def test_recovery_verifier_can_keep_recovered_answer_as_partial(tmp_path, monkey
     monkeypatch.setattr(pipeline.answer_cache, "set", lambda *_, **__: None)
     monkeypatch.setattr(pipeline, "retrieve_evidence", lambda *_: initial_retrieval)
     monkeypatch.setattr(pipeline.evidence_selector, "select", lambda _question, result: result)
-    monkeypatch.setattr(pipeline, "generate_answer", lambda *_: generated_answers.pop(0))
+    # generate_answer's signature now accepts a `model_override` keyword
+    # arg (Step 4 of tier enforcement). The stub ignores all args so
+    # this test stays decoupled from future signature evolution.
+    monkeypatch.setattr(
+        pipeline,
+        "generate_answer",
+        lambda *_args, **_kwargs: generated_answers.pop(0),
+    )
     monkeypatch.setattr(pipeline.retriever, "should_recover_after_abstention", lambda *_: True)
     monkeypatch.setattr(pipeline.retriever, "recover_after_abstention", lambda **_: recovered_retrieval)
     monkeypatch.setattr(

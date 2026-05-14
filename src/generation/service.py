@@ -190,7 +190,19 @@ class AnswerGenerator:
             query_used=question,
         )
 
-    def generate(self, question: str, retrieval_result: RetrievalResult) -> AnswerResult:
+    def generate(
+        self,
+        question: str,
+        retrieval_result: RetrievalResult,
+        *,
+        model_override: str | None = None,
+    ) -> AnswerResult:
+        # model_override lets the caller (typically the /qa handler
+        # via the pipeline) pick a model based on the requesting user's
+        # tier — free → gpt-5.4-nano, pro/business → gpt-5.4-mini.
+        # When None, falls back to settings.answer_model so eval
+        # scripts and other unauthenticated contexts still work.
+        model_name = model_override or self.settings.answer_model
         evidence = retrieval_result.candidates
         if retrieval_result.evidence_status == "unsupported":
             return AnswerResult(
@@ -221,7 +233,7 @@ class AnswerGenerator:
         prompt = build_grounded_prompt(question, evidence, summary_mode=summary_mode)
         try:
             response = self.client.chat.completions.create(
-                model=self.settings.answer_model,
+                model=model_name,
                 messages=[
                     {"role": "system", "content": "You answer questions using only supplied document evidence."},
                     {"role": "user", "content": prompt},
@@ -296,7 +308,7 @@ class AnswerGenerator:
             support_status=support_status,
             support_summary=_normalize_support_summary(support_summary_raw, support_status=support_status),
             cache_status=CacheStatus(),
-            model_name=self.settings.answer_model,
+            model_name=model_name,
             citation_details=citation_details,
             retrieval_notes=retrieval_result.strategy_notes,
             note=reason_text or ("Evidence quality was weak, so the answer should be treated cautiously." if retrieval_result.weak_evidence else None),
