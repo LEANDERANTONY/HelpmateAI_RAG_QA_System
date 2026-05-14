@@ -67,9 +67,54 @@ merging the series.
    branch). Worth keeping an eye on if OpenAPI schema generation matters
    for the frontend's API types.
 
-## Step 3 — Monthly question quota
+## Step 3 — Monthly question quota (PR: feat/question-quota)
 
-(to be filled in as we ship)
+1. **Pre-check + post-increment, not atomic-pre-increment.** The brief
+   showed both patterns; I went with the "increment AFTER successful
+   generation" recommendation rather than the example's "increment then
+   check". Trade-off: a small race window where two concurrent /qa
+   requests at cap-1 can both pre-check pass and both run pipeline,
+   producing N+1 actual answers on a cap of N. Counter ends at N+1 and
+   subsequent calls reject. Accepted because the alternative (atomic
+   pre-increment + rollback on failure) is meaningfully more complex
+   for no real-world benefit at our scale.
+
+2. **Pipeline failure does NOT decrement.** Per brief, the increment only
+   runs on success — pipeline raises → no increment, user can retry. We
+   don't have a "rollback on failure" path because we never incremented
+   in the first place. Cleaner than the example's atomic-then-undo flow.
+
+3. **`LocalQuotaStore` uses a single JSON file with read-modify-write,
+   no locking.** Fine for dev/tests (single-process). Production runs
+   `SupabaseQuotaStore` which uses the atomic RPC. Don't deploy the
+   local backend in prod (it's already the wrong choice for state
+   anyway — `state_store_backend=supabase` is the production setting).
+
+4. **`current_period_start()` accepts an optional `now` param for tests
+   but is called as `current_period_start()` everywhere in production.**
+   The Local store's month-rollover test monkey-patches the function
+   instead of injecting `now`. If we ever add a "set quota period" admin
+   tool, that's the seam.
+
+5. **RPC functions are SECURITY DEFINER + service_role only.** Caught
+   while drafting these notes: my initial migration granted EXECUTE to
+   `authenticated`, which would have let any signed-in user call
+   `supabase.rpc('increment_question_counter', {p_user_id: '<victim>'})`
+   to burn another user's quota. Fixed in the same migration — now
+   granted to `service_role` only. The backend uses the service-role
+   key for Supabase access, so backend-driven increments still work;
+   client-side calls fail with permission-denied. If we ever want to
+   expose this to authenticated clients (we shouldn't), add a
+   `p_user_id = auth.uid()` check inside the function.
+
+6. **Return-type annotation `-> AskResponse | JSONResponse` on /qa**,
+   same caveat as Step 2's upload handler. FastAPI handles it at
+   runtime; OpenAPI schema may not reflect both branches.
+
+7. **`HELPMATE_SUPABASE_RUN_TRACES_TABLE` was missing from `.env.example`
+   even though it's in `Settings`.** I added the new
+   `HELPMATE_SUPABASE_QUOTA_COUNTERS_TABLE` for completeness; didn't
+   backfill the missing one for run_traces (out of this PR's scope).
 
 ## Step 4 — Tier-aware answer model
 

@@ -42,6 +42,7 @@ QuotaErrorCode = Literal[
     "quota_exceeded",
     "file_too_large",
     "doc_count_cap",
+    "question_quota_exhausted",
 ]
 
 
@@ -149,6 +150,41 @@ def check_file_size_cap(
         tier=tier,
         limit=cap,
         current=file_size,
+    )
+
+
+def check_question_quota(
+    *,
+    questions_used: int,
+    tier: Tier,
+    limits: TierLimits | None = None,
+) -> JSONResponse | None:
+    """402 reject when the user has consumed their monthly question quota.
+
+    `questions_used` is the user's current question count for the
+    calendar month (UTC). Reject when used >= cap — at cap means the
+    next question would push past, so we don't run the pipeline.
+
+    Quota windows reset at the first of the month (UTC). The
+    helpmate_quota_counters table's (user_id, period_start) primary
+    key gives us a fresh row on Nov 1 / Dec 1 / etc. — no application
+    code needs to schedule a "reset".
+    """
+    if limits is None:
+        limits = TIER_LIMITS[tier]
+    cap = limits["questions_per_month"]
+    if questions_used < cap:
+        return None
+    return quota_error_response(
+        status_code=402,
+        code="question_quota_exhausted",
+        detail=(
+            f"You've used all {cap} questions in this month's quota. "
+            "Quota resets on the 1st (UTC) — or upgrade for more."
+        ),
+        tier=tier,
+        limit=cap,
+        current=questions_used,
     )
 
 

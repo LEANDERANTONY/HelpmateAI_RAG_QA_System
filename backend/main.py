@@ -14,7 +14,13 @@ from pydantic import BaseModel
 
 from backend.auth import AuthenticatedUser, require_authenticated_user
 from backend.file_storage import FileStorage, build_file_storage
-from backend.quota import check_content_length_present, check_doc_count_cap, check_file_size_cap
+from backend.quota import (
+    check_content_length_present,
+    check_doc_count_cap,
+    check_file_size_cap,
+    check_question_quota,
+)
+from backend.quota_store import QuotaStore, build_quota_store
 from backend.store import build_api_record_store
 from backend.tiers import TIER_LIMITS, resolve_user_tier
 from src.config import get_settings
@@ -138,6 +144,13 @@ def _pipeline() -> HelpmatePipeline:
 @lru_cache
 def _store() -> Any:
     return build_api_record_store(_settings())
+
+
+@lru_cache
+def _quota_store() -> QuotaStore:
+    # Local backend for HELPMATE_STATE_STORE_BACKEND=local (JSON file at
+    # data/api_state/quota_counters.json), Supabase otherwise (atomic RPC).
+    return build_quota_store(_settings())
 
 
 @lru_cache
@@ -800,17 +813,49 @@ def get_document_file(
 def answer_question(
     payload: AskRequest,
     user: AuthenticatedUser = Depends(require_authenticated_user),
-) -> AskResponse:
+) -> AskResponse | JSONResponse:
     document = _require_document_for_user(payload.document_id, user)
     index_record = _require_index(payload.document_id)
     question = payload.question.strip()
     if not question:
         raise HTTPException(status_code=400, detail="Question cannot be empty.")
+
+    # Monthly question quota — pre-check + post-increment-on-success.
+    #
+    # Pre-check is a read-only count: if the user is already at their
+    # tier's cap we reject 402 without running the pipeline (no point
+    # paying OpenAI/Chroma cost just to deny the answer).
+    #
+    # Post-increment uses the atomic RPC (`increment_question_counter`)
+    # on the Supabase backend so two concurrent /qa requests can't
+    # both squeeze through the pre-check at N-1 and both run — the
+    # second atomic increment returns N+1 and we never run pipeline.
+    #
+    # Order: pre-check → pipeline → atomic increment. Pipeline failures
+    # propagate before the increment runs, so a failed answer doesn't
+    # consume the user's quota. See docs/tier-enforcement-flags.md for
+    # the small race window we accept on the local backend.
+    tier = resolve_user_tier(user)
+    limits = TIER_LIMITS[tier]
+    counter = _quota_store().get_counter(user.id)
+    quota_response = check_question_quota(
+        questions_used=counter.questions,
+        tier=tier,
+        limits=limits,
+    )
+    if quota_response is not None:
+        return quota_response
+
     answer: AnswerResult = _pipeline().answer_question(
         document,
         index_record,
         question,
     )
+    # Increment AFTER successful generation. Pipeline raised → we
+    # return here via the exception path with no increment; user is
+    # not charged for a failed answer.
+    _quota_store().increment_questions(user.id)
+
     _save_touched_document(document, user)
     return AskResponse(answer=answer.to_dict())
 
