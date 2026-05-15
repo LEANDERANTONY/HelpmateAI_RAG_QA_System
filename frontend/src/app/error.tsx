@@ -1,5 +1,6 @@
 "use client";
 
+import * as Sentry from "@sentry/nextjs";
 import { useEffect } from "react";
 
 type ErrorPageProps = {
@@ -9,6 +10,13 @@ type ErrorPageProps = {
 
 export default function ErrorPage({ error, reset }: ErrorPageProps) {
   useEffect(() => {
+    // Belt-and-suspenders: the App Router's onRequestError hook in
+    // ``instrumentation.ts`` already forwards uncaught Server
+    // Component errors to Sentry, but client-side rendering errors
+    // surface here and need explicit capture to attach the React
+    // component stack from the error boundary.
+    Sentry.captureException(error);
+    // eslint-disable-next-line no-console
     console.error(error);
   }, [error]);
 

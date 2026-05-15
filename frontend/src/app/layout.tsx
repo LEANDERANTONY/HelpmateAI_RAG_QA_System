@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { DM_Sans, Geist_Mono, Space_Grotesk } from "next/font/google";
+import { PostHogProvider } from "@/components/posthog-provider";
 import { Toaster } from "@/components/toaster";
 import "./globals.css";
 
@@ -40,7 +41,7 @@ export default function RootLayout({
       className={`${dmSans.variable} ${spaceGrotesk.variable} ${geistMono.variable} h-full scroll-smooth antialiased`}
     >
       <body className="min-h-full flex flex-col">
-        {children}
+        <PostHogProvider>{children}</PostHogProvider>
         <Toaster />
         <Analytics />
         <SpeedInsights />

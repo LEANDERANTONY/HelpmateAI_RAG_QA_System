@@ -216,6 +216,22 @@ class Settings:
     docx_pdf_conversion_timeout: int = _env_int("HELPMATE_DOCX_PDF_TIMEOUT", 60)
     docx_pdf_soffice_binary: str = _env_str("HELPMATE_DOCX_PDF_SOFFICE", "soffice")
 
+    # Observability — Sentry + PostHog. All four are optional; when the
+    # DSN / API key is empty the observability bootstrap is a no-op (no
+    # network, no SDK init), so dev environments and CI don't have to
+    # carry the secrets. ``environment`` and ``release`` are used by
+    # both vendors to slice issues / events by deploy. ``release``
+    # defaults to the retrieval_version when unset so a forgotten
+    # SENTRY_RELEASE still groups events by something stable.
+    sentry_dsn: str | None = field(default_factory=lambda: os.getenv("SENTRY_DSN") or None)
+    sentry_traces_sample_rate: float = field(default_factory=lambda: _env_float("SENTRY_TRACES_SAMPLE_RATE", 0.1))
+    sentry_profiles_sample_rate: float = field(default_factory=lambda: _env_float("SENTRY_PROFILES_SAMPLE_RATE", 0.0))
+    sentry_send_default_pii: bool = field(default_factory=lambda: _env_bool("SENTRY_SEND_DEFAULT_PII", False))
+    posthog_api_key: str | None = field(default_factory=lambda: os.getenv("POSTHOG_API_KEY") or None)
+    posthog_host: str = field(default_factory=lambda: _env_str("POSTHOG_HOST", "https://eu.i.posthog.com"))
+    observability_environment: str = field(default_factory=lambda: _env_str("HELPMATE_ENVIRONMENT", _env_str("ENVIRONMENT", "development")))
+    observability_release: str | None = field(default_factory=lambda: os.getenv("SENTRY_RELEASE") or None)
+
     def __post_init__(self) -> None:
         uploads_dir = _env_path("HELPMATE_UPLOADS_DIR", self.data_dir / "uploads")
         indexes_dir = _env_path("HELPMATE_INDEXES_DIR", self.data_dir / "indexes")

@@ -3,10 +3,11 @@ from __future__ import annotations
 import asyncio
 import logging
 import tempfile
+from contextlib import asynccontextmanager
 from functools import lru_cache
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
-from typing import Any
+from typing import Any, AsyncIterator
 
 from fastapi import Depends, FastAPI, File, HTTPException, Request, UploadFile
 from fastapi.middleware.cors import CORSMiddleware
@@ -21,6 +22,11 @@ from backend.feedback_store import (
     build_feedback_store,
 )
 from backend.file_storage import FileStorage, build_file_storage
+from backend.observability import (
+    capture_event,
+    initialize_observability,
+    shutdown_observability,
+)
 from backend.quota import (
     UPGRADE_URL,
     check_content_length_present,
@@ -222,13 +228,40 @@ class TranscribeResponse(BaseModel):
     duration_seconds: float
 
 
+settings = get_settings()
+
+# Initialize Sentry + PostHog BEFORE ``FastAPI()`` so Sentry's ASGI
+# middleware wraps the app instance at construction time. Both are
+# no-ops when their respective DSN / API key env vars are unset, so
+# the order is safe in environments that haven't wired the
+# integration on yet (local dev, CI, the test suite). See
+# ``backend/observability.py`` for the bootstrap details.
+initialize_observability(settings)
+
+
+@asynccontextmanager
+async def _lifespan(app: FastAPI) -> AsyncIterator[None]:
+    # ``yield`` is the boundary: startup happens above (we already
+    # initialized observability at import time, so there's no setup
+    # work to do here), shutdown happens below.
+    try:
+        yield
+    finally:
+        # Flush the PostHog buffer on graceful termination. PostHog also
+        # registers its own atexit handler, but explicit drain via lifespan
+        # ensures buffered events leave the process even when the worker
+        # is killed by a signal that the interpreter atexit chain doesn't
+        # reach (eg. SIGTERM on Vercel / a container redeploy).
+        shutdown_observability()
+
+
 app = FastAPI(
     title="HelpmateAI API",
     version="0.1.0",
     description="Thin FastAPI boundary over the existing HelpmateAI RAG core.",
+    lifespan=_lifespan,
 )
 
-settings = get_settings()
 cors_origins = list(settings.cors_origins)
 allow_all_origins = "*" in cors_origins
 
@@ -666,6 +699,25 @@ def health() -> HealthResponse:
     )
 
 
+@app.get("/health/sentry-debug")
+def sentry_debug() -> None:
+    """Raise an unhandled exception so Sentry sees the issue end-to-end.
+
+    Used once at deploy time to confirm the DSN, environment, and
+    release tag are wired. The route returns no JSON — Sentry's
+    FastAPI integration catches the raise, ships the event, and
+    FastAPI's default 500 handler returns "Internal Server Error" to
+    the caller. There is intentionally no auth on this route: it must
+    be callable from anywhere with curl. Remove or gate it behind a
+    feature flag if your threat model objects.
+    """
+    # ``division by zero`` is the canonical Sentry-tutorial sample;
+    # keeping it deliberately recognizable so anyone reading the issue
+    # title in Sentry knows it's a smoke test, not a real bug.
+    division_by_zero = 1 / 0  # noqa: F841 — intentional crash for Sentry verification
+    return None
+
+
 @app.post("/documents/upload", response_model=DocumentBundleResponse)
 async def upload_document(
     request: Request,
@@ -1101,7 +1153,26 @@ def answer_question(
         _quota_store().increment_premium(user.id)
 
     _save_touched_document(document, user)
-    return AskResponse(answer=answer.to_dict())
+
+    # PostHog event — server-side capture so the analytics dashboard
+    # sees the same /qa volume the user actually pays for, including
+    # API-only callers that never hit the browser. The event name
+    # mirrors the FE's "asked_question" convention so funnels join
+    # cleanly. No question text in properties (PII).
+    answer_dict = answer.to_dict()
+    capture_event(
+        distinct_id=user.id,
+        event="qa_answered",
+        properties={
+            "tier": tier,
+            "premium": bool(payload.premium),
+            "model": active_model,
+            "document_id": payload.document_id,
+            "trace_id": answer_dict.get("trace_id"),
+            "support_status": answer_dict.get("support_status"),
+        },
+    )
+    return AskResponse(answer=answer_dict)
 
 
 @app.post("/feedback", response_model=FeedbackResponse)
@@ -1154,6 +1225,17 @@ def submit_feedback(
             status_code=503,
             detail="Feedback couldn't be saved. Please try again.",
         ) from exc
+
+    capture_event(
+        distinct_id=user.id,
+        event="feedback_submitted",
+        properties={
+            "rating": payload.rating,
+            "surface": surface,
+            "trace_id": trace_id,
+            "has_comment": bool(comment),
+        },
+    )
 
     return FeedbackResponse(
         feedback_id=record.feedback_id,

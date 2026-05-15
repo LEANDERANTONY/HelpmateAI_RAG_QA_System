@@ -19,6 +19,13 @@ dependencies = [
     "supabase>=2.10,<3",
     "uvicorn>=0.30,<1",
     "pdfplumber>=0.11,<1",
+    # Observability — Sentry for error tracking + tracing, PostHog for
+    # product analytics & server-side event capture. Both clients are
+    # no-ops when their DSN / API key env var is unset, so adding them
+    # to the runtime image is safe even in environments that haven't
+    # turned the integration on yet (eg. local dev, CI).
+    "sentry-sdk[fastapi]>=2.18,<3",
+    "posthog>=3.7,<4",
 ]
 
 [dependency-groups]

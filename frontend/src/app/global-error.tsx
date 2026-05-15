@@ -1,5 +1,6 @@
 "use client";
 
+import * as Sentry from "@sentry/nextjs";
 import { useEffect } from "react";
 
 type GlobalErrorPageProps = {
@@ -9,6 +10,13 @@ type GlobalErrorPageProps = {
 
 export default function GlobalErrorPage({ error, reset }: GlobalErrorPageProps) {
   useEffect(() => {
+    // ``global-error.tsx`` is the very last error boundary in the App
+    // Router; an error reaching here means the root layout itself
+    // threw and the regular ``error.tsx`` never mounted. Capture it
+    // explicitly — Sentry's auto-instrumentation can miss this code
+    // path because the React tree was never rendered.
+    Sentry.captureException(error);
+    // eslint-disable-next-line no-console
     console.error(error);
   }, [error]);
 

@@ -10,12 +10,14 @@
     "postinstall": "node scripts/copy-pdfjs-worker.mjs"
   },
   "dependencies": {
+    "@sentry/nextjs": "^10.53.0",
     "@supabase/ssr": "^0.10.2",
     "@supabase/supabase-js": "^2.103.0",
     "@vercel/analytics": "^2.0.1",
     "@vercel/speed-insights": "^2.0.0",
     "next": "16.2.2",
     "pdfjs-dist": "^5.1.91",
+    "posthog-js": "^1.205.0",
     "react": "19.2.4",
     "react-dom": "19.2.4",
     "sonner": "^2.0.7",
