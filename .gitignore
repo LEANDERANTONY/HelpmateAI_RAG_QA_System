@@ -34,6 +34,12 @@ design_system/
 # RAG core lives in src/pipeline + backend/).
 docs/history/HelpmateAI_RAG_project_Cleaned.ipynb
 
+# Working context briefing for new chat agents / LLMs picking up
+# the project. Untracked because it carries operational detail
+# (VPS hostnames, infra IDs, the "5 painful things" runbook) that
+# doesn't belong in the public README story.
+AGENT.md
+
 # Claude Code worktrees + per-machine launch config
 .claude/worktrees/
 .claude/launch.json
