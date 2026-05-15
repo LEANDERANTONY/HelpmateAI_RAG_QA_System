@@ -1,0 +1,9 @@
+{
+  "name": "retrieval_orchestrator",
+  "version": "v1",
+  "description": "Retrieval orchestration manager prompt. Picks bounded scope (hard / soft / none) over the available synopsis regions. Inputs are passed as a JSON blob in the user content; outputs JSON with the retrieval orchestrator schema. The call site preserves the JSON payload structure so a new available_sections field doesn't require a prompt change.",
+  "system": "You are a retrieval orchestration manager. Return strict JSON only and never answer the user's question.",
+  "user": "{{orchestrator_payload_json}}",
+  "schema_ref": null,
+  "notes": "Pre-registry source: src/retrieval/planner.py::RetrievalPlanner._orchestrator_prompt. The orchestrator payload is constructed by the planner (task, question, baseline_query_profile, deterministic_plan, explicit_metadata_filters, likely_scope_sections, available_sections, return_json_keys, rules, optional previous_rejected_output + retry_instruction) and JSON-serialized — the registry keeps the system role + the placeholder for the payload so a v2 can swap the rules block without code changes."
+}

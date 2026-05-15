@@ -10,6 +10,8 @@ import type {
 
 import { AuthSidebar } from "@/components/auth-sidebar";
 import { ErrorState } from "@/components/error-state";
+import { FeedbackButtons } from "@/components/feedback-buttons";
+import { VoiceInputButton, isVoiceInputSupported } from "@/components/voice-input-button";
 import { ChatCollapseToggle } from "@/components/viewer/chat-collapse-toggle";
 import { MobileSourceSheet } from "@/components/viewer/mobile-source-sheet";
 import { SourcePane } from "@/components/viewer/source-pane";
@@ -774,6 +776,15 @@ function AskBlock({
   onFocusChange: (value: boolean) => void;
   onPremiumToggle: (next: boolean) => void;
 }) {
+  // Mirror the latest `question` into a ref so callbacks created at
+  // render time (notably the voice-transcript callback below) read
+  // the FRESH textarea content when they fire, not the snapshot from
+  // when recording started. Without this, a user who keeps typing
+  // while Whisper transcribes will see their typed-during-recording
+  // suffix get clobbered by the stale closure value. Codex P1 on
+  // PR #5 round 4.
+  const questionRef = useRef(question);
+  questionRef.current = question;
   // Premium toggle gating:
   //   premium_available=false   → disabled with upgrade tooltip; never
   //                               flips, never fires onPremiumToggle.
@@ -852,6 +863,23 @@ function AskBlock({
           <kbd>⌘↵</kbd>
           <span>to submit</span>
         </span>
+        {isVoiceInputSupported() ? (
+          <VoiceInputButton
+            disabled={!canAsk || isLoading}
+            onError={(message) => notifyError(message)}
+            onTranscript={(text) => {
+              // Read questionRef.current (not the closed-over
+              // `question`) so we append onto whatever the textarea
+              // contains AT THE MOMENT the transcript arrives — not
+              // the snapshot from when recording started. The
+              // closure-captured `question` would clobber any text
+              // the user typed during recording. Codex P1 on PR #5.
+              const current = questionRef.current;
+              const next = current.trim() ? `${current.trim()} ${text}` : text;
+              onQuestionChange(next);
+            }}
+          />
+        ) : null}
         <button
           type="button"
           className={`h-premium-toggle${premiumActive ? " active" : ""}`}
@@ -1213,6 +1241,13 @@ function QACard({
       ) : null}
       {!streaming && turn.answer.note && turn.answer.support_status !== "supported" ? (
         <p className="h-note-card">{turn.answer.note}</p>
+      ) : null}
+      {!streaming ? (
+        <FeedbackButtons
+          surface="answer"
+          traceId={turn.answer.run_trace_id ?? null}
+          onError={(message) => notifyError(message)}
+        />
       ) : null}
     </article>
   );

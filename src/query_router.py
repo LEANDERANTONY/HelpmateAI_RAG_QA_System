@@ -121,18 +121,19 @@ class QueryRouter:
         if current.confidence > self.settings.router_confidence_threshold:
             return current
 
-        prompt = (
-            "Choose the best retrieval route for a long-document QA system.\n"
-            "Routes:\n"
-            "- chunk_first: exact fact, explicit page/clause, definition, or tightly localized lookup\n"
-            "- section_first: a legacy section-scoped retrieval mode when synopsis-first is unnecessary\n"
-            "- hybrid_both: distributed evidence or genuinely mixed intent\n"
-            "- synopsis_first: broad synthesis or section-level narrowing before chunk retrieval\n\n"
-            "Return compact JSON with keys route and reason.\n\n"
-            f"Intent: {query_profile.intent_type}\n"
-            f"Evidence spread: {query_profile.evidence_spread}\n"
-            f"Question: {question}"
+        # Pull the prompt from ``backend/prompts/query_router/v1.json``
+        # via the registry. Imported lazily so test fixtures that only
+        # exercise the heuristic router don't drag the backend.prompt_registry
+        # module + filesystem reads into their import cost.
+        from backend.prompt_registry import get_prompt
+
+        template = get_prompt("query_router", "v1")
+        rendered = template.render(
+            intent_type=query_profile.intent_type,
+            evidence_spread=query_profile.evidence_spread,
+            question=question,
         )
+        prompt = rendered["user"]
         # Schema-strict path: the QueryRouterOutput Pydantic model
         # constrains the LLM to produce {route, reason}; an unknown
         # route surfaces here as a StructuredOutputError (when the

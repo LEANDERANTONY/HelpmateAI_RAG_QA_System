@@ -34,3 +34,7 @@ static/financebench/*.pdf
 docs/evals/financebench/
 docs/evals/financebench_manifest.json
 design_system/
+
+# Claude Code worktrees + per-machine launch config
+.claude/worktrees/
+.claude/launch.json

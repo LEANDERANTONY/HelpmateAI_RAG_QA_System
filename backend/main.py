@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import logging
 import tempfile
 from functools import lru_cache
@@ -14,6 +15,11 @@ from pydantic import BaseModel
 
 from backend.auth import AuthenticatedUser, require_authenticated_user
 from backend.billing_routes import router as billing_router
+from backend.feedback_store import (
+    FeedbackStore,
+    FeedbackValidationError,
+    build_feedback_store,
+)
 from backend.file_storage import FileStorage, build_file_storage
 from backend.quota import (
     UPGRADE_URL,
@@ -37,6 +43,31 @@ logger = logging.getLogger(__name__)
 
 
 SUPPORTED_UPLOAD_TYPES = {".pdf", ".docx"}
+
+# Accepted audio mime types for /transcribe. The MediaRecorder API on
+# the major browsers produces audio/webm by default; Safari emits
+# audio/mp4. We let the OpenAI Whisper API decide format compatibility
+# rather than gating tightly here — anything outside this list is
+# rejected with a clear 400 before we burn tokens on it.
+SUPPORTED_TRANSCRIBE_AUDIO_TYPES = {
+    "audio/webm",
+    "audio/mp4",
+    "audio/mpeg",
+    "audio/mp3",
+    "audio/wav",
+    "audio/x-wav",
+    "audio/ogg",
+    "audio/x-m4a",
+    "audio/m4a",
+}
+
+# Hard upper bound on the body size of an uploaded audio clip. Whisper
+# itself caps at 25 MB; we mirror that so a misconfigured client (or a
+# malicious one streaming a 1 GB blob) gets a 413 before we touch
+# OpenAI. The default MediaRecorder produces ~16 KB/sec at the default
+# bitrate, so 25 MB is roughly 25 minutes of recording — well past the
+# "ask your PDF" use case (single multi-paragraph question).
+TRANSCRIBE_MAX_FILE_BYTES = 25 * 1024 * 1024
 SAMPLE_DOCUMENT_DETAILS = {
     "HealthInsurance_Policy.pdf": {
         "title": "Health Insurance Policy",
@@ -152,6 +183,45 @@ class SampleDocumentResponse(BaseModel):
     size_bytes: int
 
 
+class FeedbackRequest(BaseModel):
+    """Inbound feedback payload.
+
+    ``trace_id`` is optional — feedback can come from surfaces that
+    aren't a tracked /qa run (eg. a "copy citation" pill in the future).
+    ``rating`` is the required signal; ``comment`` is the optional
+    free-text follow-up. ``surface`` lets us slice the table by where
+    feedback was issued without baking that into the URL path.
+    """
+
+    trace_id: str | None = None
+    rating: str  # validated by FeedbackStore against {'up','down'}
+    surface: str = "answer"
+    comment: str = ""
+
+
+class FeedbackResponse(BaseModel):
+    """Echo back the persisted row's PK + timestamp so the optimistic
+    UI on the frontend can swap in the real id and replace its
+    locally-generated placeholder."""
+
+    feedback_id: str
+    created_at: str
+
+
+class TranscribeResponse(BaseModel):
+    """Whisper transcription result.
+
+    ``text`` is the transcript (already stripped of leading/trailing
+    whitespace). ``duration_seconds`` is Whisper's reported audio
+    duration when the SDK surfaces it via ``verbose_json``; otherwise
+    a wall-clock measurement of how long the API call took. The
+    frontend uses the value purely for telemetry / "you spoke for X
+    seconds" affordances — never as a billing signal."""
+
+    text: str
+    duration_seconds: float
+
+
 app = FastAPI(
     title="HelpmateAI API",
     version="0.1.0",
@@ -199,6 +269,14 @@ def _quota_store() -> QuotaStore:
     # Local backend for HELPMATE_STATE_STORE_BACKEND=local (JSON file at
     # data/api_state/quota_counters.json), Supabase otherwise (atomic RPC).
     return build_quota_store(_settings())
+
+
+@lru_cache
+def _feedback_store() -> FeedbackStore:
+    # Backend mirrors HELPMATE_STATE_STORE_BACKEND: local JSON file at
+    # data/api_state/feedback.json for dev, Supabase's helpmate_feedback
+    # table (with RLS) for production. See backend/feedback_store.py.
+    return build_feedback_store(_settings())
 
 
 @lru_cache
@@ -1024,6 +1102,233 @@ def answer_question(
 
     _save_touched_document(document, user)
     return AskResponse(answer=answer.to_dict())
+
+
+@app.post("/feedback", response_model=FeedbackResponse)
+def submit_feedback(
+    payload: FeedbackRequest,
+    user: AuthenticatedUser = Depends(require_authenticated_user),
+) -> FeedbackResponse:
+    """Record a thumb-up / thumb-down (and optional comment) against
+    an answer or any surface that produced a trace_id.
+
+    Item 2 of the UX Pack. The frontend renders the buttons under
+    each answer card and POSTs here on click; the row lands in
+    ``helpmate_feedback`` keyed on (user_id, trace_id) so dashboards
+    can join with ``helpmate_run_traces`` for the model × cost × rating
+    rollup.
+
+    Auth required. RLS scopes inserts to the calling user — the table
+    enforces ``auth.uid() = user_id`` with check, and the service-side
+    code also passes the authenticated user_id explicitly so a bad
+    payload can't write under another account even with service-role
+    bypass.
+
+    Validation:
+      • rating ∈ {'up', 'down'} (else 400)
+      • comment ≤ 2000 chars (else 400)
+      • trace_id is opaque — we don't pre-verify it points at a real
+        trace row. Stale / unknown trace_ids land in the table for
+        analytics consistency rather than failing the user's tap.
+    """
+    comment = (payload.comment or "").strip()
+    surface = (payload.surface or "answer").strip() or "answer"
+    trace_id = (payload.trace_id or "").strip() or None
+
+    try:
+        record = _feedback_store().save_feedback(
+            user_id=user.id,
+            rating=payload.rating,
+            trace_id=trace_id,
+            surface=surface,
+            comment=comment,
+        )
+    except FeedbackValidationError as exc:
+        raise HTTPException(status_code=400, detail=str(exc)) from exc
+    except Exception as exc:
+        # Storage failure (Supabase outage, disk full on local) — we
+        # surface a 503 so the frontend can retry once. Feedback is
+        # the user's gesture; a silent drop would feel buggy.
+        logger.warning("Feedback save failed: %s", exc)
+        raise HTTPException(
+            status_code=503,
+            detail="Feedback couldn't be saved. Please try again.",
+        ) from exc
+
+    return FeedbackResponse(
+        feedback_id=record.feedback_id,
+        created_at=record.created_at,
+    )
+
+
+@app.post("/transcribe", response_model=TranscribeResponse)
+async def transcribe_audio(
+    file: UploadFile = File(...),
+    user: AuthenticatedUser = Depends(require_authenticated_user),
+) -> TranscribeResponse:
+    """Transcribe a short audio clip via OpenAI Whisper.
+
+    Powers the "speak your question" affordance on the workspace. The
+    frontend records a single utterance with the MediaRecorder API and
+    POSTs the blob here; we hand it off to Whisper and return the
+    transcript so the textarea can populate without the user typing a
+    multi-paragraph question.
+
+    Free for every tier — no quota gate. The cost per call is tiny
+    (Whisper bills $0.006/min) and the feature is a UX win, not a
+    paid-tier hook. We still require auth so the route can't be
+    abused as an anonymous transcription API.
+
+    Validates upload type + size BEFORE touching OpenAI so a misfiled
+    blob (or a 1 GB stream) gets a fast 400/413 instead of burning
+    minutes of audio at the API edge.
+    """
+    settings = _settings()
+    if not settings.openai_api_key:
+        # The frontend gates the voice button on whether transcription
+        # is configured; if a request still lands here without a key,
+        # surface a clear 503 rather than crashing on a None client.
+        raise HTTPException(
+            status_code=503,
+            detail="Voice transcription is not configured for this deployment.",
+        )
+
+    content_type = (file.content_type or "").split(";", 1)[0].strip().lower()
+    if content_type and content_type not in SUPPORTED_TRANSCRIBE_AUDIO_TYPES:
+        raise HTTPException(
+            status_code=400,
+            detail=f"Unsupported audio content-type: {content_type}.",
+        )
+
+    # Stream the upload in 64 KB chunks so an oversized blob fails
+    # fast at 413 BEFORE we hold the whole payload in memory. Reading
+    # the full body first (the original implementation) lets a hostile
+    # 1 GB upload allocate ~1 GB of RSS on this process before the
+    # size check runs — Vercel's container would OOM long before
+    # returning the 413. The 64 KB chunk size is a round number large
+    # enough to keep the read syscall count reasonable while small
+    # enough that the early-bail check fires on the first chunk past
+    # the cap. Codex flagged this as P1 on PR #5.
+    CHUNK_SIZE = 64 * 1024
+    audio_chunks: list[bytes] = []
+    audio_size = 0
+    while True:
+        chunk = await file.read(CHUNK_SIZE)
+        if not chunk:
+            break
+        audio_size += len(chunk)
+        if audio_size > TRANSCRIBE_MAX_FILE_BYTES:
+            raise HTTPException(
+                status_code=413,
+                detail="Audio recording exceeds the 25 MB Whisper limit.",
+            )
+        audio_chunks.append(chunk)
+    if not audio_chunks:
+        raise HTTPException(
+            status_code=400,
+            detail="Audio payload is empty.",
+        )
+    audio_bytes = b"".join(audio_chunks)
+
+    # Late import so the test suite + harness paths that never hit the
+    # route don't pay the openai SDK import cost on every cold start.
+    # The downstream call mirrors the OpenAIService construction pattern
+    # used elsewhere — a missing key surfaces as the 503 above.
+    try:
+        from openai import OpenAI
+    except Exception as exc:  # pragma: no cover — defensive
+        logger.warning("OpenAI SDK import failed for /transcribe: %s", exc)
+        raise HTTPException(status_code=503, detail="Voice transcription unavailable.") from exc
+
+    suffix = Path(file.filename or "audio.webm").suffix.lower() or ".webm"
+    with tempfile.NamedTemporaryFile(suffix=suffix, delete=False) as buffer:
+        buffer.write(audio_bytes)
+        tmp_path = Path(buffer.name)
+
+    started_at = datetime.now(timezone.utc)
+
+    # Two-step transcription chain: ``whisper-1`` is the default
+    # (cheaper, ubiquitous, supports verbose_json with duration);
+    # ``gpt-4o-mini-transcribe`` is the fallback for cases where
+    # the Whisper endpoint itself is unavailable. The fallback only
+    # fires on a Whisper-side exception — payload-level rejections
+    # (mime/size/empty) already short-circuited earlier with their
+    # own 400/413 responses. CodeRabbit flagged on PR #5 that the
+    # PR description advertised a fallback but the code only had
+    # Whisper.
+    def _call_transcribe_sync(model_name: str) -> object:
+        """Blocking OpenAI transcription call — the SDK is sync-only
+        for audio.transcriptions as of v1.98 (blocking POST +
+        multipart upload via ``requests``). The caller must hand this
+        to ``asyncio.to_thread`` so the FastAPI event loop stays
+        responsive (Codex P1).
+
+        ``verbose_json`` carries the ``duration`` field for whisper-1;
+        gpt-4o-mini-transcribe returns the standard ``json`` shape
+        without ``duration`` — we'll fall back to wall-clock in that
+        case (covered by the post-call duration resolution below).
+        """
+        # Cheap rebuild — no auth round-trip — so we can construct
+        # per attempt; keeps state local to the call.
+        client = OpenAI(api_key=settings.openai_api_key)
+        with tmp_path.open("rb") as audio_handle:
+            response_format = "verbose_json" if model_name == "whisper-1" else "json"
+            return client.audio.transcriptions.create(
+                model=model_name,
+                file=audio_handle,
+                response_format=response_format,
+            )
+
+    response = None
+    primary_error: Exception | None = None
+    try:
+        try:
+            response = await asyncio.to_thread(_call_transcribe_sync, "whisper-1")
+        except HTTPException:
+            raise
+        except Exception as exc:
+            logger.warning(
+                "Whisper transcription failed; trying gpt-4o-mini-transcribe fallback (%s)",
+                exc.__class__.__name__,
+            )
+            primary_error = exc
+            try:
+                response = await asyncio.to_thread(
+                    _call_transcribe_sync, "gpt-4o-mini-transcribe"
+                )
+            except HTTPException:
+                raise
+            except Exception as fallback_exc:
+                logger.warning(
+                    "Fallback gpt-4o-mini-transcribe also failed (%s); surfacing 502",
+                    fallback_exc.__class__.__name__,
+                )
+                # Surface the FALLBACK error (more recent + actionable
+                # signal for ops). Chain both via ``__context__`` /
+                # ``from`` so the traceback shows the original Whisper
+                # failure too.
+                raise HTTPException(
+                    status_code=502,
+                    detail="Transcription service is temporarily unavailable.",
+                ) from fallback_exc
+    finally:
+        try:
+            tmp_path.unlink(missing_ok=True)
+        except OSError:
+            pass
+
+    transcript = str(getattr(response, "text", "") or "").strip()
+    duration = getattr(response, "duration", None)
+    if duration is None and isinstance(response, dict):
+        duration = response.get("duration")
+    try:
+        duration_value = float(duration) if duration is not None else 0.0
+    except (TypeError, ValueError):
+        duration_value = 0.0
+    if duration_value <= 0:
+        elapsed = (datetime.now(timezone.utc) - started_at).total_seconds()
+        duration_value = max(elapsed, 0.0)
+    return TranscribeResponse(text=transcript, duration_seconds=round(duration_value, 3))
 
 
 @app.get("/benchmarks/latest", response_model=BenchmarkResponse)

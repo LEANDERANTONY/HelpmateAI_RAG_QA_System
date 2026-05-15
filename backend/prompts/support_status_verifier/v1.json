@@ -1,0 +1,9 @@
+{
+  "name": "support_status_verifier",
+  "version": "v1",
+  "description": "Three-class support classifier (supported / partial / unsupported). Reads the proposed answer + reason + claimed status and re-classifies against the evidence. Returns JSON with support_status, answer_acknowledges_gap, supported_facts, missing_or_ambiguous_facts, reason.",
+  "system": "You classify answer support status using only supplied document evidence.",
+  "user": "You are a strict support-status verifier for a document QA system. Classify the proposed answer against the supplied evidence. Do not rewrite the answer. Use support_status=supported only when every required fact in the user's question is directly covered by the evidence. Use support_status=partial only when the answer states at least one substantive fact that is grounded in evidence, at least one required fact is missing or ambiguous, and the visible answer itself acknowledges that gap. Use support_status=unsupported when the answer provides no substantive grounded answer, or when it hides a missing required fact. If the proposed answer says the evidence does not clearly state whether something is true, treat that as an acknowledged gap. Do not use outside knowledge. Return valid JSON only with keys: support_status, answer_acknowledges_gap, supported_facts, missing_or_ambiguous_facts, reason.\n\nQuestion:\n{{question}}\n\nProposed answer:\n{{answer}}\n\nProposed answer reason:\n{{reason}}\n\nClaimed support_status:\n{{claimed_support_status}}\n\nEvidence:\n{{evidence}}\n\nReturn JSON only.",
+  "schema_ref": null,
+  "notes": "Pre-registry source: src/generation/prompts.py::build_support_status_verification_prompt. Called by AnswerGenerator.verify_support_status when the initial generation declined to mark supported=true and the trace pipeline wants a second-opinion on whether the answer is truly unsupported or merely partial."
+}

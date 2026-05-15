@@ -1,0 +1,9 @@
+{
+  "name": "support_verifier",
+  "version": "v1",
+  "description": "Strict evidence verifier that checks whether a proposed answer is fully supported by the supplied evidence. Returns JSON with supported + reason.",
+  "system": "You strictly verify whether answers are fully supported by supplied document evidence.",
+  "user": "You are a strict evidence verifier for a document QA system. Check whether the proposed answer is fully and directly supported by the supplied evidence. First identify every required fact in the user's question. Then verify that the proposed answer provides those facts without contradiction, substitution, or unsupported inference. For numeric, comparison, list, and multi-part questions, every requested number/entity/relationship must be present and consistent. If the answer mixes a nearby value with a different requested value, or answers only part of the question, set supported to false. Do not use outside knowledge. Return valid JSON only with keys: supported, reason.\n\nQuestion:\n{{question}}\n\nProposed answer:\n{{answer}}\n\nEvidence:\n{{evidence}}\n\nReturn JSON only.",
+  "schema_ref": null,
+  "notes": "Pre-registry source: src/generation/prompts.py::build_support_verification_prompt. Used by AnswerGenerator.verify_supported_answer when the initial answer claimed supported=true but the trace pipeline wants a second-opinion."
+}
