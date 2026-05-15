@@ -44,7 +44,13 @@
 create table if not exists public.helpmate_feedback (
     feedback_id uuid primary key default gen_random_uuid(),
     user_id uuid not null references auth.users (id) on delete cascade,
-    trace_id uuid,
+    -- ``text`` (not uuid) because the application emits trace_id values
+    -- shaped as ``trace-<hex>`` from ``src/pipeline/service.py::_build_run_trace``
+    -- (see also: ``helpmate_run_traces.trace_id`` which is also text).
+    -- Declaring this as ``uuid`` would silently reject every real
+    -- feedback insert with a Postgres invalid_text_representation error
+    -- and surface as an opaque 502 to the client. Codex P1 on PR #5.
+    trace_id text,
     surface text not null default 'answer',
     rating text not null check (rating in ('up', 'down')),
     comment text not null default '',
