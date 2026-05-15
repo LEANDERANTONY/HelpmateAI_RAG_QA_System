@@ -17,12 +17,6 @@ static/Final_Thesis_Leander_Antony_A.pdf
 *.pyd
 .DS_Store
 Thumbs.db
-PLAN.md
-ROADMAP.md
-THREAD_HANDOFF.md
-docs/deployment.md
-docs/frontend-reference.md
-docs/quickstart.md
 .tmp/
 tmp/
 static/
@@ -34,6 +28,11 @@ static/financebench/*.pdf
 docs/evals/financebench/
 docs/evals/financebench_manifest.json
 design_system/
+
+# Historical prototype notebook — kept locally as a portfolio
+# artifact but no longer part of the public repo (the production
+# RAG core lives in src/pipeline + backend/).
+docs/history/HelpmateAI_RAG_project_Cleaned.ipynb
 
 # Claude Code worktrees + per-machine launch config
 .claude/worktrees/
