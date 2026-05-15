@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import asyncio
 import logging
 import tempfile
 from functools import lru_cache
@@ -1199,17 +1200,35 @@ async def transcribe_audio(
             detail=f"Unsupported audio content-type: {content_type}.",
         )
 
-    audio_bytes = await file.read()
-    if not audio_bytes:
+    # Stream the upload in 64 KB chunks so an oversized blob fails
+    # fast at 413 BEFORE we hold the whole payload in memory. Reading
+    # the full body first (the original implementation) lets a hostile
+    # 1 GB upload allocate ~1 GB of RSS on this process before the
+    # size check runs — Vercel's container would OOM long before
+    # returning the 413. The 64 KB chunk size is a round number large
+    # enough to keep the read syscall count reasonable while small
+    # enough that the early-bail check fires on the first chunk past
+    # the cap. Codex flagged this as P1 on PR #5.
+    CHUNK_SIZE = 64 * 1024
+    audio_chunks: list[bytes] = []
+    audio_size = 0
+    while True:
+        chunk = await file.read(CHUNK_SIZE)
+        if not chunk:
+            break
+        audio_size += len(chunk)
+        if audio_size > TRANSCRIBE_MAX_FILE_BYTES:
+            raise HTTPException(
+                status_code=413,
+                detail="Audio recording exceeds the 25 MB Whisper limit.",
+            )
+        audio_chunks.append(chunk)
+    if not audio_chunks:
         raise HTTPException(
             status_code=400,
             detail="Audio payload is empty.",
         )
-    if len(audio_bytes) > TRANSCRIBE_MAX_FILE_BYTES:
-        raise HTTPException(
-            status_code=413,
-            detail="Audio recording exceeds the 25 MB Whisper limit.",
-        )
+    audio_bytes = b"".join(audio_chunks)
 
     # Late import so the test suite + harness paths that never hit the
     # route don't pay the openai SDK import cost on every cold start.
@@ -1227,7 +1246,19 @@ async def transcribe_audio(
         tmp_path = Path(buffer.name)
 
     started_at = datetime.now(timezone.utc)
-    try:
+
+    def _call_whisper_sync() -> object:
+        """The OpenAI Python SDK is sync-only for audio.transcriptions
+        as of v1.98 — it does a blocking POST + multipart upload with
+        ``requests``. Calling this directly from an ``async def``
+        handler blocks the FastAPI event loop for the full Whisper
+        round-trip (often 2-10s depending on clip length), which
+        starves every other concurrent request on this worker.
+
+        ``asyncio.to_thread`` hands the blocking call to the default
+        thread pool so the event loop stays responsive. Codex flagged
+        this as P1 on PR #5.
+        """
         client = OpenAI(api_key=settings.openai_api_key)
         with tmp_path.open("rb") as audio_handle:
             # ``verbose_json`` exposes the duration field so we can
@@ -1235,11 +1266,14 @@ async def transcribe_audio(
             # default ``json`` response_format omits it. Falling back
             # to wall-clock keeps the contract intact when an SDK
             # upgrade renames the field.
-            response = client.audio.transcriptions.create(
+            return client.audio.transcriptions.create(
                 model="whisper-1",
                 file=audio_handle,
                 response_format="verbose_json",
             )
+
+    try:
+        response = await asyncio.to_thread(_call_whisper_sync)
     except HTTPException:
         raise
     except Exception as exc:

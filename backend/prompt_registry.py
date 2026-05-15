@@ -182,7 +182,15 @@ def _load_registry_manifest(prompts_root: Path) -> dict[str, str]:
         raise PromptRegistryError(
             f"prompts/registry.json is malformed: {exc}"
         ) from exc
-    active = payload.get("active", {}) if isinstance(payload, dict) else {}
+    # Fail fast when the top-level isn't an object: silently treating
+    # a malformed manifest as empty config hides corruption and later
+    # surfaces as unrelated PromptNotFoundError failures. CodeRabbit
+    # flagged this as a Major finding on PR #5.
+    if not isinstance(payload, dict):
+        raise PromptRegistryError(
+            "prompts/registry.json: top-level must be an object"
+        )
+    active = payload.get("active", {})
     if not isinstance(active, dict):
         raise PromptRegistryError(
             "prompts/registry.json: 'active' must be an object"
@@ -198,12 +206,17 @@ def _refresh_registry_if_changed(prompts_root: Path) -> None:
     """
     registry_path = prompts_root / "registry.json"
     if not registry_path.exists():
-        if _CACHE.active_versions and _CACHE.registry_path == registry_path:
-            # The registry was removed since last load — drop the
-            # cached versions so the next call has to specify
-            # ``version=`` explicitly.
-            _CACHE.active_versions = {}
-            _CACHE.registry_mtime = None
+        # Unconditional reset when the manifest is missing for THIS
+        # root. The old guard (only reset when the cached registry_path
+        # matched the current one) let stale active_versions leak when
+        # callers swapped to a different prompts_root that had no
+        # registry — get_prompt(name, prompts_root=other) would
+        # resolve a version implicitly from the OLD root, violating
+        # the documented contract that no-registry roots must require
+        # an explicit version=. Codex P2 + CodeRabbit Major on PR #5.
+        _CACHE.active_versions = {}
+        _CACHE.registry_path = registry_path
+        _CACHE.registry_mtime = None
         return
     mtime = registry_path.stat().st_mtime
     if _CACHE.registry_path == registry_path and _CACHE.registry_mtime == mtime:

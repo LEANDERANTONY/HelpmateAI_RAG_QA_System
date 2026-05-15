@@ -215,6 +215,95 @@ def test_corrupt_template_file_raises_registry_error(tmp_path):
         get_prompt("bad", prompts_root=prompts_root)
 
 
+# ─── registry.json safety checks (post-CodeRabbit review hardening) ──────
+
+
+def test_registry_with_non_object_top_level_raises(tmp_path):
+    """When registry.json's top-level is a list/string/number/null
+    instead of an object, fail fast with a clear PromptRegistryError
+    rather than silently treating it as empty config. CodeRabbit Major
+    finding on PR #5."""
+    prompts_root = tmp_path / "prompts"
+    prompts_root.mkdir()
+    (prompts_root / "registry.json").write_text(
+        json.dumps(["not", "an", "object"]),
+        encoding="utf-8",
+    )
+    (prompts_root / "tailoring").mkdir()
+    (prompts_root / "tailoring" / "v1.json").write_text(
+        json.dumps(
+            {
+                "name": "tailoring",
+                "version": "v1",
+                "system": "s",
+                "user": "u",
+            }
+        ),
+        encoding="utf-8",
+    )
+    with pytest.raises(PromptRegistryError) as exc_info:
+        get_prompt("tailoring", prompts_root=prompts_root)
+    assert "top-level" in str(exc_info.value).lower()
+
+
+def test_cache_resets_when_switching_to_root_without_registry(tmp_path):
+    """Two prompts_root directories:
+        - root_with: has registry.json mapping name→v1
+        - root_without: no registry.json
+    After resolving via root_with, switching to root_without must NOT
+    carry the cached active_versions across. The contract is that
+    no-registry roots require an explicit version= kwarg; an implicit
+    resolution from a stale cache would be a silent correctness bug.
+    CodeRabbit Major + Codex P2 on PR #5."""
+    # Set up root_with: has a registry.json that points at v1.
+    root_with = tmp_path / "with"
+    root_with.mkdir()
+    (root_with / "registry.json").write_text(
+        json.dumps({"active": {"tailoring": "v1"}}),
+        encoding="utf-8",
+    )
+    (root_with / "tailoring").mkdir()
+    (root_with / "tailoring" / "v1.json").write_text(
+        json.dumps(
+            {
+                "name": "tailoring",
+                "version": "v1",
+                "system": "s",
+                "user": "u",
+            }
+        ),
+        encoding="utf-8",
+    )
+    # Set up root_without: has the template at v1 but no registry.json.
+    root_without = tmp_path / "without"
+    root_without.mkdir()
+    (root_without / "tailoring").mkdir()
+    (root_without / "tailoring" / "v1.json").write_text(
+        json.dumps(
+            {
+                "name": "tailoring",
+                "version": "v1",
+                "system": "s-without",
+                "user": "u-without",
+            }
+        ),
+        encoding="utf-8",
+    )
+    # Warm the cache against root_with — this seeds _CACHE.active_versions
+    # with {"tailoring": "v1"} keyed against root_with's registry.json.
+    template_a = get_prompt("tailoring", prompts_root=root_with)
+    assert template_a.system == "s"
+
+    # Now switch to root_without and request the same name WITHOUT
+    # passing version=. Before the fix this would have resolved
+    # "tailoring" → "v1" from the cached active_versions and silently
+    # loaded root_without's tailoring/v1.json. After the fix the
+    # missing-manifest reset zeroes the cache for this root, so the
+    # implicit resolution must raise PromptNotFoundError.
+    with pytest.raises(PromptNotFoundError):
+        get_prompt("tailoring", prompts_root=root_without)
+
+
 def test_template_with_mismatched_name_raises(tmp_path):
     prompts_root = tmp_path / "prompts"
     prompts_root.mkdir()
