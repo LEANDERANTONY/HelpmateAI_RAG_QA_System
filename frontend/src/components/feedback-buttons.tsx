@@ -100,6 +100,13 @@ export function FeedbackButtons({
   const commentRef = useRef<string>(comment);
   stateRef.current = state;
   commentRef.current = comment;
+  // Belt-and-suspenders against the unmount race: setState is async,
+  // so between a Send/Skip click and the next render, stateRef still
+  // says "rated-pending" — and an unmount during that window would
+  // fire a second submitFeedback. ``committingRef`` flips true the
+  // instant any commit path starts; the unmount effect bails out if
+  // it's set. Mirrors the AI Job Agent fix flagged by Codex P2.
+  const committingRef = useRef<boolean>(false);
 
   const clearTimer = useCallback(() => {
     if (timerRef.current !== null) {
@@ -114,6 +121,11 @@ export function FeedbackButtons({
   const commitFeedback = useCallback(
     async (rating: FeedbackRating, commentText: string) => {
       clearTimer();
+      // Mark in-flight synchronously BEFORE the async setState. The
+      // unmount effect reads this to decide whether to fire its own
+      // best-effort flush — without the flag, an unmount between the
+      // Send click and the next render would double-submit.
+      committingRef.current = true;
       // Mark in-flight so the buttons disable + a second commit can't
       // race in (e.g. Send button click during the auto-commit timer
       // firing).
@@ -158,14 +170,15 @@ export function FeedbackButtons({
   );
 
   // Best-effort flush on unmount: if the user navigated away while
-  // a rating is still pending, fire a final submitFeedback so the
-  // rating isn't silently dropped. Reads from refs so the call sees
-  // the latest rating + comment values, not the snapshot at mount.
+  // a rating is still pending AND no commit path has started, fire
+  // a final submitFeedback so the rating isn't silently dropped.
+  // The committingRef guard prevents the race where Send/Skip
+  // already started a commit but state hasn't re-rendered yet.
   useEffect(() => {
     return () => {
       clearTimer();
       const current = stateRef.current;
-      if (current.kind === "rated-pending") {
+      if (current.kind === "rated-pending" && !committingRef.current) {
         // Fire-and-forget — no UI to update after unmount and the
         // backend gracefully handles the case where the user closes
         // the tab mid-request.
@@ -204,8 +217,16 @@ export function FeedbackButtons({
       return;
     }
     // Either fresh rating from idle, or switching ratings while
-    // pending. In both cases we land in rated-pending with the new
-    // rating + restart the auto-commit timer.
+    // pending, or starting a new rating after a previous submit.
+    // In all cases we land in rated-pending with the new rating +
+    // restart the auto-commit timer.
+    //
+    // Clear any leftover comment text: a comment typed under the
+    // PRIOR rating shouldn't auto-submit with the new rating.
+    // Without this, a user could type "wrong tone" under 👎, switch
+    // to 👍, and the 8s auto-commit fires with rating="up" +
+    // stale "wrong tone" comment. Codex P2 on PR #5.
+    setComment("");
     setState({ kind: "rated-pending", rating });
     scheduleAutoCommit(rating);
   }

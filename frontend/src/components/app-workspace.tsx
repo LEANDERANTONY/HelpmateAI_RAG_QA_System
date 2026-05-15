@@ -776,6 +776,15 @@ function AskBlock({
   onFocusChange: (value: boolean) => void;
   onPremiumToggle: (next: boolean) => void;
 }) {
+  // Mirror the latest `question` into a ref so callbacks created at
+  // render time (notably the voice-transcript callback below) read
+  // the FRESH textarea content when they fire, not the snapshot from
+  // when recording started. Without this, a user who keeps typing
+  // while Whisper transcribes will see their typed-during-recording
+  // suffix get clobbered by the stale closure value. Codex P1 on
+  // PR #5 round 4.
+  const questionRef = useRef(question);
+  questionRef.current = question;
   // Premium toggle gating:
   //   premium_available=false   → disabled with upgrade tooltip; never
   //                               flips, never fires onPremiumToggle.
@@ -859,10 +868,14 @@ function AskBlock({
             disabled={!canAsk || isLoading}
             onError={(message) => notifyError(message)}
             onTranscript={(text) => {
-              // Append rather than replace so a user can dictate a
-              // continuation onto already-typed text. Trim leading
-              // space so back-to-back transcripts don't double-space.
-              const next = question.trim() ? `${question.trim()} ${text}` : text;
+              // Read questionRef.current (not the closed-over
+              // `question`) so we append onto whatever the textarea
+              // contains AT THE MOMENT the transcript arrives — not
+              // the snapshot from when recording started. The
+              // closure-captured `question` would clobber any text
+              // the user typed during recording. Codex P1 on PR #5.
+              const current = questionRef.current;
+              const next = current.trim() ? `${current.trim()} ${text}` : text;
               onQuestionChange(next);
             }}
           />

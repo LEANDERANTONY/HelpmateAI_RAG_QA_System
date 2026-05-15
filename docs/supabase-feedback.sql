@@ -17,12 +17,16 @@
 --     feedback_id   uuid           PK, server-generated
 --     user_id       uuid           FK to auth.users — cascade so a
 --                                  deleted user's feedback is removed
---     trace_id      uuid           nullable — soft FK to
+--     trace_id      text           nullable — soft FK to
 --                                  helpmate_run_traces.trace_id. We
 --                                  don't enforce the FK because some
 --                                  feedback surfaces (a copy button,
 --                                  a citation pill) may produce events
---                                  outside the trace lifecycle.
+--                                  outside the trace lifecycle. Note
+--                                  the column is ``text``, NOT uuid:
+--                                  the app emits trace_id values
+--                                  shaped as ``trace-<hex>`` from
+--                                  src/pipeline/service.py::_build_run_trace.
 --     surface       text           where the feedback was issued.
 --                                  Defaults to 'answer'; future
 --                                  values include 'citation',
