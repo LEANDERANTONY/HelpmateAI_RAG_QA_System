@@ -8,6 +8,101 @@ Historical note:
 - later entries add quality-control, benchmarking, and document-intelligence work on top of that baseline
 - the project is still evolving, so later entries refine earlier architectural assumptions without erasing them
 
+## Day 36: Doc Hygiene + Operational Recovery + Cost-Aware Eval Pacing
+
+- Switched `backend/nightly_eval` to **manual-only mode** (commit `2252dbd`). Real RAGAS + FinanceBench + final_eval runs cost ~\$1.5-3 in OpenAI per invocation (~600-1000 LLM calls); daily would burn \$45-90/month at pre-revenue stage. The Sentry Crons heartbeat is now gated on `HELPMATE_NIGHTLY_EVAL_MONITOR_ENABLED` (default off), and the cron line on the VPS was disabled with a documentation block describing the re-enable path. ADR-020 captures the cost rationale and the re-enable trigger (revenue justifying daily regression detection).
+- Restored the Job Agent reverse-proxy block to the shared Caddyfile (commit `28509e1`). During the docker recreate that brought the new Job Agent observability image live, a `docker compose` cross-project name collision briefly bounced `helpmate-api`; restarting Caddy after the recovery cleared its in-memory runtime config, which had been silently carrying a `api.job-application-copilot.xyz` site block that was never committed. The committed Caddyfile only knew about `api.helpmateai.xyz`, so Job Agent's public domain went 502 until the missing block was added back to the file. Lesson: any runtime Caddy config edit needs to land in `deploy/vps/Caddyfile` immediately or the next restart wipes it. Cross-repo coupling note: the Job Agent backend's compose override (`AI_Job_Application_Agent/backend/vps/docker-compose.override.yml`) deliberately drops its own Caddy service via `shared_ingress / vps_default`, so the HelpmateAI Caddy is the single ingress for both products.
+- Recovery from project-name churn. Bouncing `helpmate-api` with the wrong `-p helpmate` compose project name created fresh empty volumes (`helpmate_helpmate_*`) instead of remounting the original `vps_helpmate_*` volumes that hold real user data. Caught immediately via a volume-content check; restored by recreating with `-p vps` (matching the GitHub Actions deploy's default project name = directory name). Data was never lost — it was sitting on the original `vps_helpmate_indexes` (91 files) and `vps_helpmate_cache` (8 files) volumes the whole time, just unmounted from the running container. Volume audit added to the operational playbook in `docs/deployment.md`.
+- Docker disk cleanup. 44 dangling images pruned via `docker image prune -f`, reclaiming 6.25 GB. Tagged images (`helpmateai/api:latest`, `ai_job_application_agent/api:latest`, `caddy:2`) preserved; all 5 named volumes preserved; all 3 active crontab entries preserved (the weekly Sunday `cleanup-docker.sh` cron is the long-term durable version of this).
+- Repo hygiene pass. 9 merged remote branches pruned across both products (`feat/safety-pack-call-sites`, `feat/ux-pack`, `feat/observability-sentry-posthog`, `feat/prompt-registry-batch-2`, two `coderabbit-root` branches, two `docs/overnight-status-2026-05-15` snapshot branches). Both repos now have `main` as the only remote branch.
+- Documentation cleanup (commit `ad70a2d`). Pruned `docs/safety-pack-migration-recipe.md` (recipe complete via Days 32-34 commits), `docs/tier-enforcement-flags.md` (rollout shipped, working-notes doc no longer needed), `docs/implementation-history.md` (overlapped DEVLOG without adding granularity), `docs/internal/next_steps_and_final_eval_plan.md` (first line said "not part of public README story" yet was tracked publicly), `docs/history/RAG_Experiment_Plan.md` (pre-production historic), `docs/history/README.md`. Promoted `DEVLOG.md` out of `docs/history/` to `docs/` since it's actively maintained. The original prototype `HelpmateAI_RAG_project_Cleaned.ipynb` stays on disk but is now gitignored — kept as portfolio artifact but no longer ships in the public repo. Stale `.gitignore` entries cleaned up.
+
+Status: production fully recovered, both APIs healthy, no scheduled OpenAI cost surfaces remaining. Both repos have parity on observability and a clean docs surface.
+
+Why now:
+
+- one daily LLM-cost surface (\$45-90/mo nightly_eval) is hard to justify pre-revenue when the regression detection it provides catches drift only after a model upgrade has already shipped
+- runtime-only Caddy edits silently delete on every restart — committing the config to git makes it survive the next docker recreate
+- branch and doc clutter accumulates fast in an autonomous-shipping cadence; periodic pruning keeps the repo legible for both future-me and external readers
+
+Challenges:
+
+- the docker compose project-name semantics are non-obvious — the default project is the directory name (`vps`), the override file's `name:` field isn't always set, and a wrong `-p` flag silently mounts fresh volumes instead of failing loudly
+- runtime Caddy state (via admin API or in-container edit) doesn't show up in any committed config; spotting drift requires diffing the autosave JSON against the Caddyfile, which isn't a routine ops check
+- pre-revenue cost gating is a different calculus than mature-product cost gating — "useful safety net" can flip to "expensive false alarm" if the underlying traffic to defend doesn't exist yet
+
+Improvements:
+
+- the cron crontab now carries an in-place documentation block describing how to re-enable nightly_eval and the cost trade-offs, so future-me doesn't have to dig through DEVLOG to remember the rationale
+- Caddy state for both Job Agent and HelpmateAI is in git, so the next Caddy restart can never again silently drop the Job Agent's reverse proxy
+- the operations runbook (`docs/deployment.md`) now documents the docker-compose project-name gotcha + the volume-audit recovery pattern, so the same mistake doesn't cost the next operator an hour
+
+ADRs added:
+
+- [ADR-018: Observability stack — Sentry + PostHog with consent-gated analytics](adr/ADR-018-observability-stack-sentry-and-posthog.md)
+- [ADR-019: EU cookie consent banner + GDPR-aligned analytics gating](adr/ADR-019-eu-cookie-consent-banner-and-gdpr-analytics-gating.md)
+- [ADR-020: Manual-only nightly_eval at pre-revenue stage](adr/ADR-020-manual-only-nightly-eval-at-pre-revenue-stage.md)
+
+## Day 35: Sentry + PostHog Observability Stack End-To-End
+
+- Wired Sentry (errors, traces, AI Agents Monitoring, Logs, Replay, Crons, Feedback widget, profiling) + PostHog (product analytics, session replay, identify, group cohorts, LLM Analytics via `$ai_generation` events) into both backend and frontend. Eight HelpmateAI commits (`a8b0204` → `aba4184`) shipped the observability layer + cookie consent banner over a single day. The Crons monitor for `nightly_eval` was added here; the heartbeat schedule is documented in `docs/deployment.md` and later disabled on Day 36.
+- **Backend wiring** (`backend/observability.py`): single bootstrap module that initializes both clients at import time. No-op when DSN / API key is empty (so dev + CI run unchanged). Sentry init includes `FastApiIntegration`, `StarletteIntegration`, `LoggingIntegration`, `OpenAIIntegration` (auto-spans for every LLM call with token + cost + latency), and `enable_logs=True` for the new Sentry Logs product. `before_send` filter drops intentional `HTTPException` events (4xx flow control + 5xx "not configured" / "temporarily unavailable" guards) so the issue feed stays focused on real bugs. `_running_under_pytest()` guard skips Sentry init when `PYTEST_CURRENT_TEST` is set, so `uv run pytest` against a real DSN no longer fires test fixtures into the production project (that bug burned ~50 events the first time the integration shipped — HELPMATE-BACKEND-2 through 7, all resolved + filtered after).
+- **Frontend wiring** (`instrumentation.ts`, `instrumentation-client.ts`, `sentry.server.config.ts`, `sentry.edge.config.ts`, `posthog-provider.tsx`, `cookie-consent.tsx`): `@sentry/nextjs@^10.53` for Next 16 compatibility. Pageview tracking via App-Router `usePathname`+`useSearchParams` listener — the SDK's built-in `capture_pageview` doesn't fire on SPA navigation and would leave Web Analytics empty. `posthog.identify(user.id, traits)` + `posthog.group('tier', tier)` from `app-workspace.tsx` so dashboards can slice by user + plan tier. `Sentry.feedbackIntegration` injects a floating "Report an issue" button. `Sentry.replayIntegration` masks all text + blocks all media (PII-safe).
+- **PostHog free-tier strategy.** PostHog free Developer plan caps at 1 project per org, so HelpmateAI and AI Job Agent share the same project. Every event gets a `product: "helpmate"` (or `"jobagent"`) super-property at SDK init via `posthog.register({product: "..."})` + a matching tag in backend `capture_event()`. Dashboards filter by `product = ...` for clean separation. The "Helpmate AI" project (179885, EU region) was renamed from "Default project" via the PostHog REST API after the Chrome MCP couldn't drive the React-controlled input. Free-tier maxed out: authorized URLs configured for prod + Vercel previews + localhost, recording domains allowlisted, heatmaps + surveys enabled, autocapture on, exception capture deliberately off (Sentry is the source of truth for errors).
+- **Sentry-Vercel integration + source map upload.** Vercel marketplace integration installed for the HelpmateAI frontend (maps `helpmateai` Vercel project → `helpmate-frontend` Sentry project). The integration auto-provisions `SENTRY_AUTH_TOKEN` so `withSentryConfig` uploads source maps on every build — stack traces are now readable instead of minified. For Job Agent, the integration's save-step conflicted with already-set `NEXT_PUBLIC_SENTRY_DSN` env vars, so the manual fallback (env var + token set directly in Vercel) was used. ADR-018 documents both paths.
+- **LLM Analytics via `$ai_generation` events.** Every LLM call inside a `/qa` request now emits a PostHog `$ai_generation` event with the documented property schema (`$ai_trace_id`, `$ai_span_name`, `$ai_provider`, `$ai_model`, `$ai_input_tokens`, `$ai_output_tokens`, `$ai_total_cost_usd`, `$ai_is_error`). The pipeline pulls per-call breakdown off `cost_collector.to_payload()` after the answer cache write so cache hits don't replay events. PostHog's LLM Analytics dashboard now shows per-span (router, planner, generator, support verifier, evidence selector) cost attribution per request.
+- **EU cookie consent banner** (`frontend/src/components/cookie-consent.tsx`). Three-state machine in `localStorage["helpmate-cookie-consent"]`: `"pending"` (banner shown, no analytics), `"accepted"` (PostHog + Sentry Replay live), `"declined"` (PostHog opt-out, Sentry stays errors-only as legitimate interest under GDPR Art. 6(1)(f)). Footer + auth-sidebar both expose "Cookie preferences" links that reset to pending. Cross-tab `storage` event listener keeps state synced. Built in-house (~100 lines + theme CSS) rather than installing Cookiebot/Iubenda — those would have cost \$11-27/mo for compliance theater we don't need. ADR-019 captures the decision.
+- **Smoke test** end-to-end: `curl https://api.helpmateai.xyz/health/sentry-debug` → HTTP 500 → `HELPMATE-BACKEND-1 "ZeroDivisionError"` in Sentry within seconds, with stack trace at `backend.main.sentry_debug`. Same pattern verified on Job Agent's `JOBAGENT-BACKEND-1`. GitHub integration + code mappings live so Sentry frames deep-link to GitHub source lines. Uptime monitor configured on `/health` for each backend (5-min interval, 3-failure threshold).
+
+Status: live on both products. The error issue feed is clean (only smoke-test events). Tracing populated within hours. PostHog session replay captures 100% of errored sessions. Source maps upload on every Vercel build for HelpmateAI.
+
+Why now:
+
+- the project was operating blind — Vercel auto-tags the frontend but the FastAPI backend had no first-class crash reporter, no LLM cost attribution, no user-cohort analytics
+- the upcoming payment cutover means we need real cohort behavior (free vs pro) and LLM cost-per-tier data on the dashboard the day a paid user signs up, not retrofit after
+- both products are launching close together; sharing observability infra (single PostHog project, paired Sentry projects under one org) keeps the dashboard real estate sane
+
+Challenges:
+
+- PostHog's React-controlled inputs reject Chrome MCP's `form_input` + synthetic keyboard events because the SDK's onChange listener doesn't fire from JS-set values; the project rename had to go through `PATCH /api/projects/<id>/` from inside the authenticated browser tab
+- Sentry blocks Chrome MCP execution on `*.sentry.io` entirely (no navigate, no JS exec, no click); the workflow had to either route through Sentry's REST API with a personal token or ask the user to click manually
+- the Sentry-Vercel integration's env-var-upsert step fails on conflict with pre-existing manually-added env vars; the fallback (manual setup of `SENTRY_AUTH_TOKEN` + `NEXT_PUBLIC_SENTRY_DSN`) gives the same source-map upload behavior without the integration UI cooperating
+- the pytest-skip guard was an emergency add after the first deploy fired 50+ test events into the production Sentry project within an hour — a useful failure mode to document
+
+Improvements:
+
+- both products now have full-stack observability (errors + traces + AI spans + logs + replay + crons + feedback) on free tier
+- PostHog LLM Analytics shows per-span cost attribution that makes "which agent is the expensive one" a one-glance question on the dashboard instead of a half-hour Supabase query
+- the cookie banner makes the EU compliance posture explicit and gives a user-visible privacy control instead of relying on `respect_dnt` which only ~3% of users toggle
+- the operations runbook in `docs/deployment.md` now lists all observability env vars + their defaults + the rollback path (delete the env var, the SDK no-ops, no other code change needed)
+
+## Day 34: UX Pack Wave 2 + Safety Pack Call-Site Migration + CI Hardening
+
+- Merged PR #5 (commit `249c383`): UX Pack Wave 2 — voice input on the Ask textarea, thumbs-up/down feedback buttons with comment capture, and the prompt registry pattern (`prompts/<name>/v<N>.json` loaded by `backend/prompt_registry.py`). The registry decouples LLM prompts from Python f-strings so a prompt change doesn't need a code redeploy; 9 LLM agents now load their system prompts from JSON files including the answer generator, query router, support verifier, evidence selector, structure repair, document classifier, document landmarks, chunk semantics, and synopsis semantics. The voice input uses the browser `MediaRecorder` API + a `/transcribe` route backed by OpenAI Whisper.
+- Merged PR #6 (commit `a9245d5`): Safety Pack call-site migration. The Production Safety Pack's three components (schema-strict outputs via Pydantic + `run_structured_prompt`, atomic cost tracking via `CostCollector`, schema-strict path for the answer generator and query router) all landed end-to-end after the wiring step was completed across the active `src/` call sites. Tests: 393 passed, no regressions.
+- Added `.coderabbit.yaml` to enable CodeRabbit manual reviews on non-default base branches (commit `d692a0f`). The default config only reviews `main`-targeted PRs; the new config unblocks review on staging branches the dev cycle actually uses.
+- CI hardening (commit `7a4a83e`): added a `uv lock --check` step that fails fast when `pyproject.toml` was edited without a corresponding `uv lock` regeneration. The production Dockerfile uses `uv sync --frozen` which installs strictly from `uv.lock`, so drift between `pyproject.toml` (new dep added) and `uv.lock` (still old) silently ships a broken image — caught on AI Job Agent when `python-multipart` was added to `pyproject.toml` but the lockfile wasn't regenerated, CI tests passed, but the prod container crash-looped on `import backend.routers.workspace` because FastAPI's multipart-form decorator path raised at module load. `uv lock --check` exits non-zero if the lockfile would change, blocking the PR before merge.
+- Vercel TS error fix (commit `94da526`): explicit type annotation on `auth.getUser()` response in `landing/pricing.tsx`. The implicit `any` was getting caught by Vercel's stricter TS check on production builds even though local `next build` passed.
+
+Status: PR #5 (Wave 2) and PR #6 (Safety Pack) both merged to `main` and deployed.
+
+Why now:
+
+- the prompt registry was the last piece of the Schema-Strict + Cost-Tracking + Registry-Loading trifecta from the Production Safety Pack (Day 31); without it, model and prompt iteration still required a code redeploy
+- the CodeRabbit unblock matters during a heavy-iteration cycle where most PRs target temporary staging branches rather than `main` directly
+- the `uv lock --check` CI gate is the kind of fix that's invisible when it works but catastrophic when it doesn't; the AI Job Agent crash-loop was a useful forcing function
+
+Challenges:
+
+- the voice input had to handle the OS-mic indicator turning off on early termination paths (recording cancelled, transcribe network failure, component unmount mid-recording) — without explicit `track.stop()` calls in every exit path, the OS mic icon stays on for hours
+- the feedback button "click → server-side write → optimistic UI" loop is racey if the user clicks twice fast; the re-entry guard via `committingRef` was added after CodeRabbit flagged it on round 5 of bot review
+
+Improvements:
+
+- prompts are now data, not code — a model upgrade can update the system prompt by writing a new `v2.json` file without touching Python
+- the safety pack's three components are live across the entire active LLM surface
+- both repos now have the `uv lock --check` CI gate, so the lockfile drift class of bug is closed for new dependencies
+
 ## Day 33: Lemon Squeezy Subscription Scaffold
 
 - Added `subscriptions` + `subscription_webhook_log` Supabase tables, owned + RLS-protected per `user_id`, with a `processor` column reserved so a future Stripe or Razorpay row can sit in the same shape (see `docs/supabase-subscriptions.sql`).

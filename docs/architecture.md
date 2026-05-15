@@ -391,6 +391,38 @@ The frontend ships a structured error pipeline that turns transport, auth, and v
 - retries are wired through closures so each catch carries the original action back, including the original question for ask-retries
 - offline detection uses `navigator.onLine` so a connection failure is named correctly rather than reported as a 5xx
 
+## Observability And Telemetry Layer
+
+The production stack now carries a dual-vendor observability layer (see [ADR-018](adr/ADR-018-observability-stack-sentry-and-posthog.md)) wired into both backend and frontend.
+
+Backend (`backend/observability.py`):
+
+- Sentry SDK with `FastApiIntegration`, `StarletteIntegration`, `LoggingIntegration`, and `OpenAIIntegration` initialized at app boot via a single `initialize_observability(settings)` call before `FastAPI()` is constructed
+- The OpenAI integration auto-emits AI-aware spans (token count, model, latency, cost) for every LLM call inside a `/qa` request, so the per-question waterfall on the Sentry Performance dashboard shows which agent (router, planner, generator, support verifier, evidence selector) accounts for the slow tail
+- `enable_logs=True` lights up the new Sentry Logs product alongside breadcrumbs/events
+- A `before_send` filter drops intentional `HTTPException` events (4xx flow control + 5xx "not configured" / "temporarily unavailable" guards) so the issue feed stays focused on real bugs
+- A `_running_under_pytest()` guard skips Sentry init when `PYTEST_CURRENT_TEST` is set, so local test runs don't pollute the production project
+- PostHog Python client emits server-side analytics events (`qa_answered`, `feedback_submitted`) keyed on `user.id` and tagged with `product: "helpmate"` so the shared free-tier project can split events by product on dashboards
+- Per-LLM-call `$ai_generation` events stream into PostHog's LLM Analytics dashboard with the full `$ai_*` property schema (trace_id, span_name, provider, model, tokens, cost), pulled off `cost_collector.to_payload()` after the answer cache write so cache hits don't replay events
+
+Frontend (`instrumentation-client.ts`, `posthog-provider.tsx`, `cookie-consent.tsx`):
+
+- `@sentry/nextjs@^10.53` with App-Router pageview tracking via a `usePathname`+`useSearchParams` listener — the SDK's built-in `capture_pageview` doesn't fire on SPA navigation
+- Sentry integrations split into always-on (errors + traces + Feedback widget — legitimate interest under GDPR Art. 6(1)(f)) and consent-gated (Session Replay — requires explicit opt-in via the cookie banner)
+- PostHog provider initializes only after consent acceptance; `posthog.identify(user.id, traits)` + `posthog.group('tier', tier)` from `app-workspace.tsx` so dashboards can slice by user + plan tier
+- A three-state cookie consent banner (`pending` / `accepted` / `declined`) persists choice in `localStorage["helpmate-cookie-consent"]` with a cross-tab `storage` event listener (see [ADR-019](adr/ADR-019-eu-cookie-consent-banner-and-gdpr-analytics-gating.md))
+
+Operational surface:
+
+- An uptime monitor pings `https://api.helpmateai.xyz/health` every 5 minutes from the Sentry Crons surface; failure thresholds are 3 consecutive misses to alert, 1 success to recover
+- A `/health/sentry-debug` route deliberately raises a `ZeroDivisionError` for end-to-end DSN verification on first deploy — `HELPMATE-BACKEND-1` in the issue feed is the deliberate smoke-test issue
+- The `nightly_eval` Sentry Crons monitor is env-gated (`HELPMATE_NIGHTLY_EVAL_MONITOR_ENABLED`) so manual runs from a shell don't fire false missed-heartbeat alerts; see [ADR-020](adr/ADR-020-manual-only-nightly-eval-at-pre-revenue-stage.md)
+
+Source maps:
+
+- Vercel's Sentry-Vercel marketplace integration auto-provisions `SENTRY_AUTH_TOKEN` so `withSentryConfig` uploads source maps on every build, making frontend stack traces readable rather than minified gibberish
+- The org + project values are hardcoded in `frontend/next.config.ts` (`org: "leander-antony-a"`, `project: "helpmate-frontend"`) so the upload destination doesn't depend on env state
+
 ## Current Strengths
 
 - clean modular architecture
@@ -405,6 +437,7 @@ The frontend ships a structured error pipeline that turns transport, auth, and v
 - orchestration-aware scope enforcement has targeted branch validation for local section/chapter questions and lean vendor comparison against OpenAI File Search and Vectara
 - ephemeral run traces make workflow decisions inspectable without becoming long-term memory
 - live deployment now reflects the benchmarked architecture instead of a separate demo shell
+- production observability is wired end-to-end (Sentry errors + traces + AI Agents Monitoring + Logs + Replay + Crons + Feedback widget; PostHog product analytics + session replay + LLM Analytics with per-span cost attribution) on free tier with a GDPR-compliant cookie banner
 - evaluation policy is now simpler and more credible:
   - fixed held-out product-fit manifest as the public marker
   - OpenAI File Search and Vectara native-mode baselines

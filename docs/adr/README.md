@@ -4,6 +4,8 @@ This directory tracks the major architecture decisions behind HelpmateAI.
 
 Current ADRs:
 
+**Core RAG architecture (ADR-001..014):**
+
 - `ADR-001-streamlit-first-backend-ready-rag-app.md`
 - `ADR-002-local-first-hybrid-rag-with-chroma-and-evals.md`
 - `ADR-003-structured-abstention-and-benchmark-driven-quality.md`
@@ -19,6 +21,18 @@ Current ADRs:
 - `ADR-013-ephemeral-workflow-run-traces.md`
 - `ADR-014-in-app-source-viewer-with-pdfjs-and-docx-rendition.md`
 
+**Tier enforcement + payments (ADR-015..017):**
+
+- `ADR-015-tier-resolution-via-single-shim-function.md`
+- `ADR-016-atomic-quota-increment-and-anon-execute-revoke.md`
+- `ADR-017-lemon-squeezy-as-merchant-of-record-for-v1.md`
+
+**Observability + compliance + cost discipline (ADR-018..020):**
+
+- `ADR-018-observability-stack-sentry-and-posthog.md`
+- `ADR-019-eu-cookie-consent-banner-and-gdpr-analytics-gating.md`
+- `ADR-020-manual-only-nightly-eval-at-pre-revenue-stage.md`
+
 Usage notes:
 
 - ADRs describe why a decision was made, not just what the code looks like today
@@ -27,8 +41,13 @@ Usage notes:
 
 Current state note:
 
-- the core RAG architecture described by these ADRs is still valid
-- the newest retrieval changes are now:
+- the **core RAG architecture** described by ADR-001..014 is still valid
+- the **tier enforcement + payments stack** (ADR-015..017) is live in production with `resolve_user_tier` reading from the `subscriptions` table; every user resolves to `"free"` until the LS variant IDs flip live
+- the **observability + compliance + cost-discipline group** (ADR-018..020) is the most recent series:
+  - dual-vendor stack (Sentry + PostHog) on free tier with paired Sentry projects per product
+  - EU cookie consent banner gating non-essential analytics while keeping crash reporting always-on under legitimate interest
+  - `nightly_eval` switched to manual-only mode at pre-revenue stage; re-enable is a three-step flip when revenue justifies the ~\$15-26/mo Mon+Thu cadence (or ~\$45-90/mo daily)
+- the newest retrieval changes are:
   - deterministic document-topology planning
   - low-confidence indexing-time structure repair
   - synopsis-first retrieval with soft structural guidance

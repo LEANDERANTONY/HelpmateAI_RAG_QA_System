@@ -232,36 +232,128 @@ Recommended host cron entry for local-disk cleanup:
 */10 * * * * docker exec helpmate-api python -m backend.maintenance >> /var/log/helpmate-workspace-sweeper.log 2>&1
 ```
 
-### Nightly Evaluation Cron
-
-The `backend.nightly_eval` CLI runs the existing RAGAS, FinanceBench, and combined final-eval suites on a schedule and writes a structured JSON summary. This catches silent quality drift between releases (model upgrades, prompt edits, index changes) before users notice.
-
-Add this line to the VPS crontab — it runs at 03:30 UTC daily so it doesn't collide with the workspace sweeper or backend deploys:
+**Full crontab on the live VPS** (informational — what's actually scheduled):
 
 ```cron
-30 3 * * * docker exec helpmate-api python -m backend.nightly_eval >> /var/log/helpmate-nightly-eval.log 2>&1
+# HelpmateAI workspace TTL sweeper (no LLM, pure DB+disk cleanup)
+*/10 * * * * docker exec helpmate-api python -m backend.maintenance >> /var/log/helpmate-workspace-sweeper.log 2>&1
+
+# AI Job Agent retention sweeper (no LLM, Supabase row cleanup only)
+17 3 * * * docker exec ai-job-application-agent-api python -m backend.maintenance >> /var/log/aijobagent-retention-sweeper.log 2>&1
+
+# Weekly docker prune (no LLM, just frees ~6 GB of dangling images)
+30 3 * * Sun cd /home/ubuntu/HelpmateAI_RAG_QA_System/deploy/vps && sh ./cleanup-docker.sh >> /var/log/helpmate-docker-cleanup.log 2>&1
 ```
 
-The script writes its structured summary to `data/nightly_eval/latest.json` inside the container. Trend tracking is just `jq` over the persisted summaries:
+Zero scheduled LLM-spending jobs. The two pg_cron jobs on the Job Agent Supabase project (`cached_jobs_refresh_4h`, `cleanup-expired-resume-builder-sessions`) are also LLM-free.
+
+### Nightly Evaluation Cron — MANUAL-ONLY MODE (current default)
+
+The `backend.nightly_eval` CLI runs the existing RAGAS, FinanceBench, and combined final-eval suites and writes a structured JSON summary. It's the safety net against silent quality drift after a model upgrade, prompt edit, or index change.
+
+**As of 2026-05-16 the scheduled cron is intentionally NOT installed.** Each full run costs ~\$1.5-3 in OpenAI (~600-1000 LLM calls); daily would burn \$45-90/month at pre-revenue stage. The decision and the re-enable trigger are captured in [ADR-020](adr/ADR-020-manual-only-nightly-eval-at-pre-revenue-stage.md).
+
+**Manual one-off (no Sentry alert, no recurring cost):**
 
 ```sh
-docker exec helpmate-api jq '.metrics' data/nightly_eval/latest.json
+docker exec helpmate-api python -m backend.nightly_eval --output /tmp/eval.json
+docker exec helpmate-api cat /tmp/eval.json | jq .metrics
 ```
 
-To enable regression-mail alerts, supply a baselines file and the strict-check flag:
+Use it after shipping a meaningful model or prompt change. The script writes its structured summary to `data/nightly_eval/latest.json` inside the container.
 
-```cron
-30 3 * * * docker exec helpmate-api python -m backend.nightly_eval \
-    --baselines data/nightly_eval/baselines.json \
-    --check-thresholds \
-    >> /var/log/helpmate-nightly-eval.log 2>&1
+**Three-step re-enable when revenue justifies the spend:**
+
+1. **Capture baselines from one manual run.** Run the manual pattern above, save the `.metrics` dict to `data/nightly_eval/baselines.json` (the script also writes baselines automatically on first non-dry-run invocation).
+
+2. **Uncomment the cron line.** The VPS crontab carries a documentation block with the recommended Mon+Thu schedule. The active line to uncomment:
+
+   ```cron
+   30 3 * * Mon,Thu docker exec helpmate-api python -m backend.nightly_eval --baselines data/nightly_eval/baselines.json --check-thresholds >> /var/log/helpmate-nightly-eval.log 2>&1
+   ```
+
+   Mon+Thu (~\$15-26/mo) gives 3-4 day drift-detection window. Daily (`30 3 * * *`, ~\$45-90/mo) is the original schedule documented before the cost analysis.
+
+3. **Flip the Sentry Crons monitor env var.** Add to the VPS `.env`:
+
+   ```
+   HELPMATE_NIGHTLY_EVAL_MONITOR_ENABLED=true
+   ```
+
+   Then `docker compose up -d --force-recreate api` to load the new env. The Sentry `helpmate-nightly-eval` monitor will auto-recreate on the first check-in with the schedule already wired in code (`30 3 * * 1,4`). Regression alerts route through Sentry's "Cron failure" issue feed — no mail server needed.
+
+`baselines.json` keys must match `TRACKED_METRICS` in `backend/nightly_eval.py` — currently `ragas_faithfulness`, `ragas_answer_relevancy`, `financebench_supported_rate`, and `final_eval_supported_rate`. A drop of more than 5% (configurable via `--regression-threshold-pct`) returns exit code 2, which is what triggers the Sentry Cron-failure issue when `--check-thresholds` is passed.
+
+The script captures step-level failures into the `errors` array instead of aborting, so a transient OpenAI outage on the RAGAS step doesn't tank the whole run.
+
+### Observability env vars
+
+These ship the Sentry + PostHog stack live (see [ADR-018](adr/ADR-018-observability-stack-sentry-and-posthog.md)). All are optional — missing values reduce to a clean no-op. Set them in the VPS `.env`:
+
+```
+# Sentry
+SENTRY_DSN=https://<key>@<org>.ingest.de.sentry.io/<project_id>
+SENTRY_TRACES_SAMPLE_RATE=0.1
+SENTRY_PROFILES_SAMPLE_RATE=0.05
+SENTRY_SEND_DEFAULT_PII=false
+# SENTRY_RELEASE falls back to retrieval_version when unset; explicit
+# value useful if you bump it per deploy
+SENTRY_RELEASE=
+
+# PostHog (shared with AI Job Agent under the same free-tier project;
+# every event auto-tags with product="helpmate" via capture_event)
+POSTHOG_API_KEY=phc_<key>
+POSTHOG_HOST=https://eu.i.posthog.com
+
+# Environment label attached to every Sentry issue + PostHog event
+HELPMATE_ENVIRONMENT=production
+
+# Sentry Crons monitor for nightly_eval — leave FALSE while the cron
+# is disabled, flip to TRUE after re-enabling the schedule
+HELPMATE_NIGHTLY_EVAL_MONITOR_ENABLED=false
 ```
 
-`baselines.json` keys must match `TRACKED_METRICS` in `backend/nightly_eval.py` — currently `ragas_faithfulness`, `ragas_answer_relevancy`, `financebench_supported_rate`, and `final_eval_supported_rate`. A drop of more than 5% (configurable via `--regression-threshold-pct`) returns exit code 2, which is what triggers cron's MAILTO behavior.
+Frontend (Next.js) reads `NEXT_PUBLIC_*` equivalents from Vercel's env settings. The Vercel-Sentry integration auto-provisions `SENTRY_AUTH_TOKEN` so `withSentryConfig` uploads source maps; manual setup (paste the token directly into Vercel env) is the fallback if the integration UI conflicts with already-set env vars.
 
-The script captures step-level failures into the `errors` array instead of aborting, so a transient OpenAI outage on the RAGAS step doesn't tank the whole nightly run. Hard failures (e.g. import errors) still surface through cron mail.
+### Operational gotchas (lessons from Day 36)
 
-We deliberately did NOT add a separate `nightly_eval_alerts` Supabase table — the JSON summary on disk plus the cron mail loop are enough for now, and adding a new table requires its own RLS policies and migration. Revisit this once you want to chart drift over time on the frontend.
+#### Docker compose project-name discipline
+
+The GHA deploy and the documented manual deploy both default to **project name = directory name = `vps`**. The named volumes are prefixed with the project name, so `vps_helpmate_uploads`, `vps_helpmate_indexes`, `vps_helpmate_cache` are the data-bearing volumes. Recreating the container with a different project name (`docker compose -p helpmate up -d`) silently mounts fresh empty volumes instead of remounting the originals — the container comes up healthy but with no data.
+
+**Audit pattern** to catch this if you suspect a project-name drift:
+
+```sh
+# What volumes does the running container actually mount?
+docker inspect helpmate-api --format \
+  '{{range .Mounts}}{{println .Name "->" .Destination}}{{end}}'
+
+# How many files are in each volume? (run from the VPS host)
+for v in vps_helpmate_uploads vps_helpmate_indexes vps_helpmate_cache; do
+  echo "$v: $(docker run --rm -v $v:/data alpine sh -c 'find /data -type f | wc -l') files"
+done
+```
+
+If the running container is mounted on `helpmate_*` but data lives on `vps_*`, fix with:
+
+```sh
+cd /home/ubuntu/HelpmateAI_RAG_QA_System/deploy/vps
+docker compose -p helpmate down                 # tear down wrong-project state
+docker volume rm helpmate_helpmate_uploads helpmate_helpmate_indexes helpmate_helpmate_cache  # drop the empties
+docker compose -p vps up -d --no-build api      # re-attach to the original volumes
+```
+
+#### Caddy state must be in git
+
+The HelpmateAI Caddy container is the **single ingress for both HelpmateAI and AI Job Agent backends** — the Job Agent's compose override deliberately drops its own Caddy via the `shared_ingress / vps_default` network pattern. Both site blocks (`api.helpmateai.xyz` + `api.job-application-copilot.xyz`) MUST live in `deploy/vps/Caddyfile` and be committed. Any runtime edit via Caddy's admin API or in-container shell will silently delete on the next `docker restart helpmate-caddy`, taking the unbacked-up site config with it.
+
+If `api.job-application-copilot.xyz` returns a 502 / 525 / "Just a moment" after a Caddy restart, the most likely cause is a missing site block. Verify:
+
+```sh
+docker exec helpmate-caddy cat /config/caddy/autosave.json | jq '.apps.http.servers'
+```
+
+If a domain is missing from `match.host`, append the site block to `deploy/vps/Caddyfile` and run `docker exec helpmate-caddy caddy reload --config /etc/caddy/Caddyfile`.
 
 ### Docker Image And Build-Cache Cleanup
 
