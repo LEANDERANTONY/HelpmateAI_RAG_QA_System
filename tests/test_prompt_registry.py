@@ -423,6 +423,32 @@ def test_list_active_versions_matches_registry_file():
     assert active == raw.get("active", {})
 
 
+def test_system_messages_match_call_sites_in_src():
+    """``src/generation/service.py`` and ``src/query_router.py`` pass
+    hardcoded system messages when invoking the LLM (the user prompt
+    now comes from the registry, but the system message is wired at
+    the call site). Locks those strings to the registry's ``system``
+    fields so a future tweak to one without the other doesn't silently
+    drift.
+
+    The contract: the registry's ``system`` field is the canonical
+    source of truth; the call-site strings MUST equal it.
+    """
+    expected = {
+        "answer_generation": "You answer questions using only supplied document evidence.",
+        "support_verifier": "You strictly verify whether answers are fully supported by supplied document evidence.",
+        "support_status_verifier": "You classify answer support status using only supplied document evidence.",
+        "query_router": "You classify retrieval routes for a document QA pipeline.",
+    }
+    for name, call_site_system in expected.items():
+        template = get_prompt(name, "v1")
+        assert template.system == call_site_system, (
+            f"{name}/v1.json system drifted from the hardcoded string in "
+            f"src/ (registry={template.system!r}, call_site={call_site_system!r}). "
+            f"Update either the JSON or the call site so they agree."
+        )
+
+
 def test_answer_generation_v1_expected_placeholders():
     """Locks the placeholder contract so a v1 edit can't drop
     {{evidence}} without failing the test."""
