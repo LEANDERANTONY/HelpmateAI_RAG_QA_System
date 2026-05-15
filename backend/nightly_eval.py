@@ -423,6 +423,78 @@ def _parse_args(argv: list[str] | None = None) -> argparse.Namespace:
     return parser.parse_args(argv)
 
 
+_CRON_MONITOR_SLUG = "helpmate-nightly-eval"
+
+
+def _start_sentry_checkin() -> tuple[Any, str | None]:
+    """Initialize Sentry + open a Crons check-in for the nightly run.
+
+    Returns ``(sentry_sdk, check_in_id)`` so ``main`` can close the
+    check-in with ``status="ok"`` or ``"error"`` at the end. Both
+    halves of the return are ``None`` when Sentry isn't configured
+    (local dev, ad-hoc invocations) — the caller treats that as a
+    no-op.
+
+    Why this lives in nightly_eval rather than backend/observability:
+        backend/observability bootstraps the FastAPI app's Sentry init
+        from ``backend.main`` at import time. ``python -m backend.nightly_eval``
+        runs as a CLI inside the container and doesn't import
+        ``backend.main``, so we initialize a dedicated Sentry client
+        here. Both inits point at the same DSN so the events land in
+        the same project; Sentry de-dupes the SDK init internally if
+        somehow both run.
+
+    The ``monitor_config`` block matches the published cron line in
+    docs/deployment.md (``30 3 * * *`` UTC) so Sentry knows when to
+    expect a heartbeat. A missed run lights up the Crons dashboard.
+    """
+    from src.config import get_settings
+
+    settings = get_settings()
+    if not settings.sentry_dsn:
+        return None, None
+    try:
+        import sentry_sdk
+
+        sentry_sdk.init(
+            dsn=settings.sentry_dsn,
+            environment=settings.observability_environment,
+            release=settings.observability_release or settings.retrieval_version,
+            traces_sample_rate=0.0,  # the CLI does no FastAPI request work
+            profiles_sample_rate=0.0,
+        )
+        check_in_id = sentry_sdk.crons.capture_checkin(
+            monitor_slug=_CRON_MONITOR_SLUG,
+            status="in_progress",
+            monitor_config={
+                "schedule": {"type": "crontab", "value": "30 3 * * *"},
+                "timezone": "UTC",
+                "checkin_margin": 5,    # minutes — alert if late
+                "max_runtime": 60,      # minutes — alert if it hangs
+                "failure_issue_threshold": 1,
+                "recovery_threshold": 1,
+            },
+        )
+        return sentry_sdk, check_in_id
+    except Exception as exc:
+        logger.warning("sentry crons init failed (%s); continuing without monitoring.", exc)
+        return None, None
+
+
+def _close_sentry_checkin(sentry_sdk: Any, check_in_id: str | None, status: str) -> None:
+    if sentry_sdk is None or check_in_id is None:
+        return
+    try:
+        sentry_sdk.crons.capture_checkin(
+            monitor_slug=_CRON_MONITOR_SLUG,
+            check_in_id=check_in_id,
+            status=status,
+        )
+        sentry_sdk.flush(timeout=5)
+    except Exception as exc:
+        logger.warning("sentry crons close failed (%s); ignoring.", exc)
+
+
 def main(argv: list[str] | None = None) -> int:
     args = _parse_args(argv)
     logging.basicConfig(
@@ -430,44 +502,61 @@ def main(argv: list[str] | None = None) -> int:
         format="%(asctime)s %(levelname)s %(name)s %(message)s",
     )
 
-    output_path = Path(args.output)
-    baselines_path = Path(args.baselines) if args.baselines else None
-    result = run_nightly_eval(
-        output_path=output_path,
-        baselines_path=baselines_path,
-        threshold_pct=args.regression_threshold_pct,
-        dry_run=args.dry_run,
-        skip_ragas=args.skip_ragas,
-        skip_financebench=args.skip_financebench,
-        skip_final_eval=args.skip_final_eval,
-        final_eval_manifest=args.final_eval_manifest,
-        ragas_dataset=args.ragas_dataset,
-        ragas_document=args.ragas_document,
-        financebench_max_questions=args.financebench_max_questions,
-    )
+    # Open a Sentry Crons check-in BEFORE the work starts so a process
+    # crash inside the eval steps still gets a "missing heartbeat"
+    # alert via Sentry's monitor watchdog (we'd never reach the close
+    # path in that case).
+    sentry_module, check_in_id = _start_sentry_checkin()
+    final_status = "ok"
+    exit_code = 0
+    try:
+        output_path = Path(args.output)
+        baselines_path = Path(args.baselines) if args.baselines else None
+        result = run_nightly_eval(
+            output_path=output_path,
+            baselines_path=baselines_path,
+            threshold_pct=args.regression_threshold_pct,
+            dry_run=args.dry_run,
+            skip_ragas=args.skip_ragas,
+            skip_financebench=args.skip_financebench,
+            skip_final_eval=args.skip_final_eval,
+            final_eval_manifest=args.final_eval_manifest,
+            ragas_dataset=args.ragas_dataset,
+            ragas_document=args.ragas_document,
+            financebench_max_questions=args.financebench_max_questions,
+        )
 
-    # Emit a single JSON line on stdout so the cron log file has a
-    # parseable trail without having to grep the per-day file.
-    print(json.dumps(result.to_dict(), indent=2))
+        # Emit a single JSON line on stdout so the cron log file has a
+        # parseable trail without having to grep the per-day file.
+        print(json.dumps(result.to_dict(), indent=2))
 
-    if result.regression_detected:
-        for regression in result.regressions:
-            logger.warning(
-                "nightly_eval REGRESSION %s: baseline=%.4f current=%.4f drop=%.2f%%",
-                regression["metric"],
-                regression["baseline"],
-                regression["current"],
-                regression["drop_pct"],
-            )
-        if args.check_thresholds:
-            return 2
+        if result.regression_detected:
+            for regression in result.regressions:
+                logger.warning(
+                    "nightly_eval REGRESSION %s: baseline=%.4f current=%.4f drop=%.2f%%",
+                    regression["metric"],
+                    regression["baseline"],
+                    regression["current"],
+                    regression["drop_pct"],
+                )
+            if args.check_thresholds:
+                final_status = "error"
+                exit_code = 2
 
-    if result.errors and args.check_thresholds:
-        # Hard failure inside a step (eval threw) — only escalate to a
-        # nonzero exit when the operator opted into strict checks.
-        return 3
-
-    return 0
+        if result.errors and args.check_thresholds:
+            # Hard failure inside a step (eval threw) — only escalate to a
+            # nonzero exit when the operator opted into strict checks.
+            final_status = "error"
+            exit_code = 3
+    except Exception:
+        # The work itself blew up — close the check-in as failed so
+        # Sentry's Crons dashboard surfaces the incident, then re-raise
+        # so the operator's cron mail still gets the traceback.
+        final_status = "error"
+        _close_sentry_checkin(sentry_module, check_in_id, final_status)
+        raise
+    _close_sentry_checkin(sentry_module, check_in_id, final_status)
+    return exit_code
 
 
 if __name__ == "__main__":

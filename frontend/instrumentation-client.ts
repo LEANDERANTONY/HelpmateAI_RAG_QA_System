@@ -45,6 +45,25 @@ if (dsn) {
         maskAllText: true,
         blockAllMedia: true,
       }),
+      // User Feedback widget — Sentry injects a floating "Report a
+      // bug" button into the DOM. Tying user-submitted reports to
+      // the current Sentry session gives us the breadcrumb trail +
+      // active replay along with whatever the user typed. Free on
+      // the Developer plan. Themed dark to match the workspace shell;
+      // the screenshot capture is opt-in so we don't accidentally
+      // ship document content.
+      Sentry.feedbackIntegration({
+        colorScheme: "dark",
+        autoInject: true,
+        showBranding: false,
+        triggerLabel: "Report an issue",
+        formTitle: "Report an issue",
+        submitButtonLabel: "Send",
+        // Screenshot capture is allowed but defaults to off — the
+        // user has to tick the box. Keeps PDF rendering safe by
+        // default while letting users opt-in when the bug is visual.
+        enableScreenshot: true,
+      }),
     ],
     debug: false,
   });
