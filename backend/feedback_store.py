@@ -13,7 +13,7 @@ Mirrors the existing two-backend pattern:
                          dev and tests; not safe under concurrent
                          workers.
   SupabaseFeedbackStore  Inserts into ``public.helpmate_feedback``
-                         (see docs/supabase-feedback.sql). RLS is
+                         (see docs/sql/supabase-feedback.sql). RLS is
                          service-role-bypass on write — the FastAPI
                          service inserts user-bound rows directly.
 

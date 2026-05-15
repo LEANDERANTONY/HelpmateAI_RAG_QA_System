@@ -57,7 +57,7 @@ on public.helpmate_run_traces (model_name);
 
 -- Note on RLS:
 --   The cost columns inherit the existing read/write policies from
---   ``helpmate_run_traces`` (see ``docs/supabase-workspace-retention.sql``).
+--   ``helpmate_run_traces`` (see ``docs/sql/supabase-workspace-retention.sql``).
 --   We deliberately do NOT add a separate cost-only policy; the
 --   trace row is already user-scoped, and there's no use case for a
 --   "users can see cost but not other trace fields" split.

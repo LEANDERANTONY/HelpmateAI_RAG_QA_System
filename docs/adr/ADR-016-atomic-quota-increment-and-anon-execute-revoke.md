@@ -80,7 +80,7 @@ The intended permission model is: `service_role` only. The backend uses `HELPMAT
 
 The first iteration of the migration revoked EXECUTE from `public` and `authenticated`. Caught post-merge: **Supabase grants `anon` EXECUTE on public-schema functions by default**, and `anon` is the role under the public anon key shipped to every browser client. Without a revoke against `anon`, an unauthenticated caller could have invoked `increment_question_counter` against any user's UUID via the public anon key — the exact attack the RPC parameterization was designed to make explicit.
 
-Closed in commit `9a1028e` via Supabase migration `revoke_anon_quota_rpcs` (applied `20260514154130`) and backported into `docs/supabase-quota-counters.sql` so a fresh-DB redeploy is secure out of the box. The final revoke set is all three of `public`, `authenticated`, and `anon`; only `service_role` retains EXECUTE.
+Closed in commit `9a1028e` via Supabase migration `revoke_anon_quota_rpcs` (applied `20260514154130`) and backported into `docs/sql/supabase-quota-counters.sql` so a fresh-DB redeploy is secure out of the box. The final revoke set is all three of `public`, `authenticated`, and `anon`; only `service_role` retains EXECUTE.
 
 ## Consequences
 
@@ -116,4 +116,4 @@ Manual security check executed against the production Supabase project after the
 - An authenticated request (using a real user's anon-client token) returns the same `permission denied`
 - The backend's service-role-keyed call continues to return the new counter value
 
-The `docs/supabase-quota-counters.sql` file in the repo is the authoritative migration; the production database matches it.
+The `docs/sql/supabase-quota-counters.sql` file in the repo is the authoritative migration; the production database matches it.

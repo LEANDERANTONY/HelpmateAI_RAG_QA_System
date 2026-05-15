@@ -60,15 +60,15 @@ This is the docs-governance file. It catalogs every tracked Markdown file in the
 
 ### Schema migrations (informational)
 
-The `docs/*.sql` files are reference copies of the Supabase migrations applied to production. They're tracked so a fresh-DB redeploy can rebuild the schema without paging through the Supabase Studio history.
+The `docs/sql/*.sql` files are reference copies of the Supabase migrations applied to production. They're tracked so a fresh-DB redeploy can rebuild the schema without paging through the Supabase Studio history.
 
 | File | What it sets up |
 |---|---|
-| `docs/supabase-feedback.sql` | `helpmate_feedback` table + RLS |
-| `docs/supabase-quota-counters.sql` | `helpmate_quota_counters` + atomic `increment_question_counter` RPC + tier matrix |
-| `docs/supabase-run-traces-cost-columns.sql` | Adds `prompt_tokens` / `completion_tokens` / `cost_usd` / `model_name` columns to `helpmate_run_traces` |
-| `docs/supabase-subscriptions.sql` | `subscriptions` + `subscription_webhook_log` tables for the LS integration |
-| `docs/supabase-workspace-retention.sql` | Workspace TTL columns + RLS (the SQL pg_cron sweeper was deprecated; the Python sweeper in `backend/maintenance.py` is the active path) |
+| `docs/sql/supabase-feedback.sql` | `helpmate_feedback` table + RLS |
+| `docs/sql/supabase-quota-counters.sql` | `helpmate_quota_counters` + atomic `increment_question_counter` RPC + tier matrix |
+| `docs/sql/supabase-run-traces-cost-columns.sql` | Adds `prompt_tokens` / `completion_tokens` / `cost_usd` / `model_name` columns to `helpmate_run_traces` |
+| `docs/sql/supabase-subscriptions.sql` | `subscriptions` + `subscription_webhook_log` tables for the LS integration |
+| `docs/sql/supabase-workspace-retention.sql` | Workspace TTL columns + RLS (the SQL pg_cron sweeper was deprecated; the Python sweeper in `backend/maintenance.py` is the active path) |
 
 Update trigger: only when a new migration lands. Old `.sql` files are append-only.
 

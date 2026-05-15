@@ -45,7 +45,7 @@ logger = logging.getLogger(__name__)
 
 
 # The subscriptions table name is fixed for v1 (mirrors the SQL
-# migration in docs/supabase-subscriptions.sql). Exposed as a
+# migration in docs/sql/supabase-subscriptions.sql). Exposed as a
 # module-level constant so the webhook handler can write to the same
 # table without hard-coding the literal twice.
 SUBSCRIPTIONS_TABLE = "subscriptions"

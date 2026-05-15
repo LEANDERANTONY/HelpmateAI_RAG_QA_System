@@ -114,7 +114,7 @@ class Settings:
     supabase_artifacts_table: str = field(default_factory=lambda: _env_str("HELPMATE_SUPABASE_ARTIFACTS_TABLE", "helpmate_index_artifacts"))
     supabase_run_traces_table: str = field(default_factory=lambda: _env_str("HELPMATE_SUPABASE_RUN_TRACES_TABLE", "helpmate_run_traces"))
     # Monthly quota counters (Step 3 of tier enforcement). Schema in
-    # docs/supabase-quota-counters.sql. Local-backend dev mirrors the
+    # docs/sql/supabase-quota-counters.sql. Local-backend dev mirrors the
     # shape in a JSON file under data/api_state/.
     supabase_quota_counters_table: str = field(default_factory=lambda: _env_str("HELPMATE_SUPABASE_QUOTA_COUNTERS_TABLE", "helpmate_quota_counters"))
     chroma_http_host: str = field(default_factory=lambda: _env_str("HELPMATE_CHROMA_HTTP_HOST", "localhost"))

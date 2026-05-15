@@ -1,7 +1,7 @@
 -- HelpmateAI subscriptions table.
 --
--- Apply this in the Supabase SQL editor alongside docs/supabase-bootstrap.sql
--- and docs/supabase-quota-counters.sql. Adds the row that
+-- Apply this in the Supabase SQL editor alongside docs/sql/supabase-bootstrap.sql
+-- and docs/sql/supabase-quota-counters.sql. Adds the row that
 -- `backend.subscriptions.get_active_subscription` reads from, which in
 -- turn drives the Lemon Squeezy-powered `resolve_user_tier`.
 --

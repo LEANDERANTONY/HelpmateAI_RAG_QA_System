@@ -141,7 +141,7 @@ def test_cost_collector_to_payload_keys_match_sql_migration():
     this test fails after a SQL migration edit, the trace store's
     Python write path will fall out of sync with the columns.
 
-    The migration in docs/supabase-run-traces-cost-columns.sql adds:
+    The migration in docs/sql/supabase-run-traces-cost-columns.sql adds:
       prompt_tokens, completion_tokens, cost_usd, model_name
 
     Each of those MUST appear in the totals dict — that's the

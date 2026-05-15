@@ -137,7 +137,7 @@ The Supabase tables are expected to support simple upserts:
 
 If you want the stricter authenticated retention model, also apply:
 
-- [docs/supabase-workspace-retention.sql](./supabase-workspace-retention.sql)
+- [docs/sql/supabase-workspace-retention.sql](./sql/supabase-workspace-retention.sql)
 
 That script adds:
 

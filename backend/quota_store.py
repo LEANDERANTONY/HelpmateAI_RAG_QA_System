@@ -8,7 +8,7 @@ that the /qa handler reads/writes through, plus two implementations:
                       tests; not safe under concurrent workers.
   SupabaseQuotaStore  Calls the increment_question_counter /
                       increment_premium_counter RPC functions from
-                      docs/supabase-quota-counters.sql. Atomic upsert
+                      docs/sql/supabase-quota-counters.sql. Atomic upsert
                       under concurrent /qa requests.
 
 The factory `build_quota_store(settings)` mirrors the existing

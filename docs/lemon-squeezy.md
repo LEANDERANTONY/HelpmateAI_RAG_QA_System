@@ -39,7 +39,7 @@ and how the frontend invokes hosted checkout / customer portal.
 
 | File | Purpose |
 | --- | --- |
-| `docs/supabase-subscriptions.sql` | `subscriptions` + `subscription_webhook_log` tables with RLS. Apply in the Supabase SQL editor. |
+| `docs/sql/supabase-subscriptions.sql` | `subscriptions` + `subscription_webhook_log` tables with RLS. Apply in the Supabase SQL editor. |
 | `backend/subscriptions.py` | Read/write helper for `subscriptions`. LRU cache keyed by `(user_id, UTC minute)`; webhook upserts also invalidate. |
 | `backend/webhooks/lemonsqueezy.py` | HMAC verification + payload parsing + event-to-status mapping + idempotency. Pure logic; no FastAPI. |
 | `backend/billing_routes.py` | `POST /webhooks/lemonsqueezy` + `POST /billing/portal`. |
@@ -91,7 +91,7 @@ protect against duplicate processing:
 
 1. **Apply the SQL migration** in the Supabase SQL editor:
    ```sql
-   \i docs/supabase-subscriptions.sql
+   \i docs/sql/supabase-subscriptions.sql
    ```
 2. **Create LS sandbox store + products**. Two variants: Pro ($9/mo) and Business ($39/mo). Note the numeric `variant_id` from each variant's API resource.
 3. **Set env vars on the VPS**:
