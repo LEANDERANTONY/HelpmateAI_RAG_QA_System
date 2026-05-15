@@ -266,4 +266,95 @@ export async function getCustomerPortalUrl(): Promise<{ url: string }> {
   });
 }
 
+// ─── UX Pack (Wave 2) ────────────────────────────────────────────────────
+
+/** Mirrors the backend's `MAX_AUDIO_BYTES`. Surfacing the cap
+ *  client-side avoids burning a multi-MB upload over a slow connection
+ *  only to be rejected by the server with a 413. The server-side gate
+ *  stays as defense in depth for hostile clients that bypass this. */
+const TRANSCRIBE_MAX_AUDIO_BYTES = 25 * 1024 * 1024;
+
+export type FeedbackRating = "up" | "down";
+
+export type FeedbackSurface =
+  | "answer"
+  | "citation"
+  | "starter_question"
+  | string; // open string for future surfaces — the backend CHECK is permissive
+
+export type SubmitFeedbackPayload = {
+  rating: FeedbackRating;
+  /** Optional trace_id correlating with a /qa run. Shape is the
+   *  backend's "trace-<hex>" string, not a canonical UUID. */
+  traceId?: string | null;
+  surface?: FeedbackSurface;
+  comment?: string;
+};
+
+export type FeedbackResponse = {
+  feedback_id: string;
+  created_at: string;
+};
+
+/** POST /feedback — record a thumb-up / thumb-down (and optional
+ *  comment) against an answer or any traced surface.
+ *
+ *  Server contract: rating must be 'up'|'down', comment ≤ 2000 chars.
+ *  trace_id is opaque — stale / unknown ids land in the table for
+ *  analytics consistency rather than failing the user's tap. */
+export async function submitFeedback(
+  payload: SubmitFeedbackPayload,
+): Promise<FeedbackResponse> {
+  return request<FeedbackResponse>("/feedback", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      rating: payload.rating,
+      trace_id: payload.traceId ?? null,
+      surface: payload.surface ?? "answer",
+      comment: payload.comment ?? "",
+    }),
+  });
+}
+
+export type TranscribeAudioResponse = {
+  text: string;
+  duration_seconds: number;
+};
+
+/** POST /transcribe — multipart audio upload, returns a Whisper
+ *  transcript. The caller hooks this up to a MediaRecorder push-to-talk
+ *  affordance; the server enforces a 25 MB cap, but we guard
+ *  client-side first for faster user feedback. */
+export async function transcribeAudio(
+  audioBlob: Blob,
+): Promise<TranscribeAudioResponse> {
+  if (audioBlob.size > TRANSCRIBE_MAX_AUDIO_BYTES) {
+    throw new Error(
+      "Audio recording exceeds the 25 MB limit. Try a shorter recording or a more compressed format.",
+    );
+  }
+  // FormData lets the browser set the multipart boundary correctly —
+  // don't add Content-Type ourselves or fetch will pick the wrong
+  // boundary and the upload will fail at FastAPI's parser.
+  const formData = new FormData();
+  // Filename hint: Whisper inspects the extension to pick a demuxer.
+  // The MIME comes off the Blob; the server normalizes both.
+  const extensionHint = audioBlob.type.includes("mp4")
+    ? "mp4"
+    : audioBlob.type.includes("wav")
+      ? "wav"
+      : audioBlob.type.includes("ogg")
+        ? "ogg"
+        : "webm";
+  formData.append("file", audioBlob, `voice.${extensionHint}`);
+
+  return request<TranscribeAudioResponse>("/transcribe", {
+    method: "POST",
+    body: formData,
+  });
+}
+
 export { API_BASE_URL, UPLOAD_API_BASE_URL };

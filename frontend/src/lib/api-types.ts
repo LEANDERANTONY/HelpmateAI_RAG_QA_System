@@ -52,6 +52,11 @@ export type AnswerResult = {
   retrieval_notes: string[];
   query_used: string;
   query_variants: string[];
+  /** Trace id assigned by the pipeline (``trace-<hex>``). When the
+   *  /qa request landed in helpmate_run_traces this is the FK the
+   *  feedback table references. May be null for cached / fallback
+   *  answers that didn't produce a fresh trace. */
+  run_trace_id?: string | null;
 };
 
 export type HealthResponse = {

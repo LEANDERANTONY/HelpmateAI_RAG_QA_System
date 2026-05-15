@@ -10,6 +10,8 @@ import type {
 
 import { AuthSidebar } from "@/components/auth-sidebar";
 import { ErrorState } from "@/components/error-state";
+import { FeedbackButtons } from "@/components/feedback-buttons";
+import { VoiceInputButton, isVoiceInputSupported } from "@/components/voice-input-button";
 import { ChatCollapseToggle } from "@/components/viewer/chat-collapse-toggle";
 import { MobileSourceSheet } from "@/components/viewer/mobile-source-sheet";
 import { SourcePane } from "@/components/viewer/source-pane";
@@ -852,6 +854,19 @@ function AskBlock({
           <kbd>⌘↵</kbd>
           <span>to submit</span>
         </span>
+        {isVoiceInputSupported() ? (
+          <VoiceInputButton
+            disabled={!canAsk || isLoading}
+            onError={(message) => notifyError(message)}
+            onTranscript={(text) => {
+              // Append rather than replace so a user can dictate a
+              // continuation onto already-typed text. Trim leading
+              // space so back-to-back transcripts don't double-space.
+              const next = question.trim() ? `${question.trim()} ${text}` : text;
+              onQuestionChange(next);
+            }}
+          />
+        ) : null}
         <button
           type="button"
           className={`h-premium-toggle${premiumActive ? " active" : ""}`}
@@ -1213,6 +1228,13 @@ function QACard({
       ) : null}
       {!streaming && turn.answer.note && turn.answer.support_status !== "supported" ? (
         <p className="h-note-card">{turn.answer.note}</p>
+      ) : null}
+      {!streaming ? (
+        <FeedbackButtons
+          surface="answer"
+          traceId={turn.answer.run_trace_id ?? null}
+          onError={(message) => notifyError(message)}
+        />
       ) : null}
     </article>
   );
