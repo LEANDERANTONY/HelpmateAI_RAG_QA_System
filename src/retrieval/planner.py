@@ -6,7 +6,6 @@ from dataclasses import replace
 from typing import Any
 
 from src.config import Settings
-from src.openai_service import CostCollector
 from src.query_analysis import QueryAnalyzer, QueryProfile
 from src.query_router import QueryRouter
 from src.schemas import RetrievalPlan, SectionSynopsisRecord
@@ -69,20 +68,13 @@ class RetrievalPlanner:
         "summary",
     }
 
-    def __init__(
-        self,
-        settings: Settings,
-        router: QueryRouter | None = None,
-        *,
-        cost_collector: CostCollector | None = None,
-    ):
-        # cost_collector flows down from the pipeline through HybridRetriever
-        # into the QueryRouter so router LLM-fallback calls land in the same
-        # per-request total as the generator's calls. When ``router`` is
-        # explicitly supplied the caller takes responsibility for wiring its
-        # collector; otherwise we build one here that shares the pipeline's.
+    def __init__(self, settings: Settings, router: QueryRouter | None = None):
+        # No cost_collector threading — the QueryRouter the planner
+        # builds reads its recorder from the request-scoped ContextVar
+        # in ``src.openai_service``. See HybridRetriever's __init__ for
+        # the same rationale.
         self.settings = settings
-        self.router = router or QueryRouter(settings, cost_collector=cost_collector)
+        self.router = router or QueryRouter(settings)
         self.query_analyzer = QueryAnalyzer()
         self.topology_service = DocumentTopologyService()
         self.client = None

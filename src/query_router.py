@@ -40,13 +40,13 @@ class QueryRouter:
         *,
         cost_collector: CostCollector | None = None,
     ):
-        # cost_collector is provided by the pipeline so a single
-        # CostCollector aggregates LLM calls from every subsystem
-        # (generator + router) into one per-request total. When omitted
-        # (eval scripts, unit tests, anything that doesn't care about
-        # cost tracking), the router builds its own local collector.
+        # cost_collector is an OPTIONAL explicit override; in production
+        # the wrapper falls back to the request-scoped ContextVar in
+        # ``src.openai_service`` so concurrent /qa requests don't share
+        # the same records list. See AnswerGenerator's __init__ for
+        # the same pattern + rationale.
         self.settings = settings
-        self.cost_collector = cost_collector or CostCollector()
+        self.cost_collector = cost_collector
         self.client = None
         if settings and settings.openai_api_key and settings.router_llm_enabled:
             try:

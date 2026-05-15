@@ -13,7 +13,11 @@ from src.config import Settings, get_settings
 from src.generation import AnswerGenerator, EvidenceSelector
 from src.ingest import DocxConversionError, convert_docx_to_pdf, ingest_document
 from src.landmarks import DocumentLandmarkService
-from src.openai_service import CostCollector
+from src.openai_service import (
+    CostCollector,
+    bind_cost_collector,
+    reset_cost_collector,
+)
 from src.retrieval import ChromaIndexStore, HybridRetriever
 from src.sections import build_sections
 from src.sections.profiles import enrich_section_profiles
@@ -30,17 +34,19 @@ logger = logging.getLogger(__name__)
 class HelpmatePipeline:
     def __init__(self, settings: Settings | None = None):
         self.settings = settings or get_settings()
-        # Per-request CostCollector — wired into the AnswerGenerator and
-        # the HybridRetriever (which threads it into RetrievalPlanner →
-        # QueryRouter) so every LLM call across the /qa request lands in
-        # a single collector. _build_run_trace folds the totals into the
-        # RunTraceRecord cost columns and the collector is reset between
-        # requests so they don't accumulate forever.
-        self.cost_collector = CostCollector()
+        # CostCollector lives in a per-request ContextVar (see
+        # src.openai_service.bind_cost_collector) — NOT on the pipeline
+        # instance, because backend/main.py:_pipeline() is an @lru_cache
+        # singleton and a shared collector would interleave records
+        # across concurrent /qa calls. The pipeline binds a fresh
+        # collector at the start of answer_question and resets it in
+        # a finally; OpenAIService reads from the ContextVar so the
+        # generator + retriever subsystems don't need a captured
+        # reference.
         self.store = ChromaIndexStore(self.settings)
-        self.retriever = HybridRetriever(self.store, self.settings, cost_collector=self.cost_collector)
+        self.retriever = HybridRetriever(self.store, self.settings)
         self.evidence_selector = EvidenceSelector(self.settings)
-        self.generator = AnswerGenerator(self.settings, cost_collector=self.cost_collector)
+        self.generator = AnswerGenerator(self.settings)
         self.answer_cache = AnswerCache(self.settings.cache_dir)
         self.topology_service = DocumentTopologyService()
         self.synopsis_semantics_service = SynopsisSemanticsService(self.settings)
@@ -264,6 +270,38 @@ class HelpmatePipeline:
             cached.cache_status.index_reused = index_record.reused
             return cached
 
+        # Fresh CostCollector for THIS request — bound to the
+        # _current_cost_collector ContextVar so OpenAIService reads
+        # the right collector inside the generator / router LLM calls.
+        # Reset in the finally so a partial failure still leaves the
+        # contextvar clean for the next request that lands on this
+        # task. The pipeline is an @lru_cache singleton in
+        # backend/main.py:_pipeline(), so a process-scoped collector
+        # would mix records across concurrent requests.
+        cost_collector = CostCollector()
+        token = bind_cost_collector(cost_collector)
+        try:
+            return self._answer_question_inner(
+                document=document,
+                index_record=index_record,
+                question=question,
+                cache_key=cache_key,
+                model_override=model_override,
+                cost_collector=cost_collector,
+            )
+        finally:
+            reset_cost_collector(token)
+
+    def _answer_question_inner(
+        self,
+        *,
+        document: DocumentRecord,
+        index_record: IndexRecord,
+        question: str,
+        cache_key: str,
+        model_override: str | None,
+        cost_collector: CostCollector,
+    ) -> AnswerResult:
         retrieval_result = self.retrieve_evidence(document.document_id, document.fingerprint, question)
         retrieval_result = self.evidence_selector.select(question, retrieval_result)
         answer = self.generate_answer(
@@ -322,6 +360,7 @@ class HelpmatePipeline:
             question=question,
             retrieval_result=retrieval_result,
             answer=answer,
+            cost_collector=cost_collector,
         )
         self.run_trace_store.save_trace(trace)
         answer.run_trace_id = trace.trace_id
@@ -388,6 +427,7 @@ class HelpmatePipeline:
         question: str,
         retrieval_result: RetrievalResult,
         answer: AnswerResult,
+        cost_collector: CostCollector | None = None,
     ) -> RunTraceRecord:
         created_at = datetime.now(timezone.utc)
         trace_id = f"trace-{uuid.uuid4().hex}"
@@ -398,13 +438,16 @@ class HelpmatePipeline:
         # Per-call breakdown lands in the payload JSON for debugging;
         # the totals populate the dedicated cost columns on the trace
         # store (prompt_tokens / completion_tokens / cost_usd / model_name).
-        cost_totals = self.cost_collector.totals()
-        llm_call_breakdown = self.cost_collector.to_payload()
-        # Reset before the next request so collectors don't accumulate
-        # across calls — the pipeline is process-lived but the collector
-        # is per-request. We do this AFTER reading totals to make sure
-        # the current trace captures everything.
-        self.cost_collector.records.clear()
+        # When the caller doesn't supply a collector (e.g. eval scripts
+        # building traces outside the request path), we record zeros —
+        # the dedicated columns still write cleanly and the trace row
+        # stays queryable for non-cost rollups.
+        if cost_collector is not None:
+            cost_totals = cost_collector.totals()
+            llm_call_breakdown = cost_collector.to_payload()
+        else:
+            cost_totals = {"prompt_tokens": 0, "completion_tokens": 0, "cost_usd": 0.0, "model_name": ""}
+            llm_call_breakdown = {"totals": cost_totals, "calls": []}
 
         payload = {
             "question": question,

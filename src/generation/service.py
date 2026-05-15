@@ -136,15 +136,15 @@ class AnswerGenerator:
         *,
         cost_collector: CostCollector | None = None,
     ):
-        # cost_collector is provided by the pipeline so a single
-        # CostCollector aggregates LLM calls from every subsystem
-        # (generator + router) into one per-request total. If omitted
-        # (eval scripts, unit tests), the generator builds its own
-        # local collector — it's still accessible via
-        # ``self.cost_collector`` for callers that want the per-call
-        # breakdown.
+        # cost_collector is an OPTIONAL explicit override for tests +
+        # eval scripts that want a captured reference. In production
+        # the pipeline binds a request-scoped CostCollector to the
+        # ContextVar in ``src.openai_service`` and the OpenAIService
+        # wrapper reads from it at record time — so leaving this None
+        # (the default) is what gives us per-request isolation under
+        # FastAPI's concurrent task model.
         self.settings = settings
-        self.cost_collector = cost_collector or CostCollector()
+        self.cost_collector = cost_collector
         self.client = None
         if settings.openai_api_key:
             try:
@@ -159,11 +159,16 @@ class AnswerGenerator:
         """Build an OpenAIService that wraps whatever ``self.client`` is
         currently set to.
 
-        Constructed per-call (rather than once in __init__) so that
-        tests which monkeypatch ``generator.client = _FakeClient(...)``
-        after construction see their fake propagated through. The wrapper
+        Constructed per-call (rather than once in __init__) so tests
+        which monkeypatch ``generator.client = _FakeClient(...)`` after
+        construction see their fake propagated through. The wrapper
         itself is cheap — no network or auth — so per-call construction
         is fine.
+
+        We pass ``self.cost_collector`` (may be None) as the explicit
+        recorder. When None, the wrapper's ``_record_cost`` falls back
+        to ``get_current_cost_collector()`` — the request-scoped
+        ContextVar the pipeline binds at the start of each /qa call.
         """
         return OpenAIService(
             self.settings,
