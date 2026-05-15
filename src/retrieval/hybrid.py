@@ -78,6 +78,10 @@ class HybridRetriever:
     }
 
     def __init__(self, store: ChromaIndexStore, settings: Settings):
+        # No cost_collector threading here — the OpenAIService wrapper
+        # used by the downstream QueryRouter reads its recorder from
+        # the request-scoped ContextVar in ``src.openai_service``, so
+        # there's nothing to plumb through this layer.
         self.store = store
         self.settings = settings
         self.reranker = Reranker(settings) if settings.reranker_enabled else None
