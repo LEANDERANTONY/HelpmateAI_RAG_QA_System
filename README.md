@@ -77,13 +77,13 @@ The latest held-out suite uses:
 - separate native-context and equalized-context modes for future product and controlled retrieval comparisons
 - documented vendor comparison settings when OpenAI File Search or Vectara baselines are run
 
-Full protocol details live in [final_eval_protocol.md](docs/evals/final_eval_protocol.md), with the broader evaluation plan in [next_steps_and_final_eval_plan.md](docs/internal/next_steps_and_final_eval_plan.md).
+Full protocol details live in [final_eval_protocol.md](docs/evals/final_eval_protocol.md).
 
 ## How It Is Built
 
 The retrieval core lives in `src/` and stays framework-agnostic. `backend/` exposes it through FastAPI upload, index, status, ask, and source-file endpoints. `frontend/` ships the Next.js workspace UI and the marketing landing as a single Vercel deployment; a host-based rewrite in `next.config.ts` serves the apex `helpmateai.xyz` from a `/landing` route group while `app.helpmateai.xyz` continues to serve the workspace. `deploy/vps/` contains the Docker Compose and Caddy deployment path for the API, and the backend image bakes in `libreoffice-core` + `libreoffice-writer` for the DOCX → PDF rendition pipeline used by the in-app source viewer.
 
-Built with Next.js, FastAPI, `pypdf`, `pdfplumber`, `python-docx`, ChromaDB, OpenAI, sentence-transformers, scikit-learn, optional Supabase persistence, optional hosted Chroma-compatible storage, Docker, and `uv`.
+Built with Next.js, FastAPI, `pypdf`, `pdfplumber`, `python-docx`, ChromaDB, OpenAI, sentence-transformers, scikit-learn, Supabase (auth + persistence + storage), hosted Chroma (HTTP-backed vector store), Docker, `uv`, Sentry + PostHog for observability, Lemon Squeezy for payments, and Caddy for VPS TLS termination.
 
 Document ingestion uses `pypdf` for PDFs and `python-docx` for DOCX files, with a `pdfplumber`-backed table enrichment pass that selectively scans likely table-heavy pages and stores extracted tables as page-linked artifacts. Configuration knobs for extractors, table enrichment, and OCR live in `.env.example`.
 
@@ -92,6 +92,16 @@ Artifact interpretation is handled by the indexing-time chunk semantics layer wh
 Document landmarks are built at indexing time when `HELPMATE_DOCUMENT_LANDMARKS_ENABLED=true`. A bounded model call reviews likely front/back matter and structural pages, then emits page-linked landmarks such as title page, foreword, abstract, executive summary, author/correspondence block, definition region, glossary, or volume boundary. These landmarks are indexed as normal evidence candidates with semantic labels rather than query-specific boosts.
 
 Answer support is also checked in two layers. The answer model returns `supported`, `partial`, or `unsupported`; when the first pass is not fully supported, `HELPMATE_SUPPORT_STATUS_VERIFIER_ENABLED=true` runs a strict support-status verifier that can distinguish a genuinely unsupported refusal from a visible partial answer. It can recover a refused answer to full support only when the verifier identifies grounded supported facts, no missing required facts, no visible gap language, and no inferential phrasing.
+
+## Production Stack
+
+Beyond the RAG core, HelpmateAI runs a production-grade stack that the architecture docs and ADRs cover in detail:
+
+- **Tier-aware quotas** — Free / Pro / Business tiers with atomic per-month quota counters, tier-aware answer model selection (`gpt-5.4-nano` → `gpt-5.4-mini` → opt-in `gpt-5.5`), and a tier-aware retention sweeper that routes deletions through Supabase Storage for bucket cleanup. See [ADR-015](docs/adr/ADR-015-tier-resolution-via-single-shim-function.md), [ADR-016](docs/adr/ADR-016-atomic-quota-increment-and-anon-execute-revoke.md).
+- **Payments via Lemon Squeezy as Merchant of Record** — HMAC-verified webhooks, idempotent event handling, a processor-agnostic `subscriptions` table so a future Stripe / Razorpay row sits in the same shape, env-gated frontend Upgrade CTA that ships "Coming soon" until LS variant IDs flip live. Walkthrough in [docs/lemon-squeezy.md](docs/lemon-squeezy.md), decision in [ADR-017](docs/adr/ADR-017-lemon-squeezy-as-merchant-of-record-for-v1.md).
+- **Dual-vendor observability with consent gating** — Sentry (errors + traces + AI Agents Monitoring + Logs + Replay + Crons + Feedback widget) + PostHog (product analytics + session replay + LLM Analytics via `$ai_generation` events) on free tier. EU cookie consent banner gates non-essential analytics while keeping crash reporting always-on under GDPR legitimate interest. See [ADR-018](docs/adr/ADR-018-observability-stack-sentry-and-posthog.md), [ADR-019](docs/adr/ADR-019-eu-cookie-consent-banner-and-gdpr-analytics-gating.md).
+- **Regression detection via `nightly_eval`** — RAGAS + FinanceBench + final_eval_suite wrapped in a single CLI with regression alerts routed through Sentry Crons. Currently in **manual-only mode** at pre-revenue stage; the recipe to re-enable Mon+Thu scheduled runs (~\$15-26/mo) is documented in [ADR-020](docs/adr/ADR-020-manual-only-nightly-eval-at-pre-revenue-stage.md).
+- **Deployment** — Vercel for the unified landing + workspace, Cloudflare-fronted FastAPI on an Ubuntu VPS behind a Caddy reverse proxy (shared with the sibling AI Job Agent backend), Supabase for state + auth + storage, and hosted Chroma for vector storage. Full operational runbook in [docs/deployment.md](docs/deployment.md); the live chronology lives in [docs/DEVLOG.md](docs/DEVLOG.md).
 
 ## Current Limits
 
