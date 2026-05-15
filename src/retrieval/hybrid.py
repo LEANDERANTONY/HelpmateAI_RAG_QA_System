@@ -4,6 +4,7 @@ from collections import defaultdict
 import re
 
 from src.config import Settings
+from src.openai_service import CostCollector
 from src.query_analysis import QueryAnalyzer
 from src.retrieval.planner import RetrievalPlanner
 from src.retrieval.reranker import Reranker
@@ -77,7 +78,17 @@ class HybridRetriever:
         "voting",
     }
 
-    def __init__(self, store: ChromaIndexStore, settings: Settings):
+    def __init__(
+        self,
+        store: ChromaIndexStore,
+        settings: Settings,
+        *,
+        cost_collector: CostCollector | None = None,
+    ):
+        # cost_collector is threaded through to RetrievalPlanner → QueryRouter
+        # so the pipeline's single per-request collector also captures any
+        # router LLM fallback calls. When omitted (the legacy call sites and
+        # most tests), the router will build its own local collector.
         self.store = store
         self.settings = settings
         self.reranker = Reranker(settings) if settings.reranker_enabled else None
@@ -85,7 +96,7 @@ class HybridRetriever:
         self.section_retriever = SectionRetriever()
         self.synopsis_retriever = SynopsisRetriever()
         self.topology_service = DocumentTopologyService()
-        self.planner = RetrievalPlanner(settings)
+        self.planner = RetrievalPlanner(settings, cost_collector=cost_collector)
 
     @staticmethod
     def _evidence_score(candidate: RetrievalCandidate) -> float:

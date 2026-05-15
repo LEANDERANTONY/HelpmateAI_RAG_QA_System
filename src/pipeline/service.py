@@ -13,6 +13,7 @@ from src.config import Settings, get_settings
 from src.generation import AnswerGenerator, EvidenceSelector
 from src.ingest import DocxConversionError, convert_docx_to_pdf, ingest_document
 from src.landmarks import DocumentLandmarkService
+from src.openai_service import CostCollector
 from src.retrieval import ChromaIndexStore, HybridRetriever
 from src.sections import build_sections
 from src.sections.profiles import enrich_section_profiles
@@ -29,10 +30,17 @@ logger = logging.getLogger(__name__)
 class HelpmatePipeline:
     def __init__(self, settings: Settings | None = None):
         self.settings = settings or get_settings()
+        # Per-request CostCollector — wired into the AnswerGenerator and
+        # the HybridRetriever (which threads it into RetrievalPlanner →
+        # QueryRouter) so every LLM call across the /qa request lands in
+        # a single collector. _build_run_trace folds the totals into the
+        # RunTraceRecord cost columns and the collector is reset between
+        # requests so they don't accumulate forever.
+        self.cost_collector = CostCollector()
         self.store = ChromaIndexStore(self.settings)
-        self.retriever = HybridRetriever(self.store, self.settings)
+        self.retriever = HybridRetriever(self.store, self.settings, cost_collector=self.cost_collector)
         self.evidence_selector = EvidenceSelector(self.settings)
-        self.generator = AnswerGenerator(self.settings)
+        self.generator = AnswerGenerator(self.settings, cost_collector=self.cost_collector)
         self.answer_cache = AnswerCache(self.settings.cache_dir)
         self.topology_service = DocumentTopologyService()
         self.synopsis_semantics_service = SynopsisSemanticsService(self.settings)
@@ -383,6 +391,21 @@ class HelpmatePipeline:
     ) -> RunTraceRecord:
         created_at = datetime.now(timezone.utc)
         trace_id = f"trace-{uuid.uuid4().hex}"
+        # Snapshot LLM-call totals from the per-request collector. The
+        # collector aggregates calls from the generator (answer +
+        # support verifier + support-status verifier) plus the router
+        # (LLM fallback when heuristic confidence is below threshold).
+        # Per-call breakdown lands in the payload JSON for debugging;
+        # the totals populate the dedicated cost columns on the trace
+        # store (prompt_tokens / completion_tokens / cost_usd / model_name).
+        cost_totals = self.cost_collector.totals()
+        llm_call_breakdown = self.cost_collector.to_payload()
+        # Reset before the next request so collectors don't accumulate
+        # across calls — the pipeline is process-lived but the collector
+        # is per-request. We do this AFTER reading totals to make sure
+        # the current trace captures everything.
+        self.cost_collector.records.clear()
+
         payload = {
             "question": question,
             "document": {
@@ -413,6 +436,10 @@ class HelpmatePipeline:
                 "citation_details": list(answer.citation_details),
                 "note": answer.note,
             },
+            # Per-call LLM breakdown — kept as a payload field for
+            # debugging-grade introspection. The summary numbers (the
+            # ones the dashboard joins on) sit on the dedicated columns.
+            "llm_calls": llm_call_breakdown,
         }
         return RunTraceRecord(
             trace_id=trace_id,
@@ -424,4 +451,8 @@ class HelpmatePipeline:
             retrieval_version=self.settings.retrieval_version,
             generation_version=self.settings.generation_version,
             payload=payload,
+            prompt_tokens=int(cost_totals.get("prompt_tokens", 0) or 0),
+            completion_tokens=int(cost_totals.get("completion_tokens", 0) or 0),
+            cost_usd=float(cost_totals.get("cost_usd", 0.0) or 0.0),
+            model_name=str(cost_totals.get("model_name", "") or ""),
         )
