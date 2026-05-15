@@ -3,3 +3,23 @@
 
     reverse_proxy api:8001
 }
+
+# AI Job Agent backend reverse-proxy. The two services share this
+# Caddy container (single TLS listener, single 80/443 bind) — the
+# Job Agent base compose at AI_Job_Application_Agent/backend/vps/
+# declares its own Caddy service but its docker-compose.override.yml
+# drops it via the shared_ingress / vps_default network pattern,
+# leaving the HelpmateAI Caddy as the single ingress for both
+# products.
+#
+# Both backends sit on the vps_default docker network so DNS-by-
+# container-name (ai-job-application-agent-api) resolves cleanly for
+# the reverse_proxy target. If the Job Agent ever needs its own
+# Caddy (separate TLS listener, separate Caddyfile), restore the
+# Caddy service in AI_Job_Application_Agent's compose and remove
+# this site block.
+api.job-application-copilot.xyz {
+    encode gzip zstd
+
+    reverse_proxy ai-job-application-agent-api:8000
+}
