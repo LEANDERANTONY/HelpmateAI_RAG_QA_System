@@ -10,18 +10,6 @@
   --primary-strong: rgb(65, 113, 255);
   --secondary: rgb(138, 200, 255);
   --subtle: rgb(191, 191, 191);
-
-  /* Sentry feedback widget — brand the floating "Report an issue"
-     trigger button to the landing CTA mint (--accent #7fe0b0 with
-     --accent-fg #04241a, defined further down for the landing). The
-     feedbackIntegration themeDark object only reaches the popup
-     surface; the trigger button reads --actor-* (which otherwise
-     falls back to the dark --background, rendering it near-black).
-     These custom properties inherit into the widget's shadow DOM. */
-  --actor-background: #7fe0b0;
-  --actor-color: #04241a;
-  --actor-hover-background: #98ecc1;
-  --actor-border: 1px solid rgba(127, 224, 176, 0.40);
 }
 
 @theme inline {
