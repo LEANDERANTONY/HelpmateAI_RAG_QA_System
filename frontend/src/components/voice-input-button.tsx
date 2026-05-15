@@ -92,6 +92,15 @@ export function VoiceInputButton({
   const recorderRef = useRef<MediaRecorder | null>(null);
   const chunksRef = useRef<Blob[]>([]);
   const mimeRef = useRef<string>("");
+  // Mirror onTranscript/onError into a ref so the MediaRecorder
+  // "stop" event listener — registered once at recording start —
+  // reads the LATEST callbacks at firing time, not the snapshot
+  // from when the recorder was constructed. Without this, a parent
+  // re-render with new callback identities between start and stop
+  // would have the stop handler invoke stale closures. Mirrors the
+  // AI Job Agent fix flagged by Codex P2 on PR #3 round 5.
+  const propsRef = useRef({ onTranscript, onError });
+  propsRef.current = { onTranscript, onError };
 
   // Stop the mic + recorder when the component unmounts mid-recording.
   // Without this, navigating away while recording leaves the OS mic
@@ -189,18 +198,21 @@ export function VoiceInputButton({
     const blob = new Blob(chunks, {
       type: mimeRef.current || "audio/webm",
     });
+    // Read the LATEST callbacks via propsRef so a parent re-render
+    // mid-recording doesn't leave us calling stale closure values.
+    const currentProps = propsRef.current;
     try {
       const response = await transcribeAudio(blob);
       const text = (response.text || "").trim();
       if (text) {
-        onTranscript(text);
+        currentProps.onTranscript(text);
       }
     } catch (error) {
       const message =
         error instanceof Error
           ? error.message
           : "Couldn't transcribe the audio. Please try again.";
-      onError?.(message);
+      currentProps.onError?.(message);
     } finally {
       setState("idle");
     }

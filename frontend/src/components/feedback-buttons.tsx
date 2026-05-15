@@ -150,6 +150,14 @@ export function FeedbackButtons({
             : "Couldn't save your feedback. Please try again.";
         setErrorMessage(message);
         onError?.(message);
+      } finally {
+        // Reset the guard so a subsequent rated-pending state can
+        // still trigger the unmount flush. Without this, a user who
+        // submitted once and then re-rates and closes the tab would
+        // have their second rating dropped — the flush would skip
+        // because committingRef was still stuck at true from the
+        // first commit. Codex P2 on PR #5 round 5.
+        committingRef.current = false;
       }
     },
     [clearTimer, onError, surface, traceId],
