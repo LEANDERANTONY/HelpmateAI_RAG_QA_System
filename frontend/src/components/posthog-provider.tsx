@@ -35,6 +35,8 @@ import { Suspense, useEffect } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
 
+import { useCookieConsent } from "@/components/cookie-consent";
+
 type PostHogProviderProps = {
   children: React.ReactNode;
 };
@@ -144,9 +146,36 @@ export function setPostHogTierGroup(tier: string | null): void {
 }
 
 export function PostHogProvider({ children }: PostHogProviderProps) {
+  const consent = useCookieConsent();
   useEffect(() => {
-    initPostHog();
-  }, []);
+    // GDPR / ePrivacy: PostHog product analytics + session replay are
+    // not strictly necessary, so we only initialize after the user
+    // explicitly accepts the cookie banner. Declined / pending both
+    // bail — no events, no distinct_id cookie.
+    //
+    // If consent flips from accepted → declined later (user revoked
+    // via "Cookie preferences"), we call opt_out_capturing so any
+    // already-loaded SDK stops sending events without a page reload.
+    if (consent === "accepted") {
+      initPostHog();
+      try {
+        if ((posthog as unknown as { __loaded?: boolean }).__loaded) {
+          posthog.opt_in_capturing();
+        }
+      } catch {
+        // SDK opt-in helper is missing on older versions — init does
+        // the right thing on its own.
+      }
+    } else if (consent === "declined") {
+      try {
+        if ((posthog as unknown as { __loaded?: boolean }).__loaded) {
+          posthog.opt_out_capturing();
+        }
+      } catch {
+        // Same — older SDK versions might lack opt_out_capturing.
+      }
+    }
+  }, [consent]);
   return (
     <>
       <Suspense fallback={null}>

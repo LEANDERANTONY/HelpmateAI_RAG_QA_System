@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { openCookiePreferences } from "@/components/cookie-consent";
 import { useLandingHref } from "@/components/landing/use-landing-href";
 
 export function LandingFooter() {
@@ -30,6 +31,17 @@ export function LandingFooter() {
           ) : (
             <a href="https://helpmateai.xyz/privacy-policy">Privacy Policy</a>
           )}
+          {/* Re-opens the cookie banner so the user can change their
+              consent without us reloading the page. The handler is a
+              no-op on the server (the helper short-circuits when
+              window is undefined). */}
+          <button
+            type="button"
+            onClick={openCookiePreferences}
+            className="l-foot-link-button"
+          >
+            Cookie preferences
+          </button>
         </div>
         <div className="l-foot-col">
           <div className="head">Socials</div>

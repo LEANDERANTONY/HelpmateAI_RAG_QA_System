@@ -3,6 +3,7 @@
 import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
+import { openCookiePreferences } from "@/components/cookie-consent";
 import type { AuthUserSummary } from "@/lib/auth";
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
@@ -142,6 +143,19 @@ export function AuthSidebar({ user }: AuthSidebarProps) {
       </div>
 
       {error ? <p className="auth-inline-error">{error}</p> : null}
+
+      {/* Cookie preferences re-opener. Lives in the auth sidebar
+          (not just the landing footer) so workspace users who never
+          see the footer can still revoke consent without hunting for
+          it. The button reads as a link to match the visual weight
+          of the surrounding auth chrome. */}
+      <button
+        type="button"
+        className="auth-inline-cookie-link"
+        onClick={openCookiePreferences}
+      >
+        Cookie preferences
+      </button>
     </section>
   );
 }

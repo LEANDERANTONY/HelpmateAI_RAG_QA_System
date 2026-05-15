@@ -446,6 +446,31 @@ a {
   line-height: 1.6;
 }
 
+.auth-inline-cookie-link {
+  /* Re-opens the cookie banner. Visual weight matches the rest of
+     the sidebar's quiet text links — no border, no background, just
+     a low-contrast tertiary affordance under the session card. */
+  background: none;
+  border: 0;
+  color: #8a93a8;
+  cursor: pointer;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 12px;
+  letter-spacing: 0.02em;
+  margin-top: 1rem;
+  padding: 4px 0;
+  text-align: left;
+  text-decoration: underline;
+  text-decoration-color: rgba(160, 178, 218, 0.18);
+  text-underline-offset: 3px;
+  transition: color 180ms ease, text-decoration-color 180ms ease;
+}
+
+.auth-inline-cookie-link:hover {
+  color: #c7cfdf;
+  text-decoration-color: rgba(160, 178, 218, 0.45);
+}
+
 .workspace-sidebar {
   position: sticky;
   top: 1.25rem;
@@ -4924,5 +4949,154 @@ input[type="file"]:disabled::file-selector-button {
 @media (prefers-reduced-motion: reduce) {
   .h-chat-collapse-toggle {
     transition: none;
+  }
+}
+
+/* ------------------------------------------------------------------
+   Cookie consent banner — lives outside the .h-shell scope (mounts
+   in layout.tsx alongside Toaster) so it can render over the landing
+   AND the workspace consistently. Hex values inlined intentionally:
+   the workspace tokens (var(--accent), var(--bg-card), etc.) are
+   scoped to .h-shell, so this self-contained block doesn't depend
+   on that scope being mounted (e.g. it renders on /landing/* too).
+   ------------------------------------------------------------------ */
+
+.h-cookie-banner {
+  position: fixed;
+  inset: auto 16px 16px 16px;
+  z-index: 9000; /* above Toaster (8000) but below modal overlays */
+  display: flex;
+  justify-content: center;
+  pointer-events: none; /* let card capture clicks; the wrapper itself shouldn't block layout */
+  animation: h-cookie-slide-in 320ms cubic-bezier(0.16, 1, 0.3, 1) both;
+}
+
+.h-cookie-content {
+  pointer-events: auto;
+  background: rgba(10, 14, 22, 0.92);
+  border: 1px solid rgba(160, 178, 218, 0.20);
+  border-radius: 14px;
+  box-shadow:
+    0 24px 48px rgba(0, 0, 0, 0.40),
+    0 0 0 1px rgba(127, 224, 176, 0.10) inset;
+  padding: 18px 22px;
+  max-width: 720px;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.h-cookie-text {
+  flex: 1 1 auto;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.h-cookie-heading {
+  color: #f5f8ff;
+  font-family: var(--font-space-grotesk), system-ui, sans-serif;
+  font-size: 14px;
+  font-weight: 600;
+  letter-spacing: 0.005em;
+  margin: 0;
+}
+
+.h-cookie-body {
+  color: #c7cfdf;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 13px;
+  line-height: 1.5;
+  margin: 0;
+}
+
+.h-cookie-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  flex: 0 0 auto;
+}
+
+.h-cookie-btn {
+  align-items: center;
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  font-family: var(--font-dm-sans), system-ui, sans-serif;
+  font-size: 13px;
+  font-weight: 600;
+  min-height: 36px;
+  padding: 8px 16px;
+  transition:
+    background-color 240ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    border-color 240ms cubic-bezier(0.2, 0.8, 0.2, 1),
+    color 240ms cubic-bezier(0.2, 0.8, 0.2, 1);
+  white-space: nowrap;
+}
+
+.h-cookie-btn-ghost {
+  background: transparent;
+  border: 1px solid rgba(160, 178, 218, 0.16);
+  color: #c7cfdf;
+}
+
+.h-cookie-btn-ghost:hover {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(160, 178, 218, 0.28);
+  color: #f5f8ff;
+}
+
+.h-cookie-btn-primary {
+  background: #7fe0b0;
+  border: 1px solid transparent;
+  color: #04241a;
+  box-shadow:
+    0 0 0 1px rgba(255, 255, 255, 0.07) inset,
+    0 8px 24px rgba(127, 224, 176, 0.22);
+}
+
+.h-cookie-btn-primary:hover {
+  background: #98ecc1;
+}
+
+@keyframes h-cookie-slide-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* Mobile: stack the text + actions vertically. The card stays
+   pinned to the bottom but uses the full width. */
+@media (max-width: 640px) {
+  .h-cookie-banner {
+    inset: auto 12px 12px 12px;
+  }
+  .h-cookie-content {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 14px;
+    padding: 16px 18px;
+  }
+  .h-cookie-actions {
+    width: 100%;
+    justify-content: stretch;
+  }
+  .h-cookie-btn {
+    flex: 1 1 0;
+    justify-content: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .h-cookie-banner {
+    animation: none;
   }
 }

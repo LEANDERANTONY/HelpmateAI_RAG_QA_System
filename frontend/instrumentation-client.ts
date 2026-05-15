@@ -14,7 +14,70 @@ import * as Sentry from "@sentry/nextjs";
 
 const dsn = process.env.NEXT_PUBLIC_SENTRY_DSN;
 
+// GDPR / ePrivacy gate. We split the Sentry integrations into two
+// categories matching the cookie-banner contract:
+//
+//   * Always-on (legitimate interest under GDPR Art. 6(1)(f) — we
+//     need crash reporting to operate the service securely):
+//       - error tracking + traces
+//       - User Feedback widget (the report itself is user-initiated;
+//         storing it after submission is justified by support)
+//   * Consent-gated (requires the user to accept the banner):
+//       - Session Replay (records DOM mutations + user input)
+//
+// At boot we read localStorage["helpmate-cookie-consent"] inline
+// (importing the helper would pull React into a config module). If
+// it's "accepted" we ship Replay; otherwise we skip it. When the
+// user later accepts via the banner, ``addReplayIntegrationAfterConsent``
+// (called from the cookie-consent state-change listener) injects
+// Replay without a page reload.
+function readConsent(): "pending" | "accepted" | "declined" {
+  if (typeof window === "undefined") return "pending";
+  try {
+    const raw = window.localStorage.getItem("helpmate-cookie-consent");
+    if (raw === "accepted" || raw === "declined") return raw;
+  } catch {
+    /* incognito / Safari ITP — treat as pending */
+  }
+  return "pending";
+}
+
+// Derive the integration-array type from Sentry.init's signature so a
+// future SDK type change can't silently widen this. ``@sentry/nextjs``
+// doesn't re-export the bare ``Integration`` type from its public
+// barrel — Parameters<...> is the supported path.
+type SentryIntegrations = NonNullable<
+  NonNullable<Parameters<typeof Sentry.init>[0]>["integrations"]
+>;
+
+function buildIntegrations(consent: "pending" | "accepted" | "declined"): SentryIntegrations {
+  const integrations: SentryIntegrations = [
+    Sentry.feedbackIntegration({
+      colorScheme: "dark",
+      autoInject: true,
+      showBranding: false,
+      triggerLabel: "Report an issue",
+      formTitle: "Report an issue",
+      submitButtonLabel: "Send",
+      enableScreenshot: true,
+    }),
+  ];
+  if (consent === "accepted") {
+    integrations.push(
+      Sentry.replayIntegration({
+        // Mask all text + media by default. The workspace shows user
+        // documents on screen; we can't ship those to Sentry without
+        // making PII commitments we haven't reviewed legally.
+        maskAllText: true,
+        blockAllMedia: true,
+      }),
+    );
+  }
+  return integrations;
+}
+
 if (dsn) {
+  const consentAtBoot = readConsent();
   Sentry.init({
     dsn,
     environment:
@@ -29,44 +92,42 @@ if (dsn) {
     ),
     // Replay strategy: skip ambient session sampling (PostHog handles
     // full session replay), but capture 100% of sessions that hit an
-    // error. The on-error path is the high-signal one — the user just
-    // saw a workspace blow up and we want to see exactly what they
-    // clicked. The free tier covers 50 sessions/month which is plenty
-    // for an MVP.
+    // error — only when the user has consented. Without consent the
+    // replay integration isn't loaded so these numbers are inert.
     replaysSessionSampleRate: 0,
-    replaysOnErrorSampleRate: Number(
-      process.env.NEXT_PUBLIC_SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE ?? 1.0,
-    ),
-    integrations: [
-      Sentry.replayIntegration({
-        // Mask all text + media by default. The workspace shows user
-        // documents on screen; we can't ship those to Sentry without
-        // making PII commitments we haven't reviewed legally.
-        maskAllText: true,
-        blockAllMedia: true,
-      }),
-      // User Feedback widget — Sentry injects a floating "Report a
-      // bug" button into the DOM. Tying user-submitted reports to
-      // the current Sentry session gives us the breadcrumb trail +
-      // active replay along with whatever the user typed. Free on
-      // the Developer plan. Themed dark to match the workspace shell;
-      // the screenshot capture is opt-in so we don't accidentally
-      // ship document content.
-      Sentry.feedbackIntegration({
-        colorScheme: "dark",
-        autoInject: true,
-        showBranding: false,
-        triggerLabel: "Report an issue",
-        formTitle: "Report an issue",
-        submitButtonLabel: "Send",
-        // Screenshot capture is allowed but defaults to off — the
-        // user has to tick the box. Keeps PDF rendering safe by
-        // default while letting users opt-in when the bug is visual.
-        enableScreenshot: true,
-      }),
-    ],
+    replaysOnErrorSampleRate:
+      consentAtBoot === "accepted"
+        ? Number(process.env.NEXT_PUBLIC_SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE ?? 1.0)
+        : 0,
+    integrations: buildIntegrations(consentAtBoot),
     debug: false,
   });
+
+  // Hot-add Replay if the user accepts AFTER the initial boot. The
+  // cookie-consent component dispatches "helpmate-cookie-consent-change"
+  // on every transition; we listen once and re-check the stored value.
+  if (typeof window !== "undefined") {
+    window.addEventListener("helpmate-cookie-consent-change", () => {
+      const next = readConsent();
+      if (next === "accepted") {
+        try {
+          Sentry.addIntegration(
+            Sentry.replayIntegration({
+              maskAllText: true,
+              blockAllMedia: true,
+            }),
+          );
+        } catch {
+          /* already added or SDK doesn't support hot-add — fine */
+        }
+      }
+      // We deliberately do NOT tear Replay down on a flip to
+      // "declined" mid-session: the SDK doesn't expose a clean
+      // removeIntegration path, and the user can hard-reload to fully
+      // unsubscribe. Setting opt-out on PostHog (in
+      // posthog-provider.tsx) covers the analytics half cleanly.
+    });
+  }
 }
 
 // Required export for Next's instrumentation hook on the client —
