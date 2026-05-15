@@ -54,6 +54,20 @@ function buildIntegrations(consent: "pending" | "accepted" | "declined"): Sentry
   const integrations: SentryIntegrations = [
     Sentry.feedbackIntegration({
       colorScheme: "dark",
+      // Brand the widget + popup to the product palette: the mint
+      // accent (--accent #7fe0b0 with --accent-fg #04241a) on the
+      // dark surface (--surface-strong) so the trigger button + form
+      // match the workspace instead of Sentry's default purple-on-grey.
+      themeDark: {
+        background: "#0b0b0b",
+        foreground: "#f5f8ff",
+        accentBackground: "#7fe0b0",
+        accentForeground: "#04241a",
+        successColor: "#7fe0b0",
+        errorColor: "#ff8b8b",
+        boxShadow: "0 16px 48px rgba(0, 0, 0, 0.6)",
+        outline: "2px solid rgba(127, 224, 176, 0.6)",
+      },
       autoInject: true,
       showBranding: false,
       triggerLabel: "Report an issue",
