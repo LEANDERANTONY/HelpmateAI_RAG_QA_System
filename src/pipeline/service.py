@@ -364,12 +364,26 @@ class HelpmatePipeline:
         )
         self.run_trace_store.save_trace(trace)
         answer.run_trace_id = trace.trace_id
+        # Cache BEFORE attaching the LLM breakdown so a cache hit on a
+        # later request doesn't replay $ai_generation events from the
+        # original call — replayed answer cost was already paid (and
+        # recorded) on the request that populated the cache.
         self.answer_cache.set(
             cache_key,
             answer,
             fingerprint=document.fingerprint,
             document_id=document.document_id,
         )
+        # Pull the per-call LLM breakdown off the cost collector before
+        # the bind_cost_collector finally resets the ContextVar. The
+        # route handler reads ``answer.llm_breakdown`` to fan out
+        # $ai_generation events to PostHog LLM Analytics (one span per
+        # underlying call: router, planner, generator, support
+        # verifier, …).
+        try:
+            answer.llm_breakdown = cost_collector.to_payload()
+        except Exception:
+            answer.llm_breakdown = None
         return answer
 
     def delete_workspace(self, document: DocumentRecord, index_record: IndexRecord | None = None) -> None:

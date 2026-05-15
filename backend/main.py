@@ -1160,6 +1160,7 @@ def answer_question(
     # mirrors the FE's "asked_question" convention so funnels join
     # cleanly. No question text in properties (PII).
     answer_dict = answer.to_dict()
+    trace_id_for_event = answer_dict.get("run_trace_id") or answer_dict.get("trace_id")
     capture_event(
         distinct_id=user.id,
         event="qa_answered",
@@ -1168,10 +1169,53 @@ def answer_question(
             "premium": bool(payload.premium),
             "model": active_model,
             "document_id": payload.document_id,
-            "trace_id": answer_dict.get("trace_id"),
+            "trace_id": trace_id_for_event,
             "support_status": answer_dict.get("support_status"),
         },
     )
+
+    # PostHog LLM Analytics — fan out one ``$ai_generation`` event per
+    # underlying LLM call so the LLM Analytics dashboard sees full
+    # token / cost / model attribution per span. Trace_id ties the
+    # spans together so the dashboard can group them per request.
+    # ``answer.llm_breakdown`` stays None on cache hits (so a cached
+    # answer doesn't replay events that never happened on this
+    # request) — bail in that case. The contract:
+    #   PostHog LLM Analytics expects ``$ai_*`` property keys verbatim;
+    #   missing them silently drops the event off the dashboard.
+    llm_breakdown = getattr(answer, "llm_breakdown", None)
+    if llm_breakdown:
+        for call in llm_breakdown.get("calls", []) or []:
+            try:
+                capture_event(
+                    distinct_id=user.id,
+                    event="$ai_generation",
+                    properties={
+                        "$ai_trace_id": trace_id_for_event,
+                        "$ai_span_name": call.get("task_name") or "llm_call",
+                        "$ai_provider": "openai",
+                        "$ai_model": call.get("model_name") or "",
+                        "$ai_input_tokens": int(call.get("prompt_tokens") or 0),
+                        "$ai_output_tokens": int(call.get("completion_tokens") or 0),
+                        "$ai_total_cost_usd": float(call.get("cost_usd") or 0.0),
+                        "$ai_is_error": bool(call.get("error")),
+                        "$ai_error": call.get("error"),
+                        # Non-$ai_ properties carry app context for
+                        # funnel building alongside the LLM Analytics
+                        # dashboard. PostHog ignores unknown $ai_*
+                        # fields but happily indexes plain ones.
+                        "tier": tier,
+                        "document_id": payload.document_id,
+                        "premium": bool(payload.premium),
+                        "raw_response_id": call.get("raw_response_id"),
+                        "response_format": call.get("response_format"),
+                    },
+                )
+            except Exception:
+                # Per-call $ai_generation is best-effort; a partial
+                # failure mustn't tank the /qa response. The qa_answered
+                # event above is the canonical funnel signal.
+                continue
     return AskResponse(answer=answer_dict)
 
 

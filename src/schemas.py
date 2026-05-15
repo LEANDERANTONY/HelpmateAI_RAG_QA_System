@@ -232,6 +232,16 @@ class AnswerResult:
     query_used: str = ""
     query_variants: list[str] = field(default_factory=list)
     run_trace_id: str | None = None
+    # Per-call LLM telemetry — populated by the pipeline so the route
+    # handler can fan it out to PostHog LLM Analytics ($ai_generation
+    # events) without re-fetching the persisted run trace. Shape mirrors
+    # ``CostCollector.to_payload()``: ``{"totals": {...}, "calls":
+    # [{"task_name", "model_name", "prompt_tokens",
+    # "completion_tokens", "cost_usd", "raw_response_id",
+    # "raw_finish_reason", "response_format", "error"}, ...]}``. Stays
+    # None for cached responses + eval-path callers that bypass the
+    # cost collector. Excluded from to_dict() so the FE doesn't see it.
+    llm_breakdown: dict[str, Any] | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
