@@ -446,7 +446,20 @@ class HelpmatePipeline:
             cost_totals = cost_collector.totals()
             llm_call_breakdown = cost_collector.to_payload()
         else:
-            cost_totals = {"prompt_tokens": 0, "completion_tokens": 0, "cost_usd": 0.0, "model_name": ""}
+            # Schema MUST match CostCollector.totals() exactly so
+            # downstream trace readers don't have to branch on whether
+            # they're reading a request-path trace or an eval-path
+            # trace. CodeRabbit caught this — the previous fallback
+            # omitted total_tokens + call_count. Build the dict from
+            # the same fields ``CostCollector.totals()`` uses.
+            cost_totals = {
+                "prompt_tokens": 0,
+                "completion_tokens": 0,
+                "total_tokens": 0,
+                "cost_usd": 0.0,
+                "model_name": "",
+                "call_count": 0,
+            }
             llm_call_breakdown = {"totals": cost_totals, "calls": []}
 
         payload = {

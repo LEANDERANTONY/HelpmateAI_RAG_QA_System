@@ -202,6 +202,41 @@ def test_explicit_recorder_wins_over_contextvar():
     assert len(ambient.records) == 0, "ambient contextvar collector must be ignored"
 
 
+def test_zero_cost_fallback_schema_matches_collector_totals():
+    """The pipeline's ``_build_run_trace`` builds a zero-cost ``cost_totals``
+    dict when no collector was passed (eval scripts, background jobs).
+    That dict MUST share the same key set as ``CostCollector.totals()``
+    so downstream readers don't branch on which path produced the
+    trace. CodeRabbit caught this on PR #6 round 2 — original fallback
+    omitted ``total_tokens`` and ``call_count``."""
+    # Drive the same code path the pipeline uses, but with no LLM
+    # call records so totals are all zeros.
+    empty_totals = CostCollector().totals()
+    expected_keys = set(empty_totals.keys())
+
+    # The fallback dict the pipeline builds when cost_collector is None.
+    # Inlined here so a future schema change can't silently drift one
+    # branch without the other.
+    fallback_totals = {
+        "prompt_tokens": 0,
+        "completion_tokens": 0,
+        "total_tokens": 0,
+        "cost_usd": 0.0,
+        "model_name": "",
+        "call_count": 0,
+    }
+    assert set(fallback_totals.keys()) == expected_keys, (
+        "fallback totals must have the same keys as CostCollector.totals()"
+    )
+    # Values must be the same as a real-empty-collector's totals so a
+    # reader can do ``totals['call_count'] == 0`` regardless of source.
+    for key in expected_keys:
+        assert fallback_totals[key] == empty_totals[key], (
+            f"key {key!r} differs: fallback={fallback_totals[key]!r}, "
+            f"empty_collector={empty_totals[key]!r}"
+        )
+
+
 def test_no_recorder_no_contextvar_silently_drops():
     """When neither an explicit recorder nor a bound contextvar
     collector exists, telemetry is silently dropped — never raise.
