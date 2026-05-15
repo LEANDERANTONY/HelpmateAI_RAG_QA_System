@@ -72,6 +72,14 @@ function initPostHog(): void {
       respect_dnt: true,
       persistence: "localStorage+cookie",
     });
+    // Register ``product: "helpmate"`` as a super-property so every
+    // event the SDK emits (pageviews, autocaptured clicks, manual
+    // captures from feedback-buttons etc.) carries the tag. PostHog's
+    // free tier caps at 1 project per org, so HelpmateAI and AI Job
+    // Agent share the same project; insight filters
+    // ``where product = 'helpmate'`` split the two products cleanly.
+    // The AI Job Agent provider registers ``product: "jobagent"``.
+    posthog.register({ product: "helpmate" });
   } catch (err) {
     // Swallow — analytics must never break the page. The dev console
     // surfaces the error for visibility.
