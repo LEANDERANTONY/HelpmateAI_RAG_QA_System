@@ -4,7 +4,12 @@ import json
 from dataclasses import dataclass, field
 
 from src.config import Settings
+from src.openai_service import CostCollector, OpenAIService, StructuredOutputError
 from src.query_analysis import QueryProfile
+from src.schemas_llm_outputs import QueryRouterOutput
+
+
+VALID_ROUTES = {"chunk_first", "section_first", "hybrid_both", "synopsis_first"}
 
 
 @dataclass(frozen=True)
@@ -29,8 +34,19 @@ class QueryRouter:
     )
     CHUNK_HINTS = ("clause ", "define", "exact", "page ", "quote", "what is", "what does")
 
-    def __init__(self, settings: Settings | None = None):
+    def __init__(
+        self,
+        settings: Settings | None = None,
+        *,
+        cost_collector: CostCollector | None = None,
+    ):
+        # cost_collector is provided by the pipeline so a single
+        # CostCollector aggregates LLM calls from every subsystem
+        # (generator + router) into one per-request total. When omitted
+        # (eval scripts, unit tests, anything that doesn't care about
+        # cost tracking), the router builds its own local collector.
         self.settings = settings
+        self.cost_collector = cost_collector or CostCollector()
         self.client = None
         if settings and settings.openai_api_key and settings.router_llm_enabled:
             try:
@@ -39,6 +55,22 @@ class QueryRouter:
                 self.client = OpenAI(api_key=settings.openai_api_key)
             except Exception:
                 self.client = None
+
+    def _wrapper(self) -> OpenAIService | None:
+        """Build an OpenAIService around the current ``self.client``,
+        or return None when the router doesn't have a live client.
+
+        Constructed per-call rather than once in __init__ for the same
+        reason as the generator: tests monkeypatch ``router.client``
+        after construction and we want those fakes to propagate.
+        """
+        if self.settings is None or self.client is None:
+            return None
+        return OpenAIService(
+            self.settings,
+            cost_recorder=self.cost_collector,
+            client=self.client,
+        )
 
     def _heuristic_route(self, question: str, query_profile: QueryProfile) -> RoutingDecision:
         lowered = question.lower()
@@ -101,28 +133,37 @@ class QueryRouter:
             f"Evidence spread: {query_profile.evidence_spread}\n"
             f"Question: {question}"
         )
+        # Schema-strict path: the QueryRouterOutput Pydantic model
+        # constrains the LLM to produce {route, reason}; an unknown
+        # route surfaces here as a StructuredOutputError (when the
+        # validator rejects) or — more often — as a valid-but-wrong
+        # route string that the post-validation check below catches.
+        # In either case we keep the heuristic decision, so a drifted
+        # LLM cannot poison routing.
+        wrapper = self._wrapper()
+        if wrapper is None:
+            return current
         try:
-            response = self.client.chat.completions.create(
+            output = wrapper.run_structured_prompt(
+                system="You classify retrieval routes for a document QA pipeline.",
+                user=prompt,
+                task_name="query_router",
                 model=self.settings.router_model,
-                messages=[
-                    {"role": "system", "content": "You classify retrieval routes for a document QA pipeline."},
-                    {"role": "user", "content": prompt},
-                ],
-                response_format={"type": "json_object"},
+                response_model=QueryRouterOutput,
             )
-            payload = json.loads(response.choices[0].message.content or "{}")
-            route = payload.get("route")
-            if route not in {"chunk_first", "section_first", "hybrid_both", "synopsis_first"}:
-                return current
-            reason = str(payload.get("reason", "")).strip() or "LLM fallback refined the retrieval route."
-            return RoutingDecision(
-                route=route,
-                confidence=0.72,
-                reasons=[*current.reasons, reason],
-                source="llm_fallback",
-            )
+        except StructuredOutputError:
+            return current
         except Exception:
             return current
+        if output.route not in VALID_ROUTES:
+            return current
+        reason = output.reason.strip() or "LLM fallback refined the retrieval route."
+        return RoutingDecision(
+            route=output.route,
+            confidence=0.72,
+            reasons=[*current.reasons, reason],
+            source="llm_fallback",
+        )
 
     def route(self, question: str, query_profile: QueryProfile) -> RoutingDecision:
         heuristic = self._heuristic_route(question, query_profile)
