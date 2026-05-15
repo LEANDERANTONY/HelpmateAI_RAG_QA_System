@@ -414,13 +414,22 @@ class AnswerGenerator:
                 "Support verifier returned drifted output; keeping original status (%s)",
                 exc,
             )
-            return True, (
+            # Preserve the incoming ``answer.supported`` rather than
+            # returning True unconditionally. CodeRabbit caught: if
+            # verify_supported_answer is ever called with an already-
+            # unsupported AnswerResult, returning True on drift would
+            # upgrade it — exactly the silent correctness regression
+            # the schema-strict path is meant to prevent.
+            return answer.supported, (
                 "Support verifier returned a structured output that did not match "
                 "the expected schema, so the original answer status was retained."
             )
         except Exception as exc:
             logger.warning("Support verifier failed; keeping original answer status (%s)", exc.__class__.__name__)
-            return True, f"Support verification failed, so the original answer status was retained. ({exc.__class__.__name__})"
+            # Same correctness: preserve the original supported flag
+            # rather than blindly returning True. A network glitch
+            # shouldn't promote an unsupported answer to supported.
+            return answer.supported, f"Support verification failed, so the original answer status was retained. ({exc.__class__.__name__})"
         if supported and _reason_reports_support_gap(reason):
             supported = False
             reason = (
