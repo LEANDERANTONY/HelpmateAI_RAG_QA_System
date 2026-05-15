@@ -1,0 +1,9 @@
+{
+  "name": "query_router",
+  "version": "v1",
+  "description": "LLM fallback for the heuristic query router. Used when the deterministic heuristic returns a low-confidence decision. Returns JSON with route + reason.",
+  "system": "You classify retrieval routes for a document QA pipeline.",
+  "user": "Choose the best retrieval route for a long-document QA system.\nRoutes:\n- chunk_first: exact fact, explicit page/clause, definition, or tightly localized lookup\n- section_first: a legacy section-scoped retrieval mode when synopsis-first is unnecessary\n- hybrid_both: distributed evidence or genuinely mixed intent\n- synopsis_first: broad synthesis or section-level narrowing before chunk retrieval\n\nReturn compact JSON with keys route and reason.\n\nIntent: {{intent_type}}\nEvidence spread: {{evidence_spread}}\nQuestion: {{question}}",
+  "schema_ref": null,
+  "notes": "Pre-registry source: src/query_router.py::QueryRouter._llm_route. The heuristic router decides first; this LLM fallback only fires when the heuristic confidence is below settings.router_confidence_threshold."
+}

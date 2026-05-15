@@ -1,0 +1,12 @@
+{
+  "_comment": "Active prompt versions. Bump the value here to roll a new version of a prompt into production. The loader watches this file's mtime so edits take effect without a restart.",
+  "active": {
+    "answer_generation": "v1",
+    "support_verifier": "v1",
+    "support_status_verifier": "v1",
+    "query_router": "v1",
+    "planner": "v1",
+    "retrieval_orchestrator": "v1",
+    "document_landmarks": "v1"
+  }
+}
