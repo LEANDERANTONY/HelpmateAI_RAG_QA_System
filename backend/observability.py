@@ -74,13 +74,34 @@ def _init_sentry(settings: Settings) -> None:
         logger.warning("sentry_sdk import failed (%s); Sentry disabled.", exc)
         return
 
-    # The LoggingIntegration sends ERROR-level logs as breadcrumbs +
-    # WARNING+ as events; the defaults are conservative enough that
-    # we don't drown in noise from background tasks.
-    logging_integration = LoggingIntegration(
-        level=logging.INFO,        # breadcrumb threshold
-        event_level=logging.ERROR, # event threshold — only ERROR+ becomes a Sentry issue
-    )
+    # OpenAI auto-instrumentation. The SDK ships a first-class
+    # OpenAIIntegration that wraps the client's HTTP calls and emits
+    # AI-aware spans (token count, model, latency, total cost). Critical
+    # for a RAG product: every /qa response becomes a parent span with
+    # the LLM call as a child, so a slow answer can be attributed to
+    # OpenAI or to retrieval. The integration is opt-in below; if the
+    # SDK rev doesn't ship it (older versions) we silently skip.
+    integrations: list = [
+        FastApiIntegration(transaction_style="endpoint"),
+        StarletteIntegration(transaction_style="endpoint"),
+        LoggingIntegration(
+            level=logging.INFO,        # breadcrumb threshold
+            event_level=logging.ERROR, # event threshold — only ERROR+ becomes a Sentry issue
+        ),
+    ]
+    try:
+        from sentry_sdk.integrations.openai import OpenAIIntegration
+
+        integrations.append(
+            OpenAIIntegration(
+                include_prompts=False,  # don't ship user PII to Sentry
+            )
+        )
+    except Exception:
+        # SDK doesn't ship the OpenAI integration; not fatal — the
+        # rest of Sentry still works, we just lose the AI-aware
+        # span attribution.
+        pass
 
     sentry_sdk.init(
         dsn=settings.sentry_dsn,
@@ -89,17 +110,20 @@ def _init_sentry(settings: Settings) -> None:
         send_default_pii=settings.sentry_send_default_pii,
         traces_sample_rate=settings.sentry_traces_sample_rate,
         profiles_sample_rate=settings.sentry_profiles_sample_rate,
-        integrations=[
-            FastApiIntegration(transaction_style="endpoint"),
-            StarletteIntegration(transaction_style="endpoint"),
-            logging_integration,
-        ],
+        # Enable the new Sentry Logs product (separate from breadcrumbs).
+        # Requires sentry-sdk>=2.35.0 — we pin >=2.18 in pyproject but
+        # the latest release fulfills the >=2.35 requirement; if a
+        # downstream env happens to install older, the flag is just
+        # ignored.
+        enable_logs=True,
+        integrations=integrations,
     )
     logger.info(
-        "Sentry initialized (environment=%s, traces=%.2f, profiles=%.2f).",
+        "Sentry initialized (environment=%s, traces=%.2f, profiles=%.2f, integrations=%d).",
         settings.observability_environment,
         settings.sentry_traces_sample_rate,
         settings.sentry_profiles_sample_rate,
+        len(integrations),
     )
 
 

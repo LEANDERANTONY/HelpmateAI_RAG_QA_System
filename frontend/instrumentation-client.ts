@@ -27,11 +27,25 @@ if (dsn) {
     tracesSampleRate: Number(
       process.env.NEXT_PUBLIC_SENTRY_TRACES_SAMPLE_RATE ?? 0.1,
     ),
-    // Don't auto-send Replay on the free tier — we already pay for
-    // session replay via PostHog and Sentry's quota is small. Flip via
-    // env if you decide to consolidate.
+    // Replay strategy: skip ambient session sampling (PostHog handles
+    // full session replay), but capture 100% of sessions that hit an
+    // error. The on-error path is the high-signal one — the user just
+    // saw a workspace blow up and we want to see exactly what they
+    // clicked. The free tier covers 50 sessions/month which is plenty
+    // for an MVP.
     replaysSessionSampleRate: 0,
-    replaysOnErrorSampleRate: 0,
+    replaysOnErrorSampleRate: Number(
+      process.env.NEXT_PUBLIC_SENTRY_REPLAYS_ON_ERROR_SAMPLE_RATE ?? 1.0,
+    ),
+    integrations: [
+      Sentry.replayIntegration({
+        // Mask all text + media by default. The workspace shows user
+        // documents on screen; we can't ship those to Sentry without
+        // making PII commitments we haven't reviewed legally.
+        maskAllText: true,
+        blockAllMedia: true,
+      }),
+    ],
     debug: false,
   });
 }
