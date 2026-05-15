@@ -120,6 +120,14 @@ export function FeedbackButtons({
    *  auto-commit timer, or the unmount cleanup. */
   const commitFeedback = useCallback(
     async (rating: FeedbackRating, commentText: string) => {
+      // Re-entry guard. ``committingRef`` is set true on entry; if
+      // a second trigger fires (auto-commit timer racing a Send/Skip
+      // click in the window before the disabled state has propagated
+      // to the DOM), this returns early instead of letting both paths
+      // call submitFeedback. The guard is synchronous so it works
+      // even when the second trigger fires inside the same task
+      // micro-tick. Codex P1 on PR #5 round 5.
+      if (committingRef.current) return;
       clearTimer();
       // Mark in-flight synchronously BEFORE the async setState. The
       // unmount effect reads this to decide whether to fire its own

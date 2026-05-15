@@ -97,16 +97,26 @@ export function VoiceInputButton({
   // reads the LATEST callbacks at firing time, not the snapshot
   // from when the recorder was constructed. Without this, a parent
   // re-render with new callback identities between start and stop
-  // would have the stop handler invoke stale closures. Mirrors the
-  // AI Job Agent fix flagged by Codex P2 on PR #3 round 5.
+  // would have the stop handler invoke stale closures.
   const propsRef = useRef({ onTranscript, onError });
   propsRef.current = { onTranscript, onError };
+  // Mounted guard. The MediaRecorder "stop" event fires whenever the
+  // input track ends — including when the unmount cleanup below
+  // calls track.stop(). Without this guard, handleRecorderStop would
+  // run on an unmounted component, triggering React state-update
+  // warnings and post-unmount setState calls. Mirrors the AI Job
+  // Agent fix flagged by CodeRabbit on PR #5 round 5.
+  const mountedRef = useRef<boolean>(true);
 
   // Stop the mic + recorder when the component unmounts mid-recording.
   // Without this, navigating away while recording leaves the OS mic
-  // indicator on until the next page interaction.
+  // indicator on until the next page interaction. Also flips
+  // ``mountedRef`` so the async ``handleRecorderStop`` (which
+  // MediaRecorder fires when the stream ends) can bail before
+  // touching state on an unmounted component.
   useEffect(() => {
     return () => {
+      mountedRef.current = false;
       const recorder = recorderRef.current;
       if (recorder && recorder.state !== "inactive") {
         try {
@@ -190,6 +200,13 @@ export function VoiceInputButton({
     const chunks = chunksRef.current;
     chunksRef.current = [];
     recorderRef.current = null;
+    // If the component has already unmounted (typical path:
+    // the unmount cleanup stopped the stream, MediaRecorder fired
+    // its ``stop`` event in response, and we landed here), bail
+    // before touching state or invoking parent callbacks. Stream
+    // is already torn down so nothing leaks. CodeRabbit on PR #5
+    // round 5.
+    if (!mountedRef.current) return;
     if (chunks.length === 0) {
       setState("idle");
       return;
@@ -203,18 +220,27 @@ export function VoiceInputButton({
     const currentProps = propsRef.current;
     try {
       const response = await transcribeAudio(blob);
+      // Second mountedRef check: the await above is multi-second
+      // (Whisper round-trip) and the user might navigate during it.
+      // Skip the post-await state updates if we unmounted — they'd
+      // trigger React's "state update on unmounted component"
+      // warning and serve no purpose since the UI is gone.
+      if (!mountedRef.current) return;
       const text = (response.text || "").trim();
       if (text) {
         currentProps.onTranscript(text);
       }
     } catch (error) {
+      if (!mountedRef.current) return;
       const message =
         error instanceof Error
           ? error.message
           : "Couldn't transcribe the audio. Please try again.";
       currentProps.onError?.(message);
     } finally {
-      setState("idle");
+      if (mountedRef.current) {
+        setState("idle");
+      }
     }
   }
 
