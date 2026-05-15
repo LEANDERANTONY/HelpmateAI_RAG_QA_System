@@ -61,7 +61,7 @@ The full product read:
 | RAGAS answer relevancy, attempted only | `80.4%` | `83.4%` | `78.0%` |
 | RAGAS context precision, attempted only | `83.9%` | `91.7%` | `78.9%` |
 
-OpenAI and Vectara are run in their native answer modes under the protocol documented below: OpenAI File Search using file-search retrieval, Vectara using hybrid search with reranking and Mockingbird generation. (Earlier exploratory vendor runs used different settings and are not directly comparable to these numbers.) HelpmateAI does not claim blanket vendor superiority: the latest evidence is that it is competitive on answerable coverage, decisively stronger on conservative abstention and zero false support in this suite, and still has work left on tiny metadata/footer facts and table-heavy numeric evidence.
+OpenAI and Vectara are run in their native answer modes under the protocol documented below: OpenAI File Search using file-search retrieval, Vectara using hybrid search with reranking and Mockingbird generation. (Earlier exploratory vendor runs used different settings and are not directly comparable to these numbers.) The honest read of this run: HelpmateAI is competitive with both vendors on answerable coverage, decisively stronger on conservative abstention and zero false support, and still has specific work left on tiny metadata/footer facts and table-heavy numeric evidence.
 
 ## Evaluation Methodology
 
