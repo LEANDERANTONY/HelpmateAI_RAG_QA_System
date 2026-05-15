@@ -190,6 +190,17 @@ class RunTraceRecord:
     retrieval_version: str
     generation_version: str
     payload: dict[str, Any] = field(default_factory=dict)
+    # Cost-tracking columns populated from the per-request CostCollector
+    # totals (sum of all run_structured_prompt + run_json_prompt calls
+    # made during the /qa request). Defaulted so existing call sites
+    # that don't populate them keep working — the Supabase upsert
+    # writes 0 / "" rows that are still queryable in the dashboard.
+    # See ``src.openai_service.CostCollector.totals()`` for the source
+    # of truth on how these are aggregated.
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
+    cost_usd: float = 0.0
+    model_name: str = ""
 
     def to_dict(self) -> dict[str, Any]:
         return asdict(self)

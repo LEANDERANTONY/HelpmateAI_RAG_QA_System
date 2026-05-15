@@ -69,6 +69,10 @@ class RetrievalPlanner:
     }
 
     def __init__(self, settings: Settings, router: QueryRouter | None = None):
+        # No cost_collector threading — the QueryRouter the planner
+        # builds reads its recorder from the request-scoped ContextVar
+        # in ``src.openai_service``. See HybridRetriever's __init__ for
+        # the same rationale.
         self.settings = settings
         self.router = router or QueryRouter(settings)
         self.query_analyzer = QueryAnalyzer()

@@ -46,6 +46,7 @@ call sites (answer generation, router, support verifier).
 """
 from __future__ import annotations
 
+import contextvars
 import json
 import logging
 from dataclasses import dataclass, field
@@ -57,6 +58,50 @@ from src.config import Settings
 
 
 logger = logging.getLogger(__name__)
+
+
+# ContextVar holding the *current request's* CostCollector. The pipeline
+# binds a fresh collector here at the start of each ``/qa`` request and
+# resets it in a ``finally`` after ``_build_run_trace`` reads totals.
+#
+# Why a ContextVar (not a pipeline-instance attribute):
+#   ``HelpmatePipeline`` is constructed by ``@lru_cache`` in
+#   ``backend/main.py:_pipeline()`` and reused across requests. Anything
+#   we attached to ``self`` would be process-scoped — under concurrent
+#   ``/qa`` calls, records from request A and B interleave on the same
+#   list and one request's ``records.clear()`` wipes the other's
+#   in-flight telemetry. A ContextVar inherits the natural per-task
+#   isolation FastAPI gives async coroutines, so each request sees its
+#   own collector without any synchronization.
+#
+# Subsystems (AnswerGenerator, QueryRouter) still accept an explicit
+# ``cost_collector`` for tests + eval scripts that want a captured
+# reference; when omitted, the wrapper reads from this ContextVar at
+# record time. That preserves test injection while making production
+# automatically request-scoped.
+_current_cost_collector: contextvars.ContextVar["CostCollector | None"] = contextvars.ContextVar(
+    "helpmate_current_cost_collector",
+    default=None,
+)
+
+
+def bind_cost_collector(collector: "CostCollector | None") -> contextvars.Token:
+    """Bind ``collector`` as the current-request CostCollector and
+    return a Token the caller must ``reset_cost_collector`` with once
+    the request is done. Pair the two in a ``try`` / ``finally`` so a
+    failed request still leaves the contextvar in a clean state."""
+    return _current_cost_collector.set(collector)
+
+
+def reset_cost_collector(token: contextvars.Token) -> None:
+    _current_cost_collector.reset(token)
+
+
+def get_current_cost_collector() -> "CostCollector | None":
+    """Read the current request's CostCollector, or None when no
+    request has bound one (eval scripts, background jobs, tests that
+    don't care about cost telemetry)."""
+    return _current_cost_collector.get()
 
 
 # OpenAI prices in USD per 1M tokens. Updated alongside the model list
@@ -436,7 +481,17 @@ class OpenAIService:
         response_format: str,
         error: str | None,
     ) -> None:
-        if self.cost_recorder is None:
+        # Recorder resolution order:
+        #   1. Explicit ``self.cost_recorder`` captured at __init__
+        #      (tests + eval scripts that want a known reference).
+        #   2. Current-request CostCollector from the ContextVar
+        #      (production hot path — bound by the pipeline at the
+        #      start of each /qa call).
+        #   3. None: telemetry is silently dropped.
+        recorder = self.cost_recorder
+        if recorder is None:
+            recorder = get_current_cost_collector()
+        if recorder is None:
             return
         try:
             response_id = str(getattr(response, "id", "") or "")
@@ -455,7 +510,7 @@ class OpenAIService:
                 response_format=response_format,
                 error=error,
             )
-            self.cost_recorder(record)
+            recorder(record)
         except Exception:  # pragma: no cover — telemetry must never crash a request
             logger.exception("cost_recorder raised while recording task=%s", task_name)
 

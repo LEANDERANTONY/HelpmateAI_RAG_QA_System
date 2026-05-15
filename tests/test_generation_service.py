@@ -94,6 +94,43 @@ def test_grounded_prompt_adds_summary_specific_guidance_for_global_questions():
     assert "what the document is about" in prompt.lower()
 
 
+def test_generation_marks_schema_drift_fallback_as_unsupported():
+    """Locks the Codex P1 fix on PR #6: when the model returns content
+    the schema-strict wrapper rejects (StructuredOutputError), we used
+    to drop into the heuristic ``_fallback_answer`` which stamps
+    ``supported=True`` for any non-empty evidence. That silently
+    presented a "best-local-match" summary as if it had been verified
+    by the LLM. The fix forces the fallback answer to be marked
+    ``supported=False / support_status=unsupported`` so the trace +
+    UI surface the drift instead of presenting the fallback as
+    grounded."""
+    # Return content that's not JSON — the wrapper raises
+    # StructuredOutputError on the json.loads step.
+    settings = Settings(openai_api_key="test-key")
+    generator = AnswerGenerator(settings)
+    generator.client = _FakeClient(["this is not json"])
+
+    retrieval = RetrievalResult(
+        question="What is the waiting period?",
+        candidates=[
+            RetrievalCandidate(
+                chunk_id="c1",
+                text="The waiting period is thirty days from the policy effective date.",
+                metadata={"page_label": "Page 4"},
+            )
+        ],
+    )
+
+    answer = generator.generate("What is the waiting period?", retrieval)
+
+    # Even though the heuristic ``_fallback_answer`` would have set
+    # supported=True for this non-empty evidence, the schema-drift
+    # branch must override it.
+    assert answer.supported is False
+    assert answer.support_status == "unsupported"
+    assert "schema" in (answer.note or "").lower()
+
+
 def test_grounded_prompt_requires_complete_support_for_multi_part_answers():
     prompt = build_grounded_prompt(
         "Compare the reported GAN, diffusion, and LLM findings.",

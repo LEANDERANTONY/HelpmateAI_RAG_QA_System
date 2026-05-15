@@ -13,6 +13,11 @@ from src.config import Settings, get_settings
 from src.generation import AnswerGenerator, EvidenceSelector
 from src.ingest import DocxConversionError, convert_docx_to_pdf, ingest_document
 from src.landmarks import DocumentLandmarkService
+from src.openai_service import (
+    CostCollector,
+    bind_cost_collector,
+    reset_cost_collector,
+)
 from src.retrieval import ChromaIndexStore, HybridRetriever
 from src.sections import build_sections
 from src.sections.profiles import enrich_section_profiles
@@ -29,6 +34,15 @@ logger = logging.getLogger(__name__)
 class HelpmatePipeline:
     def __init__(self, settings: Settings | None = None):
         self.settings = settings or get_settings()
+        # CostCollector lives in a per-request ContextVar (see
+        # src.openai_service.bind_cost_collector) — NOT on the pipeline
+        # instance, because backend/main.py:_pipeline() is an @lru_cache
+        # singleton and a shared collector would interleave records
+        # across concurrent /qa calls. The pipeline binds a fresh
+        # collector at the start of answer_question and resets it in
+        # a finally; OpenAIService reads from the ContextVar so the
+        # generator + retriever subsystems don't need a captured
+        # reference.
         self.store = ChromaIndexStore(self.settings)
         self.retriever = HybridRetriever(self.store, self.settings)
         self.evidence_selector = EvidenceSelector(self.settings)
@@ -256,6 +270,38 @@ class HelpmatePipeline:
             cached.cache_status.index_reused = index_record.reused
             return cached
 
+        # Fresh CostCollector for THIS request — bound to the
+        # _current_cost_collector ContextVar so OpenAIService reads
+        # the right collector inside the generator / router LLM calls.
+        # Reset in the finally so a partial failure still leaves the
+        # contextvar clean for the next request that lands on this
+        # task. The pipeline is an @lru_cache singleton in
+        # backend/main.py:_pipeline(), so a process-scoped collector
+        # would mix records across concurrent requests.
+        cost_collector = CostCollector()
+        token = bind_cost_collector(cost_collector)
+        try:
+            return self._answer_question_inner(
+                document=document,
+                index_record=index_record,
+                question=question,
+                cache_key=cache_key,
+                model_override=model_override,
+                cost_collector=cost_collector,
+            )
+        finally:
+            reset_cost_collector(token)
+
+    def _answer_question_inner(
+        self,
+        *,
+        document: DocumentRecord,
+        index_record: IndexRecord,
+        question: str,
+        cache_key: str,
+        model_override: str | None,
+        cost_collector: CostCollector,
+    ) -> AnswerResult:
         retrieval_result = self.retrieve_evidence(document.document_id, document.fingerprint, question)
         retrieval_result = self.evidence_selector.select(question, retrieval_result)
         answer = self.generate_answer(
@@ -314,6 +360,7 @@ class HelpmatePipeline:
             question=question,
             retrieval_result=retrieval_result,
             answer=answer,
+            cost_collector=cost_collector,
         )
         self.run_trace_store.save_trace(trace)
         answer.run_trace_id = trace.trace_id
@@ -380,9 +427,41 @@ class HelpmatePipeline:
         question: str,
         retrieval_result: RetrievalResult,
         answer: AnswerResult,
+        cost_collector: CostCollector | None = None,
     ) -> RunTraceRecord:
         created_at = datetime.now(timezone.utc)
         trace_id = f"trace-{uuid.uuid4().hex}"
+        # Snapshot LLM-call totals from the per-request collector. The
+        # collector aggregates calls from the generator (answer +
+        # support verifier + support-status verifier) plus the router
+        # (LLM fallback when heuristic confidence is below threshold).
+        # Per-call breakdown lands in the payload JSON for debugging;
+        # the totals populate the dedicated cost columns on the trace
+        # store (prompt_tokens / completion_tokens / cost_usd / model_name).
+        # When the caller doesn't supply a collector (e.g. eval scripts
+        # building traces outside the request path), we record zeros —
+        # the dedicated columns still write cleanly and the trace row
+        # stays queryable for non-cost rollups.
+        if cost_collector is not None:
+            cost_totals = cost_collector.totals()
+            llm_call_breakdown = cost_collector.to_payload()
+        else:
+            # Schema MUST match CostCollector.totals() exactly so
+            # downstream trace readers don't have to branch on whether
+            # they're reading a request-path trace or an eval-path
+            # trace. CodeRabbit caught this — the previous fallback
+            # omitted total_tokens + call_count. Build the dict from
+            # the same fields ``CostCollector.totals()`` uses.
+            cost_totals = {
+                "prompt_tokens": 0,
+                "completion_tokens": 0,
+                "total_tokens": 0,
+                "cost_usd": 0.0,
+                "model_name": "",
+                "call_count": 0,
+            }
+            llm_call_breakdown = {"totals": cost_totals, "calls": []}
+
         payload = {
             "question": question,
             "document": {
@@ -413,6 +492,10 @@ class HelpmatePipeline:
                 "citation_details": list(answer.citation_details),
                 "note": answer.note,
             },
+            # Per-call LLM breakdown — kept as a payload field for
+            # debugging-grade introspection. The summary numbers (the
+            # ones the dashboard joins on) sit on the dedicated columns.
+            "llm_calls": llm_call_breakdown,
         }
         return RunTraceRecord(
             trace_id=trace_id,
@@ -424,4 +507,8 @@ class HelpmatePipeline:
             retrieval_version=self.settings.retrieval_version,
             generation_version=self.settings.generation_version,
             payload=payload,
+            prompt_tokens=int(cost_totals.get("prompt_tokens", 0) or 0),
+            completion_tokens=int(cost_totals.get("completion_tokens", 0) or 0),
+            cost_usd=float(cost_totals.get("cost_usd", 0.0) or 0.0),
+            model_name=str(cost_totals.get("model_name", "") or ""),
         )

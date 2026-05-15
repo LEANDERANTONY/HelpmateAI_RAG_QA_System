@@ -70,6 +70,10 @@ class SupabaseRunTraceStore:
         self.table_name = settings.supabase_run_traces_table
 
     def save_trace(self, trace: RunTraceRecord) -> None:
+        # Cost columns are populated by the pipeline's per-request
+        # CostCollector. Existing rows backfilled with the migration
+        # defaults (0 / "") so callers that haven't yet routed through
+        # the new collector still write a clean row.
         payload = {
             "trace_id": trace.trace_id,
             "document_id": trace.document_id,
@@ -78,6 +82,10 @@ class SupabaseRunTraceStore:
             "created_at": trace.created_at,
             "expires_at": trace.expires_at,
             "payload": trace.to_dict(),
+            "prompt_tokens": trace.prompt_tokens,
+            "completion_tokens": trace.completion_tokens,
+            "cost_usd": trace.cost_usd,
+            "model_name": trace.model_name,
         }
         try:
             self.client.table(self.table_name).upsert(payload, on_conflict="trace_id").execute()

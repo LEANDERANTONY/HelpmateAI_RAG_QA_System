@@ -8,7 +8,17 @@ from src.generation.prompts import (
     build_support_status_verification_prompt,
     build_support_verification_prompt,
 )
+from src.openai_service import (
+    CostCollector,
+    OpenAIService,
+    StructuredOutputError,
+)
 from src.schemas import AnswerResult, CacheStatus, RetrievalCandidate, RetrievalResult
+from src.schemas_llm_outputs import (
+    AnswerOutput,
+    SupportStatusVerifierOutput,
+    SupportVerifierOutput,
+)
 
 
 logger = logging.getLogger(__name__)
@@ -120,8 +130,21 @@ def _as_text_list(value: object) -> list[str]:
 
 
 class AnswerGenerator:
-    def __init__(self, settings: Settings):
+    def __init__(
+        self,
+        settings: Settings,
+        *,
+        cost_collector: CostCollector | None = None,
+    ):
+        # cost_collector is an OPTIONAL explicit override for tests +
+        # eval scripts that want a captured reference. In production
+        # the pipeline binds a request-scoped CostCollector to the
+        # ContextVar in ``src.openai_service`` and the OpenAIService
+        # wrapper reads from it at record time — so leaving this None
+        # (the default) is what gives us per-request isolation under
+        # FastAPI's concurrent task model.
         self.settings = settings
+        self.cost_collector = cost_collector
         self.client = None
         if settings.openai_api_key:
             try:
@@ -131,6 +154,27 @@ class AnswerGenerator:
             except Exception as exc:
                 logger.warning("Answer generator client setup failed (%s)", exc.__class__.__name__)
                 self.client = None
+
+    def _wrapper(self) -> OpenAIService:
+        """Build an OpenAIService that wraps whatever ``self.client`` is
+        currently set to.
+
+        Constructed per-call (rather than once in __init__) so tests
+        which monkeypatch ``generator.client = _FakeClient(...)`` after
+        construction see their fake propagated through. The wrapper
+        itself is cheap — no network or auth — so per-call construction
+        is fine.
+
+        We pass ``self.cost_collector`` (may be None) as the explicit
+        recorder. When None, the wrapper's ``_record_cost`` falls back
+        to ``get_current_cost_collector()`` — the request-scoped
+        ContextVar the pipeline binds at the start of each /qa call.
+        """
+        return OpenAIService(
+            self.settings,
+            cost_recorder=self.cost_collector,
+            client=self.client,
+        )
 
     @staticmethod
     def _citation_details(evidence: list[RetrievalCandidate]) -> list[str]:
@@ -231,17 +275,47 @@ class AnswerGenerator:
         retrieval_plan = retrieval_result.retrieval_plan or {}
         summary_mode = str(retrieval_plan.get("evidence_spread", "")) == "global"
         prompt = build_grounded_prompt(question, evidence, summary_mode=summary_mode)
+        # Schema-strict path: OpenAI constrains the response to the
+        # AnswerOutput shape and we validate through Pydantic before
+        # downstream consumption. A drifted prompt or model version can
+        # no longer return content that silently parses as a wrong-shape
+        # dict — it surfaces as StructuredOutputError, which we catch
+        # and route through the same fallback path as the legacy
+        # generic-exception branch.
         try:
-            response = self.client.chat.completions.create(
+            output = self._wrapper().run_structured_prompt(
+                system="You answer questions using only supplied document evidence.",
+                user=prompt,
+                task_name="answer_generation",
                 model=model_name,
-                messages=[
-                    {"role": "system", "content": "You answer questions using only supplied document evidence."},
-                    {"role": "user", "content": prompt},
-                ],
-                response_format={"type": "json_object"},
-                temperature=0,
+                response_model=AnswerOutput,
             )
-            content = response.choices[0].message.content or "{}"
+            payload = output.model_dump()
+        except StructuredOutputError as exc:
+            logger.warning(
+                "Answer model returned drifted structured output; falling back (%s)",
+                exc,
+            )
+            answer = self._fallback_answer(question, evidence)
+            answer.retrieval_notes = retrieval_result.strategy_notes
+            answer.query_used = retrieval_result.query_used
+            answer.query_variants = retrieval_result.query_variants
+            # Schema-drift means the LLM produced content the validator
+            # rejected; we cannot trust the "supported" flag the
+            # _fallback_answer heuristic would otherwise stamp on. Mark
+            # the answer as unsupported so the trace + UI surfaces the
+            # drift instead of presenting a lossy local summary as if
+            # it were a verified grounded answer. Codex P1 on PR #6.
+            answer.supported = False
+            answer.support_status = "unsupported"
+            answer.support_summary = "Schema drift"
+            answer.note = (
+                "Live model returned a structured output that did not match the "
+                "expected schema; the answer was downgraded to unsupported so "
+                "the run trace surfaces the drift instead of treating the local "
+                "fallback as a verified answer."
+            )
+            return answer
         except Exception as exc:
             logger.warning("Answer model call failed; returning local fallback (%s)", exc.__class__.__name__)
             answer = self._fallback_answer(question, evidence)
@@ -250,10 +324,6 @@ class AnswerGenerator:
             answer.query_variants = retrieval_result.query_variants
             answer.note = f"Live model call failed, so a local grounded fallback was returned instead. ({exc.__class__.__name__})"
             return answer
-        try:
-            payload = json.loads(content)
-        except json.JSONDecodeError:
-            payload = {"supported": False, "answer": "Unsupported by the retrieved evidence.", "reason": "The model did not return valid structured output."}
         citation_details = self._citation_details(evidence)
         references_block = ""
         supported = bool(payload.get("supported", False))
@@ -326,23 +396,40 @@ class AnswerGenerator:
         if self.client is None:
             return True, "Support verification skipped because no live model client is available."
         prompt = build_support_verification_prompt(question, answer.answer, evidence)
+        # Schema-strict: SupportVerifierOutput is just (supported, reason)
+        # so the schema constraint is small but still catches the
+        # case where the model returns text instead of JSON entirely.
         try:
-            response = self.client.chat.completions.create(
+            verifier_output = self._wrapper().run_structured_prompt(
+                system="You strictly verify whether answers are fully supported by supplied document evidence.",
+                user=prompt,
+                task_name="support_verifier",
                 model=self.settings.answer_model,
-                messages=[
-                    {"role": "system", "content": "You strictly verify whether answers are fully supported by supplied document evidence."},
-                    {"role": "user", "content": prompt},
-                ],
-                response_format={"type": "json_object"},
-                temperature=0,
+                response_model=SupportVerifierOutput,
             )
-            content = response.choices[0].message.content or "{}"
-            payload = json.loads(content)
+            supported = verifier_output.supported
+            reason = verifier_output.reason.strip()
+        except StructuredOutputError as exc:
+            logger.warning(
+                "Support verifier returned drifted output; keeping original status (%s)",
+                exc,
+            )
+            # Preserve the incoming ``answer.supported`` rather than
+            # returning True unconditionally. CodeRabbit caught: if
+            # verify_supported_answer is ever called with an already-
+            # unsupported AnswerResult, returning True on drift would
+            # upgrade it — exactly the silent correctness regression
+            # the schema-strict path is meant to prevent.
+            return answer.supported, (
+                "Support verifier returned a structured output that did not match "
+                "the expected schema, so the original answer status was retained."
+            )
         except Exception as exc:
             logger.warning("Support verifier failed; keeping original answer status (%s)", exc.__class__.__name__)
-            return True, f"Support verification failed, so the original answer status was retained. ({exc.__class__.__name__})"
-        supported = bool(payload.get("supported", False))
-        reason = str(payload.get("reason", "")).strip()
+            # Same correctness: preserve the original supported flag
+            # rather than blindly returning True. A network glitch
+            # shouldn't promote an unsupported answer to supported.
+            return answer.supported, f"Support verification failed, so the original answer status was retained. ({exc.__class__.__name__})"
         if supported and _reason_reports_support_gap(reason):
             supported = False
             reason = (
@@ -369,21 +456,29 @@ class AnswerGenerator:
             claimed_support_status=claimed_support_status,
             evidence=evidence,
         )
+        # Schema-strict: SupportStatusVerifierOutput matches the existing
+        # five-key shape (support_status, answer_acknowledges_gap,
+        # supported_facts, missing_or_ambiguous_facts, reason). The
+        # downstream normalization stays identical — the schema only
+        # changes how the payload is *obtained*, not how it's interpreted.
         try:
-            response = self.client.chat.completions.create(
+            verifier_output = self._wrapper().run_structured_prompt(
+                system="You classify answer support status using only supplied document evidence.",
+                user=prompt,
+                task_name="support_status_verifier",
                 model=self.settings.support_status_verifier_model,
-                messages=[
-                    {
-                        "role": "system",
-                        "content": "You classify answer support status using only supplied document evidence.",
-                    },
-                    {"role": "user", "content": prompt},
-                ],
-                response_format={"type": "json_object"},
-                temperature=0,
+                response_model=SupportStatusVerifierOutput,
             )
-            content = response.choices[0].message.content or "{}"
-            payload = json.loads(content)
+        except StructuredOutputError as exc:
+            logger.warning(
+                "Support-status verifier returned drifted output; keeping original status (%s)",
+                exc,
+            )
+            return claimed_support_status, (
+                (reason_text + " " if reason_text else "")
+                + "Support-status verifier returned a structured output that did not match "
+                + "the expected schema, so the original status was retained."
+            )
         except Exception as exc:
             logger.warning("Support-status verifier failed; keeping original status (%s)", exc.__class__.__name__)
             return claimed_support_status, (
@@ -391,11 +486,11 @@ class AnswerGenerator:
                 + f"Support-status verification failed, so the original status was retained. ({exc.__class__.__name__})"
             )
 
-        verifier_status = _normalize_support_status(payload.get("support_status"), supported=False)
-        supported_facts = _as_text_list(payload.get("supported_facts"))
-        missing_facts = _as_text_list(payload.get("missing_or_ambiguous_facts"))
-        acknowledges_gap = bool(payload.get("answer_acknowledges_gap", False))
-        verifier_reason = str(payload.get("reason", "")).strip()
+        verifier_status = _normalize_support_status(verifier_output.support_status, supported=False)
+        supported_facts = _as_text_list(verifier_output.supported_facts)
+        missing_facts = _as_text_list(verifier_output.missing_or_ambiguous_facts)
+        acknowledges_gap = bool(verifier_output.answer_acknowledges_gap)
+        verifier_reason = verifier_output.reason.strip()
 
         if verifier_status == "supported":
             if not supported_facts or missing_facts or acknowledges_gap:
