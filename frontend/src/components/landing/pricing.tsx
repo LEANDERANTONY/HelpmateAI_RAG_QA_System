@@ -160,9 +160,9 @@ function PricingCard({ tier }: { tier: Tier }) {
     const supabase = createClient();
     supabase.auth
       .getUser()
-      .then(({ data }) => {
+      .then((response: { data: { user: { id: string } | null } }) => {
         if (cancelled) return;
-        setUserId(data.user?.id ?? null);
+        setUserId(response.data.user?.id ?? null);
       })
       .catch(() => {
         // Auth read failed (transient network / dev without supabase).
