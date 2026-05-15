@@ -1247,41 +1247,70 @@ async def transcribe_audio(
 
     started_at = datetime.now(timezone.utc)
 
-    def _call_whisper_sync() -> object:
-        """The OpenAI Python SDK is sync-only for audio.transcriptions
-        as of v1.98 — it does a blocking POST + multipart upload with
-        ``requests``. Calling this directly from an ``async def``
-        handler blocks the FastAPI event loop for the full Whisper
-        round-trip (often 2-10s depending on clip length), which
-        starves every other concurrent request on this worker.
+    # Two-step transcription chain: ``whisper-1`` is the default
+    # (cheaper, ubiquitous, supports verbose_json with duration);
+    # ``gpt-4o-mini-transcribe`` is the fallback for cases where
+    # the Whisper endpoint itself is unavailable. The fallback only
+    # fires on a Whisper-side exception — payload-level rejections
+    # (mime/size/empty) already short-circuited earlier with their
+    # own 400/413 responses. CodeRabbit flagged on PR #5 that the
+    # PR description advertised a fallback but the code only had
+    # Whisper.
+    def _call_transcribe_sync(model_name: str) -> object:
+        """Blocking OpenAI transcription call — the SDK is sync-only
+        for audio.transcriptions as of v1.98 (blocking POST +
+        multipart upload via ``requests``). The caller must hand this
+        to ``asyncio.to_thread`` so the FastAPI event loop stays
+        responsive (Codex P1).
 
-        ``asyncio.to_thread`` hands the blocking call to the default
-        thread pool so the event loop stays responsive. Codex flagged
-        this as P1 on PR #5.
+        ``verbose_json`` carries the ``duration`` field for whisper-1;
+        gpt-4o-mini-transcribe returns the standard ``json`` shape
+        without ``duration`` — we'll fall back to wall-clock in that
+        case (covered by the post-call duration resolution below).
         """
+        # Cheap rebuild — no auth round-trip — so we can construct
+        # per attempt; keeps state local to the call.
         client = OpenAI(api_key=settings.openai_api_key)
         with tmp_path.open("rb") as audio_handle:
-            # ``verbose_json`` exposes the duration field so we can
-            # report the actual audio length back to the caller; the
-            # default ``json`` response_format omits it. Falling back
-            # to wall-clock keeps the contract intact when an SDK
-            # upgrade renames the field.
+            response_format = "verbose_json" if model_name == "whisper-1" else "json"
             return client.audio.transcriptions.create(
-                model="whisper-1",
+                model=model_name,
                 file=audio_handle,
-                response_format="verbose_json",
+                response_format=response_format,
             )
 
+    response = None
+    primary_error: Exception | None = None
     try:
-        response = await asyncio.to_thread(_call_whisper_sync)
-    except HTTPException:
-        raise
-    except Exception as exc:
-        logger.warning("Whisper transcription failed: %s", exc.__class__.__name__)
-        raise HTTPException(
-            status_code=502,
-            detail="Transcription service is temporarily unavailable.",
-        ) from exc
+        try:
+            response = await asyncio.to_thread(_call_transcribe_sync, "whisper-1")
+        except HTTPException:
+            raise
+        except Exception as exc:
+            logger.warning(
+                "Whisper transcription failed; trying gpt-4o-mini-transcribe fallback (%s)",
+                exc.__class__.__name__,
+            )
+            primary_error = exc
+            try:
+                response = await asyncio.to_thread(
+                    _call_transcribe_sync, "gpt-4o-mini-transcribe"
+                )
+            except HTTPException:
+                raise
+            except Exception as fallback_exc:
+                logger.warning(
+                    "Fallback gpt-4o-mini-transcribe also failed (%s); surfacing 502",
+                    fallback_exc.__class__.__name__,
+                )
+                # Surface the FALLBACK error (more recent + actionable
+                # signal for ops). Chain both via ``__context__`` /
+                # ``from`` so the traceback shows the original Whisper
+                # failure too.
+                raise HTTPException(
+                    status_code=502,
+                    detail="Transcription service is temporarily unavailable.",
+                ) from fallback_exc
     finally:
         try:
             tmp_path.unlink(missing_ok=True)

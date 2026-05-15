@@ -246,6 +246,68 @@ def test_registry_with_non_object_top_level_raises(tmp_path):
     assert "top-level" in str(exc_info.value).lower()
 
 
+def test_template_cache_does_not_cross_pollute_between_roots(tmp_path):
+    """Two prompts_root directories that ship the SAME (name, version)
+    must NOT share a template cache entry — even when both files
+    happen to be readable and parse cleanly. CodeRabbit Major + Codex
+    P2 round-2 on PR #5: the original cache key was just
+    (name, version) so a template loaded from root_a could be returned
+    when the caller asked from root_b with the same key.
+
+    The fix scopes the cache by ``(prompts_root.resolve(), name, version)``
+    so different roots are distinct cache entries.
+    """
+    root_a = tmp_path / "a"
+    root_a.mkdir()
+    (root_a / "registry.json").write_text(
+        json.dumps({"active": {"tailoring": "v1"}}),
+        encoding="utf-8",
+    )
+    (root_a / "tailoring").mkdir()
+    (root_a / "tailoring" / "v1.json").write_text(
+        json.dumps(
+            {
+                "name": "tailoring",
+                "version": "v1",
+                "system": "from-root-a",
+                "user": "u-a",
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    root_b = tmp_path / "b"
+    root_b.mkdir()
+    (root_b / "registry.json").write_text(
+        json.dumps({"active": {"tailoring": "v1"}}),
+        encoding="utf-8",
+    )
+    (root_b / "tailoring").mkdir()
+    (root_b / "tailoring" / "v1.json").write_text(
+        json.dumps(
+            {
+                "name": "tailoring",
+                "version": "v1",
+                "system": "from-root-b",
+                "user": "u-b",
+            }
+        ),
+        encoding="utf-8",
+    )
+
+    template_a = get_prompt("tailoring", prompts_root=root_a)
+    template_b = get_prompt("tailoring", prompts_root=root_b)
+    assert template_a.system == "from-root-a"
+    assert template_b.system == "from-root-b", (
+        "cache must NOT serve root_a's template when asked from root_b"
+    )
+
+    # Round-trip back to root_a to make sure adding root_b's entry
+    # didn't evict root_a's cached template either.
+    template_a_again = get_prompt("tailoring", prompts_root=root_a)
+    assert template_a_again.system == "from-root-a"
+
+
 def test_cache_resets_when_switching_to_root_without_registry(tmp_path):
     """Two prompts_root directories:
         - root_with: has registry.json mapping name→v1

@@ -172,10 +172,50 @@ def test_transcribe_oversized_body_returns_413(authed_client, fake_openai_client
 
 
 def test_transcribe_whisper_failure_returns_502(authed_client, fake_openai_client, with_api_key):
-    fake_openai_client.create.side_effect = RuntimeError("upstream timeout")
+    """Both Whisper-1 AND the gpt-4o-mini-transcribe fallback raise;
+    the route surfaces 502. Configure side_effect as a list so we get
+    deterministic exceptions on both attempts."""
+    fake_openai_client.create.side_effect = [
+        RuntimeError("whisper-1 upstream timeout"),
+        RuntimeError("gpt-4o-mini-transcribe also down"),
+    ]
     response = authed_client.post("/transcribe", files=_audio_file())
     assert response.status_code == 502
     assert "temporarily" in response.json()["detail"].lower()
+    # Confirm BOTH models were tried — the chain ran end to end.
+    assert fake_openai_client.create.call_count == 2
+
+
+def test_transcribe_falls_back_to_gpt4o_when_whisper_fails(
+    authed_client, fake_openai_client, with_api_key
+):
+    """When the first call (whisper-1) raises but the second
+    (gpt-4o-mini-transcribe) succeeds, the route returns the fallback's
+    transcript with a 200. Locks the fallback chain CodeRabbit asked
+    for on PR #5 round 2 — without it, a Whisper-only failure would
+    take /transcribe down completely."""
+    # First call raises, second returns a usable response. The
+    # fallback model returns the plain JSON shape (no duration field),
+    # so the route falls back to wall-clock duration too.
+    fallback_response = SimpleNamespace(text="Fallback model heard this.")
+    fake_openai_client.create.side_effect = [
+        RuntimeError("whisper-1 unavailable"),
+        fallback_response,
+    ]
+    response = authed_client.post("/transcribe", files=_audio_file())
+    assert response.status_code == 200
+    body = response.json()
+    assert body["text"] == "Fallback model heard this."
+    # duration_seconds populated from wall-clock since the fallback
+    # response didn't carry a duration attribute. Non-negative is
+    # enough — the exact value depends on test timing.
+    assert body["duration_seconds"] >= 0
+    # Verify both models were called in order.
+    assert fake_openai_client.create.call_count == 2
+    first_call_model = fake_openai_client.create.call_args_list[0].kwargs.get("model")
+    second_call_model = fake_openai_client.create.call_args_list[1].kwargs.get("model")
+    assert first_call_model == "whisper-1"
+    assert second_call_model == "gpt-4o-mini-transcribe"
 
 
 def test_transcribe_missing_api_key_returns_503(authed_client, monkeypatch):

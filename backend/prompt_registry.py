@@ -153,9 +153,17 @@ def _render_text(template: str, values: dict[str, Any], *, where: str) -> str:
 @dataclass
 class _RegistryCache:
     """Internal cache state. Guarded by ``_LOCK`` so concurrent
-    /qa requests don't race a file read."""
+    /qa requests don't race a file read.
 
-    templates: dict[tuple[str, str], PromptTemplate] = field(default_factory=dict)
+    ``templates`` is keyed by ``(prompts_root, name, version)`` rather
+    than just ``(name, version)`` so a template loaded from one
+    ``prompts_root`` cannot satisfy a request against a different
+    ``prompts_root``. The original two-tuple key let cross-root reuse
+    slip through whenever both roots had identical mtimes — discovered
+    by CodeRabbit + Codex on PR #5 round 2.
+    """
+
+    templates: dict[tuple[Path, str, str], PromptTemplate] = field(default_factory=dict)
     mtimes: dict[Path, float] = field(default_factory=dict)
     active_versions: dict[str, str] = field(default_factory=dict)
     registry_path: Path | None = None
@@ -300,7 +308,13 @@ def get_prompt(
                 f"Prompt file does not exist: {path}"
             )
         mtime = path.stat().st_mtime
-        cache_key = (name, resolved_version)
+        # Include the resolved prompts_root in the cache key — without
+        # it, two roots that happen to ship the same (name, version)
+        # at the same mtime would collide and the second caller would
+        # get the first caller's template. Pin to ``root.resolve()``
+        # so cosmetic differences (trailing slash, mixed case on case-
+        # insensitive FS) don't fragment the cache.
+        cache_key = (root.resolve(), name, resolved_version)
         cached = _CACHE.templates.get(cache_key)
         if cached is not None and _CACHE.mtimes.get(path) == mtime:
             return cached
