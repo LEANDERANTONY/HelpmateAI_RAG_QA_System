@@ -300,9 +300,20 @@ class AnswerGenerator:
             answer.retrieval_notes = retrieval_result.strategy_notes
             answer.query_used = retrieval_result.query_used
             answer.query_variants = retrieval_result.query_variants
+            # Schema-drift means the LLM produced content the validator
+            # rejected; we cannot trust the "supported" flag the
+            # _fallback_answer heuristic would otherwise stamp on. Mark
+            # the answer as unsupported so the trace + UI surfaces the
+            # drift instead of presenting a lossy local summary as if
+            # it were a verified grounded answer. Codex P1 on PR #6.
+            answer.supported = False
+            answer.support_status = "unsupported"
+            answer.support_summary = "Schema drift"
             answer.note = (
                 "Live model returned a structured output that did not match the "
-                "expected schema, so a local grounded fallback was returned instead."
+                "expected schema; the answer was downgraded to unsupported so "
+                "the run trace surfaces the drift instead of treating the local "
+                "fallback as a verified answer."
             )
             return answer
         except Exception as exc:
