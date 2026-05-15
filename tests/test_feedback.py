@@ -44,12 +44,18 @@ def isolated_feedback_store(monkeypatch, tmp_path):
     from src.config import Settings
 
     monkeypatch.setenv("HELPMATE_DATA_DIR", str(tmp_path / "data"))
-    backend_main._feedback_store.cache_clear()
+    # Capture the original lru_cache-wrapped function before monkeypatch
+    # replaces it; we'll clear its cache after teardown so the next test
+    # starts from a clean slate.
+    original_feedback_store = backend_main._feedback_store
+    original_feedback_store.cache_clear()
     backend_main._settings.cache_clear()
     store = LocalFeedbackStore(Settings())
     monkeypatch.setattr(backend_main, "_feedback_store", lambda: store)
     yield store
-    backend_main._feedback_store.cache_clear()
+    # monkeypatch's teardown restores _feedback_store; clear the
+    # original's cache so we don't carry state across tests.
+    original_feedback_store.cache_clear()
     backend_main._settings.cache_clear()
 
 

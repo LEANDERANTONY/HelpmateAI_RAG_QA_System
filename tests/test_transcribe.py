@@ -87,11 +87,15 @@ def with_api_key(monkeypatch):
     from backend import main as backend_main
     from src.config import Settings
 
+    import dataclasses
+
     original = backend_main._settings
     backend_main._settings.cache_clear()
 
-    overridden = Settings()
-    overridden.openai_api_key = "test-key"
+    # Settings is a frozen dataclass, so we can't assign to fields
+    # directly. Use dataclasses.replace to build a new instance with
+    # the test key swapped in.
+    overridden = dataclasses.replace(Settings(), openai_api_key="test-key")
 
     def _override_settings():
         return overridden
@@ -179,11 +183,13 @@ def test_transcribe_missing_api_key_returns_503(authed_client, monkeypatch):
     a 503 instead of crashing on a None client. Matches the
     'gracefully degrade' pattern used elsewhere in the app (billing
     routes do the same)."""
+    import dataclasses
+
     from backend import main as backend_main
     from src.config import Settings
 
-    overridden = Settings()
-    overridden.openai_api_key = None  # explicit no-key
+    # Settings is a frozen dataclass — use replace() to swap in None.
+    overridden = dataclasses.replace(Settings(), openai_api_key=None)
     monkeypatch.setattr(backend_main, "_settings", lambda: overridden)
     response = authed_client.post("/transcribe", files=_audio_file())
     assert response.status_code == 503
