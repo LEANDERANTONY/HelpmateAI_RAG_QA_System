@@ -435,6 +435,23 @@ def _start_sentry_checkin() -> tuple[Any, str | None]:
     (local dev, ad-hoc invocations) — the caller treats that as a
     no-op.
 
+    Manual-only-mode gate
+    ---------------------
+    The Crons heartbeat is only opened when
+    ``HELPMATE_NIGHTLY_EVAL_MONITOR_ENABLED=true``. Default is OFF
+    because the nightly_eval cron is **disabled on the VPS** as of
+    2026-05-16 (per-run cost ~\\$1.5-3 in OpenAI calls × daily would
+    burn \\$45-90/month at pre-revenue stage). Without a scheduled
+    cron, Sentry's missed-heartbeat alert would fire every day —
+    that's the HELPMATE-BACKEND-8 false-positive we already chased.
+
+    When the operator re-enables the scheduled cron (see
+    ``docs/deployment.md`` for the recommended Mon+Thu line), set
+    ``HELPMATE_NIGHTLY_EVAL_MONITOR_ENABLED=true`` in the VPS .env so
+    Sentry resumes expecting heartbeats. Until then, manual one-off
+    runs (``docker exec helpmate-api python -m backend.nightly_eval``)
+    skip Sentry entirely and don't fire alerts.
+
     Why this lives in nightly_eval rather than backend/observability:
         backend/observability bootstraps the FastAPI app's Sentry init
         from ``backend.main`` at import time. ``python -m backend.nightly_eval``
@@ -444,10 +461,19 @@ def _start_sentry_checkin() -> tuple[Any, str | None]:
         the same project; Sentry de-dupes the SDK init internally if
         somehow both run.
 
-    The ``monitor_config`` block matches the published cron line in
-    docs/deployment.md (``30 3 * * *`` UTC) so Sentry knows when to
-    expect a heartbeat. A missed run lights up the Crons dashboard.
+    The ``monitor_config`` block matches the recommended Mon+Thu
+    schedule documented in docs/deployment.md so Sentry knows when to
+    expect a heartbeat once monitoring is re-enabled. A missed run
+    lights up the Crons dashboard.
     """
+    import os
+
+    if os.environ.get("HELPMATE_NIGHTLY_EVAL_MONITOR_ENABLED", "").strip().lower() not in {"1", "true", "yes", "on"}:
+        # Manual-only mode (current default). Skip Sentry entirely so
+        # ad-hoc runs from a shell don't trigger missed-heartbeat
+        # alerts on a monitor that has no schedule to keep.
+        return None, None
+
     from src.config import get_settings
 
     settings = get_settings()
@@ -467,7 +493,9 @@ def _start_sentry_checkin() -> tuple[Any, str | None]:
             monitor_slug=_CRON_MONITOR_SLUG,
             status="in_progress",
             monitor_config={
-                "schedule": {"type": "crontab", "value": "30 3 * * *"},
+                # Mon + Thu @ 3:30 UTC — matches the recommended re-enable
+                # cron line in docs/deployment.md.
+                "schedule": {"type": "crontab", "value": "30 3 * * 1,4"},
                 "timezone": "UTC",
                 "checkin_margin": 5,    # minutes — alert if late
                 "max_runtime": 60,      # minutes — alert if it hangs
