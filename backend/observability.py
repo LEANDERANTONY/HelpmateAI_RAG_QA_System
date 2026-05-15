@@ -61,9 +61,86 @@ def initialize_observability(settings: Settings) -> None:
     _init_posthog(settings)
 
 
+def _running_under_pytest() -> bool:
+    """True when the current process was launched by pytest.
+
+    The flag matters because the local ``.env`` carries a real
+    SENTRY_DSN for dev work; without this guard every `uv run pytest`
+    invocation fires test-only crashes (mock RuntimeError, fake-401s,
+    HTTPExceptions for the "feature not configured" paths) into the
+    production Sentry project, drowning real issues in test noise.
+
+    ``PYTEST_CURRENT_TEST`` is the canonical signal — pytest sets it
+    before each test and unsets it after. ``"pytest" in sys.modules``
+    is the secondary check that catches the import-time bootstrap
+    window before the env var lands. Either positive → bail out of
+    Sentry init.
+    """
+    import os
+    import sys
+
+    if os.environ.get("PYTEST_CURRENT_TEST"):
+        return True
+    if "pytest" in sys.modules:
+        return True
+    return False
+
+
+def _drop_expected_http_exceptions(event, hint):
+    """``before_send`` filter — drop FastAPI HTTPException events.
+
+    FastAPI uses HTTPException as a structured-flow-control mechanism:
+    every 4xx response (auth failure, validation reject, quota cap) and
+    several intentional 5xx ones ("Feature not configured", "Service
+    unavailable") raise HTTPException, which then becomes the response.
+    These are NOT bugs — they're the contract. Without this filter,
+    every rejected upload, every disabled-feature ping, and every quota
+    cap fills the Sentry issue feed.
+
+    We let through:
+      • Bare ``HTTPException`` with status_code >= 500 that ISN'T a
+        clean 503 from one of our "not configured" guards — those still
+        usually represent a backend problem worth seeing.
+      • Every non-HTTPException error (RuntimeError, IntegrityError,
+        OpenAI APIError, etc.) — those are the high-signal ones.
+
+    Returning None drops the event; returning ``event`` keeps it.
+    """
+    exc_info = hint.get("exc_info") if hint else None
+    if not exc_info:
+        return event
+    exc_type = exc_info[0]
+    if exc_type is None:
+        return event
+    try:
+        from fastapi import HTTPException
+    except Exception:
+        return event
+    if not issubclass(exc_type, HTTPException):
+        return event
+    # Drop everything < 500. Those are intentional client errors.
+    exc_value = exc_info[1]
+    status_code = getattr(exc_value, "status_code", None)
+    if status_code is None or status_code < 500:
+        return None
+    # For 5xx HTTPException, keep them — they usually indicate an
+    # upstream failure we want to know about (Supabase outage, OpenAI
+    # 5xx, etc.). The exception to that rule is the "not configured"
+    # 503 family which is intentional in dev/preview deploys.
+    detail = getattr(exc_value, "detail", "") or ""
+    if isinstance(detail, str):
+        lowered = detail.lower()
+        if "not configured" in lowered or "temporarily unavailable" in lowered:
+            return None
+    return event
+
+
 def _init_sentry(settings: Settings) -> None:
     if not settings.sentry_dsn:
         logger.debug("SENTRY_DSN not configured; skipping Sentry init.")
+        return
+    if _running_under_pytest():
+        logger.debug("Pytest detected; skipping Sentry init to avoid polluting prod issues with test fixtures.")
         return
     try:
         import sentry_sdk
@@ -117,6 +194,10 @@ def _init_sentry(settings: Settings) -> None:
         # ignored.
         enable_logs=True,
         integrations=integrations,
+        # Drop expected HTTPException events (intentional 4xx + dev
+        # 5xx "not configured" guards) before they leave the process.
+        # Keeps the issue feed focused on actual bugs.
+        before_send=_drop_expected_http_exceptions,
     )
     logger.info(
         "Sentry initialized (environment=%s, traces=%.2f, profiles=%.2f, integrations=%d).",
