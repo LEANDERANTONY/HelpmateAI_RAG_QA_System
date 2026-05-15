@@ -12,9 +12,10 @@
  *      "localStorage+cookie"`` so the distinct_id survives a hard
  *      reload but a logged-out user is reset to anonymous on
  *      explicit ``posthog.reset()``.
- *   2. A small Supabase listener (added in ``use-posthog-identity``)
- *      pairs the anonymous PostHog id to the authenticated user id
- *      on login and resets on logout.
+ *   2. The workspace shell calls ``identifyPostHogUser`` once the
+ *      Supabase user resolves; that's what pairs the anonymous
+ *      pre-login session to the authenticated id (preserving the
+ *      funnel — anonymous lands → signs up → asks first question).
  *
  * Failure modes:
  *   • NEXT_PUBLIC_POSTHOG_KEY unset → the provider renders children
@@ -22,9 +23,16 @@
  *   • posthog-js fails to load (network blocked, ad blocker) → the
  *     ``try/catch`` around init keeps a broken analytics import from
  *     blocking the workspace render.
+ *
+ * Pageview tracking lives in ``PostHogPageView`` (mounted next to
+ * this provider). It's a separate component because Suspense — Next
+ * 15+ requires ``useSearchParams`` consumers to be wrapped in their
+ * own ``<Suspense>`` boundary, and we don't want that boundary to
+ * also block PostHog init for children below it.
  */
 
-import { useEffect } from "react";
+import { Suspense, useEffect } from "react";
+import { usePathname, useSearchParams } from "next/navigation";
 import posthog from "posthog-js";
 
 type PostHogProviderProps = {
@@ -43,11 +51,11 @@ function initPostHog(): void {
   try {
     posthog.init(key, {
       api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://eu.i.posthog.com",
-      // Manual page-view capture from the App Router listener (added
-      // in a follow-up patch) is more reliable than autocapture because
-      // the App Router does not fire the legacy "popstate" event the
-      // SDK listens for. Setting capture_pageview to false here avoids
-      // the SDK and our listener double-firing.
+      // Manual page-view capture via PostHogPageView below. The
+      // built-in capture_pageview path listens for ``popstate`` /
+      // ``hashchange`` which the App Router does NOT fire on
+      // navigation — that path would emit zero pageviews on a SPA
+      // navigation, leaving the Web Analytics dashboard empty.
       capture_pageview: false,
       // Capture form submits + clicks. Plenty for funnel building
       // without the noise of every input change.
@@ -70,9 +78,81 @@ function initPostHog(): void {
   }
 }
 
+/**
+ * Manually capture ``$pageview`` events on every App Router
+ * navigation. Wraps the ``useSearchParams`` hook in Suspense per the
+ * Next 15+ requirement; that's why this lives in its own component.
+ */
+function PostHogPageView(): null {
+  const pathname = usePathname();
+  const searchParams = useSearchParams();
+  useEffect(() => {
+    if (typeof window === "undefined") return;
+    if (!(posthog as unknown as { __loaded?: boolean }).__loaded) return;
+    const url = pathname + (searchParams?.toString() ? `?${searchParams.toString()}` : "");
+    posthog.capture("$pageview", { $current_url: window.location.origin + url });
+  }, [pathname, searchParams]);
+  return null;
+}
+
+/**
+ * Tie the current PostHog session to a Supabase user id. Safe to call
+ * with the same id on every render — posthog-js dedupes identify
+ * calls internally. Passing ``null`` resets the session to anonymous
+ * (logout flow).
+ *
+ * The ``traits`` argument lets you attach a few user properties for
+ * cohort building — we use ``tier`` and ``email`` from the app
+ * workspace. Tier is also set via ``posthog.group('tier', tier)`` so
+ * we can run group-level analytics (free vs pro funnels) in addition
+ * to per-user properties.
+ */
+export function identifyPostHogUser(
+  userId: string | null,
+  traits?: Record<string, unknown>,
+): void {
+  if (typeof window === "undefined") return;
+  if (!(posthog as unknown as { __loaded?: boolean }).__loaded) return;
+  try {
+    if (!userId) {
+      posthog.reset();
+      return;
+    }
+    posthog.identify(userId, traits);
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.warn("[posthog] identify failed", err);
+  }
+}
+
+/**
+ * Attach the current user to a group for cohort analytics. We use
+ * group_type="tier" with the user's plan as the key (e.g. "free",
+ * "pro", "business"), which lets dashboards filter "free-tier funnel"
+ * without manually filtering on a person property each time.
+ */
+export function setPostHogTierGroup(tier: string | null): void {
+  if (typeof window === "undefined") return;
+  if (!(posthog as unknown as { __loaded?: boolean }).__loaded) return;
+  if (!tier) return;
+  try {
+    posthog.group("tier", tier);
+  } catch (err) {
+    // eslint-disable-next-line no-console
+    console.warn("[posthog] group failed", err);
+  }
+}
+
 export function PostHogProvider({ children }: PostHogProviderProps) {
   useEffect(() => {
     initPostHog();
   }, []);
-  return <>{children}</>;
+  return (
+    <>
+      <Suspense fallback={null}>
+        <PostHogPageView />
+      </Suspense>
+      {children}
+    </>
+  );
 }

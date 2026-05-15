@@ -11,6 +11,10 @@ import type {
 import { AuthSidebar } from "@/components/auth-sidebar";
 import { ErrorState } from "@/components/error-state";
 import { FeedbackButtons } from "@/components/feedback-buttons";
+import {
+  identifyPostHogUser,
+  setPostHogTierGroup,
+} from "@/components/posthog-provider";
 import { VoiceInputButton, isVoiceInputSupported } from "@/components/voice-input-button";
 import { ChatCollapseToggle } from "@/components/viewer/chat-collapse-toggle";
 import { MobileSourceSheet } from "@/components/viewer/mobile-source-sheet";
@@ -2034,6 +2038,19 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
     process.env.NEXT_PUBLIC_ENABLE_DEBUG_PANEL === "true";
   const isAuthenticated = Boolean(user);
 
+  // Tie the PostHog session to the Supabase user id as soon as the
+  // workspace receives a user prop. On logout (user → null) we
+  // explicitly reset the SDK so subsequent anonymous events don't
+  // accidentally inherit the prior user's distinct_id. ``identify``
+  // is dedupe-safe inside posthog-js so this re-firing on every
+  // re-render is harmless.
+  useEffect(() => {
+    identifyPostHogUser(user?.id ?? null, {
+      email: user?.email ?? undefined,
+      display_name: user?.displayName ?? undefined,
+    });
+  }, [user?.id, user?.email, user?.displayName]);
+
   const [document, setDocument] = useState<DocumentRecord | null>(null);
   const [indexRecord, setIndexRecord] = useState<IndexRecord | null>(null);
   const [answer, setAnswer] = useState<AnswerResult | null>(null);
@@ -2067,6 +2084,16 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
   // "X / Y this month" indicator.
   const [premiumActive, setPremiumActive] = useState(false);
   const [quotaSnapshot, setQuotaSnapshot] = useState<WorkspaceQuotaResponse | null>(null);
+
+  // Whenever the quota snapshot arrives (or the tier flips on
+  // upgrade/downgrade), attach the user to the matching PostHog
+  // group. This unlocks group-level analytics — e.g. "free-tier /qa
+  // funnel" without per-event property filters. The call is a no-op
+  // when posthog-js isn't initialized.
+  useEffect(() => {
+    setPostHogTierGroup(quotaSnapshot?.tier ?? null);
+  }, [quotaSnapshot?.tier]);
+
   const evidenceRefs = useRef<Record<string, HTMLElement | null>>({});
   const turnRefs = useRef<Record<string, HTMLElement | null>>({});
   const flashTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
