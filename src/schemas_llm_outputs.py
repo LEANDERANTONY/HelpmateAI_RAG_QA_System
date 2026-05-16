@@ -32,15 +32,33 @@ from pydantic import BaseModel, ConfigDict, Field
 
 
 class StructuredLLMModel(BaseModel):
-    """Shared base — pins the strict-output settings in one place.
+    """Shared base — pins the structured-output settings in one place.
 
-    ``extra="forbid"`` mirrors OpenAI strict mode's
-    ``additionalProperties: false``: a model that sneaks in an extra
-    key will fail validation rather than silently passing through.
+    ``extra="ignore"`` (was ``"forbid"``) — defence-in-depth.
+
+    First-line guard is OpenAI structured-outputs strict mode:
+    ``_enforce_strict_schema`` force-sets ``additionalProperties:false``
+    on the response_format independently of this config, so a compliant
+    model already cannot emit extra keys. This setting only governs the
+    redundant client-side ``model_validate`` after the response returns.
+
+    Under ``"forbid"`` that redundant step turned ANY stray key into a
+    ``StructuredOutputError`` → the answer/verifier/router call sites
+    route that to a hard fallback ("Schema drift" → unsupported /
+    deterministic plan). That only bites when strict mode is NOT
+    honoured (a non-strict model, a degraded/truncated response, a
+    future non-strict-mode prompt) — but when it does, one benign extra
+    field shouldn't nuke an otherwise-valid answer. ``"ignore"`` drops
+    unknown keys while STILL enforcing required fields, types, and
+    Literal/enum constraints, so genuinely-malformed output (missing
+    ``answer``, wrong type, invalid ``route``) is still caught and still
+    falls back — the behaviour we want. Required-field safety is
+    unchanged; only the brittle "unknown key ⇒ reject" edge is removed.
+    Changing this does NOT relax the OpenAI-side strict schema.
     """
 
     model_config = ConfigDict(
-        extra="forbid",
+        extra="ignore",
         str_strip_whitespace=True,
         frozen=False,
     )

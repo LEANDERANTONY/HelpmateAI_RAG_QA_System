@@ -219,20 +219,30 @@ def test_build_response_format_slug_strips_unsafe_chars():
 # ─── Pydantic model behavior ──────────────────────────────────────────
 
 
-def test_answer_output_rejects_extra_keys():
-    """Drift safety: the strict path's whole job is to fail closed when
-    the model adds a key we didn't ask for."""
-    with pytest.raises(Exception):
-        AnswerOutput.model_validate(
-            {
-                "supported": True,
-                "support_status": "supported",
-                "answer": "...",
-                "reason": None,
-                "support_summary": None,
-                "rogue_key": "should be rejected",
-            }
-        )
+def test_answer_output_ignores_extra_keys():
+    """INTENTIONAL contract change (was test_answer_output_rejects_
+    extra_keys, extra='forbid'). Fail-closed against unknown keys is
+    now enforced where it actually matters — the OpenAI strict
+    response_format (`_enforce_strict_schema` force-sets
+    additionalProperties:false server-side, independent of this
+    config). Client-side Pydantic uses extra='ignore' so that IF
+    strict mode is ever not honoured (non-strict model, truncated
+    response), one stray key degrades gracefully instead of nuking the
+    whole answer into a 'Schema drift' abstention. Required-field
+    safety is unchanged (see the missing-field test below)."""
+    out = AnswerOutput.model_validate(
+        {
+            "supported": True,
+            "support_status": "supported",
+            "answer": "...",
+            "reason": None,
+            "support_summary": None,
+            "rogue_key": "dropped, not rejected",
+        }
+    )
+    assert out.supported is True
+    assert out.support_status == "supported"
+    assert not hasattr(out, "rogue_key")
 
 
 def test_answer_output_round_trips_minimal_required():
@@ -560,3 +570,43 @@ def test_token_usage_returns_zero_when_response_has_no_usage():
     usage = _extract_token_usage(response)
     assert usage.prompt_tokens == 0
     assert usage.completion_tokens == 0
+
+
+# ─── extra="ignore" contract (defence-in-depth for non-strict paths) ────
+
+
+def test_structured_model_ignores_benign_extra_key_not_abstains():
+    """Regression guard: when strict mode is NOT honoured and the model
+    returns a valid payload PLUS a stray key, validation must DROP the
+    key and succeed — not raise (which the call sites route to a hard
+    'Schema drift' / unsupported fallback). Was extra='forbid'."""
+    payload = {
+        "supported": True,
+        "support_status": "supported",
+        "support_summary": "Cited evidence",
+        "answer": "The editor was Steven B. Kennedy [Source 1].",
+        "reason": "Directly stated.",
+        "confidence": 0.92,          # stray key a non-strict model added
+        "citations": ["Source 1"],   # another stray key
+    }
+    out = AnswerOutput.model_validate(payload)
+    assert out.supported is True
+    assert out.support_status == "supported"
+    assert out.answer.startswith("The editor was Steven B. Kennedy")
+    # Extra keys are dropped, not retained.
+    assert not hasattr(out, "confidence")
+
+
+def test_structured_model_still_rejects_missing_required_field():
+    """The fix must NOT become over-permissive: a genuinely malformed
+    payload (missing required ``answer``) must still fail validation so
+    the call site falls back instead of presenting a hollow answer.
+    (Route-value validity is intentionally NOT a Pydantic concern —
+    QueryRouterOutput.route is a plain str, re-checked against
+    VALID_ROUTES in query_router + enforced by the OpenAI strict
+    response_format. extra='ignore' does not touch required/type
+    enforcement, which is what this guards.)"""
+    with pytest.raises(Exception):  # pydantic ValidationError
+        AnswerOutput.model_validate(
+            {"supported": True, "support_status": "supported"}  # no answer
+        )
