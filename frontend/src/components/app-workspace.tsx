@@ -1686,20 +1686,8 @@ function MobileEvidence({
 
 type PaletteAction = "focus-ask" | "reindex" | "replace";
 
-type PaletteSection = {
-  heading: string;
-  chunkId: string;
-  pageLabel: string;
-  // The source evidence candidate, carried so selecting the row can
-  // open Read Mode at this exact chunk (same path the evidence card's
-  // "Open in source" uses). buildReadModeChunk needs the full
-  // candidate, not just the id.
-  candidate: RetrievalCandidate;
-};
-
 type PaletteResult =
   | { kind: "qa"; key: string; turnId: string; question: string; preview: string }
-  | { kind: "section"; key: string; section: PaletteSection }
   | {
       kind: "action";
       key: string;
@@ -1707,31 +1695,6 @@ type PaletteResult =
       label: string;
       description: string;
     };
-
-function paletteSectionsFromTurns(turns: QATurn[]): PaletteSection[] {
-  const seen = new Set<string>();
-  const sections: PaletteSection[] = [];
-  for (const turn of turns) {
-    for (const candidate of turn.answer.evidence) {
-      const heading = metadataText(candidate, "section_heading").trim();
-      if (!heading) {
-        continue;
-      }
-      const dedupeKey = heading.toLowerCase();
-      if (seen.has(dedupeKey)) {
-        continue;
-      }
-      seen.add(dedupeKey);
-      sections.push({
-        heading,
-        chunkId: candidate.chunk_id,
-        pageLabel: metadataText(candidate, "page_label"),
-        candidate,
-      });
-    }
-  }
-  return sections;
-}
 
 function PaletteResultRow({
   result,
@@ -1751,10 +1714,6 @@ function PaletteResultRow({
     title = result.question;
     preview = result.preview;
     badge = "Q&A";
-  } else if (result.kind === "section") {
-    title = result.section.heading;
-    preview = result.section.pageLabel || "Document section";
-    badge = "Section";
   } else {
     title = result.label;
     preview = result.description;
@@ -1784,7 +1743,6 @@ function CommandPalette({
   indexState,
   onClose,
   onSelectTurn,
-  onSelectSection,
   onAction,
 }: {
   open: boolean;
@@ -1794,19 +1752,12 @@ function CommandPalette({
   indexState: AsyncState;
   onClose: () => void;
   onSelectTurn: (turnId: string) => void;
-  onSelectSection: (section: PaletteSection) => void;
   onAction: (action: PaletteAction) => void;
 }) {
   const [query, setQuery] = useState("");
   const [selectedIndex, setSelectedIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement | null>(null);
   const overlayRef = useRef<HTMLDivElement | null>(null);
-
-  // Only the CURRENT answer's evidence (the latest turn) — NOT the
-  // whole session. Accumulating every past answer's section headings
-  // made this list grow unbounded after a few questions and stop
-  // reflecting what the user is actually looking at.
-  const sections = useMemo(() => paletteSectionsFromTurns(turns.slice(-1)), [turns]);
 
   const actions = useMemo<
     Array<{ action: PaletteAction; label: string; description: string }>
@@ -1858,15 +1809,6 @@ function CommandPalette({
         preview: stripReferencesBlock(turn.answer.answer).replace(/\s+/g, " ").slice(0, 110),
       }));
 
-    const sectionMatches = sections
-      .filter((section) => !q || section.heading.toLowerCase().includes(q))
-      .slice(0, 6)
-      .map<PaletteResult>((section) => ({
-        kind: "section",
-        key: `section-${section.chunkId}`,
-        section,
-      }));
-
     const actionMatches = actions
       .filter(
         (item) =>
@@ -1882,8 +1824,8 @@ function CommandPalette({
         description: item.description,
       }));
 
-    return [...qaMatches, ...sectionMatches, ...actionMatches];
-  }, [actions, query, sections, turns]);
+    return [...qaMatches, ...actionMatches];
+  }, [actions, query, turns]);
 
   useEffect(() => {
     const raf = requestAnimationFrame(() => setSelectedIndex(0));
@@ -1906,14 +1848,12 @@ function CommandPalette({
     (result: PaletteResult) => {
       if (result.kind === "qa") {
         onSelectTurn(result.turnId);
-      } else if (result.kind === "section") {
-        onSelectSection(result.section);
       } else {
         onAction(result.action);
       }
       onClose();
     },
-    [onAction, onClose, onSelectSection, onSelectTurn],
+    [onAction, onClose, onSelectTurn],
   );
 
   useEffect(() => {
@@ -1959,7 +1899,6 @@ function CommandPalette({
 
   const groupHeads: Record<PaletteResult["kind"], string> = {
     qa: "This session",
-    section: "Sections",
     action: "Actions",
   };
 
@@ -2579,24 +2518,6 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
     }
   }
 
-  function handlePaletteSelectSection(section: PaletteSection) {
-    // A palette Section row advertises a page, so selecting it should
-    // take you THERE in the document. The old behavior tried to scroll
-    // an evidence card that often isn't rendered (a guaranteed no-op
-    // on mobile, where the evidence drawer is closed, and for any
-    // off-screen card) — it never surfaced the card the way the
-    // citation handler does. Instead, open the source/PDF pane at this
-    // exact chunk: the SAME path the evidence card's "Open in source"
-    // uses. Independent of the answer/evidence panel being up;
-    // identical on desktop and mobile.
-    if (!document) {
-      return;
-    }
-    useReadModeStore
-      .getState()
-      .enterReadMode(buildReadModeChunk(section.candidate, document.file_name));
-  }
-
   function handlePaletteAction(action: PaletteAction) {
     if (action === "focus-ask") {
       window.setTimeout(() => {
@@ -2727,7 +2648,6 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
           isAuthenticated={isAuthenticated}
           onAction={handlePaletteAction}
           onClose={() => setPaletteOpen(false)}
-          onSelectSection={handlePaletteSelectSection}
           onSelectTurn={handlePaletteSelectTurn}
           open={paletteOpen}
           turns={turns}
