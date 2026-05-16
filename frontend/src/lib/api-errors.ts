@@ -111,7 +111,7 @@ export function messageForApiError(
       case "index":
         return {
           title: "Document not found",
-          body: "It may have been removed. Upload a new one.",
+          body: "It may have expired (workspaces are kept for a limited time) or been removed — upload it again.",
           action: null,
         };
       case "load":

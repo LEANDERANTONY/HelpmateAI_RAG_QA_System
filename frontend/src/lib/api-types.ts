@@ -116,5 +116,9 @@ export type WorkspaceQuotaResponse = {
   // surfaces the upgrade_url instead.
   premium_available: boolean;
   documents: QuotaCountInfo;
+  // Per-tier workspace retention window in days (free 30, pro 365).
+  // -1 = unbounded (Business never auto-deletes). Surfaced so the UI
+  // can show retention proactively instead of it being a silent sweep.
+  retention_days: number;
   upgrade_url: string;
 };

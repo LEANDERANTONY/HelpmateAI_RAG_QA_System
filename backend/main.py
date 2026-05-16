@@ -150,6 +150,11 @@ class WorkspaceQuotaResponse(BaseModel):
     premium: QuotaCountInfo
     premium_available: bool
     documents: QuotaCountInfo
+    # Per-tier workspace retention window, in days (Free 30, Pro 365).
+    # -1 = unbounded (Business never auto-deletes). Surfaced so the UI
+    # can proactively tell users their workspace isn't kept forever —
+    # retention was previously a silent background sweep (P2).
+    retention_days: int
     upgrade_url: str
 
 
@@ -896,6 +901,7 @@ def get_workspace_quota(
             used=_count_active_documents(user),
             limit=limits["doc_cap"],
         ),
+        retention_days=limits["retention_days"],
         upgrade_url=UPGRADE_URL,
     )
 

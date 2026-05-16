@@ -403,6 +403,17 @@ function Stat({ label, value, mono = false }: { label: string; value: string; mo
   );
 }
 
+// Human label for the tier retention window. -1 = unbounded
+// (Business). free 30 → "30 days", pro 365 → "1 year".
+function retentionLabel(days: number): string {
+  if (days < 0) return "Unlimited";
+  if (days >= 365 && days % 365 === 0) {
+    const years = days / 365;
+    return years === 1 ? "1 year" : `${years} years`;
+  }
+  return `${days} days`;
+}
+
 function SupportPip({
   className = "",
   children,
@@ -583,6 +594,7 @@ function DocStrip({
   isAuthenticated,
   selectedFile,
   lastAnswer,
+  quotaSnapshot,
   error,
   replaceOpen,
   confirmReindex,
@@ -599,6 +611,7 @@ function DocStrip({
   isAuthenticated: boolean;
   selectedFile: File | null;
   lastAnswer: AnswerResult | null;
+  quotaSnapshot: WorkspaceQuotaResponse | null;
   error: string | null;
   replaceOpen: boolean;
   confirmReindex: boolean;
@@ -655,6 +668,9 @@ function DocStrip({
           <Stat label="Chunks" value={indexRecord ? formatNumber(indexRecord.chunk_count) : "-"} />
           <Stat label="Sections" value={indexRecord ? formatNumber(indexRecord.section_count) : "-"} />
           <Stat label="Embedding" value={indexRecord?.embedding_model ?? "-"} mono />
+          {quotaSnapshot ? (
+            <Stat label="Retention" value={retentionLabel(quotaSnapshot.retention_days)} />
+          ) : null}
         </div>
       )}
 
@@ -2577,6 +2593,7 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
             onSetConfirmReindex={setConfirmReindex}
             onToggleReplace={() => setReplaceOpen((current) => !current)}
             onUpload={handleUpload}
+            quotaSnapshot={quotaSnapshot}
             replaceOpen={replaceOpen}
             selectedFile={selectedFile}
             uploadState={uploadState}
