@@ -412,7 +412,16 @@ export function MobileSourceSheet() {
             </button>
           </header>
 
-          <div className="h-source-body">
+          {/* data-vaul-no-drag: vaul lets Drawer.Content be dragged from
+              anywhere by default, so a vertical swipe on the PDF was being
+              consumed as a sheet-drag gesture instead of scrolling the
+              document — and the scrollbar is hidden on mobile, leaving no
+              way to scroll at all. Marking this subtree no-drag makes vaul
+              ignore touches here (they fall through to the PDF container's
+              native overflow scroll). The drag handle zone is a SIBLING of
+              this div (not inside it), so sheet resize via the handle still
+              works. */}
+          <div className="h-source-body" data-vaul-no-drag>
             <PdfViewer
               ref={viewerRef}
               documentId={currentChunk.documentId}

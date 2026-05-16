@@ -4105,6 +4105,13 @@ input[type="file"]:disabled::file-selector-button {
      pdf-viewer.tsx — see applyFitScale. */
   .h-pdf-container {
     scrollbar-width: none;
+    /* touch-action: pan-y tells the browser a vertical drag here is a
+       scroll, not a gesture for an ancestor — reinforces the
+       data-vaul-no-drag on .h-source-body so the PDF scrolls by swipe.
+       overscroll-behavior: contain stops the scroll from chaining into
+       the sheet / page once the PDF hits its top or bottom edge. */
+    touch-action: pan-y;
+    overscroll-behavior: contain;
   }
   .h-pdf-container::-webkit-scrollbar {
     display: none;
