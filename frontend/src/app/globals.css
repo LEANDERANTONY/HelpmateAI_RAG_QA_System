@@ -3446,8 +3446,22 @@ input[type="file"]:disabled::file-selector-button {
     transform: none;
     min-width: 0;
     max-width: none;
-    margin-left: auto;
+    /* Cluster search with the avatar on the trailing edge (mobile
+       top-bar convention: brand left, action icons right). The
+       flex:1 .h-spacer keeps order:0 with the brand and grows to
+       fill the middle, so order:2 here drops the pill just left of
+       the avatar instead of being marooned next to the logo. Desktop
+       is position:absolute and ignores flex order entirely, so this
+       is inherently mobile-only — supersedes the old margin-left:auto
+       (which fought the spacer and left a gap between search and
+       avatar). .h-topbar-inner's 16px gap spaces the cluster. */
+    order: 2;
     padding: 7px 10px;
+  }
+
+  /* Avatar trails the search icon in the right-side action cluster. */
+  .h-account-wrap {
+    order: 3;
   }
 
   .h-mobile-docbar {
