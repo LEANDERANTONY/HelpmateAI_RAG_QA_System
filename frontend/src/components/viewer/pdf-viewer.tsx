@@ -179,6 +179,30 @@ function scrollToMatchOnPage(
   state.eventBus.on("textlayerrendered", onRendered);
 }
 
+// D1: with highlightAll the find controller paints the anchor on
+// EVERY page where it occurs, document-wide. We want the highlight
+// scoped to the single page handleFindResults resolved to. Removing
+// pdfjs's highlight classes on a page neutralises the paint there
+// (pdf_viewer.css styles `.highlight`); a persistent
+// textlayerrendered listener re-applies this for pages that render
+// or repaint later (pdfjs repaints matches on every text-layer
+// render). The resolved page is never passed here, so
+// scrollToMatchOnPage's `.textLayer .highlight` lookup still works.
+function clearFindHighlightsOnPage(
+  viewer: { getPageView: (idx: number) => unknown },
+  pageNumber: number,
+) {
+  const pageView = viewer.getPageView(pageNumber - 1) as
+    | { div?: HTMLElement }
+    | null
+    | undefined;
+  const root = pageView?.div;
+  if (!root) return;
+  root.querySelectorAll(".textLayer .highlight").forEach((el) => {
+    el.classList.remove("highlight", "selected", "begin", "end", "middle");
+  });
+}
+
 export const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>(function PdfViewer(
   {
     documentId,
@@ -214,6 +238,13 @@ export const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>(function Pd
   useEffect(() => {
     onTotalPagesChangeRef.current = onTotalPagesChange;
   });
+
+  // D1: the 1-based page handleFindResults resolved the anchor to.
+  // null = not resolved yet — during the find scan we deliberately
+  // let pdfjs paint doc-wide and only scope once a page is chosen.
+  // Read by the persistent textlayerrendered listener so pages that
+  // render/repaint after resolution stay scoped too.
+  const resolvedPageRef = useRef<number | null>(null);
 
   // Imperative handle for parent-driven scroll. Critically, scrollToPage
   // ONLY moves the viewport — it must not dispatch find or touch chunk
@@ -291,7 +322,18 @@ export const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>(function Pd
         const matches = pageMatches[idx];
         if (matches && matches.length > 0) {
           try {
+            const resolved = idx + 1;
+            resolvedPageRef.current = resolved;
             scrollToMatchOnPage(state, idx);
+            // D1: scope the doc-wide highlightAll paint to just the
+            // resolved page. Strip every other currently-rendered
+            // page now; the persistent textlayerrendered listener
+            // handles pages that render/repaint later. The resolved
+            // page is intentionally left untouched.
+            const total = state.viewer.pagesCount || 0;
+            for (let p = 1; p <= total; p++) {
+              if (p !== resolved) clearFindHighlightsOnPage(state.viewer, p);
+            }
             // PDF.js dispatches updatefindmatchescount progressively
             // during a scan — the first dispatch with total=0 sets the
             // no-match banner, then a later dispatch with total>0 lands
@@ -322,6 +364,16 @@ export const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>(function Pd
     const pageCount = state.viewer.pagesCount || 1;
     const clamped = Math.max(1, Math.min(hintPage, pageCount));
     state.viewer.currentPageNumber = clamped;
+
+    // D1: new search — forget the previous resolution and wipe any
+    // lingering highlightAll paint so the prior chunk's highlights
+    // don't persist while the new scan runs. resolvedPageRef stays
+    // null until handleFindResults resolves the new target page.
+    resolvedPageRef.current = null;
+    const totalPages = state.viewer.pagesCount || 0;
+    for (let p = 1; p <= totalPages; p++) {
+      clearFindHighlightsOnPage(state.viewer, p);
+    }
 
     const anchor = buildSearchAnchor(text);
     if (!anchor) {
@@ -497,9 +549,25 @@ export const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>(function Pd
         if (cb) cb(payload.pageNumber);
       };
 
+      // D1: pdfjs repaints highlightAll matches every time a page's
+      // text layer (re)renders — including pages scrolled into view
+      // long after handleFindResults resolved. Re-strip any page that
+      // isn't the resolved one so the highlight stays scoped. No-op
+      // until a page is resolved (resolvedPageRef null).
+      const onTextLayerScoped = (payload: { pageNumber: number }) => {
+        if (cancelled) return;
+        const st = stateRef.current;
+        const resolved = resolvedPageRef.current;
+        if (!st || resolved === null || payload.pageNumber === resolved) {
+          return;
+        }
+        clearFindHighlightsOnPage(st.viewer, payload.pageNumber);
+      };
+
       eventBus.on("pagesinit", onPagesInit);
       eventBus.on("updatefindmatchescount", onMatches);
       eventBus.on("pagechanging", onPageChanging);
+      eventBus.on("textlayerrendered", onTextLayerScoped);
 
       // Re-fit pages whenever the container resizes — mobile sheet snap
       // changes (compact/split/full), orientation flips, or desktop pane
