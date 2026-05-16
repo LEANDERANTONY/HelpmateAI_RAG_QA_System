@@ -3509,9 +3509,28 @@ input[type="file"]:disabled::file-selector-button {
     min-height: 48px;
   }
 
+  /* Mobile: keep the control row HORIZONTAL and let it wrap, instead
+     of the old flex-direction:column that stacked all four children
+     on their own lines (~161px tall, ~70px of it wasted). The base
+     rule is already `display:flex; justify-content:space-between`, so
+     line 1 becomes [mic] … [★ Premium] and Generate wraps to its own
+     full-width line below (thumb target). Not Read-Mode-gated — this
+     reclaims the space in both normal and Read Mode views. */
   .h-ask-row {
-    align-items: flex-start;
-    flex-direction: column;
+    align-items: center;
+    flex-wrap: wrap;
+    row-gap: 10px;
+  }
+  /* ⌘↵ is a desktop keyboard hint — there's no Cmd+Enter on touch, so
+     it's dead weight on mobile. Hide it rather than reflow a no-op
+     control (plan B). Desktop still shows it (base rule untouched). */
+  .h-ask-row .h-help {
+    display: none;
+  }
+  /* Generate keeps its own full-width line; flex-basis 100% forces the
+     wrap so the small controls share the line above it. */
+  .h-ask-row .h-btn-primary {
+    flex: 1 0 100%;
   }
 
   .h-qa-card {
