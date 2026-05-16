@@ -42,7 +42,7 @@ import {
   PdfLoadError,
   type PdfjsModule,
 } from "@/lib/pdfjs-loader";
-import { buildSearchAnchor, parsePageLabel } from "@/lib/search-anchor";
+import { buildSearchAnchors, parsePageLabel } from "@/lib/search-anchor";
 
 import "pdfjs-dist/web/pdf_viewer.css";
 
@@ -375,15 +375,18 @@ export const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>(function Pd
       clearFindHighlightsOnPage(state.viewer, p);
     }
 
-    const anchor = buildSearchAnchor(text);
-    if (!anchor) {
+    const anchors = buildSearchAnchors(text);
+    if (anchors.length === 0) {
       setBanner("no-match");
       return;
     }
     state.eventBus.dispatch("find", {
       source: state.eventBus,
       type: "",
-      query: anchor,
+      // pdfjs v5 accepts string | string[]; an array highlights every
+      // phrase (D2.2 — the highlight spans the chunk, not just its
+      // first ~80 chars). Single anchor stays a plain string.
+      query: anchors.length === 1 ? anchors[0] : anchors,
       caseSensitive: false,
       entireWord: false,
       phraseSearch: true,

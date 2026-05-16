@@ -59,11 +59,12 @@ const ANCHOR_TARGET_LEN = 80;
 const ANCHOR_MIN_LEN = 40;
 
 /**
- * Extract a short, distinctive substring of chunk text suitable for
- * PDF.js find. Returns the empty string only if chunkText is empty
- * after cleanup — otherwise some non-empty anchor is always produced.
+ * Strip leading boilerplate and collapse whitespace, returning the
+ * chunk's normalized body (single-spaced, newline-free) — the common
+ * preprocessing both anchor builders share. Empty string only when
+ * nothing survives cleanup.
  */
-export function buildSearchAnchor(chunkText: string): string {
+function extractNormalizedBody(chunkText: string): string {
   if (!chunkText) {
     return "";
   }
@@ -106,24 +107,89 @@ export function buildSearchAnchor(chunkText: string): string {
   // (including newlines) into single spaces — PDF.js's text extraction
   // produces a single string per page, so multiple runs of whitespace
   // in the query just hurt match likelihood.
-  const body = lines.slice(bodyStart).join(" ");
-  const normalized = body.replace(/\s+/g, " ").trim();
+  return lines.slice(bodyStart).join(" ").replace(/\s+/g, " ").trim();
+}
 
+/**
+ * Take up to ANCHOR_TARGET_LEN chars of `body` from `start`, snapped
+ * to word boundaries on both ends so PDF.js isn't asked to match a
+ * half-word (a precision + perf hit). Hard-cuts only when snapping
+ * would leave it implausibly short.
+ */
+function clampAnchorFrom(body: string, start: number): string {
+  let s = Math.max(0, start);
+  // Don't begin mid-word (matters for the middle/end slices). Advance
+  // to the next space, but only a bounded amount so we never skip a
+  // whole short sentence.
+  if (s > 0) {
+    const sp = body.indexOf(" ", s);
+    if (sp !== -1 && sp - s <= 24) {
+      s = sp + 1;
+    }
+  }
+  const slice = body.slice(s, s + ANCHOR_TARGET_LEN);
+  // Trim a trailing partial word, unless that leaves it too short or
+  // nothing was actually cut (we're at the body's end).
+  if (s + ANCHOR_TARGET_LEN < body.length) {
+    const lastSpace = slice.lastIndexOf(" ");
+    if (lastSpace >= ANCHOR_MIN_LEN) {
+      return slice.slice(0, lastSpace).trim();
+    }
+  }
+  return slice.trim();
+}
+
+/**
+ * Single distinctive ~80-char anchor from the chunk head. Empty only
+ * if chunkText is empty after cleanup. Kept for the single-anchor
+ * contract; buildSearchAnchors is the multi-phrase superset the
+ * viewer uses.
+ */
+export function buildSearchAnchor(chunkText: string): string {
+  const normalized = extractNormalizedBody(chunkText);
   if (normalized.length <= ANCHOR_TARGET_LEN) {
     return normalized;
   }
+  return clampAnchorFrom(normalized, 0);
+}
 
-  // Truncate to ~80 chars, then walk back to the previous word boundary
-  // so we don't cut a word in half (PDF.js can match the broken word
-  // but it's a perf-and-precision hit). If the boundary is too close
-  // to the start (<= 40 chars), keep the hard cut — that means the
-  // chunk's first 80 chars is one giant word like a URL.
-  const head = normalized.slice(0, ANCHOR_TARGET_LEN);
-  const lastSpace = head.lastIndexOf(" ");
-  if (lastSpace >= ANCHOR_MIN_LEN) {
-    return head.slice(0, lastSpace);
+/**
+ * D2.2: a ~1200-char chunk reduced to ONE ~80-char prefix only ever
+ * highlights its opening phrase. Instead sample up to three short,
+ * word-snapped sub-phrases — start, middle, end — so PDF.js (v5
+ * accepts a string[] query) paints matches spanning the cited
+ * passage, not just its head. Deduped; each >= ANCHOR_MIN_LEN.
+ *
+ * MUST be rendered page-scoped (D1): more phrases mean more incidental
+ * document-wide matches, and D1 strips everything off the resolved
+ * page so the extra terms can't bleed onto other pages.
+ */
+export function buildSearchAnchors(chunkText: string): string[] {
+  const body = extractNormalizedBody(chunkText);
+  if (!body) {
+    return [];
   }
-  return head;
+  if (body.length <= ANCHOR_TARGET_LEN) {
+    return [body];
+  }
+
+  const offsets = [
+    0,
+    Math.floor(body.length / 2 - ANCHOR_TARGET_LEN / 2),
+    body.length - ANCHOR_TARGET_LEN,
+  ];
+  const seen = new Set<string>();
+  const anchors: string[] = [];
+  for (const off of offsets) {
+    const a = clampAnchorFrom(body, off);
+    if (a.length >= ANCHOR_MIN_LEN && !seen.has(a)) {
+      seen.add(a);
+      anchors.push(a);
+    }
+  }
+  // Guarantee at least one even if the slices collapse to sub-MIN_LEN
+  // (body only slightly over the target).
+  return anchors.length > 0 ? anchors : [clampAnchorFrom(body, 0)];
 }
 
 /**
