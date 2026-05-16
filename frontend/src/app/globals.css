@@ -2385,6 +2385,22 @@ input[type="file"]:disabled::file-selector-button {
   color: var(--fg-2);
 }
 
+/* Quota-toast "See plans" CTA. Sonner injects its own action-button
+   styles, so scope under .h-toast and !important the accent identity
+   props so the mint theme reliably wins. Mirrors .h-btn-primary. */
+.h-toast .h-toast-action-upgrade {
+  background: var(--accent) !important;
+  border: 1px solid transparent !important;
+  border-radius: 999px;
+  color: var(--accent-fg) !important;
+  font-weight: 600;
+  padding: 6px 12px;
+}
+
+.h-toast .h-toast-action-upgrade:hover {
+  background: var(--accent-strong) !important;
+}
+
 .h-btn-danger {
   background: rgba(255, 139, 139, 0.12);
   border-color: rgba(255, 139, 139, 0.26);

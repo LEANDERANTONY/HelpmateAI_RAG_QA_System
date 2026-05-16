@@ -58,10 +58,24 @@ async function requestAgainst<T>(
   }
   if (!response.ok) {
     let detail = "";
+    let code: string | null = null;
+    let upgradeUrl: string | null = null;
     try {
-      const payload = (await response.json()) as { detail?: string };
+      const payload = (await response.json()) as {
+        detail?: string;
+        code?: string;
+        upgrade_url?: string;
+      };
       if (typeof payload.detail === "string") {
         detail = payload.detail;
+      }
+      // Structured tier/quota error shape (backend quota.py). Carried
+      // through so the toast can frame the limit + render an upgrade CTA.
+      if (typeof payload.code === "string") {
+        code = payload.code;
+      }
+      if (typeof payload.upgrade_url === "string") {
+        upgradeUrl = payload.upgrade_url;
       }
     } catch {
       // Body wasn't JSON. Leave detail empty so callers can use a friendly fallback.
@@ -87,6 +101,8 @@ async function requestAgainst<T>(
       detail,
       isRetriableStatus(response.status),
       retryAfterSeconds,
+      code,
+      upgradeUrl,
     );
   }
   return (await response.json()) as T;
