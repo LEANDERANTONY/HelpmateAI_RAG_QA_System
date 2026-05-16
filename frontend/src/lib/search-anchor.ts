@@ -15,31 +15,44 @@
 // the real body text where PDF find has a fighting chance.
 
 /**
- * Whether a line looks like leading boilerplate we should skip before
- * picking the search anchor. Conservative — only the patterns we've
- * actually seen at the start of chunks in the corpus.
+ * Unambiguous leading boilerplate that is ALWAYS safe to skip: a bare
+ * page number ("Page 7", "7 / 24") or a lone citation marker
+ * ("[12]", "(Smith, 2020)"). These are chunker stitching artefacts
+ * that never appear as body text in the rendered PDF, so skipping
+ * them is unconditionally correct.
  */
-function looksLikeBoilerplate(line: string): boolean {
+function isHardBoilerplate(line: string): boolean {
   // "Page 7", "PAGE 7", "7", "7 / 24"
   if (/^(page\s+)?\d+\s*(\/\s*\d+)?\s*$/i.test(line)) {
     return true;
-  }
-  // Lone section heading: short line, no terminal punctuation, no
-  // sentence-mid commas. Title-case-ish (starts with capital, mostly
-  // letters/spaces). Avoids matching real first sentences which tend
-  // to be longer and end with a period.
-  if (line.length <= 60 && /^[A-Z0-9]/.test(line)) {
-    const noEndPunct = !/[.!?]$/.test(line);
-    const wordCount = line.split(/\s+/).filter(Boolean).length;
-    if (noEndPunct && wordCount >= 1 && wordCount <= 8) {
-      return true;
-    }
   }
   // Citation markers like "[12]" or "(Smith, 2020)" on their own line.
   if (/^\s*[\[(][^\])]{1,40}[\])]\s*$/.test(line)) {
     return true;
   }
   return false;
+}
+
+/**
+ * Whether a line *looks* like a lone section heading: short,
+ * title-case-ish, few words, no terminal sentence punctuation.
+ *
+ * This is INTENTIONALLY only advisory. These bounds also match a real
+ * short first sentence ("The motion carried", "Risk factors apply"),
+ * so the caller skips a heading-looking line ONLY when genuine body
+ * text follows it. If it is the chunk's only/last content it IS the
+ * body and must be kept — otherwise the anchor starts mid-chunk or
+ * empties entirely (the over-stripping bug this guards against).
+ */
+function looksLikeHeading(line: string): boolean {
+  if (line.length > 60 || !/^[A-Z0-9]/.test(line)) {
+    return false;
+  }
+  if (/[.!?]$/.test(line)) {
+    return false;
+  }
+  const wordCount = line.split(/\s+/).filter(Boolean).length;
+  return wordCount >= 1 && wordCount <= 8;
 }
 
 const ANCHOR_TARGET_LEN = 80;
@@ -56,8 +69,15 @@ export function buildSearchAnchor(chunkText: string): string {
   }
   const lines = chunkText.split(/\r?\n/);
 
-  // Skip blank lines and boilerplate lines from the front. Stop as soon
-  // as we hit a "real" content line; the rest of the chunk is its body.
+  // A line that is genuine body text: non-empty, not hard boilerplate,
+  // not heading-looking. Used as the lookahead test below.
+  const isBodyLine = (raw: string): boolean => {
+    const t = raw.trim();
+    return t.length > 0 && !isHardBoilerplate(t) && !looksLikeHeading(t);
+  };
+
+  // Skip blank lines and leading boilerplate. Stop at the first "real"
+  // content line; the rest of the chunk is its body.
   let bodyStart = 0;
   for (let i = 0; i < lines.length; i++) {
     const trimmed = lines[i].trim();
@@ -65,7 +85,16 @@ export function buildSearchAnchor(chunkText: string): string {
       bodyStart = i + 1;
       continue;
     }
-    if (looksLikeBoilerplate(trimmed)) {
+    if (isHardBoilerplate(trimmed)) {
+      bodyStart = i + 1;
+      continue;
+    }
+    // A heading-looking line is skipped ONLY if real body text follows
+    // it. If nothing real follows, this short line IS the chunk's
+    // content — keep it, instead of stripping it and anchoring on
+    // nothing / mid-chunk. This is the over-stripping fix: real short
+    // first sentences were being eaten as "headings".
+    if (looksLikeHeading(trimmed) && lines.slice(i + 1).some(isBodyLine)) {
       bodyStart = i + 1;
       continue;
     }
