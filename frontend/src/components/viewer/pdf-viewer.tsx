@@ -424,21 +424,35 @@ export const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>(function Pd
         const state = stateRef.current;
         if (!state?.pagesReady) return;
         try {
+          // Desktop: pdfjs "page-width" verbatim (reserves 40px for a
+          // real scrollbar; the centred-page-on-dark look is intended).
           const isMobile = window.matchMedia("(max-width: 900px)").matches;
           if (!isMobile) {
             state.viewer.currentScaleValue = "page-width";
             return;
           }
-          const pageView = state.viewer.getPageView(0) as
-            | { viewport?: { width: number; scale: number } }
-            | undefined;
-          const vp = pageView?.viewport;
-          const nativeWidth = vp && vp.scale ? vp.width / vp.scale : 0;
-          const targetWidth = container.clientWidth;
-          if (nativeWidth > 0 && targetWidth > 0) {
-            state.viewer.currentScale = targetWidth / nativeWidth;
-          } else {
-            state.viewer.currentScaleValue = "page-width";
+          // Mobile: let pdfjs compute "page-width" FIRST. That value is
+          // correct in every respect except it subtracts a hardcoded
+          // SCROLLBAR_PADDING (40px) the touch sheet doesn't need.
+          // Crucially, pdfjs's scale already bakes in the PDF-point →
+          // CSS-pixel factor (96/72); hand-deriving it from a viewport
+          // is what overshot by 4/3 before. So: take pdfjs's base
+          // scale, measure the page it produced, then scale up by the
+          // exact measured ratio to fill the container edge to edge.
+          // Self-correcting — no hardcoded padding constant, and the
+          // page-width reset each run makes it an idempotent fixpoint.
+          state.viewer.currentScaleValue = "page-width";
+          const base = state.viewer.currentScale;
+          const pageEl = container.querySelector(
+            ".pdfViewer .page",
+          ) as HTMLElement | null;
+          if (!pageEl || !base) return; // ResizeObserver retries
+          // getBoundingClientRect forces a synchronous layout, so this
+          // reflects the page-width width pdfjs just applied.
+          const pageW = pageEl.getBoundingClientRect().width;
+          const targetW = container.clientWidth;
+          if (pageW > 1 && targetW > 1 && Math.abs(targetW - pageW) > 1) {
+            state.viewer.currentScale = base * (targetW / pageW);
           }
         } catch {
           /* viewer mid-teardown */
