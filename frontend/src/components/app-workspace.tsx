@@ -1690,6 +1690,11 @@ type PaletteSection = {
   heading: string;
   chunkId: string;
   pageLabel: string;
+  // The source evidence candidate, carried so selecting the row can
+  // open Read Mode at this exact chunk (same path the evidence card's
+  // "Open in source" uses). buildReadModeChunk needs the full
+  // candidate, not just the id.
+  candidate: RetrievalCandidate;
 };
 
 type PaletteResult =
@@ -1721,6 +1726,7 @@ function paletteSectionsFromTurns(turns: QATurn[]): PaletteSection[] {
         heading,
         chunkId: candidate.chunk_id,
         pageLabel: metadataText(candidate, "page_label"),
+        candidate,
       });
     }
   }
@@ -1796,7 +1802,11 @@ function CommandPalette({
   const inputRef = useRef<HTMLInputElement | null>(null);
   const overlayRef = useRef<HTMLDivElement | null>(null);
 
-  const sections = useMemo(() => paletteSectionsFromTurns(turns), [turns]);
+  // Only the CURRENT answer's evidence (the latest turn) — NOT the
+  // whole session. Accumulating every past answer's section headings
+  // made this list grow unbounded after a few questions and stop
+  // reflecting what the user is actually looking at.
+  const sections = useMemo(() => paletteSectionsFromTurns(turns.slice(-1)), [turns]);
 
   const actions = useMemo<
     Array<{ action: PaletteAction; label: string; description: string }>
@@ -2570,15 +2580,21 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
   }
 
   function handlePaletteSelectSection(section: PaletteSection) {
-    setHighlightedChunkId(section.chunkId);
-    setHighlightedCitationKey(null);
-    window.setTimeout(() => {
-      getVisibleEvidenceElement(section.chunkId)?.scrollIntoView({
-        behavior: "smooth",
-        block: "center",
-      });
-    }, 0);
-    clearFlashLater();
+    // A palette Section row advertises a page, so selecting it should
+    // take you THERE in the document. The old behavior tried to scroll
+    // an evidence card that often isn't rendered (a guaranteed no-op
+    // on mobile, where the evidence drawer is closed, and for any
+    // off-screen card) — it never surfaced the card the way the
+    // citation handler does. Instead, open the source/PDF pane at this
+    // exact chunk: the SAME path the evidence card's "Open in source"
+    // uses. Independent of the answer/evidence panel being up;
+    // identical on desktop and mobile.
+    if (!document) {
+      return;
+    }
+    useReadModeStore
+      .getState()
+      .enterReadMode(buildReadModeChunk(section.candidate, document.file_name));
   }
 
   function handlePaletteAction(action: PaletteAction) {
