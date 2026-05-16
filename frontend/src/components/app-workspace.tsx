@@ -380,37 +380,6 @@ function buildReadModeChunk(
   };
 }
 
-// Read Mode banner shown above the chat input when the most recent
-// answer abstained. Self-contained: returns null outside Read Mode or
-// when the latest answer has evidence, so callers can render this
-// unconditionally without their own branching.
-//
-// We don't auto-clear this banner on a timer — it sits until the user
-// asks another question (the next runAsk replaces `lastAnswer`). That
-// matches the spec's "Source not yanked" intent: the abstention signal
-// should be visible as long as the unsupported answer is the working
-// context.
-function ReadModeAbstentionBanner({ answer }: { answer: AnswerResult | null }) {
-  const mode = useReadModeStatus();
-  if (mode !== "read" || !answer) {
-    return null;
-  }
-  // Treat both `support_status === 'unsupported'` and the empty-evidence
-  // edge case as "abstained" — the latter shouldn't happen for an
-  // unsupported answer from the backend, but the guard makes the banner
-  // resilient if it ever does.
-  const abstained = answer.support_status === "unsupported" || answer.evidence.length === 0;
-  if (!abstained) {
-    return null;
-  }
-  return (
-    <div className="h-abstention-banner" role="status">
-      Helpmate didn&apos;t find evidence for this question — the source view
-      stays on your last passage.
-    </div>
-  );
-}
-
 function Hairline() {
   return <div className="h-hairline" />;
 }
@@ -1358,9 +1327,6 @@ function Conversation({
               visible={Boolean(indexRecord && turns.length === 0 && !pendingQuestion)}
             />
             <div className="h-ask-group">
-              <ReadModeAbstentionBanner
-                answer={turns.length > 0 ? turns[turns.length - 1].answer : null}
-              />
               <AskBlock
                 askFocused={askFocused}
                 canAsk={canAsk}
@@ -2313,8 +2279,8 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
       // the new answer when in Read Mode. setCurrentChunk is a no-op
       // outside read mode (per store logic), so calling it
       // unconditionally is safe. Abstained answers (no evidence) leave
-      // the viewer alone — ReadModeAbstentionBanner surfaces the
-      // "no evidence" signal above the chat input instead.
+      // the viewer on the previous passage; the abstained answer card
+      // itself carries the "no evidence" signal (no extra banner).
       //
       // Prefer the first chunk the LLM actually cited so the user
       // lands on a chunk that backs the answer, not just the retriever's

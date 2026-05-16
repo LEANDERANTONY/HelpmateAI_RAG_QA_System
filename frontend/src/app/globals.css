@@ -4523,44 +4523,6 @@ input[type="file"]:disabled::file-selector-button {
   }
 }
 
-/* ============================================================ */
-/*  READ MODE — ABSTENTION BANNER                               */
-/*  Shown above the chat input when the latest answer abstained */
-/*  while in Read Mode. The banner is part of .h-ask-group so   */
-/*  it inherits the sticky-bottom positioning on mobile and     */
-/*  lifts above the bottom sheet via the same calc().           */
-/* ============================================================ */
-
-.h-abstention-banner {
-  background: rgba(247, 165, 96, 0.10);
-  border: 1px solid rgba(247, 165, 96, 0.28);
-  border-radius: 8px;
-  color: var(--fg);
-  font-size: 12.5px;
-  margin-bottom: 8px;
-  padding: 8px 12px;
-  /* Fade in with the rest of the Read Mode chrome — same easing
-     token so the motion language stays consistent. */
-  animation: h-abstention-enter var(--duration-base) var(--ease-out);
-}
-
-@keyframes h-abstention-enter {
-  from {
-    opacity: 0;
-    transform: translateY(4px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .h-abstention-banner {
-    animation: none !important;
-  }
-}
-
 /* === SourcePane shell === */
 .h-source-pane {
   animation: h-source-enter var(--duration-base) var(--ease-out);
