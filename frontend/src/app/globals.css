@@ -2633,7 +2633,7 @@ input[type="file"]:disabled::file-selector-button {
               background-color var(--duration-fast) var(--ease-out);
 }
 
-.h-premium-toggle:hover:not(:disabled) {
+.h-premium-toggle:hover {
   border-color: var(--accent);
   color: var(--fg);
 }
@@ -2644,9 +2644,56 @@ input[type="file"]:disabled::file-selector-button {
   color: var(--accent-strong);
 }
 
-.h-premium-toggle:disabled {
-  cursor: not-allowed;
-  opacity: 0.45;
+/* Locked = free tier / pre-quota-fetch. Deliberately NOT
+   `:disabled`-styled (opacity:0.45 made it all but invisible on a
+   phone, which is what made users think it was broken). It stays a
+   fully legible, obviously tappable switch; the click handler shows
+   the upgrade toast. Dimmed only enough to read as "off". */
+.h-premium-toggle.locked {
+  color: var(--fg-3);
+  cursor: pointer;
+}
+
+.h-premium-toggle.locked:hover {
+  border-color: var(--accent);
+  color: var(--fg-2);
+}
+
+/* The track + knob is what makes this unmistakably a TOGGLE rather
+   than just another pill/chip in the row. Knob slides right when
+   active. Absolutely positioned knob so the travel can't clip. */
+.h-premium-switch {
+  background: var(--bg-chip);
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  display: inline-block;
+  flex: none;
+  height: 16px;
+  margin-left: 2px;
+  position: relative;
+  width: 28px;
+}
+
+.h-premium-knob {
+  background: var(--fg-3);
+  border-radius: 50%;
+  height: 10px;
+  left: 3px;
+  position: absolute;
+  top: 2px;
+  transition: left var(--duration-fast) var(--ease-out),
+              background-color var(--duration-fast) var(--ease-out);
+  width: 10px;
+}
+
+.h-premium-toggle.active .h-premium-switch {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.h-premium-toggle.active .h-premium-knob {
+  background: var(--accent-strong);
+  left: 14px;
 }
 
 .h-premium-count {
@@ -3542,6 +3589,11 @@ input[type="file"]:disabled::file-selector-button {
      wrap so the small controls share the line above it. */
   .h-ask-row .h-btn-primary {
     flex: 1 0 100%;
+  }
+  /* Comfortable touch target for the premium switch on phones —
+     matches the 36px the .h-btn family uses. */
+  .h-ask-row .h-premium-toggle {
+    min-height: 36px;
   }
 
   .h-qa-card {

@@ -29,7 +29,7 @@ import {
 } from "@/lib/api";
 import { ApiError } from "@/lib/api-errors";
 import type { AuthUserSummary } from "@/lib/auth";
-import { notifyApiError, notifyError, notifySuccess } from "@/lib/toast";
+import { notifyApiError, notifyError, notifyInfo, notifySuccess } from "@/lib/toast";
 import {
   splitCitationSegments,
   stripReferencesBlock,
@@ -866,18 +866,29 @@ function AskBlock({
         ) : null}
         <button
           type="button"
-          className={`h-premium-toggle${premiumActive ? " active" : ""}`}
-          // Disabled at the HTML level when premium isn't available so
-          // keyboard users can tab past it without entering a dead
-          // toggle state. The title attribute carries the upgrade
-          // copy for both desktop hover and screen reader announce.
-          disabled={!premiumAvailable}
+          className={`h-premium-toggle${premiumActive ? " active" : ""}${
+            premiumAvailable ? "" : " locked"
+          }`}
+          // Intentionally NOT HTML-`disabled`. A disabled button is
+          // inert to touch: no hover (so the title tooltip never
+          // shows) and the tap is swallowed — free-tier mobile users
+          // got zero feedback and assumed it was broken. Instead it
+          // stays a fully visible, tappable switch and we gate in the
+          // handler: a locked tap surfaces the upgrade copy in place
+          // (toast, no navigation) rather than silently doing nothing.
+          // aria-disabled still tells assistive tech it's not operable.
           aria-pressed={premiumActive}
+          aria-disabled={!premiumAvailable}
           title={premiumTooltip}
           onClick={() => {
             if (premiumAvailable) {
               onPremiumToggle(!premiumActive);
+              return;
             }
+            notifyInfo(
+              "Premium answers (GPT-5.5)",
+              "This is a paid feature. Upgrade your plan to unlock premium answers.",
+            );
           }}
         >
           <span aria-hidden>★</span>
@@ -887,6 +898,9 @@ function AskBlock({
               {premiumUsed}/{premiumLimit}
             </span>
           ) : null}
+          <span aria-hidden className="h-premium-switch">
+            <span className="h-premium-knob" />
+          </span>
         </button>
         <button
           className="h-btn h-btn-primary"
