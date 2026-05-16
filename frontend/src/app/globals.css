@@ -1984,16 +1984,6 @@ input[type="file"]:disabled::file-selector-button {
   color: var(--fg);
 }
 
-.h-avatar.h-avatar-logo {
-  background: none;
-  border: 0;
-  /* SVG already carries a rounded-square shape with its own accent stroke;
-     drop the circular mask so the corners don't clip the icon's outline. */
-  border-radius: 7px;
-  box-shadow: 0 4px 12px rgba(127, 224, 176, 0.18);
-  object-fit: contain;
-}
-
 .h-avatar {
   align-items: center;
   background: linear-gradient(135deg, var(--accent), #4ec594);

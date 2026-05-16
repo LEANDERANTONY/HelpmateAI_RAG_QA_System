@@ -146,6 +146,16 @@ const icons = {
       </svg>
     );
   },
+  // Generic account glyph for the signed-out state — head + shoulders
+  // arc, matching the stroke style of the rest of the icon set.
+  Person({ size = 14 }: IconProps) {
+    return (
+      <svg aria-hidden="true" height={size} viewBox="0 0 24 24" width={size}>
+        <circle cx="12" cy="9" r="3.4" />
+        <path d="M5.5 20a6.5 6.5 0 0 1 13 0" />
+      </svg>
+    );
+  },
   Refresh({ size = 14 }: IconProps) {
     return (
       <svg aria-hidden="true" height={size} viewBox="0 0 24 24" width={size}>
@@ -449,14 +459,15 @@ function AccountTopbar({
         {user ? (
           <span className="h-avatar">{accountInitial(user)}</span>
         ) : (
-          <img
-            alt=""
-            aria-hidden="true"
-            className="h-avatar h-avatar-logo"
-            height={26}
-            src="/brand/helpmate-icon.svg"
-            width={26}
-          />
+          // Signed out: a generic person glyph in the SAME avatar
+          // circle as the signed-in state (standard "no photo"
+          // pattern). Previously this rendered the brand H logo,
+          // which on mobile — where the "Sign in" label + chevron
+          // are hidden — collapsed to a second copy of the brand
+          // mark already shown on the left of the topbar.
+          <span className="h-avatar" aria-hidden="true">
+            <icons.Person size={15} />
+          </span>
         )}
         <span className="h-account-email">{accountLabel(user)}</span>
         <icons.Chevron size={12} />
