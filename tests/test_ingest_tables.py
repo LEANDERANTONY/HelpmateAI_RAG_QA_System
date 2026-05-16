@@ -50,3 +50,35 @@ def test_table_candidate_detection_handles_captions_and_dense_numeric_pages():
     assert _looks_table_enrichment_candidate(caption_page) is True
     assert _looks_table_enrichment_candidate(dense_numeric_page) is True
     assert _looks_table_enrichment_candidate(prose_page) is False
+
+
+def test_table_candidate_detection_is_corpus_agnostic():
+    # Generic tables with NONE of the old corpus words (scenario / 2050 /
+    # gtco / usd / investment …) must now be detected — the whole point
+    # of generalising the pre-gate.
+    pricing_table = "\n".join(
+        [
+            "Plan        Seats   Monthly",
+            "Starter     5       49",
+            "Team        25      199",
+            "Enterprise  100     799",
+        ]
+    )
+    hr_text_table = "\n".join(
+        [
+            "Role          Department     Manager",
+            "Engineer      Platform       A. Rivera",
+            "Designer      Product        K. Osei",
+            "Analyst       Finance        M. Lindqvist",
+        ]
+    )
+    prose_with_words = (
+        "The investment scenario for 2050 is described here in ordinary "
+        "prose with no tabular structure whatsoever, just sentences."
+    )
+
+    assert _looks_table_enrichment_candidate(pricing_table) is True
+    assert _looks_table_enrichment_candidate(hr_text_table) is True
+    # Corpus words alone (no structure) no longer force a candidate —
+    # confirms the allowlist is gone, not just shadowed.
+    assert _looks_table_enrichment_candidate(prose_with_words) is False

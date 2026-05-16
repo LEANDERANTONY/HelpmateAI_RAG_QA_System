@@ -53,31 +53,75 @@ def _table_extractor_mode() -> str:
 
 
 def _table_extractor_max_pages() -> int:
+    """Candidate-page scan cap. ``0`` (the default) = unlimited.
+
+    The old default of 40 silently dropped tables past page 40 of long
+    documents — a table on page 150 of a 200-page report must still be
+    captured. The env var stays as a safety valve for pathological
+    inputs only; unset / 0 / invalid all mean "no cap".
+    """
     value = os.getenv("HELPMATE_TABLE_EXTRACTOR_MAX_PAGES")
     if not value:
-        return 40
+        return 0
     try:
         return max(0, int(value))
     except ValueError:
-        return 40
+        return 0
+
+
+def _table_pregate_min_lines() -> int:
+    """Minimum tabular-looking lines for the structural pre-gate to flag
+    a page (env-tunable, default 3 = a header + two data rows). Lower =
+    higher recall / more pdfplumber passes."""
+    value = os.getenv("HELPMATE_TABLE_PREGATE_MIN_LINES")
+    if not value:
+        return 3
+    try:
+        return max(1, int(value))
+    except ValueError:
+        return 3
 
 
 def _looks_table_enrichment_candidate(text: str) -> bool:
-    lowered = text.lower()
-    if re.search(r"\b(?:table|exhibit)\s+[a-z0-9.:-]+", text, flags=re.IGNORECASE):
+    """Vocabulary-free, recall-biased pre-gate: does this page show any
+    tabular structure worth pdfplumber's geometry pass?
+
+    Replaces the old corpus-word allowlist (``scenario``, ``2050``,
+    ``gtco`` …) which was fitted to the eval corpus and silently skipped
+    every generic table — HR, pricing, schedules — that didn't use that
+    vocabulary. Signals here are purely structural so the gate
+    generalises to any document class.
+
+    Deliberately recall-biased: a false positive is cheap (the
+    lines/text detection + shape filter discard non-tables); a false
+    negative permanently loses a real table. The structural test keeps
+    the ``len(tokens) >= 5`` proxy because pypdf collapses table cell
+    boundaries to single spaces, so multi-space gaps alone under-detect
+    rows on extracted text.
+    """
+    # A captioned table/exhibit is a universal, high-precision signal —
+    # any document class, no vocabulary assumption.
+    if re.search(r"\b(?:table|exhibit)\s+[a-z0-9.:\-]+", text, flags=re.IGNORECASE):
         return True
-    if any(token in lowered for token in ("scenario", "indicators", "investment", "2030", "2050", "usd", "%", "gtco", "ej")):
-        numeric_count = len(re.findall(r"\b\d+(?:[.,]\d+)?\b", text))
-        return numeric_count >= 8
-    dense_numeric_lines = 0
+    min_lines = _table_pregate_min_lines()
+    tabular_lines = 0
     for line in text.splitlines():
         stripped = line.strip()
-        if not stripped:
+        if len(stripped) < 4:
             continue
-        numeric_ratio = sum(char.isdigit() for char in stripped) / max(len(stripped), 1)
-        if numeric_ratio >= 0.12 and (re.search(r"\s{2,}|\t|[|]", stripped) or len(stripped.split()) >= 5):
-            dense_numeric_lines += 1
-    return dense_numeric_lines >= 3
+        tokens = stripped.split()
+        has_column_gap = bool(re.search(r"\s{2,}|\t|\|", stripped))
+        numeric_ratio = sum(char.isdigit() for char in stripped) / len(stripped)
+        # A row is tabular if it shows explicit column structure
+        # (aligned/ruled/piped — text tables, glossaries, schedules) OR
+        # it's a numeric data row (financial/metrics tables, robust to
+        # pypdf single-space cell collapse via the token-count proxy).
+        is_tabular = has_column_gap or (numeric_ratio >= 0.12 and len(tokens) >= 5)
+        if is_tabular:
+            tabular_lines += 1
+            if tabular_lines >= min_lines:
+                return True
+    return False
 
 
 def _markdown_table(rows: list[list[str]]) -> str:
@@ -102,6 +146,70 @@ def _table_text_from_rows(rows: list[list[str]]) -> str:
     return "Extracted table:\n" + markdown
 
 
+# Stage 2 detection strategies. `lines` = ruled tables (pdfplumber's
+# conservative default; near-zero hallucination, blind to borderless).
+# `text` = infer columns from text alignment; catches borderless tables
+# (incl. Word/DOCX tables LibreOffice renders without visible borders)
+# but hallucinates from prose/TOC/multi-column text — so it only runs as
+# a per-page fallback where `lines` found nothing, bounding its noise to
+# the borderless-table signature.
+_LINES_TABLE_SETTINGS = {
+    "vertical_strategy": "lines",
+    "horizontal_strategy": "lines",
+    "snap_tolerance": 3,
+    "join_tolerance": 3,
+    "intersection_tolerance": 3,
+}
+_TEXT_TABLE_SETTINGS = {
+    "vertical_strategy": "text",
+    "horizontal_strategy": "text",
+    "snap_tolerance": 3,
+    "join_tolerance": 3,
+}
+
+
+def _tables_to_artifacts(
+    tables: list, page_number: int, strategy: str
+) -> list[dict[str, object]]:
+    """Stage 3 precision guard: clean rows + drop pdfplumber's
+    degenerate matches (slivers / single-cell / too-sparse), shared by
+    both detection strategies so the filter is identical regardless of
+    how the table was found."""
+    artifacts: list[dict[str, object]] = []
+    table_index = 0
+    for table in tables:
+        rows = [
+            [(cell or "").strip() for cell in row]
+            for row in table
+            if any((cell or "").strip() for cell in row)
+        ]
+        if not rows:
+            continue
+        row_count = len(rows)
+        column_count = max(len(row) for row in rows)
+        populated_cells = sum(1 for row in rows for cell in row if cell)
+        if column_count < 2 or populated_cells < 4 or (row_count < 2 and column_count < 4):
+            continue
+        table_text = _table_text_from_rows(rows)
+        if not table_text:
+            continue
+        table_index += 1
+        artifacts.append(
+            {
+                "artifact_type": "table",
+                "source_backend": "pdfplumber",
+                "source_strategy": strategy,
+                "original_page_number": page_number,
+                "original_page_label": f"Page {page_number}",
+                "table_index_on_page": table_index,
+                "row_count": row_count,
+                "column_count": column_count,
+                "text": table_text,
+            }
+        )
+    return artifacts
+
+
 def _extract_pdfplumber_table_artifacts(path: Path, pages: list[dict[str, str]]) -> list[dict[str, object]]:
     if _table_extractor_mode() == "off":
         return []
@@ -114,17 +222,13 @@ def _extract_pdfplumber_table_artifacts(path: Path, pages: list[dict[str, str]])
         index
         for index, page in enumerate(pages, start=1)
         if _looks_table_enrichment_candidate(str(page.get("text", "")))
-    ][: _table_extractor_max_pages()]
+    ]
+    max_pages = _table_extractor_max_pages()
+    if max_pages > 0:
+        candidate_page_numbers = candidate_page_numbers[:max_pages]
     if not candidate_page_numbers:
         return []
 
-    table_settings = {
-        "vertical_strategy": "lines",
-        "horizontal_strategy": "lines",
-        "snap_tolerance": 3,
-        "join_tolerance": 3,
-        "intersection_tolerance": 3,
-    }
     artifacts: list[dict[str, object]] = []
     with pdfplumber.open(path) as pdf:
         for page_number in candidate_page_numbers:
@@ -132,39 +236,19 @@ def _extract_pdfplumber_table_artifacts(path: Path, pages: list[dict[str, str]])
                 continue
             page = pdf.pages[page_number - 1]
             try:
-                tables = page.extract_tables(table_settings=table_settings)
+                lines_tables = page.extract_tables(table_settings=_LINES_TABLE_SETTINGS)
             except Exception:
-                continue
-            table_index = 0
-            for table in tables:
-                rows = [
-                    [(cell or "").strip() for cell in row]
-                    for row in table
-                    if any((cell or "").strip() for cell in row)
-                ]
-                if not rows:
-                    continue
-                row_count = len(rows)
-                column_count = max(len(row) for row in rows)
-                populated_cells = sum(1 for row in rows for cell in row if cell)
-                if column_count < 2 or populated_cells < 4 or (row_count < 2 and column_count < 4):
-                    continue
-                table_text = _table_text_from_rows(rows)
-                if not table_text:
-                    continue
-                table_index += 1
-                artifacts.append(
-                    {
-                        "artifact_type": "table",
-                        "source_backend": "pdfplumber",
-                        "original_page_number": page_number,
-                        "original_page_label": f"Page {page_number}",
-                        "table_index_on_page": table_index,
-                        "row_count": row_count,
-                        "column_count": column_count,
-                        "text": table_text,
-                    }
-                )
+                lines_tables = []
+            page_artifacts = _tables_to_artifacts(lines_tables, page_number, "lines")
+            if not page_artifacts:
+                # No ruled table survived on a page the structural
+                # pre-gate flagged → retry borderless via text strategy.
+                try:
+                    text_tables = page.extract_tables(table_settings=_TEXT_TABLE_SETTINGS)
+                except Exception:
+                    text_tables = []
+                page_artifacts = _tables_to_artifacts(text_tables, page_number, "text")
+            artifacts.extend(page_artifacts)
     return artifacts
 
 
