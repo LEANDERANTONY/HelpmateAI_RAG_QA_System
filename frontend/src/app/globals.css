@@ -3893,14 +3893,37 @@ input[type="file"]:disabled::file-selector-button {
   gap: 10px;
   padding: 8px 12px;
   text-align: left;
-  transition: background var(--duration-fast) var(--ease-out);
+  transition: background var(--duration-fast) var(--ease-out),
+              box-shadow var(--duration-fast) var(--ease-out),
+              color var(--duration-fast) var(--ease-out);
   width: 100%;
 }
 
-.h-palette-result.selected,
+/* Mouse hover stays the neutral elevated surface. */
 .h-palette-result:hover {
   background: var(--bg-card-2);
   color: var(--fg);
+}
+
+/* Keyboard cursor / active selection — the row Enter will fire.
+   Mint, to match the app's established "active/selected" language
+   (premium toggle, feedback button). The accent edge is an INSET
+   shadow, not a real border, so moving the cursor row to row has
+   zero layout shift. Declared after :hover at equal specificity so
+   a row that is both selected AND hovered reads as selected — the
+   one that will actually trigger. */
+.h-palette-result.selected {
+  background: var(--accent-soft);
+  box-shadow: inset 3px 0 0 0 var(--accent);
+  color: var(--accent-strong);
+}
+
+/* Tie the leading badge into the selected state — keep the chip
+   fill, just tint its border + glyph mint so it reads as part of
+   the highlight rather than a stray neutral block. */
+.h-palette-result.selected .h-palette-result-badge {
+  border-color: var(--accent);
+  color: var(--accent-strong);
 }
 
 .h-palette-result-badge {
