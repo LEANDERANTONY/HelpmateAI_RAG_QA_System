@@ -272,11 +272,13 @@ def isolated_quota_store(monkeypatch, tmp_path):
     return store
 
 
-def test_qa_free_tier_passes_nano_as_model_override(
+def test_qa_free_tier_passes_mini_as_model_override(
     authed_client, fake_pipeline_and_doc, isolated_quota_store
 ):
     """The default tier resolver returns 'free'; free's answer_model
-    is gpt-5.4-nano per TIER_LIMITS. /qa must pass that down."""
+    is gpt-5.4-mini per TIER_LIMITS (intentionally bumped from nano —
+    nano tripped the schema-strict gate + support verifier into
+    spurious abstentions on the default path). /qa must pass it down."""
     response = authed_client.post(
         "/qa",
         json={"document_id": "doc-fake", "question": "anything"},
@@ -287,12 +289,12 @@ def test_qa_free_tier_passes_nano_as_model_override(
     # answer.model_name. If model_override wasn't passed, we'd
     # see "default-from-settings" instead.
     assert body["answer"]["model_name"] == TIER_LIMITS["free"]["answer_model"]
-    assert body["answer"]["model_name"] == "gpt-5.4-nano"
+    assert body["answer"]["model_name"] == "gpt-5.4-mini"
 
     # Verify directly on the mock call too, as a belt-and-braces
     # check against the echo path.
     call = fake_pipeline_and_doc.answer_question.call_args
-    assert call.kwargs["model_override"] == "gpt-5.4-nano"
+    assert call.kwargs["model_override"] == "gpt-5.4-mini"
 
 
 def test_qa_pro_tier_passes_mini_as_model_override(

@@ -95,7 +95,10 @@ def test_free_tier_matches_pricing_matrix():
     assert free["questions_per_month"] == 50
     assert free["premium_answers_per_month"] == 0
     assert free["retention_days"] == 30
-    assert free["answer_model"] == "gpt-5.4-nano"
+    # Intentionally bumped nano -> mini: nano tripped the schema-strict
+    # gate + support verifier into spurious abstentions on the default
+    # path. See backend/tiers.py free-tier answer_model comment.
+    assert free["answer_model"] == "gpt-5.4-mini"
     # Premium answers aren't available on free — None signals
     # "no model to call" to the /qa handler and the frontend toggle.
     assert free["premium_model"] is None

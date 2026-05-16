@@ -18,7 +18,7 @@ here, change the pricing UI in the same PR — drift between the two
 is how customers get angry. The matrix:
 
     TIER       DOCS   FILE CAP   Q/MO   PREMIUM/MO   RETENTION   MODEL
-    free       3      25 MB      50     0            30 days     gpt-5.4-nano
+    free       3      25 MB      50     0            30 days     gpt-5.4-mini
     pro        ∞*     150 MB     500    25           1 year      gpt-5.4-mini
     business   ∞*     500 MB     2,000  100          ∞           gpt-5.4-mini
 
@@ -103,7 +103,12 @@ TIER_LIMITS: dict[Tier, TierLimits] = {
         "questions_per_month": 50,
         "premium_answers_per_month": 0,
         "retention_days": 30,
-        "answer_model": "gpt-5.4-nano",
+        # Was gpt-5.4-nano. Bumped to mini: nano's looser JSON shaping +
+        # heavier hedging tripped the schema-strict gate and the
+        # support-status verifier into spurious abstentions on the
+        # default/free path. Quality-over-COGS call to kill that
+        # amplifier; free-tier answer cost rises (mini ≈ nano×N).
+        "answer_model": "gpt-5.4-mini",
         "premium_model": None,
     },
     "pro": {

@@ -21,6 +21,7 @@ Shape contract:
 """
 from __future__ import annotations
 
+import hashlib
 import json
 import time
 from pathlib import Path
@@ -470,3 +471,62 @@ def test_support_status_verifier_v1_expected_placeholders():
 def test_query_router_v1_expected_placeholders():
     template = get_prompt("query_router", "v1")
     assert template.placeholders() == {"intent_type", "evidence_spread", "question"}
+
+
+# ─── byte-identity drift guard ──────────────────────────────────────────
+#
+# The PR#5 prompt-registry migration shipped WITHOUT a drift guard:
+# nothing asserted the migrated JSON text matched its pre-registry
+# inline form, so a future edit to any v1.json could silently change
+# /qa behaviour (e.g. drop a required JSON key the strict AnswerOutput /
+# verifier schemas demand -> universal StructuredOutputError ->
+# universal abstention). These digests pin the exact, audited-good
+# system+user text of every active prompt.
+#
+# If a prompt change is INTENTIONAL:
+#   1. bump that prompt's version in backend/prompts/registry.json
+#      (ship vN+1, keep vN immutable), and
+#   2. regenerate the digest below for the new active version.
+# A failure here with no such bump means a prompt drifted silently —
+# treat it as a release blocker, not a test to "just update".
+_FROZEN_PROMPT_DIGESTS = {
+    "answer_generation": "a7505645130045a0c998164f160af08a06d70500213a5a00ab63321a4be550b8",
+    "document_landmarks": "c8ec8d14308168870ba75b81ae4990b617800753470b769e54484c9d79472e31",
+    "planner": "73ea5174a07b7e7a651eb182294094b01edff814dccba042d15669c5b3b4b7a2",
+    "query_router": "efe7541635ca37e51a24861a2f0a9aff0742a510b493e474372c73f29dcae8b6",
+    "retrieval_orchestrator": "5a217d034bf51a30628ee5508a4f51ad601a2fdc55df607b942ea225d9c0dbc6",
+    "support_status_verifier": "0125dba3c9a4e9a1a8197ba2efd10234fab7089057f28079d581fb0d814d590c",
+    "support_verifier": "b253edde6389cc26cf62b25b7d52ebbdad106c9e1ea12a1e3896b50b994085c3",
+}
+
+
+def _prompt_digest(template: PromptTemplate) -> str:
+    # \x1e (record separator) between system and user so a string
+    # can't migrate across the boundary undetected.
+    blob = f"{template.system}\x1e{template.user}".encode("utf-8")
+    return hashlib.sha256(blob).hexdigest()
+
+
+def test_active_registry_matches_frozen_set():
+    """Every prompt that is active in registry.json must have a frozen
+    digest — a new prompt added without pinning it is a coverage gap."""
+    active = set(list_active_versions().keys())
+    assert active == set(_FROZEN_PROMPT_DIGESTS), (
+        "Active prompts and frozen-digest set diverged. Pin the new "
+        "prompt's digest in _FROZEN_PROMPT_DIGESTS (or remove the stale "
+        f"entry). active={sorted(active)} "
+        f"frozen={sorted(_FROZEN_PROMPT_DIGESTS)}"
+    )
+
+
+@pytest.mark.parametrize("name", sorted(_FROZEN_PROMPT_DIGESTS))
+def test_prompt_text_has_not_drifted(name):
+    template = get_prompt(name)
+    actual = _prompt_digest(template)
+    assert actual == _FROZEN_PROMPT_DIGESTS[name], (
+        f"Prompt '{name}' (active v{template.version}) text drifted from "
+        f"its pinned digest. If intentional: bump the version in "
+        f"registry.json and update _FROZEN_PROMPT_DIGESTS. If not: a "
+        f"prompt changed silently — block the release. "
+        f"expected={_FROZEN_PROMPT_DIGESTS[name]} actual={actual}"
+    )

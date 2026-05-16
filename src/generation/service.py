@@ -353,7 +353,20 @@ class AnswerGenerator:
                 claimed_support_status=support_status,
                 evidence=evidence,
             )
-            if support_status == "supported" and not _uses_inferential_supported_language(answer_text) and not _answer_reports_support_gap(answer_text):
+            # Regression fix (2/2): trust the verifier's "supported"
+            # verdict. verify_support_status only returns "supported"
+            # when it found grounded supported_facts AND an EMPTY
+            # missing_or_ambiguous_facts set — it has already
+            # adjudicated whether any acknowledged gap is real. The old
+            # `not _answer_reports_support_gap(answer_text)` clause
+            # re-blocked promotion on the raw answer text whenever the
+            # answer politely noted a caveat, so `supported` stayed
+            # False and the `elif not supported` below re-stamped
+            # "unsupported" — abstaining a verifier-confirmed answer.
+            # The inferential-language guard stays: if the answer's
+            # grounded claims are themselves weaselled ("suggests",
+            # "appears"), not trusting "supported" is still correct.
+            if support_status == "supported" and not _uses_inferential_supported_language(answer_text):
                 supported = True
         if support_status == "partial":
             supported = False
@@ -493,8 +506,26 @@ class AnswerGenerator:
         verifier_reason = verifier_output.reason.strip()
 
         if verifier_status == "supported":
-            if not supported_facts or missing_facts or acknowledges_gap:
-                verifier_status = "partial" if acknowledges_gap and supported_facts and missing_facts else "unsupported"
+            if not supported_facts:
+                # Verifier said "supported" but cannot name a single
+                # grounded fact — self-contradictory, don't trust it.
+                verifier_status = "unsupported"
+            elif missing_facts:
+                # The verifier itself found a required fact missing or
+                # ambiguous — a real gap. Partial only when the answer
+                # owns the gap (acknowledges_facts already truthy here),
+                # else unsupported. Equivalent to the old
+                # "acknowledges_gap and supported_facts and missing_facts"
+                # check since both supported_facts and missing_facts are
+                # known truthy in this branch.
+                verifier_status = "partial" if acknowledges_gap else "unsupported"
+            # else: supported_facts present AND the verifier found
+            # nothing missing -> the answer is genuinely supported.
+            # Regression fix: previously `acknowledges_gap` alone forced
+            # "unsupported" here, so a fully-grounded answer that merely
+            # *acknowledged a potential gap the verifier did NOT confirm*
+            # was wrongly abstained. The verifier's evidence-grounded
+            # verdict must win over the answer's self-doubt.
         if verifier_status == "partial" and not (acknowledges_gap and supported_facts and missing_facts):
             verifier_status = "unsupported"
 

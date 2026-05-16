@@ -370,3 +370,103 @@ def test_support_status_verifier_does_not_recover_inferential_atomic_answer():
     assert answer.supported is False
     assert answer.support_status == "unsupported"
     assert "inferential wording" in (answer.note or "")
+
+
+def test_support_status_verifier_does_not_abstain_grounded_answer_that_merely_hedges():
+    """Regression for the PR#6 false-abstention bug (verify_support_status).
+
+    The answer is fully grounded and the verifier independently confirms
+    it (support_status=supported, supported_facts present, NOTHING in
+    missing_or_ambiguous_facts) — but the answer politely volunteered a
+    caveat, so answer_acknowledges_gap=True. The old code forced
+    "unsupported" here (no path back to "supported" once a gap was
+    acknowledged), abstaining a correct answer. The verifier's
+    evidence-grounded verdict must win over the answer's self-doubt.
+    """
+    answer_payload = json.dumps(
+        {
+            "supported": False,
+            "support_status": "unsupported",
+            "answer": (
+                "By unanimous vote the Committee selected Jerome H. Powell "
+                "as Chair [Source 1]. Missing required fact: the evidence "
+                "may not exhaustively label every role."
+            ),
+            "reason": "The first pass hedged on completeness.",
+        }
+    )
+    verifier_payload = json.dumps(
+        {
+            "support_status": "supported",
+            "answer_acknowledges_gap": True,
+            "supported_facts": [
+                "By unanimous vote, Jerome H. Powell was selected as Chair."
+            ],
+            "missing_or_ambiguous_facts": [],
+            "reason": "The evidence directly supports the named selection; "
+            "no required fact is missing for the question as asked.",
+        }
+    )
+    generator = AnswerGenerator(Settings(openai_api_key="test-key"))
+    generator.client = _FakeClient([answer_payload, verifier_payload])
+    retrieval = RetrievalResult(
+        question="Who was selected as Chair by unanimous vote?",
+        candidates=[
+            RetrievalCandidate(
+                chunk_id="c1",
+                text="By unanimous vote the Committee selected Jerome H. Powell as Chair.",
+                metadata={"page_label": "Page 2"},
+            )
+        ],
+    )
+
+    answer = generator.generate(
+        "Who was selected as Chair by unanimous vote?", retrieval
+    )
+
+    # Pre-fix: this was support_status == "unsupported" (ABSTAINED).
+    assert answer.support_status == "supported"
+    assert answer.supported is True
+
+
+def test_support_status_verifier_still_downgrades_when_verifier_finds_real_gap():
+    """Guard against over-correcting the fix: when the verifier itself
+    reports a missing/ambiguous required fact, an acknowledged gap is a
+    *real* partial (or unsupported if unowned) — NOT a free pass to
+    "supported"."""
+    answer_payload = json.dumps(
+        {
+            "supported": False,
+            "support_status": "partial",
+            "answer": "Powell is Chair [Source 1]; the deputy is not stated.",
+            "reason": "Only part of the question is covered.",
+        }
+    )
+    verifier_payload = json.dumps(
+        {
+            "support_status": "supported",
+            "answer_acknowledges_gap": True,
+            "supported_facts": ["Powell is Chair."],
+            "missing_or_ambiguous_facts": ["The deputy manager is not named."],
+            "reason": "Chair is grounded; the deputy is genuinely absent.",
+        }
+    )
+    generator = AnswerGenerator(Settings(openai_api_key="test-key"))
+    generator.client = _FakeClient([answer_payload, verifier_payload])
+    retrieval = RetrievalResult(
+        question="Who are the Chair and deputy?",
+        candidates=[
+            RetrievalCandidate(
+                chunk_id="c1",
+                text="Powell is Chair.",
+                metadata={"page_label": "Page 2"},
+            )
+        ],
+    )
+
+    answer = generator.generate("Who are the Chair and deputy?", retrieval)
+
+    # Verifier found a real missing fact + answer owns it -> partial,
+    # not silently promoted to supported by the fix.
+    assert answer.support_status == "partial"
+    assert answer.supported is False
