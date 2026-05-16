@@ -194,6 +194,12 @@ export function CookieConsentBanner(): React.ReactElement | null {
   // this we get a hydration mismatch warning when consent !== "pending".
   const [mounted, setMounted] = useState(false);
   useEffect(() => {
+    // Intentional one-shot mount/hydration guard: the server renders
+    // null, the client flips mounted post-hydration so reading the
+    // consent cookie can't cause a hydration mismatch. setState-in-
+    // effect is correct here (syncing React with "we're now on the
+    // client") — not a cascading-render smell.
+    // eslint-disable-next-line react-hooks/set-state-in-effect
     setMounted(true);
   }, []);
   if (!mounted) return null;

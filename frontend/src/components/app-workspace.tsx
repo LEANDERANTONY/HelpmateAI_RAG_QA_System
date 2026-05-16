@@ -784,7 +784,14 @@ function AskBlock({
   // suffix get clobbered by the stale closure value. Codex P1 on
   // PR #5 round 4.
   const questionRef = useRef(question);
-  questionRef.current = question;
+  // Sync via a post-commit effect, NOT during render (react-hooks/refs:
+  // mutating a ref in render is impure). No deps array → runs after
+  // every commit, so the async voice-transcript callback below still
+  // reads the freshest value when Whisper returns (it fires long after
+  // commit, so the one-frame lag of an effect is irrelevant here).
+  useEffect(() => {
+    questionRef.current = question;
+  });
   // Premium toggle gating:
   //   premium_available=false   → disabled with upgrade tooltip; never
   //                               flips, never fires onPremiumToggle.

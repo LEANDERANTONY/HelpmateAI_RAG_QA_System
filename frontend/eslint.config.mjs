@@ -12,6 +12,10 @@ const eslintConfig = defineConfig([
     "out/**",
     "build/**",
     "next-env.d.ts",
+    // Static + vendored bundles (e.g. the minified pdfjs worker
+    // pdf.worker.min.mjs). Never lint third-party minified output —
+    // it's not source we control and floods the report with noise.
+    "public/**",
   ]),
 ]);
 

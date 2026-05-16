@@ -16,6 +16,10 @@ export function useLandingHref() {
   const [href, setHref] = useState("/");
   useEffect(() => {
     if (window.location.host !== "helpmateai.xyz") {
+      // The real host is only knowable on the client; setting href
+      // once after mount is an intentional sync with that external
+      // fact, not a cascading-render smell.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
       setHref("/landing");
     }
   }, []);
