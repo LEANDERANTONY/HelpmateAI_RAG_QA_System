@@ -11,7 +11,12 @@ from src.cache import AnswerCache
 from src.chunking import ChunkSemanticsService, chunk_document
 from src.config import Settings, get_settings
 from src.generation import AnswerGenerator, EvidenceSelector
-from src.ingest import DocxConversionError, convert_docx_to_pdf, ingest_document
+from src.ingest import (
+    DocxConversionError,
+    convert_docx_to_pdf,
+    file_fingerprint,
+    ingest_document,
+)
 from src.landmarks import DocumentLandmarkService
 from src.openai_service import (
     CostCollector,
@@ -63,14 +68,61 @@ class HelpmatePipeline:
             shutil.copy2(source, target)
         return target
 
+    def _prepare_docx_rendition(self, persisted_path: Path) -> Path | None:
+        """Produce (or reuse) the LibreOffice PDF rendition for a DOCX
+        upload *before* extraction, so ``ingest_document`` can extract
+        from it instead of the python-docx flattener.
+
+        The rendition is written to ``<uploads>/<document_id>.pdf`` where
+        ``document_id = file_fingerprint(path)[:16]`` — the exact path
+        ``normalize_upload_paths`` later computes — so it cache-hits
+        there (no second LibreOffice run) and the chunks' ``Page N``
+        labels are extracted from the very PDF the viewer serves.
+
+        Returns the rendition path on success, ``None`` when DOCX→PDF is
+        disabled or LibreOffice fails. ``None`` makes ``ingest_document``
+        fall back to python-docx — self-consistent, because in that case
+        ``normalize_upload_paths`` also leaves ``viewable_pdf_path`` unset
+        and the viewer is download-only (no page alignment either side).
+        """
+        if persisted_path.suffix.lower() != ".docx":
+            return None
+        if not self.settings.docx_pdf_conversion_enabled:
+            return None
+        document_id = file_fingerprint(persisted_path)[:16]
+        rendition = persisted_path.parent / f"{document_id}.pdf"
+        if rendition.exists() and rendition.is_file():
+            return rendition
+        try:
+            convert_docx_to_pdf(
+                persisted_path,
+                rendition,
+                soffice_binary=self.settings.docx_pdf_soffice_binary,
+                timeout=self.settings.docx_pdf_conversion_timeout,
+            )
+        except DocxConversionError as exc:
+            logger.warning(
+                "DOCX→PDF rendition failed for %s; ingestion falls back to "
+                "python-docx text, viewer to download-only (%s)",
+                persisted_path.name,
+                exc,
+            )
+            return None
+        return rendition
+
     def ingest_document(self, file_path: str | Path) -> DocumentRecord:
         persisted_path = self._persist_upload(file_path)
-        document = ingest_document(persisted_path)
+        # For DOCX, stage the LibreOffice PDF rendition first and extract
+        # from it (real Page N labels + pdfplumber tables, self-consistent
+        # with the viewer). Falls back to python-docx when the rendition
+        # can't be produced. PDF uploads pass rendition=None untouched.
+        docx_rendition = self._prepare_docx_rendition(persisted_path)
+        document = ingest_document(persisted_path, docx_pdf_rendition=docx_rendition)
         # Normalize storage AFTER ingestion (which reads from disk) so the
         # extractor sees the original file at the original name. Once we know
         # the document_id we rename to `{id}{ext}` to dodge cross-user
-        # filename collisions in the flat uploads directory, and produce a
-        # viewable PDF for DOCX uploads so the in-app viewer can render them.
+        # filename collisions in the flat uploads directory; the DOCX viewer
+        # PDF was already produced above and is reused here (no second run).
         self.normalize_upload_paths(document)
         return document
 

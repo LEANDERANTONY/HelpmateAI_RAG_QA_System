@@ -16,6 +16,17 @@ def _file_fingerprint(path: Path) -> str:
     return digest.hexdigest()
 
 
+def file_fingerprint(path: Path) -> str:
+    """Public SHA-256 content fingerprint.
+
+    Exposed so the pipeline can derive the same ``document_id`` stem the
+    module uses (``file_fingerprint(path)[:16]``) to pre-stage the DOCX
+    PDF rendition at the path ``normalize_upload_paths`` expects, without
+    reaching into the private helper.
+    """
+    return _file_fingerprint(path)
+
+
 def _strip_invalid_storage_chars(value: Any) -> Any:
     if isinstance(value, str):
         return value.replace("\x00", "")
@@ -339,14 +350,69 @@ def _extract_docx(path: Path) -> tuple[str, list[dict[str, str]], int, dict[str,
     return _extract_docx_python_docx(path)
 
 
-def ingest_document(path: str | Path) -> DocumentRecord:
+def _extract_docx_via_pdf_or_text(
+    docx_path: Path, rendition: str | Path | None
+) -> tuple[str, list[dict[str, str]], int, dict[str, str]]:
+    """Prefer extracting a DOCX from its LibreOffice-rendered PDF.
+
+    The python-docx path flattens the whole document into one
+    ``page_label="Document"`` page and drops tables/headers/footers
+    entirely. Extracting instead from the LibreOffice rendition — the
+    SAME PDF artifact the viewer serves via ``viewable_pdf_path`` — runs
+    the document through the proven native-PDF pipeline (``_extract_pdf``
+    → pypdf text + pdfplumber tables + real ``Page N`` labels). Those
+    page labels line up exactly with what the user sees in Read Mode,
+    which is what fixes the DOCX page-hint / ring-trap defect.
+
+    Falls back to the python-docx extractor when no rendition was
+    produced (LibreOffice disabled / unavailable) or the PDF path
+    raises, so a missing converter never blocks ingestion. The fallback
+    is self-consistent: when there's no rendition the viewer is
+    download-only too, so "no page alignment" matches end to end.
+    """
+    if rendition is not None:
+        rendition_path = Path(rendition)
+        if rendition_path.is_file():
+            try:
+                full_text, pages, page_count, metadata = _extract_pdf(rendition_path)
+            except Exception:
+                full_text, pages = "", []
+                page_count, metadata = 0, {}
+            if pages:
+                return (
+                    full_text,
+                    pages,
+                    page_count,
+                    {**metadata, "docx_extraction_source": "libreoffice_pdf"},
+                )
+    return _extract_docx(docx_path)
+
+
+def ingest_document(
+    path: str | Path,
+    *,
+    docx_pdf_rendition: str | Path | None = None,
+) -> DocumentRecord:
+    """Extract a document into a ``DocumentRecord``.
+
+    ``docx_pdf_rendition`` (keyword-only, optional): when the upload is a
+    DOCX and the pipeline has already produced its LibreOffice PDF
+    rendition, pass that path here to extract from the rendered PDF
+    instead of the python-docx paragraph flattener. This yields real
+    per-page text + pdfplumber tables + ``Page N`` labels that match the
+    PDF the viewer serves. Omitting it (or passing a missing path)
+    preserves the legacy python-docx behaviour, so existing callers and
+    PDF uploads are unaffected.
+    """
     file_path = Path(path)
     suffix = file_path.suffix.lower()
     if suffix == ".pdf":
         full_text, pages, page_count, extraction_metadata = _extract_pdf(file_path)
         file_type = "pdf"
     elif suffix == ".docx":
-        full_text, pages, page_count, extraction_metadata = _extract_docx(file_path)
+        full_text, pages, page_count, extraction_metadata = _extract_docx_via_pdf_or_text(
+            file_path, docx_pdf_rendition
+        )
         file_type = "docx"
     else:
         raise ValueError(f"Unsupported document type: {file_path.suffix}")
