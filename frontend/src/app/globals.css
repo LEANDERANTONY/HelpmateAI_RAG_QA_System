@@ -2707,6 +2707,116 @@ input[type="file"]:disabled::file-selector-button {
   color: var(--accent-strong);
 }
 
+/* Inline answer feedback (thumb up/down + optional comment).
+   Component: components/feedback-buttons.tsx. It originally shipped
+   with NO styles at all — every class below was unstyled, so the
+   comment <textarea> fell back to its intrinsic ~20-column width
+   (the "half-width box") and the label/textarea/buttons collapsed
+   into raw document flow on both desktop and mobile. */
+.h-feedback {
+  border-top: 1px solid var(--hairline);
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 12px;
+}
+
+.h-feedback-buttons {
+  align-items: center;
+  display: flex;
+  gap: 8px;
+}
+
+.h-feedback-btn {
+  align-items: center;
+  background: transparent;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  cursor: pointer;
+  display: inline-flex;
+  font-size: 15px;
+  justify-content: center;
+  line-height: 1;
+  min-height: 32px;
+  min-width: 38px;
+  padding: 4px 8px;
+  transition: background-color var(--duration-base) var(--ease-out),
+              border-color var(--duration-base) var(--ease-out);
+}
+
+.h-feedback-btn:hover:not(:disabled) {
+  background: var(--bg-card);
+  border-color: var(--border-strong);
+}
+
+.h-feedback-btn.active {
+  background: var(--accent-soft);
+  border-color: var(--accent);
+}
+
+.h-feedback-btn:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.h-feedback-status {
+  color: var(--fg-3);
+  font-size: 12.5px;
+}
+
+.h-feedback-comment {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.h-feedback-comment-label {
+  color: var(--fg-2);
+  font-size: 12.5px;
+  font-weight: 500;
+}
+
+.h-feedback-comment-input {
+  background: var(--bg-chip);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-sizing: border-box;
+  color: var(--fg);
+  font-family: var(--font-body);
+  font-size: 13px;
+  line-height: 1.45;
+  padding: 9px 12px;
+  resize: vertical;
+  width: 100%;
+}
+
+.h-feedback-comment-input:focus {
+  border-color: var(--accent);
+  outline: none;
+}
+
+.h-feedback-comment-input::placeholder {
+  color: var(--fg-4);
+}
+
+.h-feedback-comment-row {
+  align-items: center;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.h-feedback-comment-submit,
+.h-feedback-comment-skip {
+  flex: none;
+}
+
+.h-feedback-error {
+  color: var(--danger);
+  font-size: 12px;
+}
+
 .h-help {
   align-items: center;
   color: var(--fg-3);
@@ -3594,6 +3704,12 @@ input[type="file"]:disabled::file-selector-button {
      matches the 36px the .h-btn family uses. */
   .h-ask-row .h-premium-toggle {
     min-height: 36px;
+  }
+  /* Feedback Send/Skip: split the row into two big equal tap targets
+     on phones instead of two small pills floating left. */
+  .h-feedback-comment-row .h-btn {
+    flex: 1 1 auto;
+    min-height: 40px;
   }
 
   .h-qa-card {
