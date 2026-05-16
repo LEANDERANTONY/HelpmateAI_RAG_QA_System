@@ -8,6 +8,65 @@ Historical note:
 - later entries add quality-control, benchmarking, and document-intelligence work on top of that baseline
 - the project is still evolving, so later entries refine earlier architectural assumptions without erasing them
 
+## Day 37: Ingestion Overhaul, Read Mode D1/D2/D3 Closure, Abstention Regression Hunt, Pricing Truthfulness
+
+A 29-commit batch (local, unpushed — see Status). Headline: the DOCX ingestion + Read Mode architecture was reworked to fix the cited-passage navigation defects at the root, a multi-day regression audit found and fixed the Safety Pack over-tightening the abstention layer, and a landing-vs-code audit removed fabricated pricing claims.
+
+### Ingestion + Read Mode (the D1/D2/D3 defect family)
+
+- **DOCX now ingests through its LibreOffice PDF rendition** (`0b2e402`). The python-docx path flattened every DOCX into one `page_label="Document"` page and dropped tables/headers/footers entirely — the root cause of the Read Mode "DOCX page hint is dead → ring trap" defect (D3): `parsePageLabel("Document")→1`, the viewer's ±3 ring only ever scanned rendered-PDF pages 1-4, so a citation on page ≥5 fell to a no-match banner with the real match painted off-screen. Fix: `_prepare_docx_rendition` stages the LibreOffice PDF at the exact `{document_id}.pdf` path `normalize_upload_paths` already computes (single conversion, cache-reused), and `ingest_document(..., docx_pdf_rendition=...)` routes DOCX through the proven native-PDF path (`_extract_pdf` → pypdf text + pdfplumber tables + real `Page N`). DOCX chunk page labels now line up **by construction** with the same PDF the viewer serves. Falls back to python-docx when LibreOffice is unavailable (self-consistent: the viewer is download-only there too).
+- **Table extraction generalized** (`6171d72`). The `_looks_table_enrichment_candidate` pre-gate was a corpus-word allowlist (`scenario`, `2050`, `gtco`, `usd`…) fitted to the FinanceBench/climate eval corpus — every generic table (HR, pricing, schedules) was silently skipped. Replaced with a vocabulary-free structural signal (captioned `Table/Exhibit N` or ≥N rows with column structure / numeric density; `len(tokens)>=5` proxy kept because pypdf collapses cell boundaries to single spaces). Detection now `lines`-first with a per-page `text` fallback only where `lines` found nothing (borderless coverage without paying the text-strategy hallucination tax everywhere); shape filter kept as a shared precision guard. Page cap default `40 → 0` (unlimited): a table on page 150 of a 200-page report must still be captured. New env knobs `HELPMATE_TABLE_PREGATE_MIN_LINES` (default 3), `HELPMATE_TABLE_EXTRACTOR_MAX_PAGES` (default 0 = unlimited, safety-valve only).
+- **Read Mode D1/D2 closed** (`5e40204`, `fec9de0`, `ec62751`). D1: the find dispatch's document-wide `highlightAll` painted the anchor on every page; now the highlight is scoped to the resolved page (without breaking the scroll-to-`.highlight` mechanism). D2.1: `looksLikeBoilerplate` was over-stripping legitimate short first sentences as "headings", so the anchor could start mid-chunk — tightened. D2.2: multi-anchor — several short sub-phrases sampled across the chunk so the highlight spans the cited passage instead of an ≤80-char prefix. Prompt-drift verification confirmed all 7 registry prompts are byte-identical to their pre-registry inline form (PR#5 migration was faithful; not a regression source).
+
+### Abstention regression hunt + fixes
+
+- A reported "default recommended question → ABSTAINED" on a freshly ingested FOMC doc kicked off a full 5-6-day architectural-change audit. Two screenshots disproved the first two hypotheses (not schema-drift; not the verifier-working-correctly case) and isolated the real cause: **two coupled defects in the Safety Pack (PR#6 `a9245d5`), amplified by free-tier model routing**.
+- **`verify_support_status` false abstention** + **the line-356 re-stamp** (`09d4f07`). Once an answer acknowledged any gap, the supported→partial→unsupported cascade had no path back to "supported" even when the verifier itself found grounded `supported_facts` and an empty `missing_or_ambiguous_facts`; and even after the verifier returned "supported", `supported=True` was gated on `not _answer_reports_support_gap(answer_text)`, so a polite caveat kept `supported=False` and `elif not supported` re-stamped "unsupported". A fully-grounded, correctly-cited answer was abstained purely for hedging. Fixed: the verifier's evidence-grounded verdict wins over the answer's self-doubt; genuine verifier-found gaps still → partial/unsupported (over-correction guard test added).
+- **Amplifier removed**: free-tier `answer_model` `gpt-5.4-nano → gpt-5.4-mini` (`09d4f07`). Nano's looser JSON shaping + heavier hedging is what made the two defects fire on the default path. Quality-over-COGS; free-tier answer cost rises (documented in `backend/tiers.py`).
+- **Schema-strict posture** `extra="forbid" → "ignore"` on `StructuredLLMModel` (`fad5c47`). Defence-in-depth, scoped honestly: the OpenAI structured-outputs strict `response_format` (`_enforce_strict_schema` force-sets `additionalProperties:false` independently) is the real fail-closed guard, so this only relaxes the redundant client-side re-validation — a benign extra key when strict mode isn't honoured no longer nukes the whole answer; required-field/type/enum enforcement is unchanged.
+- **Hardening**: a golden-hash byte-identity guard over all 7 active registry prompts (`test_prompt_registry.py`) — the PR#5 migration shipped without one; a future `v1.json` edit dropping a required key would otherwise silently universal-abstain via the schema gate.
+- Verified the rest of the 5-6-day surface: retrieval/ingestion LLM call sites (router/planner/landmarks/classifier) all degrade gracefully on drift (heuristic / deterministic plan / no-enrichment / keyword fallback) — the dangerous strict-gate class is confined to the /qa answer+verifier path, now fixed. File-storage fails loud (FileNotFound, not silent-empty); retention sweeper is inactivity-TTL with activity refresh (not creation+30d); quota gate order is correct. None architecture-breaking.
+
+### Pricing truthfulness (landing vs. wired code)
+
+- `70b19c9`: Pro **"Export to Word + Notion"** had zero implementation (no export endpoint, "notion" appears nowhere in the repo; only an ungated plain-text "Copy answer"). On a self-serve checkout tier that's a false-advertising liability — removed (propagates to Business via "Everything in Pro"). Business **"5-seat team workspace" / "SSO + audit log"** — no team/seat/SSO/audit anywhere; reframed as "on request" (Business is sales-led/Contact-us), blurb softened.
+- `b514457`: the product is **single-document by design** — `_find_active_workspace_document` keeps the one most-recent doc and deletes all others on every workspace resolve ("one workspace per user"; no document list endpoint; no switcher). So Free "3 active documents" and Pro "Unlimited documents" (and the blurbs carrying the same claim) misrepresented the core model — removed; blurbs reblurbed to real wired differentiators; the COGS comment reconciled with a guard note that doc-count is deliberately not a tier lever. Every remaining bullet on every tier is now verified against `backend/tiers.py` + the live gates.
+
+### Quota/tier UX + UI polish
+
+- Quota-UX P1/P2/P3 (`637c7e0`, `425a87d`, `375f30c`, `c7fcf5e`): correct quota-limit framing + an upgrade CTA on the locked Premium toggle, themed CTA using brand hex (not `var(--accent)`), and surfacing workspace retention so the sweep isn't silent.
+- Mobile/Read-Mode/command-palette polish + cookie-consent (the 2026-05-16 sub-batch `889ec3c`…`771ba16`): mobile PDF edge-to-edge / fit-overshoot / touch-scroll inside the vaul sheet, single-line ask-row, command-palette mint styling + Sections-group removal, person glyph for signed-out, answer-feedback form CSS, always-visible Premium toggle, dropped the Read Mode abstention banner, and cookie consent persisted in a parent-domain cookie instead of localStorage.
+
+Status: the full 29-commit batch is **local and unpushed** (HelpmateAI is ~29 ahead of `origin/main`). It is held deliberately behind one gate.
+
+Why now:
+
+- the cited-passage navigation defect (D3 ring trap) was a root-cause ingestion problem, not a viewer patch — fixing it where the page label is born (the rendition) also recovered DOCX table/header/footer content that python-docx silently dropped
+- the abstention regression was systemic (a confirmed logic bug + a model-downgrade amplifier landing in the same window with no integration eval between them) — exactly the class of drift the deferred ADR-020 eval exists to catch
+- promising unbuilt features on a self-serve paid tier is a consumer-protection liability the moment the Lemon Squeezy variant goes live; the single-document positioning is the headline product-model claim and was misrepresented on every tier including Free
+
+Challenges:
+
+- the abstention bug was two *coupled* defects — fixing only the verifier cascade left it still broken; the failing regression test (not the code read) is what surfaced the second defect downstream
+- the prompt-drift hypothesis had to be settled by direct byte comparison of all 7 prompts against their pre-registry inline form, not assumed; it was clean, which sharpened the diagnosis to the Python logic
+- "scanned, not verified" is not "safe" — the medium-risk register items (file-storage, retention sweeper, quota gate, support_summary) each needed their actual failure path read before they could be cleared
+
+Improvements:
+
+- DOCX Read Mode page hints are now correct by construction (extracted from the exact PDF the viewer serves), and DOCX table/header/footer text is captured for the first time
+- the abstention layer no longer punishes a well-grounded answer for honestly hedging; the prompt-drift golden-hash guard makes a future silent prompt regression a hard test failure
+- the landing now promises only what the code delivers; the COGS comment carries an in-code guard against re-adding multi-doc copy
+
+ADRs added:
+
+- [ADR-021: DOCX ingestion via LibreOffice rendition + generalized table extraction](adr/ADR-021-docx-via-pdf-rendition-and-generalized-table-extraction.md)
+- [ADR-022: Single-document workspace is the product model](adr/ADR-022-single-document-workspace-product-model.md)
+- [ADR-023: Abstention-robustness posture after the Safety-Pack regression](adr/ADR-023-abstention-robustness-posture.md)
+
+Eval gate (carried, not yet cleared):
+
+- This batch changes ingestion AND the full abstention surface (verifier logic + default answer model + structured-output posture). Per ADR-020, run the manual eval on a pre-batch commit as baseline vs. current HEAD and compare FinanceBench / final-eval supported-rate **before pushing**. The expectation is neutral-to-up (the changes are recovery + correctness), but it is unverified until measured; the batch stays local until then.
+
 ## Day 36: Doc Hygiene + Operational Recovery + Cost-Aware Eval Pacing
 
 - Switched `backend/nightly_eval` to **manual-only mode** (commit `2252dbd`). Real RAGAS + FinanceBench + final_eval runs cost ~\$1.5-3 in OpenAI per invocation (~600-1000 LLM calls); daily would burn \$45-90/month at pre-revenue stage. The Sentry Crons heartbeat is now gated on `HELPMATE_NIGHTLY_EVAL_MONITOR_ENABLED` (default off), and the cron line on the VPS was disabled with a documentation block describing the re-enable path. ADR-020 captures the cost rationale and the re-enable trigger (revenue justifying daily regression detection).

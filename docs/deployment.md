@@ -68,6 +68,12 @@ Optional cloud-persistence variables:
 - `HELPMATE_CHROMA_HTTP_HEADERS`
 - `HELPMATE_WORKSPACE_RETENTION_HOURS`
 - `HELPMATE_CHROMA_UPSERT_BATCH_SIZE`
+- `HELPMATE_TABLE_PREGATE_MIN_LINES` (default `3`) — tunes the vocabulary-free structural table pre-gate; lower = higher recall / more pdfplumber passes (see [ADR-021](adr/ADR-021-docx-via-pdf-rendition-and-generalized-table-extraction.md))
+- `HELPMATE_TABLE_EXTRACTOR_MAX_PAGES` (default `0` = unlimited) — **changed from a hard 40**; now a safety valve only. A table on page 150 of a 200-page report must still be captured
+
+Operational note — DOCX ingest now depends on LibreOffice (`soffice`): DOCX is extracted from its LibreOffice PDF rendition, not python-docx (ADR-021). LibreOffice was already required for the Read Mode viewer rendition, so this adds no new system dependency; if `soffice` is missing, ingest falls back to python-docx (single-page, no table/header text, no page-aligned Read Mode) — install `libreoffice-core` + `libreoffice-writer` on the VPS to keep the full path.
+
+Cost note — the **free tier `answer_model` is now `gpt-5.4-mini`** (was `gpt-5.4-nano`; see ADR-023). Free-tier per-answer OpenAI cost rises accordingly; this is a deliberate quality-over-COGS decision (nano was amplifying spurious abstentions). Do not revert to nano without re-running the COGS math and re-checking the abstention posture.
 
 Current production-friendly backend mode:
 

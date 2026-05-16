@@ -33,6 +33,12 @@ Current ADRs:
 - `ADR-019-eu-cookie-consent-banner-and-gdpr-analytics-gating.md`
 - `ADR-020-manual-only-nightly-eval-at-pre-revenue-stage.md`
 
+**Ingestion + correctness hardening (ADR-021..023):**
+
+- `ADR-021-docx-via-pdf-rendition-and-generalized-table-extraction.md` — DOCX ingested through its LibreOffice rendition (fixes the Read Mode page-hint root cause + recovers DOCX table/header text); table pre-gate generalized off the eval-corpus word allowlist; page cap removed. Refines the DOCX-extraction half of ADR-014.
+- `ADR-022-single-document-workspace-product-model.md` — records that the product is a single-document workspace (one doc per user; a new upload supersedes); doc-count is deliberately not a tier lever (pricing copy must not claim multi-doc).
+- `ADR-023-abstention-robustness-posture.md` — fixes + pins the Safety-Pack abstention regression: verifier verdict wins over answer self-doubt, `extra="ignore"` (server-side strict is the real guard), free-tier model mini-not-nano, prompt-drift golden-hash guard. Refines ADR-011.
+
 Usage notes:
 
 - ADRs describe why a decision was made, not just what the code looks like today
@@ -81,6 +87,11 @@ Current state note:
   - traces follow the same workspace retention window locally and in Supabase
 - the newest product-surface change is:
   - an in-app source viewer (Read Mode) replaces the dead "Open in source" link with a layout posture that puts the chat and the PDF side-by-side on desktop and as a draggable bottom sheet on mobile
-  - DOCX uploads now produce a viewable PDF rendition at ingest via LibreOffice, so the viewer experience is uniform across formats
+  - DOCX is now both rendered AND **ingested** through its LibreOffice PDF (ADR-021): chunk page labels equal the physical page of the exact PDF Read Mode serves, so the cited-passage page hint is correct by construction (this superseded the old hint-page + ±3-ring + soft-banner heuristic, which structurally failed for DOCX since python-docx produced a single `"Document"` page)
   - a new `GET /documents/{id}/file` endpoint serves the rendition inline (with HTTP Range support for PDF.js streaming) and the original source under `?download=1`
-  - the viewer uses a hint-page + ±3 page window strategy to locate the cited passage, falling back to a soft banner rather than a far-page jump when the chunk's anchor text cannot be matched
+  - Read Mode highlight is scoped to the resolved page (no document-wide bleed) and uses multi-anchor sub-phrases so the highlight spans the cited passage, not an 80-char prefix
+- the newest correctness + positioning closure is (ADR-021..023):
+  - DOCX ingestion root-caused: extracted from the LibreOffice rendition, table pre-gate generalized off the eval-corpus word allowlist, page cap removed
+  - abstention-robustness posture pinned: the support-status verifier's evidence verdict wins over an answer's honest hedging; `StructuredLLMModel` is `extra="ignore"` (OpenAI strict `response_format` is the real fail-closed guard); free-tier answer model is `gpt-5.4-mini` not nano; a golden-hash guard makes prompt drift a hard test failure
+  - the product is recorded as a single-document workspace — doc-count is deliberately not a tier lever; landing pricing carries only wired claims (no fabricated export / multi-doc / enterprise bullets)
+  - this batch is local/unpushed pending the ADR-020 baseline-vs-HEAD eval (it changes ingestion + the full abstention surface the FinanceBench/final-eval suites measure)

@@ -40,15 +40,15 @@ Recommended deployment shape:
 
 ## Ingestion And Structure Layer
 
-The ingestion path captures more than raw text. PDF and DOCX extraction run through predictable local backends, with a selective table-enrichment pass for PDFs:
+The ingestion path captures more than raw text. PDF and DOCX both flow through the same proven local PDF path, with a generalized structural table-enrichment pass (see [ADR-021](adr/ADR-021-docx-via-pdf-rendition-and-generalized-table-extraction.md)):
 
 - `HELPMATE_PDF_EXTRACTOR=pypdf` is the default for PDFs and uses the lightweight local text extractor
-- `HELPMATE_DOCX_EXTRACTOR=python-docx` is the default for DOCX files
-- `HELPMATE_TABLE_EXTRACTOR=pdfplumber` is the default table-enrichment path for likely table-heavy PDF pages
-- `HELPMATE_TABLE_EXTRACTOR=off` disables table enrichment
-- `HELPMATE_TABLE_EXTRACTOR_MAX_PAGES=40` caps how many candidate pages are reviewed by pdfplumber
+- **DOCX is ingested through its LibreOffice PDF rendition**, not python-docx. The rendition the viewer already serves (`viewable_pdf_path`, [ADR-014](adr/ADR-014-in-app-source-viewer-with-pdfjs-and-docx-rendition.md)) is staged before extraction and run through the same `pypdf` + pdfplumber path as native PDFs, so DOCX chunk `page_label`s equal the physical page of the exact PDF Read Mode displays. python-docx (`HELPMATE_DOCX_EXTRACTOR`) remains only as the fallback when LibreOffice is unavailable (self-consistent: the viewer is download-only there too)
+- `HELPMATE_TABLE_EXTRACTOR=pdfplumber` is the default table-enrichment path; `=off` disables it
+- table candidacy is now a **vocabulary-free structural pre-gate** (captioned `Table/Exhibit N`, or rows with column-gap structure / numeric density) — not the former eval-corpus word allowlist. Detection is `lines`-strategy first with a per-page `text`-strategy fallback only where `lines` found nothing (borderless tables, e.g. Word tables LibreOffice renders without ruling), behind a shared shape-filter precision guard
+- `HELPMATE_TABLE_PREGATE_MIN_LINES=3` tunes the structural pre-gate; `HELPMATE_TABLE_EXTRACTOR_MAX_PAGES=0` (unlimited, the new default — was a hard 40) caps candidate pages only as a safety valve for pathological inputs
 
-`pypdf` and `python-docx` stay as the production defaults because they are fast, local, and fail predictably on large reports. Full-text extraction with pdfplumber was tested on policy, thesis, FOMC, and technical-report PDFs, but it was generally slower and sometimes worse for prose and front matter. Instead, pdfplumber is used only where it helps most: extracting table artifacts from pages that already look numeric, tabular, or captioned.
+`pypdf` stays the production text backend because it is fast, local, and fails predictably on large reports. Full-text extraction with pdfplumber was tested on policy, thesis, FOMC, and technical-report PDFs, but it was generally slower and sometimes worse for prose and front matter. Instead, pdfplumber is used only for table artifacts on pages the structural pre-gate flags.
 
 Managed cloud layout parsers and Docling were tested as candidates for table and heading extraction, but they added too much latency, operational complexity, or install/runtime weight for the current product path. The selected text backend and table-enrichment backend are recorded in document and page metadata so extraction behavior is visible in traces and eval reports.
 
