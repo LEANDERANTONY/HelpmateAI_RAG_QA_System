@@ -32,8 +32,13 @@ type Tier = {
 // Tier caps + prices are sized against actual unit economics — see the
 // COGS analysis in the project README/docs. The short version:
 //
-//   • Storage is essentially free (~$0.02/GB-month) so "Unlimited
-//     documents" is safe at all paid tiers.
+//   • The product is a single-document workspace — one active doc per
+//     user; a new upload supersedes the prior. There is no per-user
+//     document library to bound, so storage is a non-factor and
+//     document COUNT is deliberately NOT a tier lever (don't re-add
+//     "N documents" / "Unlimited documents" copy — it misrepresents
+//     the model). Tiers differentiate on file size, questions/mo,
+//     Premium-answer caps, and retention.
 //   • The LLM answer model is the dominant cost driver. We use
 //     gpt-5.4-mini as the default workhorse (~$0.008/query) and quota
 //     GPT-5.5 as Premium answers (~$0.052/query, 6.5x more expensive).
@@ -49,10 +54,9 @@ const TIERS: Tier[] = [
     id: "free",
     name: "Free",
     price: 0,
-    blurb: "Try Helpmate on a few documents.",
+    blurb: "Try Helpmate on your own document.",
     cta: { label: "Start free", href: WORKSPACE_URL },
     features: [
-      "3 active documents",
       "25 MB file size cap",
       "50 questions / month",
       "Read Mode + citations",
@@ -63,11 +67,10 @@ const TIERS: Tier[] = [
     id: "pro",
     name: "Pro",
     price: 9,
-    blurb: "Unlimited docs for individuals.",
+    blurb: "More questions, bigger files, premium answers.",
     cta: { label: "Get Pro", href: WORKSPACE_URL },
     featured: true,
     features: [
-      "Unlimited documents",
       "150 MB file size cap",
       "500 questions / month",
       "25 Premium answers (GPT-5.5) / month",
