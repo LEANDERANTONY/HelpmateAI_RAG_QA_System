@@ -398,6 +398,53 @@ export const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>(function Pd
       });
       linkService.setViewer(viewer);
 
+      // Fit the PDF to its container. Two strategies by viewport:
+      //
+      //  Desktop  → pdfjs's "page-width" sentinel. It reserves a
+      //             hardcoded SCROLLBAR_PADDING (40px) before deriving
+      //             the scale, which is correct there: the desktop
+      //             pane shows a real scrollbar, and the resulting
+      //             centred-page-on-dark-backdrop is the intended
+      //             document-reader look.
+      //
+      //  Mobile   → an EXPLICIT numeric scale = clientWidth /
+      //             nativePageWidth. The sheet scrolls by touch
+      //             (overlay scrollbar; the custom one is hidden in
+      //             CSS at <=900px), so reserving pdfjs's 40px just
+      //             leaves a dark gutter on both sides — the page
+      //             renders ~40px narrower than the sheet and its
+      //             margin:auto centres the gap into view. Computing
+      //             the scale ourselves fills the sheet edge to edge.
+      //
+      // Re-run on resize (orientation flip, sheet snap, pane drag) so
+      // the fit stays fresh. Defensive: if the first page isn't
+      // measurable yet, fall back to "page-width" — the ResizeObserver
+      // fires again once layout settles and recomputes.
+      const applyFitScale = () => {
+        const state = stateRef.current;
+        if (!state?.pagesReady) return;
+        try {
+          const isMobile = window.matchMedia("(max-width: 900px)").matches;
+          if (!isMobile) {
+            state.viewer.currentScaleValue = "page-width";
+            return;
+          }
+          const pageView = state.viewer.getPageView(0) as
+            | { viewport?: { width: number; scale: number } }
+            | undefined;
+          const vp = pageView?.viewport;
+          const nativeWidth = vp && vp.scale ? vp.width / vp.scale : 0;
+          const targetWidth = container.clientWidth;
+          if (nativeWidth > 0 && targetWidth > 0) {
+            state.viewer.currentScale = targetWidth / nativeWidth;
+          } else {
+            state.viewer.currentScaleValue = "page-width";
+          }
+        } catch {
+          /* viewer mid-teardown */
+        }
+      };
+
       // pagesinit fires once the viewer knows the page count and can
       // accept currentPageNumber / find dispatches. Before this fires,
       // navigation calls are silently dropped.
@@ -406,13 +453,7 @@ export const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>(function Pd
         if (stateRef.current) {
           stateRef.current.pagesReady = true;
         }
-        // Fit pages to the container width so PDFs don't overflow
-        // horizontally on narrow viewports. "page-width" is a PDF.js
-        // sentinel — assigning to currentScaleValue re-derives the
-        // numeric scale from the container's current width, so we can
-        // re-apply on resize (orientation change, sheet snap change,
-        // window resize) to keep the fit fresh.
-        viewer.currentScaleValue = "page-width";
+        applyFitScale();
         setLoadState("ready");
         // Notify parent of total page count so its chrome can render
         // the page-nav controls. Fires exactly once per document load.
@@ -457,13 +498,10 @@ export const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>(function Pd
         rescaleScheduled = true;
         window.requestAnimationFrame(() => {
           rescaleScheduled = false;
-          const state = stateRef.current;
-          if (!state?.pagesReady) return;
-          try {
-            state.viewer.currentScaleValue = "page-width";
-          } catch {
-            /* viewer may be mid-teardown */
-          }
+          // applyFitScale picks page-width (desktop) vs explicit
+          // numeric (mobile) and has its own pagesReady + teardown
+          // guards, so the rAF body just delegates.
+          applyFitScale();
         });
       };
       const resizeObserver = new ResizeObserver(rescaleToFit);

@@ -4089,6 +4089,33 @@ input[type="file"]:disabled::file-selector-button {
   .h-shell[data-read-mode="read"][data-mobile-snap="full"] .h-ask-group {
     display: none;
   }
+
+  /* Mobile PDF should fill the sheet edge to edge. Two things produce
+     the "dark wall on the sides" otherwise:
+       1. Our custom 10px webkit scrollbar reserves a gutter. Touch
+          devices scroll with overlay scrollbars, so the reserved
+          column is pure waste — hide it and reclaim the width.
+       2. The desktop .page rule centres the page with `margin: auto`
+          and frames it with an L/R border + radius (the "document on
+          a dark backdrop" reader look). On a phone that framing just
+          shows the container behind the page. Strip it so the page
+          sits flush; keep only a thin inter-page bottom gap.
+     The matching width fix (so the page is actually AS WIDE as the
+     sheet, not 40px narrower from pdfjs's SCROLLBAR_PADDING) lives in
+     pdf-viewer.tsx — see applyFitScale. */
+  .h-pdf-container {
+    scrollbar-width: none;
+  }
+  .h-pdf-container::-webkit-scrollbar {
+    display: none;
+  }
+  .h-pdf-container .pdfViewer .page {
+    border-left: 0;
+    border-right: 0;
+    border-radius: 0;
+    box-shadow: none;
+    margin: 0 0 8px 0;
+  }
 }
 
 /* === Mobile sheet — vaul Drawer.Content === */
