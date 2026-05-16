@@ -3410,7 +3410,14 @@ input[type="file"]:disabled::file-selector-button {
 
   .h-wordmark,
   .h-account-email,
-  .h-palette span span {
+  .h-palette span span,
+  /* ⌘K is a desktop keyboard hint — no Cmd+K on touch, same dead
+     affordance we dropped for ⌘↵ in the ask row. The magnifier icon
+     stays as the tap target so search (docs / questions / sections)
+     is still reachable on mobile; only the kbd glyph goes. The
+     palette dropdown itself already hides its keyboard hints
+     (.h-palette-esc / .h-palette-shortcut) at this breakpoint. */
+  .h-palette kbd {
     display: none;
   }
 
