@@ -3682,7 +3682,15 @@ input[type="file"]:disabled::file-selector-button {
 
   .h-ask-group {
     bottom: 0;
-    margin-top: auto;
+    /* Was `margin-top: auto`, which in this mobile flex column ate
+       ALL leftover viewport height as top margin to bottom-anchor the
+       ask box — on a tall phone with a short/empty thread that's a
+       huge empty band that shoves the question panel way down. A small
+       fixed margin keeps it tucked just below the content; the sticky
+       `bottom: 0` still pins it to the viewport on scroll, so the
+       reachable-while-scrolling behaviour is unchanged. Desktop is
+       unaffected (its .h-ask-group has no margin-top rule). */
+    margin-top: 16px;
     position: sticky;
     top: auto;
     z-index: 25;
