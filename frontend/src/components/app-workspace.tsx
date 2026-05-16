@@ -29,7 +29,7 @@ import {
 } from "@/lib/api";
 import { ApiError } from "@/lib/api-errors";
 import type { AuthUserSummary } from "@/lib/auth";
-import { notifyApiError, notifyError, notifyInfo, notifySuccess } from "@/lib/toast";
+import { notifyApiError, notifyError, notifyUpgrade, notifySuccess } from "@/lib/toast";
 import {
   splitCitationSegments,
   stripReferencesBlock,
@@ -885,9 +885,9 @@ function AskBlock({
               onPremiumToggle(!premiumActive);
               return;
             }
-            notifyInfo(
+            notifyUpgrade(
               "Premium answers (GPT-5.5)",
-              "This is a paid feature. Upgrade your plan to unlock premium answers.",
+              "This is a paid feature — upgrade your plan to unlock premium answers.",
             );
           }}
         >

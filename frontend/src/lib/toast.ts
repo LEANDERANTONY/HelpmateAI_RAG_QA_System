@@ -84,6 +84,28 @@ export function notifyInfo(title: string, body?: string) {
   toast(title, { description: body });
 }
 
+/**
+ * Paid-feature / upgrade nudge carrying the SAME mint "See plans" CTA
+ * the quota toasts use (h-toast-action-upgrade → safeUpgradeUrl), so
+ * every "this is a paid feature" surface gets one consistent upgrade
+ * path. Neutral toast (not toast.error) — a client-side paid-feature
+ * pre-check isn't an error. There's no backend upgrade_url on the
+ * client gate, so it points at the default pricing page.
+ */
+export function notifyUpgrade(title: string, body?: string) {
+  const target = safeUpgradeUrl(null);
+  toast(title, {
+    description: body,
+    action: {
+      label: "See plans",
+      onClick: () => {
+        window.open(target, "_blank", "noopener,noreferrer");
+      },
+    },
+    classNames: { actionButton: "h-toast-action-upgrade" },
+  });
+}
+
 export function notifySuccess(title: string, body?: string) {
   toast.success(title, { description: body });
 }
