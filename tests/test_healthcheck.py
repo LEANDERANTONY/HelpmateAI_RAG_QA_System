@@ -75,7 +75,8 @@ def test_healthcheck_passes_on_clean_state(tmp_path):
 
 def test_healthcheck_degraded_on_expired_backlog(tmp_path, monkeypatch):
     """A backlog of expired-but-undeleted documents — the signature of
-    a stalled Supabase pg_cron retention job — fails retention_backlog."""
+    a sweeper that runs but isn't clearing expired rows — fails
+    retention_backlog."""
     monkeypatch.setattr(hc, "MAX_EXPIRED_BACKLOG", 2)
     settings = _settings(tmp_path)
     settings.ensure_dirs()

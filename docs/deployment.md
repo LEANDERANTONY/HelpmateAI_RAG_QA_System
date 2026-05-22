@@ -259,7 +259,7 @@ Zero scheduled LLM-spending jobs. The two pg_cron jobs on the Job Agent Supabase
 
 ### Daily Retention Healthcheck
 
-`backend.healthcheck` is the daily backstop for the retention pipeline. It reads the document store + the local upload directory and asserts cleanup is *keeping up* — a small expired-document backlog (the Supabase pg_cron retention signal, otherwise unmonitored) and an upload directory that hasn't outgrown the active-document count (the workspace-sweeper signal). The Day 22 sweeper Sentry monitor proves the sweep *ran*; this proves it is *effective*.
+`backend.healthcheck` is the daily backstop for the retention pipeline. It reads the document store + the local upload directory and asserts cleanup is *keeping up* — a small expired-document backlog (the sweeper's Supabase-side cleanup) and an upload directory that hasn't outgrown the active-document count (the sweeper's disk-side cleanup). The sweeper's Sentry monitor proves the sweep *ran*; this proves it is *effective*.
 
 It is read-only, spends no LLM tokens, and — unlike `nightly_eval` — is **not** env-gated: the crontab line above runs it unconditionally. The run is wrapped in a Sentry Crons check-in (`helpmate-healthcheck`, `30 4 * * *`): the check-in resolves `ok` when the healthcheck RAN (even if it found degradation) and `error` only when it could not run at all. A degraded *result* is a separate error-level Sentry message — so a missed check-in means "the healthcheck never ran", while a degraded message means "it ran and the retention pipeline is unhealthy". The monitor self-creates in Sentry on the first check-in after deploy.
 

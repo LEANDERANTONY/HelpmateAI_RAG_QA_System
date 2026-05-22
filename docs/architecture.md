@@ -418,7 +418,7 @@ Operational surface:
 - A `/health/sentry-debug` route deliberately raises a `ZeroDivisionError` for end-to-end DSN verification on first deploy — `HELPMATE-BACKEND-1` in the issue feed is the deliberate smoke-test issue
 - The `nightly_eval` Sentry Crons monitor is env-gated (`HELPMATE_NIGHTLY_EVAL_MONITOR_ENABLED`) so manual runs from a shell don't fire false missed-heartbeat alerts; see [ADR-020](adr/ADR-020-manual-only-nightly-eval-at-pre-revenue-stage.md)
 - The every-10-minute VPS workspace sweeper (`python -m backend.maintenance`) is wrapped in a Sentry Crons check-in (`helpmate-workspace-sweeper`); the sweeper keeps local disk from filling with expired uploads/indexes/cache, and a missed or errored check-in surfaces a silently-dead sweep. Unlike the `nightly_eval` monitor it is not env-gated — the sweeper cron runs unconditionally
-- `backend.healthcheck` runs daily (`helpmate-healthcheck` Sentry Crons monitor) as a read-only backstop — it asserts the retention pipeline is *keeping up*: the expired-document backlog is small (the otherwise-unmonitored Supabase pg_cron retention signal) and the upload directory hasn't outgrown the active-document count. A degraded result is reported to Sentry as an error-level message, distinct from a missed check-in
+- `backend.healthcheck` runs daily (`helpmate-healthcheck` Sentry Crons monitor) as a read-only backstop — it asserts the retention pipeline is *keeping up*: the expired-document backlog is small and the upload directory hasn't outgrown the active-document count. The sweeper's own monitor proves it *ran*; the healthcheck proves it *worked*. A degraded result is reported to Sentry as an error-level message, distinct from a missed check-in
 
 Source maps:
 

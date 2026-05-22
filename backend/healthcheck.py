@@ -1,19 +1,22 @@
 """Daily health check for the HelpmateAI retention pipeline.
 
-HelpmateAI runs two background cleanup jobs: a Supabase ``pg_cron`` job
-that deletes expired workspace rows every 5 minutes, and the VPS
-workspace sweeper (``backend.maintenance``, every 10 minutes) that
-clears the matching files off local disk. The sweeper is wrapped in a
-Sentry Crons check-in — but that only proves the sweep *ran*, not that
-cleanup is actually *keeping up*, and the Supabase pg_cron has no
-monitor of its own at all.
+HelpmateAI retention runs on a single background job: the VPS
+workspace sweeper (``backend.maintenance``, every 10 minutes), which
+deletes expired workspace rows from Supabase *and* clears the matching
+files off local disk and the Storage bucket. The sweeper is wrapped in
+a Sentry Crons check-in (``helpmate-workspace-sweeper``) — but that
+only proves the sweep *ran*, not that cleanup is actually *keeping
+up*: a sweeper that fires every cycle but silently fails to delete (a
+broken Supabase call, a partial error) still reports an ``ok``
+check-in while expired data piles up.
 
 ``run_healthcheck`` is the daily backstop. It reads HelpmateAI's
 document store + the local upload directory and asserts a couple of
 invariants:
 
   * retention_backlog — few expired-but-undeleted documents remain.
-    A backlog means the Supabase pg_cron retention job has stopped.
+    A backlog means the sweeper is running but not actually clearing
+    expired rows.
   * disk_not_filling  — the upload directory hasn't accumulated far
     more files than there are active documents, which would mean the
     sweeper has stopped clearing local disk.
@@ -48,7 +51,7 @@ logger = logging.getLogger(__name__)
 _CRON_MONITOR_SLUG = "helpmate-healthcheck"
 
 # A handful of expired-but-undeleted documents is normal in the gap
-# between expiry and the next pg_cron tick; a real backlog is not.
+# between expiry and the next sweeper tick; a real backlog is not.
 MAX_EXPIRED_BACKLOG = 25
 
 # The upload dir holds up to ~2 files per active document (the source
@@ -120,7 +123,7 @@ def run_healthcheck(settings: Settings | None = None) -> dict[str, Any]:
     disk_ceiling = 2 * total + DISK_SLACK
 
     checks = [
-        # retention_backlog — the Supabase pg_cron retention signal.
+        # retention_backlog — cross-checks the sweeper's Supabase-side cleanup.
         _check(
             "retention_backlog",
             expired <= MAX_EXPIRED_BACKLOG,
