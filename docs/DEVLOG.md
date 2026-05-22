@@ -1097,3 +1097,15 @@ Improvements:
 Verification:
 
 - `tests/test_workspace_sweeper.py` extended — `main()` runs the sweep and prints the summary, a sweep failure re-raises, the check-in helpers no-op when Sentry is unconfigured, and the pytest guard is exercised. 5 tests green.
+
+## Day 23: PostHog Funnel Instrumentation
+
+- Instrumented the three missing funnel events in the backend so the product funnel is finally visible in PostHog: `document_uploaded` (the `/documents/upload` route), `document_indexed` (`/documents/{id}/index`), and `quota_blocked` (every quota-gate rejection).
+- Before this the backend emitted only `qa_answered`, `feedback_submitted`, and the `$ai_generation` LLM-Analytics events — PostHog could see questions and feedback but nothing upstream. The upload → index → ask conversion, and which plan limit users hit, were both invisible.
+- `quota_blocked` is wired through a small `_quota_blocked` passthrough helper that wraps a quota check's result: when the check returns a rejection `JSONResponse`, the helper emits the event (tagged with a `gate` name — `upload_file_size`, `upload_doc_count`, `premium_quota`, `question_quota`) and returns the response unchanged, so each call site keeps its `if response is not None: return response` shape.
+- `document_uploaded` / `document_indexed` are post-success emits mirroring the existing `qa_answered` pattern — fire-and-forget, no PII in properties (tier, file type, chunk / section counts).
+- Added a pytest guard to `_init_posthog` (mirroring the one `_init_sentry` already had): the local `.env` carries a real `POSTHOG_API_KEY`, so without it every test exercising an instrumented route would ship events into the production analytics project.
+
+Verification:
+
+- New `tests/test_funnel_events.py` covers the `_quota_blocked` helper (passthrough on allow, emit on reject). The existing quota + feedback suites stay green — the gate wrap changes behavior only by adding the telemetry side-effect. 35 tests green across the funnel / quota / feedback files.

@@ -723,6 +723,32 @@ def sentry_debug() -> None:
     return None
 
 
+def _quota_blocked(
+    response: JSONResponse | None,
+    *,
+    user: AuthenticatedUser,
+    gate: str,
+) -> JSONResponse | None:
+    """Pass a quota check's result through, emitting a ``quota_blocked``
+    PostHog event when the check rejected.
+
+    A quota helper (``check_question_quota``, ``check_file_size_cap``,
+    ...) returns a ``JSONResponse`` on rejection or ``None`` when the
+    action is allowed. Wrapping the call in ``_quota_blocked`` records
+    the rejection as a funnel event — ``gate`` names which limit fired —
+    and returns the value unchanged so the caller keeps its
+    ``if response is not None: return response`` shape. Fire-and-forget:
+    ``capture_event`` swallows its own errors.
+    """
+    if response is not None:
+        capture_event(
+            distinct_id=user.id,
+            event="quota_blocked",
+            properties={"gate": gate, "tier": resolve_user_tier(user)},
+        )
+    return response
+
+
 @app.post("/documents/upload", response_model=DocumentBundleResponse)
 async def upload_document(
     request: Request,
@@ -759,10 +785,10 @@ async def upload_document(
     # actual body size after multipart parsing, not the envelope-
     # inflated Content-Length. See check_file_size_cap's docstring.
     file_size = file.size or 0
-    size_response = check_file_size_cap(
-        file_size=file_size,
-        tier=tier,
-        limits=limits,
+    size_response = _quota_blocked(
+        check_file_size_cap(file_size=file_size, tier=tier, limits=limits),
+        user=user,
+        gate="upload_file_size",
     )
     if size_response is not None:
         return size_response
@@ -770,10 +796,12 @@ async def upload_document(
     # Gate 3 — active document count vs tier cap. Counts BEFORE the
     # existing-doc deletion below, so a re-upload of the user's single
     # workspace doc sees count=1 (allowed under cap=3 for free).
-    count_response = check_doc_count_cap(
-        active_count=_count_active_documents(user),
-        tier=tier,
-        limits=limits,
+    count_response = _quota_blocked(
+        check_doc_count_cap(
+            active_count=_count_active_documents(user), tier=tier, limits=limits
+        ),
+        user=user,
+        gate="upload_doc_count",
     )
     if count_response is not None:
         return count_response
@@ -801,6 +829,13 @@ async def upload_document(
 
     document = _save_touched_document(document, user)
     existing_index = _store().get_index(document.document_id)
+    # PostHog funnel event — the top of the HelpmateAI funnel
+    # (document intake). Server-side, fire-and-forget; no PII.
+    capture_event(
+        distinct_id=user.id,
+        event="document_uploaded",
+        properties={"tier": tier, "file_type": suffix.lstrip(".")},
+    )
     return DocumentBundleResponse(
         document=_document_payload(document),
         index=existing_index.to_dict() if existing_index else None,
@@ -915,6 +950,17 @@ def build_or_load_index(
     index_record = _pipeline().build_or_load_index(document)
     document = _save_touched_document(document, user)
     _store().save_index(index_record)
+    # PostHog funnel event — the document is now retrieval-ready, the
+    # second funnel step before the user can ask questions.
+    capture_event(
+        distinct_id=user.id,
+        event="document_indexed",
+        properties={
+            "tier": resolve_user_tier(user),
+            "chunk_count": index_record.chunk_count,
+            "section_count": index_record.section_count,
+        },
+    )
     return DocumentBundleResponse(
         document=_document_payload(document),
         index=index_record.to_dict(),
@@ -1113,18 +1159,22 @@ def answer_question(
     counter = _quota_store().get_counter(user.id)
 
     if payload.premium:
-        premium_response = check_premium_quota(
-            premium_used=counter.premium,
-            tier=tier,
-            limits=limits,
+        premium_response = _quota_blocked(
+            check_premium_quota(
+                premium_used=counter.premium, tier=tier, limits=limits
+            ),
+            user=user,
+            gate="premium_quota",
         )
         if premium_response is not None:
             return premium_response
 
-    quota_response = check_question_quota(
-        questions_used=counter.questions,
-        tier=tier,
-        limits=limits,
+    quota_response = _quota_blocked(
+        check_question_quota(
+            questions_used=counter.questions, tier=tier, limits=limits
+        ),
+        user=user,
+        gate="question_quota",
     )
     if quota_response is not None:
         return quota_response

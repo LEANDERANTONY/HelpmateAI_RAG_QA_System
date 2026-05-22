@@ -214,6 +214,15 @@ def _init_posthog(settings: Settings) -> None:
         logger.debug("POSTHOG_API_KEY not configured; skipping PostHog init.")
         _posthog_client = None
         return
+    if _running_under_pytest():
+        # The local .env carries a real POSTHOG_API_KEY for dev work;
+        # without this guard every test that exercises an instrumented
+        # route (upload, index, /qa, /feedback, a quota reject) would
+        # ship events into the production analytics project. Mirrors
+        # the _init_sentry pytest guard.
+        logger.debug("Pytest detected; skipping PostHog init.")
+        _posthog_client = None
+        return
     try:
         from posthog import Posthog
     except Exception as exc:  # pragma: no cover — defensive
