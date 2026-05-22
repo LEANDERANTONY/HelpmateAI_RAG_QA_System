@@ -241,7 +241,7 @@ Recommended host cron entry for local-disk cleanup:
 **Full crontab on the live VPS** (informational — what's actually scheduled):
 
 ```cron
-# HelpmateAI workspace TTL sweeper (no LLM, pure DB+disk cleanup)
+# HelpmateAI workspace TTL sweeper (no LLM, DB+disk cleanup; Sentry helpmate-workspace-sweeper monitor)
 */10 * * * * docker exec helpmate-api python -m backend.maintenance >> /var/log/helpmate-workspace-sweeper.log 2>&1
 
 # HelpmateAI daily retention healthcheck (no LLM, read-only assertion

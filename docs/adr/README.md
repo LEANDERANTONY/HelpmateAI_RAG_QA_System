@@ -95,3 +95,7 @@ Current state note:
   - abstention-robustness posture pinned: the support-status verifier's evidence verdict wins over an answer's honest hedging; `StructuredLLMModel` is `extra="ignore"` (OpenAI strict `response_format` is the real fail-closed guard); free-tier answer model is `gpt-5.4-mini` not nano; a golden-hash guard makes prompt drift a hard test failure
   - the product is recorded as a single-document workspace — doc-count is deliberately not a tier lever; landing pricing carries only wired claims (no fabricated export / multi-doc / enterprise bullets)
   - this batch is local/unpushed pending the ADR-020 baseline-vs-HEAD eval (it changes ingestion + the full abstention surface the FinanceBench/final-eval suites measure)
+- the newest observability hardening is:
+  - the every-10-minute workspace sweeper and a new daily `backend.healthcheck` both carry Sentry Crons monitors (`helpmate-workspace-sweeper`, `helpmate-healthcheck`); the healthcheck is a read-only backstop asserting the retention pipeline is keeping up
+  - the backend emits a full server-side product funnel to PostHog (`document_uploaded` → `document_indexed` → `qa_answered`, plus `quota_blocked`), surfaced on a "Helpmate AI — Product Health" dashboard
+  - extends ADR-018; no new ADR — operational hardening, recorded in DEVLOG Days 22-24

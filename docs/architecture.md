@@ -401,8 +401,8 @@ Backend (`backend/observability.py`):
 - The OpenAI integration auto-emits AI-aware spans (token count, model, latency, cost) for every LLM call inside a `/qa` request, so the per-question waterfall on the Sentry Performance dashboard shows which agent (router, planner, generator, support verifier, evidence selector) accounts for the slow tail
 - `enable_logs=True` lights up the new Sentry Logs product alongside breadcrumbs/events
 - A `before_send` filter drops intentional `HTTPException` events (4xx flow control + 5xx "not configured" / "temporarily unavailable" guards) so the issue feed stays focused on real bugs
-- A `_running_under_pytest()` guard skips Sentry init when `PYTEST_CURRENT_TEST` is set, so local test runs don't pollute the production project
-- PostHog Python client emits server-side analytics events (`qa_answered`, `feedback_submitted`) keyed on `user.id` and tagged with `product: "helpmate"` so the shared free-tier project can split events by product on dashboards
+- A `_running_under_pytest()` guard skips **both Sentry and PostHog** init when `PYTEST_CURRENT_TEST` is set, so local test runs neither pollute the production issue feed nor ship events into the analytics project
+- PostHog Python client emits server-side product-funnel events — `document_uploaded`, `document_indexed`, `qa_answered`, `quota_blocked`, `feedback_submitted` — keyed on `user.id` and tagged with `product: "helpmate"` so the shared free-tier project can split events by product; the upload → index → ask funnel is surfaced on the "Helpmate AI — Product Health" dashboard
 - Per-LLM-call `$ai_generation` events stream into PostHog's LLM Analytics dashboard with the full `$ai_*` property schema (trace_id, span_name, provider, model, tokens, cost), pulled off `cost_collector.to_payload()` after the answer cache write so cache hits don't replay events
 
 Frontend (`instrumentation-client.ts`, `posthog-provider.tsx`, `cookie-consent.tsx`):
@@ -417,6 +417,8 @@ Operational surface:
 - An uptime monitor pings `https://api.helpmateai.xyz/health` every 5 minutes from the Sentry Crons surface; failure thresholds are 3 consecutive misses to alert, 1 success to recover
 - A `/health/sentry-debug` route deliberately raises a `ZeroDivisionError` for end-to-end DSN verification on first deploy — `HELPMATE-BACKEND-1` in the issue feed is the deliberate smoke-test issue
 - The `nightly_eval` Sentry Crons monitor is env-gated (`HELPMATE_NIGHTLY_EVAL_MONITOR_ENABLED`) so manual runs from a shell don't fire false missed-heartbeat alerts; see [ADR-020](adr/ADR-020-manual-only-nightly-eval-at-pre-revenue-stage.md)
+- The every-10-minute VPS workspace sweeper (`python -m backend.maintenance`) is wrapped in a Sentry Crons check-in (`helpmate-workspace-sweeper`); the sweeper keeps local disk from filling with expired uploads/indexes/cache, and a missed or errored check-in surfaces a silently-dead sweep. Unlike the `nightly_eval` monitor it is not env-gated — the sweeper cron runs unconditionally
+- `backend.healthcheck` runs daily (`helpmate-healthcheck` Sentry Crons monitor) as a read-only backstop — it asserts the retention pipeline is *keeping up*: the expired-document backlog is small (the otherwise-unmonitored Supabase pg_cron retention signal) and the upload directory hasn't outgrown the active-document count. A degraded result is reported to Sentry as an error-level message, distinct from a missed check-in
 
 Source maps:
 
