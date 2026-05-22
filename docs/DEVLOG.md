@@ -1109,3 +1109,14 @@ Verification:
 Verification:
 
 - New `tests/test_funnel_events.py` covers the `_quota_blocked` helper (passthrough on allow, emit on reject). The existing quota + feedback suites stay green — the gate wrap changes behavior only by adding the telemetry side-effect. 35 tests green across the funnel / quota / feedback files.
+
+## Day 24: Daily Retention Healthcheck
+
+- Added `backend.healthcheck` — a daily read-only assertion over the retention pipeline, the HelpmateAI counterpart of the AI Job Agent's `cached-jobs-healthcheck`.
+- Day 22 wrapped the workspace sweeper in a Sentry cron monitor, which proves the sweep *ran*. The healthcheck is the second layer — it proves cleanup is *keeping up*. Two checks: `retention_backlog` (few expired-but-undeleted documents; a backlog means the Supabase pg_cron retention job has stopped — and that pg_cron had no monitor of its own, so this check is now it) and `disk_not_filling` (the upload directory hasn't accumulated far more files than there are active documents — the sign of a sweeper that stopped clearing disk).
+- Runs as a CLI (`python -m backend.healthcheck`) from the VPS crontab once a day (`30 4 * * *`), matching the `maintenance` / `nightly_eval` cron shape. The run is wrapped in a Sentry Crons check-in (`helpmate-healthcheck`): the check-in resolves `ok` when the healthcheck RAN — even if it found degradation — and `error` only when it could not run at all. A degraded *result* is a separate error-level Sentry message. So a missed check-in means "the healthcheck never ran"; a degraded message means "it ran and the retention pipeline is unhealthy".
+- Read-only, no LLM tokens, not env-gated (the cron always runs); pytest-guarded so test runs never fire check-ins at the production monitor. `docs/deployment.md` carries the crontab line + a runbook subsection.
+
+Verification:
+
+- New `tests/test_healthcheck.py` — a clean state passes, an expired-document backlog fails `retention_backlog`, upload-directory accumulation fails `disk_not_filling`, `main()` runs and prints the report, and the Sentry helpers no-op when unconfigured / under pytest. 6 tests green.

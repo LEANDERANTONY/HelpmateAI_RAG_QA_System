@@ -244,6 +244,10 @@ Recommended host cron entry for local-disk cleanup:
 # HelpmateAI workspace TTL sweeper (no LLM, pure DB+disk cleanup)
 */10 * * * * docker exec helpmate-api python -m backend.maintenance >> /var/log/helpmate-workspace-sweeper.log 2>&1
 
+# HelpmateAI daily retention healthcheck (no LLM, read-only assertion
+# over the retention pipeline; Sentry helpmate-healthcheck monitor)
+30 4 * * * docker exec helpmate-api python -m backend.healthcheck >> /var/log/helpmate-healthcheck.log 2>&1
+
 # AI Job Agent retention sweeper (no LLM, Supabase row cleanup only)
 17 3 * * * docker exec ai-job-application-agent-api python -m backend.maintenance >> /var/log/aijobagent-retention-sweeper.log 2>&1
 
@@ -252,6 +256,18 @@ Recommended host cron entry for local-disk cleanup:
 ```
 
 Zero scheduled LLM-spending jobs. The two pg_cron jobs on the Job Agent Supabase project (`cached_jobs_refresh_4h`, `cleanup-expired-resume-builder-sessions`) are also LLM-free.
+
+### Daily Retention Healthcheck
+
+`backend.healthcheck` is the daily backstop for the retention pipeline. It reads the document store + the local upload directory and asserts cleanup is *keeping up* — a small expired-document backlog (the Supabase pg_cron retention signal, otherwise unmonitored) and an upload directory that hasn't outgrown the active-document count (the workspace-sweeper signal). The Day 22 sweeper Sentry monitor proves the sweep *ran*; this proves it is *effective*.
+
+It is read-only, spends no LLM tokens, and — unlike `nightly_eval` — is **not** env-gated: the crontab line above runs it unconditionally. The run is wrapped in a Sentry Crons check-in (`helpmate-healthcheck`, `30 4 * * *`): the check-in resolves `ok` when the healthcheck RAN (even if it found degradation) and `error` only when it could not run at all. A degraded *result* is a separate error-level Sentry message — so a missed check-in means "the healthcheck never ran", while a degraded message means "it ran and the retention pipeline is unhealthy". The monitor self-creates in Sentry on the first check-in after deploy.
+
+**Manual one-off:**
+
+```sh
+docker exec helpmate-api python -m backend.healthcheck
+```
 
 ### Nightly Evaluation Cron — MANUAL-ONLY MODE (current default)
 
