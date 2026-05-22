@@ -6,8 +6,10 @@ import shutil
 from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any
 
 from backend.file_storage import build_file_storage
+from backend.observability import _running_under_pytest
 from backend.store import (
     WORKSPACE_EXPIRES_AT_KEY,
     build_api_record_store,
@@ -181,8 +183,101 @@ def sweep_local_workspace_storage(settings: Settings | None = None) -> SweepSumm
     return summary
 
 
+# Sentry Crons monitor slug for the workspace sweeper. Unlike the
+# nightly_eval monitor this is NOT env-gated: the sweeper cron runs
+# every 10 minutes unconditionally (see docs/deployment.md), so Sentry
+# should always expect a heartbeat.
+_CRON_MONITOR_SLUG = "helpmate-workspace-sweeper"
+
+
+def _open_sentry_checkin() -> tuple[Any, str | None]:
+    """Open a Sentry Crons check-in for the workspace sweeper.
+
+    Returns ``(sentry_sdk, check_in_id)``, or ``(None, None)`` when
+    Sentry isn't configured or shouldn't run. ``python -m
+    backend.maintenance`` is a CLI that does not import
+    ``backend.main``, so observability is never bootstrapped — a
+    dedicated Sentry client is initialized here, exactly as
+    ``backend.nightly_eval`` does. Both inits point at the same DSN.
+
+    NEVER raises: a telemetry failure must not stop the sweep. The
+    pytest guard keeps the local ``.env`` SENTRY_DSN from firing
+    test-run check-ins at the production monitor.
+    """
+    if _running_under_pytest():
+        return None, None
+    settings = get_settings()
+    if not settings.sentry_dsn:
+        return None, None
+    try:
+        import sentry_sdk
+
+        sentry_sdk.init(
+            dsn=settings.sentry_dsn,
+            environment=settings.observability_environment,
+            release=settings.observability_release or settings.retrieval_version,
+            traces_sample_rate=0.0,  # the CLI does no FastAPI request work
+            profiles_sample_rate=0.0,
+        )
+        check_in_id = sentry_sdk.crons.capture_checkin(
+            monitor_slug=_CRON_MONITOR_SLUG,
+            status="in_progress",
+            monitor_config={
+                # Every 10 minutes — matches the VPS crontab line in
+                # docs/deployment.md.
+                "schedule": {"type": "crontab", "value": "*/10 * * * *"},
+                "timezone": "UTC",
+                "checkin_margin": 5,   # minutes late before "missed"
+                "max_runtime": 8,      # minutes before "timed out"
+                "failure_issue_threshold": 1,
+                "recovery_threshold": 1,
+            },
+        )
+        return sentry_sdk, check_in_id
+    except Exception as exc:  # noqa: BLE001 — telemetry is best-effort
+        logger.warning(
+            "sentry crons init failed (%s); sweeper continues unmonitored.",
+            exc,
+        )
+        return None, None
+
+
+def _close_sentry_checkin(
+    sentry_sdk: Any, check_in_id: str | None, status: str
+) -> None:
+    """Resolve the sweeper's Sentry Crons check-in (``ok`` / ``error``)."""
+    if sentry_sdk is None or check_in_id is None:
+        return
+    try:
+        sentry_sdk.crons.capture_checkin(
+            monitor_slug=_CRON_MONITOR_SLUG,
+            check_in_id=check_in_id,
+            status=status,
+        )
+        sentry_sdk.flush(timeout=5)
+    except Exception as exc:  # noqa: BLE001 — telemetry is best-effort
+        logger.warning("sentry crons close failed (%s); ignoring.", exc)
+
+
 def main() -> None:
-    summary = sweep_local_workspace_storage()
+    """CLI entry point — run the workspace sweep under a Sentry Crons
+    check-in.
+
+    The VPS crontab runs this every 10 minutes
+    (``docker exec helpmate-api python -m backend.maintenance``). The
+    Sentry ``helpmate-workspace-sweeper`` monitor turns a
+    silently-dead sweeper — the job that keeps the VPS disk from
+    filling with expired uploads / indexes / cache — into a visible
+    missed-check-in alert. A sweep failure resolves the check-in as
+    ``error`` and re-raises so the run also exits non-zero.
+    """
+    sentry_sdk, check_in_id = _open_sentry_checkin()
+    try:
+        summary = sweep_local_workspace_storage()
+    except Exception:
+        _close_sentry_checkin(sentry_sdk, check_in_id, "error")
+        raise
+    _close_sentry_checkin(sentry_sdk, check_in_id, "ok")
     print(json.dumps(summary.to_dict(), indent=2))
 
 

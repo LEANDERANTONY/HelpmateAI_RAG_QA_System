@@ -1085,3 +1085,15 @@ Improvements:
 - corrected HelpmateAI estimate: `92.6%` answerable coverage, `89.6%` strict fully supported rate, `7.4%` false abstention, `0.0%` false support, and `100.0%` unsupported-question abstention
 - recovery now permits full support only when the verifier finds direct support for all required facts with no missing facts, no gap language, and no inferential phrasing
 - next backend focus is artifact-aware ingestion for title pages, footers, forewords, acknowledgements, definitions, and tables rather than another answer-layer threshold change
+
+## Day 22: Sentry Cron Monitor For The Workspace Sweeper
+
+- Wrapped the every-10-minute VPS workspace sweeper (`python -m backend.maintenance`) in a Sentry Crons check-in under a new `helpmate-workspace-sweeper` monitor.
+- The sweeper is the job that keeps the VPS disk from filling with expired uploads, index directories, and answer-cache files. It was running completely unmonitored — a dead cron daemon, a renamed container, or a crashing sweep would have silently let local disk grow until a hard failure.
+- `backend/maintenance.py` now initializes a dedicated Sentry client (the CLI doesn't import `backend.main`, so observability is never bootstrapped — the same pattern `backend/nightly_eval.py` already uses) and opens an `in_progress` check-in before the sweep, resolving it to `ok` on success or `error` on failure. A failed sweep also re-raises so the run exits non-zero.
+- Unlike the `helpmate-nightly-eval` monitor this one is NOT env-gated: the sweeper cron runs unconditionally every 10 minutes, so Sentry should always expect the heartbeat. A pytest guard keeps test runs from firing check-ins at the production monitor.
+- The monitor self-creates in Sentry on the first check-in after deploy (schedule `*/10 * * * *`, 5-min margin, 8-min max runtime); a missed heartbeat becomes a Sentry Crons issue.
+
+Verification:
+
+- `tests/test_workspace_sweeper.py` extended — `main()` runs the sweep and prints the summary, a sweep failure re-raises, the check-in helpers no-op when Sentry is unconfigured, and the pytest guard is exercised. 5 tests green.

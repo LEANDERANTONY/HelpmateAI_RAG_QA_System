@@ -1,10 +1,19 @@
 from __future__ import annotations
 
+import json
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 
+import pytest
+
 from backend.main import WORKSPACE_EXPIRES_AT_KEY
-from backend.maintenance import sweep_local_workspace_storage
+from backend.maintenance import (
+    SweepSummary,
+    _close_sentry_checkin,
+    _open_sentry_checkin,
+    main,
+    sweep_local_workspace_storage,
+)
 from backend.store import LocalApiRecordStore
 from src.cache.answer_cache import AnswerCache
 from src.config import Settings
@@ -172,3 +181,45 @@ def test_sweeper_deletes_expired_workspaces_and_orphans(tmp_path: Path):
     assert trace_store.list_traces("doc-expired") == []
     assert trace_store.list_traces("doc-orphan") == []
     assert len(trace_store.list_traces("doc-active")) == 1
+
+
+# ─── Sentry cron monitor wiring ─────────────────────────────────────────
+
+
+def test_open_sentry_checkin_is_noop_under_pytest():
+    """The pytest guard keeps a real .env SENTRY_DSN from firing
+    test-run check-ins at the production helpmate-workspace-sweeper
+    monitor."""
+    assert _open_sentry_checkin() == (None, None)
+
+
+def test_close_sentry_checkin_handles_none():
+    """Closing a check-in that was never opened is a safe no-op —
+    telemetry must never break the sweep."""
+    _close_sentry_checkin(None, None, "ok")  # must not raise
+
+
+def test_main_runs_sweep_and_prints_summary(monkeypatch, capsys):
+    """main() wraps the sweep in a Sentry cron check-in; with Sentry
+    off under pytest it still runs the sweep and prints the JSON
+    summary the cron log captures."""
+    monkeypatch.setattr(
+        "backend.maintenance.sweep_local_workspace_storage",
+        lambda *args, **kwargs: SweepSummary(expired_workspaces_deleted=3),
+    )
+    main()
+    printed = json.loads(capsys.readouterr().out)
+    assert printed["expired_workspaces_deleted"] == 3
+
+
+def test_main_reraises_on_sweep_failure(monkeypatch):
+    """A sweep failure resolves the check-in as 'error' and re-raises
+    so the cron run also exits non-zero."""
+    def _boom(*args, **kwargs):
+        raise RuntimeError("disk gone")
+
+    monkeypatch.setattr(
+        "backend.maintenance.sweep_local_workspace_storage", _boom
+    )
+    with pytest.raises(RuntimeError, match="disk gone"):
+        main()
