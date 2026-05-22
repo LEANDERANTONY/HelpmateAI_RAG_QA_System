@@ -145,6 +145,8 @@ If you want the stricter authenticated retention model, also apply:
 
 - [docs/sql/supabase-workspace-retention.sql](./sql/supabase-workspace-retention.sql)
 
+> **Note (May 2026): the `pg_cron` retention job is deprecated and not used in production.** The SQL-only cleanup job and its `pg_cron` schedule were dropped via the `drop_legacy_cleanup_rpc` migration — a database-side sweep cannot clean the Supabase Storage bucket, so it left orphaned objects behind. Retention is now handled **entirely** by the Python `backend.maintenance` sweeper on the VPS crontab (`*/10`), which deletes expired Supabase rows, local disk artifacts, **and** Storage bucket objects in a single pass. Apply this SQL script for its `user_id` / `last_activity_at` / `expires_at` columns and RLS policies only — disregard the `pg_cron` bullet below and the "keep the Supabase SQL cleanup enabled" guidance that follows; the `backend.maintenance` sweeper is the whole retention story.
+
 That script adds:
 
 - explicit `user_id`, `last_activity_at`, and `expires_at` columns
