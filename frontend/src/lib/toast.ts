@@ -49,6 +49,14 @@ export function notifyApiError(
     const target = safeUpgradeUrl(copy.upgradeUrl);
     toast.error(copy.title, {
       description: copy.body,
+      // Explicit duration so this toast definitely auto-dismisses.
+      // Sonner v2 in some configurations extends ``toast.error`` with
+      // an action button beyond the Toaster's global ``duration`` (the
+      // "give the user time to hit Retry / See plans" heuristic) — the
+      // mobile UI test caught one persisting ~60s on a premium-answer
+      // failure, way longer than the configured 6s. Setting the
+      // duration per-call removes the version-dependent surprise.
+      duration: 6000,
       action: {
         label: copy.action,
         onClick: () => {
@@ -65,6 +73,7 @@ export function notifyApiError(
 
   toast.error(copy.title, {
     description: copy.body,
+    duration: 6000,
     action: showAction
       ? {
           label: copy.action as string,
@@ -77,7 +86,7 @@ export function notifyApiError(
 }
 
 export function notifyError(title: string, body?: string) {
-  toast.error(title, { description: body });
+  toast.error(title, { description: body, duration: 6000 });
 }
 
 export function notifyInfo(title: string, body?: string) {

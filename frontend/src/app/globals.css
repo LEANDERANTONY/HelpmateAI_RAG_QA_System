@@ -5376,3 +5376,87 @@ input[type="file"]:disabled::file-selector-button {
     animation: none;
   }
 }
+
+/* ─────────────────────────────────────────────────────────────────────
+   Mobile tap-target spec — 2026-05-27 launch-readiness pass
+   ─────────────────────────────────────────────────────────────────────
+   The mobile UI test caught most-touched controls violating Apple HIG
+   (≥44px) at iPhone width: thumbs-up/down 39×32, citation pills 87×20,
+   Premium toggle ~28×24, PDF nav arrows 32×32, PDF close 30×30, account
+   avatar 28×28. Generate-answer was 355×38.
+
+   These rules raise the touch target without resizing the visual where
+   possible. Three patterns are used:
+
+     1. Icon-only controls (close, page-nav arrows, avatar) — directly
+        bump min-width / min-height to 44.
+     2. Toggles + small text buttons (thumbs, Premium toggle, Generate
+        answer) — bump min-height; keep horizontal padding.
+     3. Citation pills (inline, density matters) — keep visual size
+        compact, extend tap target via a transparent ::before pseudo-
+        element so the link still flows inline with body text. This is
+        the standard inline-link-on-mobile pattern.
+
+   All scoped behind `@media (max-width: 900px)` so the desktop layout
+   is untouched. Each rule below is small and isolated; pulling any
+   individual selector if it breaks layout is safe.
+*/
+@media (max-width: 900px) {
+  /* Citation pills — keep 20px visual height, extend tap target to
+     ~44px via an invisible pseudo so inline density (multiple pills
+     in a row inside an answer paragraph) survives intact. */
+  .h-cite {
+    position: relative;
+  }
+  .h-cite::before {
+    content: "";
+    position: absolute;
+    /* -12 vertical → 20 + 24 = 44 total tap height.
+        -2 horizontal → small overlap-friendly buffer that doesn't
+        push neighbor pills out of reach. */
+    inset: -12px -2px;
+  }
+
+  /* Feedback thumbs — bump from 39×32 to ≥44×44. */
+  .h-feedback-btn {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Account chip in topbar — bump to ≥44 so the entire chevron+avatar
+     row is a generous tap target on the topbar. The internal padding
+     already centers the avatar; adding min-height to the surrounding
+     button is enough. */
+  .h-account {
+    min-height: 44px;
+  }
+  /* Avatar circle itself stays its visual size — it sits inside the
+     bumped .h-account button so the tap target is the whole chip. */
+
+  /* PDF viewer close + mobile sheet close — both currently 30×30. */
+  .h-source-close,
+  .h-mobile-sheet-close {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* PDF page-nav arrows — currently 32×32. */
+  .h-source-pagenav-step {
+    min-width: 44px;
+    min-height: 44px;
+  }
+
+  /* Premium toggle — bump min-height so the pill is reliably tappable
+     on mobile even at its compact width. */
+  .h-premium-toggle {
+    min-height: 44px;
+  }
+
+  /* Generate-answer button + sibling primary buttons — bump from 38 to
+     44 minimum height. Width is already 100% of the ask row, so this
+     only changes height. */
+  .h-btn {
+    min-height: 44px;
+  }
+}
+

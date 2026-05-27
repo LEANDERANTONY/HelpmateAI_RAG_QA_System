@@ -205,7 +205,16 @@
   display: flex;
   flex-direction: column;
   padding: 32px 24px;
-  background: rgba(2, 4, 9, 0.97);
+  /* Fully opaque background — the previous 0.97 alpha left ~3% of the
+     hero copy bleeding through the open menu at iPhone width (caught
+     in the 2026-05-27 mobile UI test). On bright-on-dark hero copy
+     the readable contrast under the menu items dropped to the point
+     where the second "Open workspace" CTA visibly ghosted under the
+     nav links. Solid background eliminates the bleed; the backdrop-
+     filter blur underneath is now a no-op but kept for browsers that
+     fall back to the rgba layer (it doesn't cost anything when the
+     above color is opaque). */
+  background: rgb(2, 4, 9);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   overflow-y: auto;
