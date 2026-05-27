@@ -355,6 +355,43 @@ function candidateLabel(candidate: RetrievalCandidate, index: number) {
   return `Source ${index + 1}`;
 }
 
+/**
+ * Split a candidate's label into ``{ section, page }`` so the
+ * EvidenceCard can render section + page as two flex children.
+ *
+ * The single-string ``candidateLabel`` above puts the page suffix
+ * AFTER a long section heading and asks CSS to ellipsize the
+ * whole thing — which eats "Page N" off the right edge of the chip
+ * when the section is long (caught in the 2026-05-27 UI feedback:
+ * "Minutes of the Federal Open Market Committee 13 -" with no
+ * visible page number). The split lets the chip do
+ * ``[ section …truncates… ] [ Page N (never shrinks) ]``.
+ *
+ * Returns ``null`` for either piece when it's missing, so the
+ * caller can render zero, one, or both parts.
+ */
+function candidateLabelParts(
+  candidate: RetrievalCandidate,
+  index: number,
+): { section: string | null; page: string | null } {
+  const section =
+    metadataText(candidate, "section_heading") ||
+    metadataText(candidate, "section_id") ||
+    "";
+  const page = metadataText(candidate, "page_label") || "";
+  if (section || page) {
+    return { section: section || null, page: page || null };
+  }
+  // No section AND no page — fall back to the existing string
+  // labelers (citation_label from backend, else "Source N"). Surface
+  // as a single section piece so the caller doesn't need a special
+  // branch.
+  return {
+    section: candidate.citation_label || `Source ${index + 1}`,
+    page: null,
+  };
+}
+
 function candidateStrength(candidate: RetrievalCandidate) {
   // The current API has answer-level support, not per-chunk strength. Render
   // this visual only when an additive backend field is actually present.
@@ -1472,8 +1509,26 @@ function EvidenceCard({
           className={`h-cite h-cite-header ${tagRinged ? "active" : ""}`}
           onClick={() => onTagClick(turnId, candidate.chunk_id)}
           type="button"
+          // The accessible name keeps the full unsplit label so screen
+          // readers still hear "Minutes of the Federal Open Market
+          // Committee 13 - Page 13" even though the visible chrome
+          // hides the trailing section text behind ellipsis when
+          // narrow.
+          aria-label={candidateLabel(candidate, index)}
         >
-          {candidateLabel(candidate, index)}
+          {(() => {
+            const parts = candidateLabelParts(candidate, index);
+            return (
+              <>
+                {parts.section ? (
+                  <span className="h-cite-section">{parts.section}</span>
+                ) : null}
+                {parts.page ? (
+                  <span className="h-cite-page">{parts.page}</span>
+                ) : null}
+              </>
+            );
+          })()}
         </button>
         {strength ? <span className={`h-strength ${strength}`}>{strength}</span> : null}
       </div>
@@ -1561,9 +1616,20 @@ function EvidenceRail({
   const groupsWithVisible = groups.map((turn) => ({
     turn,
     visible: visibleEvidence(turn.answer.answer, turn.answer.evidence, {
-      // On abstention show at least two retrieved chunks so the user
-      // sees what the retriever found before the model abstained.
-      fallbackCount: 2,
+      // Show the top-2 retriever chunks when the model abstained on
+      // partial / weak grounding so the user can still see what was
+      // closest — useful for "the answer's partially supported, here's
+      // the relevant excerpt" cases.
+      //
+      // EXCEPT on a FULL abstention (support_status === "unsupported"):
+      // those neighbors are by definition not relevant to the question
+      // (e.g. "how to go to the moon?" against an FOMC doc returns
+      // ABSTAIN with nearest-neighbor chunks about inflation — pure
+      // noise that confuses the user into thinking the chunks are
+      // somehow related). Drop the fallback to 0 there so the
+      // evidence panel renders nothing for clean abstentions, matching
+      // the "no evidence" honesty of the answer itself.
+      fallbackCount: turn.answer.support_status === "unsupported" ? 0 : 2,
     }),
   }));
   const evidenceCount = groupsWithVisible.reduce(
@@ -1653,13 +1719,18 @@ function MobileEvidence({
   //
   // Visibility mirrors DesktopEvidence: keep only chunks the LLM
   // actually cited (so every card has a matching inline pill), fall
-  // back to top-2 retrieved on abstention so the user still sees
-  // something concrete.
+  // back to top-2 retrieved on partial-grounding abstention so the
+  // user still sees something concrete. On FULL abstention
+  // (support_status === "unsupported") drop the fallback entirely —
+  // the nearest neighbors are by definition not relevant and just
+  // create noise that the user mistakes for actual citations. See
+  // matching logic + reasoning at the other visibleEvidence call site
+  // above.
   const groups = [...turns].reverse();
   const groupsWithVisible = groups.map((turn) => ({
     turn,
     visible: visibleEvidence(turn.answer.answer, turn.answer.evidence, {
-      fallbackCount: 2,
+      fallbackCount: turn.answer.support_status === "unsupported" ? 0 : 2,
     }),
   }));
   const evidenceCount = groupsWithVisible.reduce(
@@ -2286,12 +2357,20 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
       //
       // Prefer the first chunk the LLM actually cited so the user
       // lands on a chunk that backs the answer, not just the retriever's
-      // top-1. Falls back to the retriever's top-1 when no citations
-      // were parsed (e.g. unsupported answers we still want to anchor).
+      // top-1. For partial-grounding abstentions we still anchor to
+      // the retriever's top-1 — the nearest passage is at least
+      // adjacent to the user's question. On FULL abstention
+      // (support_status === "unsupported") the nearest neighbor is by
+      // definition NOT relevant, so we skip the auto-anchor entirely
+      // — read mode keeps whatever chunk it had open (or stays closed),
+      // matching the empty-evidence panel rendered for that case.
       const firstEvidence = visibleEvidence(
         response.answer.answer,
         response.answer.evidence ?? [],
-        { fallbackCount: 1 },
+        {
+          fallbackCount:
+            response.answer.support_status === "unsupported" ? 0 : 1,
+        },
       )[0];
       if (firstEvidence && document) {
         useReadModeStore

@@ -3347,11 +3347,45 @@ input[type="file"]:disabled::file-selector-button {
 }
 
 .h-evi-card-head .h-cite-header {
+  /* The chip is now a two-child flex container so the page badge
+     stays visible while the section heading ellipsizes. Without
+     min-width: 0 the section child refuses to shrink past its
+     intrinsic width (flexbox default), so the whole chip would
+     overflow the card edge instead of triggering the ellipsis. */
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
   max-width: 100%;
+  min-width: 0;
+}
+.h-evi-card-head .h-cite-header .h-cite-section {
+  /* Truncate the section heading from the right when too long —
+     this is the piece that used to eat "Page N" off the chip
+     because both lived in the same overflow context. */
+  flex: 1 1 auto;
   min-width: 0;
   overflow: hidden;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+.h-evi-card-head .h-cite-header .h-cite-page {
+  /* Page badge never shrinks and never wraps — always fully visible
+     even when the section heading is "Minutes of the Federal Open
+     Market Committee 13" long. Slightly muted color so it reads as
+     metadata rather than primary chip text. */
+  flex: 0 0 auto;
+  white-space: nowrap;
+  color: var(--fg-3);
+  font-variant-numeric: tabular-nums;
+}
+.h-evi-card-head .h-cite-header .h-cite-section + .h-cite-page::before {
+  /* Inline separator dot between section and page. The adjacent-
+     sibling selector means the dot ONLY renders when .h-cite-page
+     immediately follows .h-cite-section — a chip with no section
+     (just "Page 13" on its own) doesn't get a leading dot. */
+  content: "·";
+  margin-right: 6px;
+  color: var(--fg-3);
 }
 
 .h-evi-card-head .h-strength {
