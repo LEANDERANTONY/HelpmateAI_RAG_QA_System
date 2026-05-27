@@ -113,7 +113,6 @@ function bannerKindFromLoadError(kind: PdfLoadError["kind"]): BannerKind {
   return "transport";
 }
 
-const WINDOW_RADIUS = 3;
 // Small delay after textlayerrendered before we query for `.highlight`.
 // The find controller paints highlight spans asynchronously after the
 // text layer renders; without this buffer the querySelector lands too
@@ -309,46 +308,56 @@ export const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>(function Pd
         return;
       }
 
-      // Expanding ring [0, +1, -1, +2, -2, +3, -3]. First page in
-      // ring order with a non-empty match list wins — biases toward
-      // the hint page while tolerating up to ±3 pages of DOCX→PDF drift.
-      const order: number[] = [0];
-      for (let d = 1; d <= WINDOW_RADIUS; d++) {
-        order.push(d, -d);
-      }
-      for (const dir of order) {
-        const idx = hintIdx + dir;
-        if (idx < 0 || idx >= pageMatches.length) continue;
-        const matches = pageMatches[idx];
-        if (matches && matches.length > 0) {
-          try {
-            const resolved = idx + 1;
-            resolvedPageRef.current = resolved;
-            scrollToMatchOnPage(state, idx);
-            // D1: scope the doc-wide highlightAll paint to just the
-            // resolved page. Strip every other currently-rendered
-            // page now; the persistent textlayerrendered listener
-            // handles pages that render/repaint later. The resolved
-            // page is intentionally left untouched.
-            const total = state.viewer.pagesCount || 0;
-            for (let p = 1; p <= total; p++) {
-              if (p !== resolved) clearFindHighlightsOnPage(state.viewer, p);
-            }
-            // PDF.js dispatches updatefindmatchescount progressively
-            // during a scan — the first dispatch with total=0 sets the
-            // no-match banner, then a later dispatch with total>0 lands
-            // here. Clear the stale banner now that the scroll succeeded.
-            // Unnoticeable on short PDFs; visible on long contracts where
-            // the scan takes long enough for the user to read the banner.
-            setBanner(null);
-          } catch {
-            /* scroll failure leaves any prior banner intact */
-          }
-          return;
+      // Page-jump policy: TRUST the citation's hint page as the page
+      // to land the user on. Earlier this ran an expanding-ring search
+      // ([0, +1, -1, +2, -2, +3, -3]) and scrolled to the FIRST page
+      // with any matches — which silently overrode the hint when a
+      // common phrase from the chunk happened to also occur on page 1
+      // (or any earlier page than the cited one). Result: users tapped
+      // a "Page 2" citation and the PDF viewer scrolled them to page 1.
+      //
+      // PDF.js also dispatches `updatefindmatchescount` PROGRESSIVELY
+      // as it scans linearly from page 1 — so the ring's "first match
+      // wins" check would see page 1 matches before the hint page had
+      // even been scanned, locking in the wrong page on every fire of
+      // this handler.
+      //
+      // New behavior:
+      //   * Highlight scoping ALWAYS scopes to the hint page — paint
+      //     stays on the cited page even if matches exist elsewhere
+      //     (those used to leak as a brief flash on adjacent pages
+      //     while the scan progressed).
+      //   * If the hint page has matches, scroll-center on its first
+      //     match (a refinement on top of the hint-page jump that
+      //     navigateToCurrent already did).
+      //   * If the hint page has NO matches in this dispatch, leave the
+      //     user on the hint page without scrolling. The ``no-match``
+      //     banner surfaces from the total-zero branch above only when
+      //     the document truly contains no matches anywhere; intermediate
+      //     "no match on hint page yet" states stay silent so progressive
+      //     scans don't briefly flash a banner that then disappears.
+      try {
+        const total = state.viewer.pagesCount || 0;
+        // Resolve to the hint page regardless of whether matches landed
+        // there; this is the page we want highlights scoped to.
+        const resolvedPage = Math.max(1, Math.min(hintPage, total || hintPage));
+        resolvedPageRef.current = resolvedPage;
+        for (let p = 1; p <= total; p++) {
+          if (p !== resolvedPage) clearFindHighlightsOnPage(state.viewer, p);
         }
+        const hintMatches =
+          hintIdx >= 0 && hintIdx < pageMatches.length ? pageMatches[hintIdx] : null;
+        if (hintMatches && hintMatches.length > 0) {
+          scrollToMatchOnPage(state, hintIdx);
+          setBanner(null);
+        }
+        // No matches on the hint page (yet) — silently keep the user on
+        // the cited page. navigateToCurrent already set
+        // currentPageNumber=hintPage before dispatching find, so they're
+        // exactly where the citation said to go.
+      } catch {
+        /* scroll failure leaves any prior banner intact */
       }
-
-      setBanner("no-match");
     },
     [],
   );
