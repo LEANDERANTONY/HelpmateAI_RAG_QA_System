@@ -245,6 +245,33 @@ export const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>(function Pd
   // render/repaint after resolution stay scoped too.
   const resolvedPageRef = useRef<number | null>(null);
 
+  // Citation-driven page hint with an "auto-correct window".
+  //
+  // PDF.js's PDFFindController has its own auto-scroll: when a find
+  // is dispatched, the controller scans the document linearly from
+  // page 1 and scrolls the viewer to the FIRST match it discovers —
+  // independent of (and racing against) the explicit
+  // ``viewer.currentPageNumber = hintPage`` we set in
+  // navigateToCurrent. For chunks whose text fragment also occurs
+  // earlier in the document (boilerplate, section headings, common
+  // phrases), pdfjs's find-controller scroll wins and the viewer
+  // lands on page 1 even though the citation said "Page 13".
+  //
+  // The re-verify report after the first attempt at this fix (commit
+  // 2df1c14) confirmed: the page header indicator shows the correct
+  // page, but the canvas itself stays on page 1 for any chunk that
+  // contains a page-1-overlap phrase.
+  //
+  // This ref enables a short "we want page N for the next N ms"
+  // window. The onPageChanging listener installed in the mount
+  // effect watches all page transitions, and within the window
+  // re-asserts the hint page if pdfjs moves us off it. After the
+  // window expires (or the user lands on the hint page once), the
+  // ref clears so genuine user scrolling isn't fought.
+  const hintPageRef = useRef<{ page: number; expiresAt: number } | null>(
+    null,
+  );
+
   // Imperative handle for parent-driven scroll. Critically, scrollToPage
   // ONLY moves the viewport — it must not dispatch find or touch chunk
   // state. Manual page nav and the anchor-driven find pipeline operate
@@ -258,6 +285,11 @@ export const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>(function Pd
         if (!state || !state.pagesReady) return;
         const total = state.viewer.pagesCount || 1;
         const clamped = Math.max(1, Math.min(pageNumber, total));
+        // User-initiated page navigation (PageNav arrows / input) must
+        // clear any active hint-page auto-correct window — otherwise
+        // tapping the next-page arrow would snap right back to the
+        // citation's page within the window.
+        hintPageRef.current = null;
         state.viewer.currentPageNumber = clamped;
         // Optimistic page-pill update. scroll-behavior:smooth on the
         // PDF container causes pdfjs to coalesce pagechanging events —
@@ -372,6 +404,21 @@ export const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>(function Pd
     const hintPage = parsePageLabel(label);
     const pageCount = state.viewer.pagesCount || 1;
     const clamped = Math.max(1, Math.min(hintPage, pageCount));
+    // Arm the auto-correct window BEFORE the find dispatch below.
+    // pdfjs's PDFFindController will fire its own scroll-to-first-match
+    // during the progressive scan; the onPageChanging listener uses
+    // this ref to snap the viewer back to the hint page if pdfjs
+    // moves us off it within ~1.5s. After the window expires (or the
+    // user successfully lands on the hint page once), the ref clears
+    // so user scrolling isn't fought. The window is generous enough
+    // to survive a viewer reopen where pdfjs re-runs the scan but
+    // tight enough that it doesn't outlive the next intentional
+    // navigation. 1500ms catches both the initial scan and any late
+    // scroll pdfjs schedules after batch matches arrive.
+    hintPageRef.current = {
+      page: clamped,
+      expiresAt: performance.now() + 1500,
+    };
     state.viewer.currentPageNumber = clamped;
 
     // D1: new search — forget the previous resolution and wipe any
@@ -555,10 +602,42 @@ export const PdfViewer = forwardRef<PdfViewerHandle, PdfViewerProps>(function Pd
       // pagechanging fires whenever the viewer's currentPageNumber
       // changes — from user scroll, find-driven scroll, or our own
       // scrollPageIntoView. The payload's pageNumber is 1-based.
+      //
+      // The hint-page auto-correct: navigateToCurrent arms
+      // ``hintPageRef`` with the citation's target page and an
+      // expiry. Within the window, if pdfjs's findController
+      // auto-scrolls us off the hint (it scrolls to the FIRST
+      // matching page found during its linear scan, which can be
+      // page 1 if the chunk text contains common boilerplate),
+      // snap back. We clear the ref the moment we successfully
+      // observe the hint page so we don't fight subsequent legitimate
+      // page changes from the user. The user-initiated scrollToPage
+      // imperative handle also clears the ref explicitly.
       const onPageChanging = (payload: { pageNumber: number }) => {
         if (cancelled) return;
         const cb = onPageChangeRef.current;
         if (cb) cb(payload.pageNumber);
+
+        const hint = hintPageRef.current;
+        if (hint === null) return;
+        if (performance.now() > hint.expiresAt) {
+          hintPageRef.current = null;
+          return;
+        }
+        if (payload.pageNumber === hint.page) {
+          // We landed on the hint page — done, stop watching so the
+          // user can navigate freely from here on.
+          hintPageRef.current = null;
+          return;
+        }
+        // pdfjs moved us off the hint page within the window. Snap
+        // back. The setter fires another pagechanging event which
+        // re-enters this handler — that next call hits the
+        // payload.pageNumber === hint.page branch above and clears
+        // the ref, so we don't loop.
+        const st = stateRef.current;
+        if (!st || !st.pagesReady) return;
+        st.viewer.currentPageNumber = hint.page;
       };
 
       // D1: pdfjs repaints highlightAll matches every time a page's
