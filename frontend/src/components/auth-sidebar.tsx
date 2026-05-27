@@ -5,14 +5,59 @@ import { useRouter } from "next/navigation";
 
 import { openCookiePreferences } from "@/components/cookie-consent";
 import type { AuthUserSummary } from "@/lib/auth";
+import type { WorkspaceQuotaResponse } from "@/lib/api-types";
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
 type AuthSidebarProps = {
   user: AuthUserSummary | null;
+  // Tier + per-month usage snapshot from GET /workspace/quota.
+  // Optional so the sign-in / signed-out states still render
+  // without a quota fetch in flight. When present, the popover
+  // surfaces the plan label + remaining quota so users see their
+  // entitlement directly rather than having to inspect the Premium
+  // pill near the ask box.
+  quotaSnapshot?: WorkspaceQuotaResponse | null;
 };
 
-export function AuthSidebar({ user }: AuthSidebarProps) {
+/** Capitalize the lowercase tier string returned by the backend
+ *  (`"free" | "pro" | "business"`) for display. Falls back to a
+ *  generic capitalize for any future tier so a new "enterprise"
+ *  string still renders sanely. */
+function formatTier(tier: string | null | undefined): string {
+  const normalized = (tier || "").trim().toLowerCase();
+  switch (normalized) {
+    case "free":
+      return "Free";
+    case "pro":
+      return "Pro";
+    case "business":
+      return "Business";
+    case "internal":
+      return "Internal";
+    case "admin":
+      return "Admin";
+    default:
+      if (!normalized) return "Free";
+      return normalized.charAt(0).toUpperCase() + normalized.slice(1);
+  }
+}
+
+/** "12 of 50 used" / "Unlimited" rendering for a quota counter.
+ *  ``limit === -1`` is the unbounded sentinel from the backend
+ *  (Business tier on most counters); render "Unlimited" with the
+ *  used count tucked behind it so a Business user still sees their
+ *  activity without a denominator that would otherwise read as
+ *  "X of -1 used". */
+function formatQuotaLine(used: number, limit: number): string {
+  if (limit < 0) {
+    return used > 0 ? `Unlimited (${used} used)` : "Unlimited";
+  }
+  const safeUsed = Math.max(0, Math.min(used, limit));
+  return `${safeUsed} of ${limit} used`;
+}
+
+export function AuthSidebar({ user, quotaSnapshot }: AuthSidebarProps) {
   const authEnabled = isSupabaseConfigured();
   const [pendingAction, setPendingAction] = useState<"signin" | "signout" | null>(
     null,
@@ -133,6 +178,43 @@ export function AuthSidebar({ user }: AuthSidebarProps) {
           </button>
         )}
       </div>
+
+      {/* Plan + quota summary. Only renders for signed-in users with a
+          fetched quota snapshot. Earlier the popover surfaced neither
+          the tier label nor the per-month counters, so users had to
+          inspect the Premium pill near the ask box to figure out their
+          entitlement. Each counter shows ``X of Y used`` (or
+          ``Unlimited`` when the backend's -1 sentinel applies on
+          Business). */}
+      {user && quotaSnapshot ? (
+        <div className="auth-inline-meta">
+          <div>
+            <p className="h-eyebrow">Plan</p>
+            <h3>{formatTier(quotaSnapshot.tier)}</h3>
+            <p>
+              Questions:{" "}
+              {formatQuotaLine(
+                quotaSnapshot.questions.used,
+                quotaSnapshot.questions.limit,
+              )}
+            </p>
+            <p>
+              Premium answers:{" "}
+              {formatQuotaLine(
+                quotaSnapshot.premium.used,
+                quotaSnapshot.premium.limit,
+              )}
+            </p>
+            <p>
+              Documents:{" "}
+              {formatQuotaLine(
+                quotaSnapshot.documents.used,
+                quotaSnapshot.documents.limit,
+              )}
+            </p>
+          </div>
+        </div>
+      ) : null}
 
       <div className="auth-inline-meta">
         <div>

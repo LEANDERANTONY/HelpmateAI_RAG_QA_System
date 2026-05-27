@@ -426,11 +426,13 @@ function SupportPip({
 
 function AccountTopbar({
   user,
+  quotaSnapshot,
   open,
   onToggle,
   onClose,
 }: {
   user: AuthUserSummary | null;
+  quotaSnapshot: WorkspaceQuotaResponse | null;
   open: boolean;
   onToggle: () => void;
   onClose: () => void;
@@ -485,7 +487,7 @@ function AccountTopbar({
       </button>
       {open ? (
         <div className="h-account-popover">
-          <AuthSidebar user={user} />
+          <AuthSidebar user={user} quotaSnapshot={quotaSnapshot} />
         </div>
       ) : null}
     </div>
@@ -494,12 +496,14 @@ function AccountTopbar({
 
 function Topbar({
   user,
+  quotaSnapshot,
   accountOpen,
   onAccountToggle,
   onAccountClose,
   onPaletteOpen,
 }: {
   user: AuthUserSummary | null;
+  quotaSnapshot: WorkspaceQuotaResponse | null;
   accountOpen: boolean;
   onAccountToggle: () => void;
   onAccountClose: () => void;
@@ -536,6 +540,7 @@ function Topbar({
           onClose={onAccountClose}
           onToggle={onAccountToggle}
           open={accountOpen}
+          quotaSnapshot={quotaSnapshot}
           user={user}
         />
       </div>
@@ -2577,6 +2582,7 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
           onAccountClose={() => setAccountOpen(false)}
           onAccountToggle={() => setAccountOpen((current) => !current)}
           onPaletteOpen={() => setPaletteOpen(true)}
+          quotaSnapshot={quotaSnapshot}
           user={user}
         />
         <div className="h-mobile-docbar">
