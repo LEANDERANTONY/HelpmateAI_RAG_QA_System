@@ -40,7 +40,19 @@ class _FakeClient:
         self.chat = _FakeChat(content)
 
 
-def test_fallback_generation_uses_evidence_when_api_key_missing():
+def test_fallback_generation_surfaces_citations_but_never_claims_support():
+    """Fallback path (no API key / live model unreachable) must NEVER
+    return supported=True. The old implementation stitched the first
+    two retrieved chunks via candidate.text[:220] and stamped
+    supported=True via a brittle "does the fabricated text contain
+    'insufficient'?" heuristic — which almost always passed and broke
+    the abstention guarantee on off-topic questions (e.g. "price of
+    Bitcoin?" against FOMC minutes returned SUPPORTED · Best local
+    match). The fix: fallback surfaces citations + evidence (so the
+    user can navigate) but the answer body is an honest "live model
+    unavailable" message and supported=False so the abstention gate
+    holds.
+    """
     settings = Settings(openai_api_key=None)
     generator = AnswerGenerator(settings)
     retrieval = RetrievalResult(
@@ -56,9 +68,67 @@ def test_fallback_generation_uses_evidence_when_api_key_missing():
 
     answer = generator.generate("What is the waiting period?", retrieval)
 
-    assert "waiting period" in answer.answer.lower()
+    # Citation pointers still surface so the user can navigate to source.
     assert answer.citations == ["Page 4"]
-    assert answer.supported is True
+    # But the answer body NEVER fabricates a grounded summary from
+    # stitched chunks, and the support flag is always False on this
+    # path so the abstention contract holds.
+    assert answer.supported is False
+    assert answer.support_status == "unsupported"
+    assert answer.support_summary == "Live model unavailable"
+    # The old mid-word chunk slice ("text[:220]") leaked things like
+    # "tee voted" / "Strateg Document" into the rendered answer. Verify
+    # the raw chunk text is no longer in the body.
+    assert "thirty days" not in answer.answer.lower()
+    assert "unavailable" in answer.answer.lower()
+
+
+def test_fallback_holds_abstention_contract_on_off_topic_question():
+    """Launch-blocker regression (PR readiness review 2026-05-27):
+    asking "What is the price of Bitcoin today?" against a FOMC-only
+    document returned ``SUPPORTED · Best local match`` with stitched
+    FOMC chunks instead of abstaining. The marketing claim of "100%
+    abstention when out-of-scope" was being silently violated any
+    time the live model failed and the fallback path fired. Pin the
+    abstention contract: when the live model is unreachable, NO
+    amount of retrieved evidence can flip supported back to True.
+    """
+    settings = Settings(openai_api_key=None)  # forces fallback path
+    generator = AnswerGenerator(settings)
+    # Simulate the n8n / Bitcoin scenario: the retriever pulled
+    # unrelated-but-keyword-adjacent FOMC chunks. Under the old
+    # heuristic these would have stitched into a "Best local match"
+    # response with supported=True.
+    retrieval = RetrievalResult(
+        question="What is the price of Bitcoin today?",
+        candidates=[
+            RetrievalCandidate(
+                chunk_id="c1",
+                text="Personal consumption expenditures inflation rose at a 4.2 percent pace.",
+                metadata={"page_label": "Page 3"},
+            ),
+            RetrievalCandidate(
+                chunk_id="c2",
+                text="The unemployment rate held at 3.6 percent in the quarter.",
+                metadata={"page_label": "Page 5"},
+            ),
+        ],
+    )
+
+    answer = generator.generate("What is the price of Bitcoin today?", retrieval)
+
+    assert answer.supported is False, (
+        "Off-topic question with unrelated retrieval must NOT be marked supported"
+    )
+    assert answer.support_status == "unsupported"
+    # The fabricated stitched chunks must not leak into the answer body.
+    assert "personal consumption" not in answer.answer.lower()
+    assert "unemployment" not in answer.answer.lower()
+    assert "4.2 percent" not in answer.answer
+    # And the misleading "best local match" / "Here is the strongest
+    # grounded summary I could find" boilerplate is gone.
+    assert "best local match" not in answer.support_summary.lower()
+    assert "strongest grounded summary" not in answer.answer.lower()
 
 
 def test_generation_short_circuits_when_retrieval_is_clearly_unsupported():

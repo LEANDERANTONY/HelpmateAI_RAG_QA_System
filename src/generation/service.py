@@ -1,5 +1,4 @@
 from __future__ import annotations
-import json
 import logging
 
 from src.config import Settings
@@ -190,6 +189,32 @@ class AnswerGenerator:
         return [detail.split("] ", 1)[1] for detail in self._citation_details(evidence)]
 
     def _fallback_answer(self, question: str, evidence: list[RetrievalCandidate]) -> AnswerResult:
+        """Build a degraded answer when the live model is unreachable.
+
+        Previously this path stitched ``candidate.text[:220]`` for the
+        first two evidence chunks together and stamped ``supported=True``
+        via a brittle heuristic ("does the fabricated text contain the
+        word 'insufficient'?"). Two failure modes resulted:
+
+          * Out-of-scope abstention break — the heuristic almost always
+            said supported=True even when the retrieved evidence was
+            obviously unrelated to the question (e.g. asking "price of
+            Bitcoin?" against FOMC minutes returned ``SUPPORTED · Best
+            local match`` with stitched FOMC chunks). The marketing
+            claim of "100% abstention when out-of-scope" was a lie any
+            time the model failed.
+          * Chunk-stitching glitches — ``text[:220]`` slices mid-word
+            so users saw "tee voted" (truncated "committee voted") and
+            "Strateg Document landmark" (random concatenation) leak
+            into the answer card as if they were real model output.
+
+        The fix: the fallback is a degraded state, period. We never claim
+        ``supported=True`` from this path. We never fabricate an answer
+        from raw chunk text. We surface the retrieval pointers (citations
+        + evidence) so the user can still navigate to the source, but
+        the answer body is an honest "live model unavailable" message and
+        the support flag is False so the abstention gate holds.
+        """
         citations = self._citations(evidence)
         citation_details = self._citation_details(evidence)
         if not evidence:
@@ -209,26 +234,33 @@ class AnswerGenerator:
                 query_used=question,
             )
 
-        snippets = " ".join(candidate.text[:220].replace("\n", " ") for candidate in evidence[:2])
+        # Evidence exists but the live model couldn't produce a
+        # grounded answer. Surface the retrieval pointers without
+        # fabricating a stitched-chunk "best local match" — the
+        # earlier path lied about supported status AND leaked mid-word
+        # chunk slices into the rendered answer. The UI will still
+        # show the citation pills + evidence panel; the user can
+        # navigate to source pages directly.
         answer = (
-            f"Here is the strongest grounded summary I could find: {snippets.strip()} "
-            "Please review the cited sections for the exact wording."
-        )
-        supported = not any(
-            phrase in answer.lower()
-            for phrase in ["could not find enough supporting evidence", "insufficient", "cannot provide an answer", "does not contain"]
+            "The live answer model is currently unavailable. The strongest "
+            "retrieved passages are linked below in the citations, but they "
+            "have not been verified to actually answer the question — please "
+            "retry, or review the cited pages directly."
         )
         return AnswerResult(
             question=question,
             answer=answer,
             citations=citations,
             evidence=evidence,
-            supported=supported,
-            support_status="supported" if supported else "unsupported",
-            support_summary="Best local match" if supported else "Source is silent",
+            supported=False,
+            support_status="unsupported",
+            support_summary="Live model unavailable",
             cache_status=CacheStatus(),
             model_name="fallback",
-            note="Returned a local grounded summary because a live model response was unavailable.",
+            note=(
+                "Returned retrieval pointers only because a live model response "
+                "was unavailable. The fallback path never claims supported status."
+            ),
             citation_details=citation_details,
             retrieval_notes=[],
             query_used=question,
