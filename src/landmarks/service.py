@@ -129,6 +129,12 @@ class DocumentLandmarkService:
         if self.client is None or not pages:
             return []
         try:
+            # Don't pass temperature — document_landmarks_model defaults
+            # to gpt-5.4-nano which (like all gpt-5.x / o-series
+            # reasoning models) rejects any non-default temperature.
+            # See openai_service._supports_temperature for the central
+            # detector + Sentry HELPMATE-BACKEND-B for the incident
+            # that motivated removing the param across the codebase.
             response = self.client.chat.completions.create(
                 model=self.settings.document_landmarks_model,
                 messages=[
@@ -136,7 +142,6 @@ class DocumentLandmarkService:
                     {"role": "user", "content": self._prompt(document, pages)},
                 ],
                 response_format={"type": "json_object"},
-                temperature=0,
             )
             payload = json.loads(response.choices[0].message.content or "{}")
         except Exception:

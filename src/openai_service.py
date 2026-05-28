@@ -250,6 +250,38 @@ def _build_json_schema_response_format(response_model: type[BaseModel]) -> dict[
     }
 
 
+def _supports_temperature(model: str | None) -> bool:
+    """Return False for OpenAI reasoning models that reject a custom
+    ``temperature`` parameter.
+
+    Sentry HELPMATE-BACKEND-B (2026-05-27): the answer-generation path
+    was passing ``temperature=0`` to ``gpt-5.5`` and the OpenAI API
+    400-ed with::
+
+        Unsupported value: 'temperature' does not support 0 with this
+        model. Only the default (1) value is supported.
+
+    The o-series (o1/o3/o4) and the gpt-5.x family all behave this way
+    — they're reasoning models that ignore sampling temperature and
+    refuse non-default values at the API layer. Our default
+    ``temperature=0.0`` was set when the codebase still ran on
+    gpt-4-class models; every configured model in ``Settings`` now
+    points at a reasoning model, so the default is universally wrong.
+
+    Detection by name prefix because OpenAI also rolls these out as
+    ``gpt-5-mini``, ``gpt-5.4-nano``, ``gpt-5.5`` etc. — anything
+    starting with ``gpt-5`` is in the family.
+    """
+    lower = (model or "").strip().lower()
+    if not lower:
+        return True
+    if lower.startswith(("o1", "o3", "o4")):
+        return False
+    if lower.startswith("gpt-5"):
+        return False
+    return True
+
+
 def _enforce_strict_schema(schema: dict[str, Any]) -> None:
     """Walk the JSON schema in-place and tighten it for OpenAI strict
     mode. The two constraints we care about:
@@ -341,13 +373,18 @@ class OpenAIService:
         if self.client is None:
             raise RuntimeError(f"OpenAI client is not available for task {task_name!r}.")
         kwargs = self._completion_kwargs(model=model, max_completion_tokens=max_completion_tokens)
+        # Omit ``temperature`` entirely for reasoning models (gpt-5.x,
+        # o-series) — they reject any non-default value at the API
+        # layer. See ``_supports_temperature`` above for the Sentry
+        # incident that motivated this guard.
+        if _supports_temperature(model):
+            kwargs["temperature"] = temperature
         response = self.client.chat.completions.create(
             messages=[
                 {"role": "system", "content": system},
                 {"role": "user", "content": user},
             ],
             response_format={"type": "json_object"},
-            temperature=temperature,
             **kwargs,
         )
         content = response.choices[0].message.content or "{}"
@@ -402,13 +439,19 @@ class OpenAIService:
             raise RuntimeError(f"OpenAI client is not available for task {task_name!r}.")
         response_format = _build_json_schema_response_format(response_model)
         kwargs = self._completion_kwargs(model=model, max_completion_tokens=max_completion_tokens)
+        # Omit ``temperature`` entirely for reasoning models (gpt-5.x,
+        # o-series) — they reject any non-default value at the API
+        # layer. See ``_supports_temperature`` above for the Sentry
+        # incident (HELPMATE-BACKEND-B, 2026-05-27) that motivated
+        # this guard.
+        if _supports_temperature(model):
+            kwargs["temperature"] = temperature
         response = self.client.chat.completions.create(
             messages=[
                 {"role": "system", "content": system},
                 {"role": "user", "content": user},
             ],
             response_format=response_format,
-            temperature=temperature,
             **kwargs,
         )
         content = response.choices[0].message.content or ""

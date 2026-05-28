@@ -204,7 +204,12 @@ class DocumentClassifierService:
                     {"role": "user", "content": prompt},
                 ],
                 response_format={"type": "json_object"},
-                temperature=0,
+                # Don't pass temperature — document_classifier_model
+                # defaults to gpt-5.4-nano which rejects non-default
+                # temperature. The silent ``except Exception:`` below
+                # was masking this; classifier was falling back to
+                # keyword style on every call. Removing the param
+                # restores the LLM classification path.
             )
             payload = json.loads(response.choices[0].message.content or "{}")
         except Exception as exc:

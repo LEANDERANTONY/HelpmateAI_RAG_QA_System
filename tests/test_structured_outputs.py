@@ -32,6 +32,7 @@ from src.openai_service import (
     TokenUsage,
     _build_json_schema_response_format,
     _enforce_strict_schema,
+    _supports_temperature,
     compute_cost_usd,
 )
 from src.schemas_llm_outputs import (
@@ -153,6 +154,114 @@ def test_compute_cost_usd_returns_zero_for_unknown_model():
     # Defensive: a renamed model just records $0 — operator notices
     # the gap in the dashboard and updates the pricing table.
     assert compute_cost_usd("unknown-future-model", 1000, 1000) == 0.0
+
+
+# ─── reasoning-model temperature suppression ──────────────────────────
+
+
+def test_supports_temperature_rejects_reasoning_models():
+    """Sentry HELPMATE-BACKEND-B regression. The gpt-5.x and o-series
+    families are reasoning models and the OpenAI API rejects any
+    non-default temperature with::
+
+        Unsupported value: 'temperature' does not support 0 with this
+        model. Only the default (1) value is supported.
+
+    The helper must report these as NOT supporting a custom
+    temperature so the API call sites can omit the param instead of
+    passing the legacy default 0.0 that triggers the rejection.
+    """
+    # gpt-5 family — every Settings default routes here.
+    assert _supports_temperature("gpt-5.5") is False
+    assert _supports_temperature("gpt-5.4") is False
+    assert _supports_temperature("gpt-5.4-mini") is False
+    assert _supports_temperature("gpt-5.4-nano") is False
+    assert _supports_temperature("gpt-5-mini") is False
+    # o-series — OpenAI's reasoning model family.
+    assert _supports_temperature("o1") is False
+    assert _supports_temperature("o1-mini") is False
+    assert _supports_temperature("o3") is False
+    assert _supports_temperature("o3-mini") is False
+    assert _supports_temperature("o4-mini") is False
+    # Case-insensitivity: OpenAI sometimes returns the dated-suffix
+    # snapshot string with mixed case; the helper must still classify it.
+    assert _supports_temperature("GPT-5.4") is False
+    assert _supports_temperature(" gpt-5.4-2026-04-01 ") is False
+
+
+def test_supports_temperature_allows_traditional_models():
+    """Non-reasoning models DO accept a custom temperature. The helper
+    must not over-reject — otherwise gpt-4-class deployments would
+    silently lose their sampling control."""
+    assert _supports_temperature("gpt-4") is True
+    assert _supports_temperature("gpt-4o") is True
+    assert _supports_temperature("gpt-4o-mini") is True
+    assert _supports_temperature("gpt-4-turbo") is True
+    assert _supports_temperature("gpt-3.5-turbo") is True
+    # Defensive: unknown / empty model name defaults to "supports" so
+    # an unrecognised future model gets the same behavior as the
+    # mainline non-reasoning class — pass temperature through, let
+    # OpenAI reject if it doesn't like the value. Better than
+    # silently stripping a param the new model might actually need.
+    assert _supports_temperature("unknown-future-model") is True
+    assert _supports_temperature("") is True
+    assert _supports_temperature(None) is True
+
+
+def test_run_structured_prompt_omits_temperature_for_reasoning_models(
+    fake_client, settings,
+):
+    """Pin the wiring: when the model is a reasoning class, the
+    chat.completions.create call must NOT contain a ``temperature``
+    kwarg. The Sentry-tripping bug was passing
+    ``temperature=0`` into ``client.chat.completions.create(...)``
+    for ``gpt-5.5``; the API 400-ed before the SDK even returned.
+    """
+    service = OpenAIService(settings, client=fake_client)
+    fake_client.chat.completions.queue(
+        _FakeResponse(content='{"supported": true, "support_status": "supported", "answer": "ok", "reason": "evidence", "support_summary": "Cited evidence"}')
+    )
+
+    service.run_structured_prompt(
+        system="sys",
+        user="usr",
+        task_name="answer_generation",
+        model="gpt-5.5",
+        response_model=AnswerOutput,
+    )
+
+    call = fake_client.chat.completions.calls[0]
+    assert "temperature" not in call, (
+        "gpt-5.5 is a reasoning model — temperature must be omitted, "
+        f"got: {call.get('temperature')!r}"
+    )
+    # The other kwargs should still be wired (sanity).
+    assert call["model"] == "gpt-5.5"
+    assert call["response_format"]["type"] == "json_schema"
+
+
+def test_run_structured_prompt_passes_temperature_for_traditional_models(
+    fake_client, settings,
+):
+    """The opposite direction: gpt-4-class models should still receive
+    the temperature kwarg. The fix is selective by model family —
+    not a blanket strip."""
+    service = OpenAIService(settings, client=fake_client)
+    fake_client.chat.completions.queue(
+        _FakeResponse(content='{"supported": true, "support_status": "supported", "answer": "ok", "reason": "evidence", "support_summary": "Cited evidence"}')
+    )
+
+    service.run_structured_prompt(
+        system="sys",
+        user="usr",
+        task_name="answer_generation",
+        model="gpt-4o-mini",
+        response_model=AnswerOutput,
+        temperature=0.2,
+    )
+
+    call = fake_client.chat.completions.calls[0]
+    assert call.get("temperature") == 0.2
 
 
 # ─── strict-schema JSON construction ──────────────────────────────────
