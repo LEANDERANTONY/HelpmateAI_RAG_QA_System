@@ -2137,6 +2137,13 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
   const turnRefs = useRef<Record<string, HTMLElement | null>>({});
   const flashTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const streamTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Mirror the active document into a ref so in-flight async work (runAsk)
+  // can detect a document replacement that happened while it was awaiting and
+  // drop its now-stale result instead of committing it to the new doc (H12).
+  const docRef = useRef<DocumentRecord | null>(document);
+  useEffect(() => {
+    docRef.current = document;
+  }, [document]);
 
   const status = useMemo(() => docStatus(indexState, indexRecord, answer), [answer, indexRecord, indexState]);
   const evidencePending = answerState === "loading";
@@ -2325,15 +2332,23 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
     // the next question defaults back to standard. The backend
     // re-validates eligibility — a free user with premium=true
     // gets a 402 here regardless of the UI state.
+    // The document this question is about. If the user replaces the document
+    // while the request is in flight, the stale result is dropped below rather
+    // than attached (with the old doc's evidence/citations) to the new thread.
+    const reqDocId = document!.document_id;
     const useThisTurnPremium = premiumActive;
     setPremiumActive(false);
 
     try {
       const response = await askQuestion(
-        document!.document_id,
+        reqDocId,
         submittedQuestion,
         { premium: useThisTurnPremium },
       );
+      if (docRef.current?.document_id !== reqDocId) {
+        // Document was replaced mid-flight — discard this answer (H12).
+        return;
+      }
       const turn: QATurn = {
         id: makeTurnId(),
         question: submittedQuestion,
