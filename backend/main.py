@@ -512,7 +512,10 @@ def _cleanup_if_expired(document: DocumentRecord) -> bool:
 
 def _find_active_workspace_document(user: AuthenticatedUser) -> DocumentRecord | None:
     active_documents: list[DocumentRecord] = []
-    for document in _store().list_documents():
+    # Scoped fetch (H3): pull only this user's documents via the indexed
+    # user_id column instead of deserializing every user's payload. The owner
+    # re-check below stays as defense-in-depth against column/metadata drift.
+    for document in _store().list_documents_for_user(user.id):
         if _document_owner_id(document) != user.id:
             continue
         if _cleanup_if_expired(document):
@@ -545,7 +548,8 @@ def _count_active_documents(user: AuthenticatedUser) -> int:
     indexed count query at the store layer.
     """
     active = 0
-    for document in _store().list_documents():
+    # Scoped fetch (H3) — see _find_active_workspace_document.
+    for document in _store().list_documents_for_user(user.id):
         if _document_owner_id(document) != user.id:
             continue
         expires_at = _document_expires_at(document)

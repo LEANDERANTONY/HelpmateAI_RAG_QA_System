@@ -72,6 +72,13 @@ class LocalApiRecordStore:
             documents.append(DocumentRecord(**json.loads(path.read_text(encoding="utf-8"))))
         return documents
 
+    def list_documents_for_user(self, user_id: str) -> list[DocumentRecord]:
+        return [
+            document
+            for document in self.list_documents()
+            if str((document.metadata or {}).get(WORKSPACE_OWNER_KEY) or "") == user_id
+        ]
+
     def delete_document(self, document_id: str) -> None:
         self._document_path(document_id).unlink(missing_ok=True)
 
@@ -140,6 +147,20 @@ class SupabaseApiRecordStore:
 
     def list_documents(self) -> list[DocumentRecord]:
         response = self.client.table(self.documents_table).select("payload").execute()
+        rows = extract_supabase_rows(response)
+        return [DocumentRecord(**(row.get("payload") or {})) for row in rows if row.get("payload")]
+
+    def list_documents_for_user(self, user_id: str) -> list[DocumentRecord]:
+        # Scoped read: uses helpmate_documents_user_id_idx instead of
+        # deserializing every user's document payload on every workspace read
+        # (H3). The backend runs as service-role (RLS bypassed), so this
+        # explicit .eq is what actually constrains the query to one user.
+        response = (
+            self.client.table(self.documents_table)
+            .select("payload")
+            .eq("user_id", user_id)
+            .execute()
+        )
         rows = extract_supabase_rows(response)
         return [DocumentRecord(**(row.get("payload") or {})) for row in rows if row.get("payload")]
 
