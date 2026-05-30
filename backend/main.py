@@ -705,23 +705,25 @@ def health() -> HealthResponse:
     )
 
 
-@app.get("/health/sentry-debug")
-def sentry_debug() -> None:
-    """Raise an unhandled exception so Sentry sees the issue end-to-end.
+# Registered ONLY outside production. The route is unauthenticated and always
+# raises, so leaving it live in prod lets anyone curl it in a loop to generate
+# 500s, burn the Sentry free-tier quota, and drown real issues. It exists only
+# as a one-time deploy smoke test; in production it simply 404s (M4).
+if settings.observability_environment != "production":
 
-    Used once at deploy time to confirm the DSN, environment, and
-    release tag are wired. The route returns no JSON — Sentry's
-    FastAPI integration catches the raise, ships the event, and
-    FastAPI's default 500 handler returns "Internal Server Error" to
-    the caller. There is intentionally no auth on this route: it must
-    be callable from anywhere with curl. Remove or gate it behind a
-    feature flag if your threat model objects.
-    """
-    # ``division by zero`` is the canonical Sentry-tutorial sample;
-    # keeping it deliberately recognizable so anyone reading the issue
-    # title in Sentry knows it's a smoke test, not a real bug.
-    division_by_zero = 1 / 0  # noqa: F841 — intentional crash for Sentry verification
-    return None
+    @app.get("/health/sentry-debug")
+    def sentry_debug() -> None:
+        """Raise an unhandled exception so Sentry sees the issue end-to-end.
+
+        Used once at deploy time to confirm the DSN, environment, and
+        release tag are wired. Gated to non-production environments so a
+        public caller can't abuse it on the live deployment.
+        """
+        # ``division by zero`` is the canonical Sentry-tutorial sample;
+        # keeping it deliberately recognizable so anyone reading the issue
+        # title in Sentry knows it's a smoke test, not a real bug.
+        division_by_zero = 1 / 0  # noqa: F841 — intentional crash for Sentry verification
+        return None
 
 
 def _quota_blocked(
