@@ -1218,14 +1218,28 @@ def answer_question(
     # Increment AFTER successful generation. Pipeline raised → we
     # return here via the exception path with no increment.
     #
-    # Premium calls increment BOTH counters (per spec): the standard
-    # question counter still ticks because the LLM call happened, AND
-    # the premium counter gets one charge for using the upgraded
-    # model. This makes total spend transparent on a single counter
-    # while still letting the premium cap function as the smaller
-    # bound on premium-model use specifically.
+    # The standard question counter ticks for every answered question
+    # (cache hits and degraded fallbacks included) — the user got an
+    # answer. The premium counter is narrower: it charges only when the
+    # premium model ACTUALLY ran this request. ``llm_breakdown`` is the
+    # record of real LLM calls (None on cache hits), so when it holds no
+    # call against the premium model — the model was unavailable and
+    # generation fell back to a local answer, or the answer came from
+    # cache — premium is not charged even though payload.premium was set.
+    # This keeps the premium cap a bound on premium-MODEL use (L1).
     _quota_store().increment_questions(user.id)
-    if payload.premium:
+    llm_breakdown = getattr(answer, "llm_breakdown", None)
+    premium_model = limits["premium_model"]
+    premium_ran = bool(
+        payload.premium
+        and premium_model
+        and llm_breakdown
+        and any(
+            call.get("model_name") == premium_model
+            for call in (llm_breakdown.get("calls") or [])
+        )
+    )
+    if premium_ran:
         _quota_store().increment_premium(user.id)
 
     _save_touched_document(document, user)
@@ -1254,12 +1268,11 @@ def answer_question(
     # underlying LLM call so the LLM Analytics dashboard sees full
     # token / cost / model attribution per span. Trace_id ties the
     # spans together so the dashboard can group them per request.
-    # ``answer.llm_breakdown`` stays None on cache hits (so a cached
-    # answer doesn't replay events that never happened on this
-    # request) — bail in that case. The contract:
+    # ``answer.llm_breakdown`` (computed above for premium gating) stays
+    # None on cache hits, so a cached answer doesn't replay events that
+    # never happened on this request — bail in that case. The contract:
     #   PostHog LLM Analytics expects ``$ai_*`` property keys verbatim;
     #   missing them silently drops the event off the dashboard.
-    llm_breakdown = getattr(answer, "llm_breakdown", None)
     if llm_breakdown:
         for call in llm_breakdown.get("calls", []) or []:
             try:

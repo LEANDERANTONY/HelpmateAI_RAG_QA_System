@@ -15,6 +15,8 @@ Step 5 of the tier-enforcement series. Coverage:
         pipeline call
       - pro user at standard cap (premium fine) → 402
         question_quota_exhausted (premium counter NOT incremented)
+      - pro user, premium model unavailable → degraded fallback, only the
+        question counter increments (premium NOT charged — L1)
 
   • /workspace/quota — shape + values match the tier and counter
     state. Read-only, no side effects.
@@ -131,7 +133,19 @@ def fake_pipeline_and_doc(monkeypatch):
         created_at="2026-01-01T00:00:00+00:00",
     )
 
-    def make_answer(model_name: str) -> AnswerResult:
+    def make_answer(
+        model_name: str, breakdown_calls: list[dict] | None = None
+    ) -> AnswerResult:
+        # Mirror production: a real run records the model it called in
+        # llm_breakdown. Default to a single call against model_name so the
+        # premium-gating logic (L1) sees the premium model actually ran;
+        # pass breakdown_calls=[] (or a non-premium model) to simulate a
+        # degraded fallback where the premium model never produced output.
+        calls = (
+            breakdown_calls
+            if breakdown_calls is not None
+            else [{"model_name": model_name}]
+        )
         return AnswerResult(
             question="q",
             answer="a",
@@ -139,6 +153,7 @@ def fake_pipeline_and_doc(monkeypatch):
             evidence=[],
             cache_status=CacheStatus(),
             model_name=model_name,
+            llm_breakdown={"calls": calls},
         )
 
     monkeypatch.setattr(backend_main, "_require_document_for_user", lambda _id, _u: fake_doc)
@@ -287,6 +302,47 @@ def test_qa_premium_false_uses_default_model_no_premium_increment(
     assert response.status_code == 200
     body = response.json()
     assert body["answer"]["model_name"] == TIER_LIMITS["pro"]["answer_model"]
+
+    counter = isolated_quota_store.get_counter(_TEST_USER_ID)
+    assert counter.questions == 1
+    assert counter.premium == 0
+
+
+def test_qa_pro_with_premium_fallback_does_not_charge_premium(
+    authed_client, fake_pipeline_and_doc, isolated_quota_store, monkeypatch
+):
+    """Pro user opts into premium, but the premium model is unavailable so
+    generation returns a degraded local fallback (model_name='fallback', no
+    premium call in llm_breakdown). The standard question counter still
+    ticks — the user got an answer — but the premium counter must NOT,
+    because the premium model never ran this request (L1)."""
+    from backend import main as backend_main
+    from src.schemas import AnswerResult, CacheStatus
+
+    monkeypatch.setattr(backend_main, "resolve_user_tier", lambda _u: "pro")
+
+    def fallback_answer(_doc, _idx, _q, *, model_override=None):
+        # Premium gpt-5.5 was requested (model_override) but failed; the
+        # service fell back to a local answer and recorded no premium call.
+        return AnswerResult(
+            question="q",
+            answer="a local fallback",
+            citations=[],
+            evidence=[],
+            cache_status=CacheStatus(),
+            model_name="fallback",
+            llm_breakdown={"calls": []},
+        )
+
+    fake_pipeline_and_doc.answer_question.side_effect = fallback_answer
+
+    response = authed_client.post(
+        "/qa",
+        json={"document_id": "doc-fake", "question": "any", "premium": True},
+    )
+    assert response.status_code == 200
+    body = response.json()
+    assert body["answer"]["model_name"] == "fallback"
 
     counter = isolated_quota_store.get_counter(_TEST_USER_ID)
     assert counter.questions == 1
