@@ -25,6 +25,7 @@ from src.openai_service import (
     reset_cost_collector,
 )
 from src.retrieval import ChromaIndexStore, HybridRetriever
+from src.retrieval.store import bind_bundle_cache, reset_bundle_cache
 from src.sections import build_sections
 from src.sections.profiles import enrich_section_profiles
 from src.sections.repair import StructureRepairService
@@ -334,6 +335,11 @@ class HelpmatePipeline:
         # would mix records across concurrent requests.
         cost_collector = CostCollector()
         token = bind_cost_collector(cost_collector)
+        # Memoize the artifact bundle for the lifetime of this request so a
+        # single retrieve() (+ any abstention recovery) fetches the Supabase
+        # row once instead of 5-8x (H2). Reset in the finally so the next
+        # request that lands on this task starts clean.
+        bundle_token = bind_bundle_cache()
         try:
             return self._answer_question_inner(
                 document=document,
@@ -344,6 +350,7 @@ class HelpmatePipeline:
                 cost_collector=cost_collector,
             )
         finally:
+            reset_bundle_cache(bundle_token)
             reset_cost_collector(token)
 
     def _answer_question_inner(
