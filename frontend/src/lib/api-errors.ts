@@ -129,6 +129,18 @@ export function messageForApiError(
     }
   }
 
+  // 410 Gone — the workspace/document expired and was purged (Free-tier
+  // retention). Distinct from 404 (never existed / wrong id) and from the
+  // generic 4xx "bad input" copy below, both of which mislabel an expired
+  // workspace. Tell the user it's gone for good and to re-upload (L4).
+  if (status === 410) {
+    return {
+      title: "Workspace expired",
+      body: "This workspace was kept for a limited time and has now expired. Upload the document again to continue.",
+      action: null,
+    };
+  }
+
   if (status === 408 || status === 504) {
     switch (op) {
       case "upload":
