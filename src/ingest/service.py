@@ -41,6 +41,25 @@ def file_fingerprint(path: Path) -> str:
     return _file_fingerprint(path)
 
 
+def derive_document_id(fingerprint: str, owner_id: str | None = None) -> str:
+    """Derive the persisted ``document_id`` from a content fingerprint.
+
+    With an ``owner_id`` the id is per-user (``sha256(owner_id:fingerprint)``
+    truncated to 16 chars), so two users uploading a byte-identical file get
+    DISTINCT ids and can't overwrite each other's workspace row (H1). The raw
+    content fingerprint stays on ``DocumentRecord.fingerprint`` and remains the
+    key for index / cache reuse, so identical content is still embedded once.
+
+    Owner-less callers (eval scripts, legacy paths) keep the original
+    content-only derivation — which is exactly how every pre-existing row was
+    keyed — so this is non-destructive: existing documents keep their ids and
+    only new owner-scoped uploads get the new derivation.
+    """
+    if owner_id:
+        return hashlib.sha256(f"{owner_id}:{fingerprint}".encode("utf-8")).hexdigest()[:16]
+    return fingerprint[:16]
+
+
 def _strip_invalid_storage_chars(value: Any) -> Any:
     if isinstance(value, str):
         return value.replace("\x00", "")
@@ -522,6 +541,7 @@ def ingest_document(
     path: str | Path,
     *,
     docx_pdf_rendition: str | Path | None = None,
+    owner_id: str | None = None,
 ) -> DocumentRecord:
     """Extract a document into a ``DocumentRecord``.
 
@@ -563,7 +583,7 @@ def ingest_document(
     pages = _strip_invalid_storage_chars(pages)
     extraction_metadata = _strip_invalid_storage_chars(extraction_metadata)
     fingerprint = _file_fingerprint(file_path)
-    document_id = fingerprint[:16]
+    document_id = derive_document_id(fingerprint, owner_id)
     enriched_pages, outline = enrich_pages_with_structure(pages)
     enriched_pages = _strip_invalid_storage_chars(enriched_pages)
     outline = _strip_invalid_storage_chars(outline)

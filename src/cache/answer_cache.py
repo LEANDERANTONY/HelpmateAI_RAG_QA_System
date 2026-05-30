@@ -19,9 +19,18 @@ class AnswerCache:
         retrieval_version: str,
         generation_version: str,
         model_name: str,
+        document_id: str = "",
     ) -> str:
         normalized = " ".join(question.lower().split())
-        payload = "||".join([fingerprint, normalized, retrieval_version, generation_version, model_name])
+        components = [fingerprint, normalized, retrieval_version, generation_version, model_name]
+        # Prepend the (post-H1 per-user) document_id so two users with
+        # byte-identical content never share a cached answer — a premium
+        # answer paid for by one user must not be served to another (M22).
+        # An empty document_id (legacy callers, eval scripts, tests) keeps the
+        # original key, so this stays non-breaking for content-only callers.
+        if document_id:
+            components.insert(0, document_id)
+        payload = "||".join(components)
         return hashlib.sha256(payload.encode("utf-8")).hexdigest()
 
     def _cache_path(self, key: str) -> Path:

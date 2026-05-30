@@ -826,7 +826,7 @@ async def upload_document(
         # blocking LibreOffice DOCX->PDF subprocess, chunking, several OpenAI
         # calls). Run it in a worker thread so a single upload doesn't stall
         # the uvicorn event loop for every other concurrent request (H4).
-        document = await asyncio.to_thread(_pipeline().ingest_document, target_path)
+        document = await asyncio.to_thread(_pipeline().ingest_document, target_path, user.id)
     except PdfExtractionError as exc:
         # Clean up the rejected upload so it doesn't linger in uploads_dir,
         # then surface a clear 422 to the client instead of an opaque 500.
@@ -881,7 +881,7 @@ def load_sample_document(
     if existing_document is not None:
         _delete_workspace_records(existing_document)
 
-    document = _pipeline().ingest_document(sample_path)
+    document = _pipeline().ingest_document(sample_path, user.id)
     index_record = _pipeline().build_or_load_index(document)
     # Sample documents go through the same storage materialization as
     # uploads — on the supabase backend the sample's bytes end up in the
