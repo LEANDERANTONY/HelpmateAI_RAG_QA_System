@@ -8,6 +8,8 @@ import type {
   ReactNode,
 } from "react";
 
+import dynamic from "next/dynamic";
+
 import { AuthSidebar } from "@/components/auth-sidebar";
 import { ErrorState } from "@/components/error-state";
 import { FeedbackButtons } from "@/components/feedback-buttons";
@@ -18,8 +20,6 @@ import {
 } from "@/components/posthog-provider";
 import { VoiceInputButton, isVoiceInputSupported } from "@/components/voice-input-button";
 import { ChatCollapseToggle } from "@/components/viewer/chat-collapse-toggle";
-import { MobileSourceSheet } from "@/components/viewer/mobile-source-sheet";
-import { SourcePane } from "@/components/viewer/source-pane";
 import {
   askQuestion,
   buildIndex,
@@ -2911,6 +2911,22 @@ function WorkspaceShellChrome({ children }: { children: ReactNode }) {
     </div>
   );
 }
+
+// Lazy-load the Read Mode surface (M10). Both viewer entry points pull in the
+// PDF viewer wrapper, vaul, and pdf_viewer.css — none of which the workspace
+// needs until the user first enters Read Mode. next/dynamic({ ssr: false })
+// splits them into a chunk fetched on that first entry (SourcePaneMount stays
+// null until mode === "read"), keeping ~vaul + the viewer off the initial
+// workspace bundle. ssr:false is required and safe: the viewer touches
+// window/matchMedia and SourcePaneMount only renders post-interaction anyway.
+const SourcePane = dynamic(
+  () => import("@/components/viewer/source-pane").then((m) => m.SourcePane),
+  { ssr: false },
+);
+const MobileSourceSheet = dynamic(
+  () => import("@/components/viewer/mobile-source-sheet").then((m) => m.MobileSourceSheet),
+  { ssr: false },
+);
 
 // Branches the source viewer based on viewport: desktop two-pane embeds
 // <SourcePane> in the .h-frame grid column; mobile (<=900px) renders the
