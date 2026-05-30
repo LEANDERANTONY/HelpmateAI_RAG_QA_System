@@ -9,12 +9,15 @@
 //     fallback — three things that take ~200 LOC each to get right.
 //   • Bundle cost is ~12KB gzipped — acceptable for the UX we need.
 //
-// The drag-to-COMPACT interception:
-//   COMPACT is reserved for keyboard-up. User drag should bounce between
-//   FULL and SPLIT only. Vaul's snap-point array includes COMPACT (so we
-//   can programmatically snap there when keyboard appears) but our
-//   setActiveSnapPoint handler bounces user-initiated drags away from
-//   COMPACT back to SPLIT.
+// The three snap points:
+//   COMPACT (25%) is the keyboard-up posture — setKeyboardActive in the
+//   store forces it so the focused chat input stays visible above the
+//   sheet. SPLIT (55%) is the default working height; FULL (100%) is the
+//   drag/tap-to-expand posture. Drag can land on any of the three: vaul
+//   resolves the nearest snap on release and handleSetActiveSnapPoint
+//   accepts it as-is (see the note there on why we no longer bounce
+//   drag-to-COMPACT back to SPLIT). The handle tap, by contrast, only ever
+//   toggles SPLIT ↔ FULL and restores SPLIT from COMPACT — never FULL.
 //
 // modal={false} keeps the chat behind the sheet interactive — user can
 // scroll Q&A history and tap the input while the sheet is at SPLIT or
@@ -375,16 +378,20 @@ export function MobileSourceSheet() {
                 : "Drag or tap to expand sheet height"
             }
             onClick={() => {
-              // Toggle FULL ↔ SPLIT. Ignore COMPACT — that's a
-              // keyboard-driven posture; tapping the handle while
-              // COMPACT should return to SPLIT (most useful for the
-              // user) rather than jump to FULL.
-              setMobileSnap(mobileSnap === "full" ? "split" : "full");
+              // Toggle SPLIT ↔ FULL, and restore SPLIT from COMPACT —
+              // never jump COMPACT → FULL. COMPACT is the keyboard-driven
+              // posture; the most useful thing a handle tap can do from
+              // there is return to the default SPLIT working height. So
+              // the only state that expands to FULL is SPLIT; everything
+              // else (FULL, COMPACT) collapses to SPLIT.
+              setMobileSnap(mobileSnap === "split" ? "full" : "split");
             }}
             onKeyDown={(event) => {
               if (event.key === "Enter" || event.key === " ") {
                 event.preventDefault();
-                setMobileSnap(mobileSnap === "full" ? "split" : "full");
+                // Same toggle as onClick: SPLIT → FULL, everything else
+                // (FULL, COMPACT) → SPLIT.
+                setMobileSnap(mobileSnap === "split" ? "full" : "split");
               }
             }}
           >
