@@ -822,7 +822,11 @@ async def upload_document(
         raise HTTPException(status_code=400, detail="Uploaded file extension mismatch.")
 
     try:
-        document = _pipeline().ingest_document(target_path)
+        # ingest_document is fully synchronous and slow (pdfplumber, a
+        # blocking LibreOffice DOCX->PDF subprocess, chunking, several OpenAI
+        # calls). Run it in a worker thread so a single upload doesn't stall
+        # the uvicorn event loop for every other concurrent request (H4).
+        document = await asyncio.to_thread(_pipeline().ingest_document, target_path)
     except PdfExtractionError as exc:
         # Clean up the rejected upload so it doesn't linger in uploads_dir,
         # then surface a clear 422 to the client instead of an opaque 500.
@@ -832,7 +836,9 @@ async def upload_document(
     # Hand the ingested files off to the configured storage backend.
     # No-op for local; uploads to Supabase bucket and rewrites the
     # source_path / viewable_pdf_path fields to bucket keys otherwise.
-    _materialize_uploads_to_storage(document, user)
+    # Blocking Supabase Storage uploads on the supabase backend — also off
+    # the event loop (H4).
+    await asyncio.to_thread(_materialize_uploads_to_storage, document, user)
 
     document = _save_touched_document(document, user)
     existing_index = _store().get_index(document.document_id)
