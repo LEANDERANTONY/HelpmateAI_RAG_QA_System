@@ -36,6 +36,7 @@ from backend.quota import (
     check_question_quota,
 )
 from backend.quota_store import QuotaStore, build_quota_store
+from backend.rate_limit import enforce_rate_limit
 from backend.store import build_api_record_store
 from backend.tiers import RETENTION_UNBOUNDED, TIER_LIMITS, resolve_user_tier
 from src.config import get_settings
@@ -1375,15 +1376,20 @@ async def transcribe_audio(
     transcript so the textarea can populate without the user typing a
     multi-paragraph question.
 
-    Free for every tier — no quota gate. The cost per call is tiny
-    (Whisper bills $0.006/min) and the feature is a UX win, not a
-    paid-tier hook. We still require auth so the route can't be
-    abused as an anonymous transcription API.
+    No monthly quota gate, but a per-user in-process rate limit (M1) bounds
+    abuse of the unmetered Whisper calls — without it a single authenticated
+    user could loop this endpoint for unbounded OpenAI spend. The cost per call
+    is tiny (Whisper bills $0.006/min) and the feature is a UX win, not a
+    paid-tier hook. We still require auth so the route can't be abused as an
+    anonymous transcription API.
 
     Validates upload type + size BEFORE touching OpenAI so a misfiled
     blob (or a 1 GB stream) gets a fast 400/413 instead of burning
     minutes of audio at the API edge.
     """
+    # ~30 transcriptions/min per user (burst 30) — far above the "speak your
+    # question" use case, but enough to stop a tight abuse loop (M1).
+    enforce_rate_limit(f"transcribe:{user.id}", capacity=30, refill_per_sec=0.5)
     settings = _settings()
     if not settings.openai_api_key:
         # The frontend gates the voice button on whether transcription
