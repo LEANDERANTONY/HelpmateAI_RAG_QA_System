@@ -12,6 +12,7 @@ import { AuthSidebar } from "@/components/auth-sidebar";
 import { ErrorState } from "@/components/error-state";
 import { FeedbackButtons } from "@/components/feedback-buttons";
 import {
+  capturePostHogEvent,
   identifyPostHogUser,
   setPostHogTierGroup,
 } from "@/components/posthog-provider";
@@ -2498,6 +2499,10 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
       // from event handlers, not render, so a one-shot getState() read
       // keeps AppWorkspace out of the mode-flip subscription tree.
       const readModeActive = useReadModeStore.getState().mode === "read";
+      capturePostHogEvent("citation_clicked", {
+        chunk_id: chunkId,
+        read_mode: readModeActive,
+      });
       if (readModeActive) {
         // Read Mode citation behavior: scroll the source viewer to the
         // clicked chunk. The evidence rail is hidden so there's nothing

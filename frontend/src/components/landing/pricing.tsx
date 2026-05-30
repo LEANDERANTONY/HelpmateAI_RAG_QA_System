@@ -14,6 +14,7 @@
 import { useEffect, useState } from "react";
 
 import { getCheckoutUrl, isLemonSqueezyEnabled } from "@/lib/api";
+import { capturePostHogEvent } from "@/components/posthog-provider";
 import { createClient } from "@/lib/supabase/client";
 import { isSupabaseConfigured } from "@/lib/supabase/config";
 
@@ -197,6 +198,15 @@ function PricingCard({ tier }: { tier: Tier }) {
         className="l-pricing-cta"
         href={cta.disabled ? undefined : cta.href}
         aria-disabled={cta.disabled || undefined}
+        onClick={
+          cta.disabled
+            ? undefined
+            : () =>
+                capturePostHogEvent("upgrade_clicked", {
+                  tier: tier.name,
+                  source: "pricing",
+                })
+        }
         // When LS isn't configured yet, the CTA renders as a static
         // "Coming soon" label without a destination -- a11y peers
         // call this the most honest fallback (no broken link, no
