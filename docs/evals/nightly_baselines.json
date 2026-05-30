@@ -1,0 +1,7 @@
+{
+  "_comment": "Pre-release quality-gate baselines for `backend/nightly_eval.py --check-thresholds`. Populate each metric with the value from a known-good run's `metrics` block, then commit. A missing or non-numeric value is skipped by _load_baselines, so this template (nulls) yields an empty baseline and never trips a false regression. See docs/deployment.md > Pre-Release Quality Gate (M26).",
+  "ragas_faithfulness": null,
+  "ragas_answer_relevancy": null,
+  "financebench_supported_rate": null,
+  "final_eval_supported_rate": null
+}

@@ -40,6 +40,29 @@ The repo includes:
 7. Set the API URL on Vercel (`API_REWRITE_TARGET=https://api.yourdomain.com`) and confirm the workspace's API client uses the absolute URL in production. The Read Mode PDF viewer also calls the backend directly via `API_BASE_URL` rather than the relative `/api/*` proxy — this matters in production because the Vercel-edge to Cloudflare proxy chain triggers Cloudflare's bot challenge on data-center origins and breaks the PDF stream. Browser-direct calls to `api.helpmateai.xyz` pass through cleanly.
 8. Test upload, indexing, QA, citations, evidence, and Read Mode (including DOCX → PDF rendition + source viewer) on the deployed URLs.
 
+## Pre-Release Quality Gate (required)
+
+Answer-quality regressions (faithfulness, answer relevancy, abstention/supported rate) are invisible to the unit suite — they are exactly what the eval harness in `backend/nightly_eval.py` is built to catch. The nightly cron is **disabled** on the VPS to save OpenAI spend (and its Sentry heartbeat is gated behind `HELPMATE_NIGHTLY_EVAL_MONITOR_ENABLED`), so the 5% regression budget is **not enforced automatically** (M26). Run it manually before every release:
+
+```bash
+# On the VPS, against the running API container. --check-thresholds exits
+# non-zero if any tracked metric drops >=5% vs the committed baselines.
+docker exec helpmate-api python -m backend.nightly_eval \
+  --check-thresholds \
+  --baselines docs/evals/nightly_baselines.json \
+  --financebench-max-questions 20
+```
+
+Tracked metrics (`TRACKED_METRICS`): `ragas_faithfulness`, `ragas_answer_relevancy`, `financebench_supported_rate`, `final_eval_supported_rate`.
+
+Maintaining the baseline:
+
+1. On a known-good commit, run the command above **without** `--check-thresholds` and read the `metrics` block from the JSON summary it writes.
+2. Commit those numbers into [`docs/evals/nightly_baselines.json`](evals/nightly_baselines.json) as a flat `{ "<metric>": <float> }` map. A missing metric is skipped by the checker, so a partial baseline is safe (no false regressions).
+3. Re-run with `--check-thresholds` before each release. A non-zero exit is a release blocker — investigate the drop, do not "just update the baseline".
+
+To re-enable automatic enforcement instead, restore a bounded VPS cron (e.g. Mon + Thu) running the same command with `HELPMATE_NIGHTLY_EVAL_MONITOR_ENABLED=true` so the Sentry check-in fires; cap cost with `--financebench-max-questions`.
+
 ## Backend Environment
 
 Important backend environment variables:
