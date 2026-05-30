@@ -218,9 +218,14 @@ def _extract_pdfplumber_table_artifacts(path: Path, pages: list[dict[str, str]])
     except ImportError:
         return []
 
+    # Use the TRUE PDF page number (pdf_page_number), not the position in the
+    # filtered `pages` list. The two diverge whenever an earlier page had no
+    # extractable text and was dropped, which previously made pdfplumber open
+    # the wrong physical page and stamp the wrong citation label (H7). Fall
+    # back to the filtered position only if the field is somehow absent.
     candidate_page_numbers = [
-        index
-        for index, page in enumerate(pages, start=1)
+        int(page.get("pdf_page_number") or filtered_pos)
+        for filtered_pos, page in enumerate(pages, start=1)
         if _looks_table_enrichment_candidate(str(page.get("text", "")))
     ]
     max_pages = _table_extractor_max_pages()
@@ -257,9 +262,15 @@ def _attach_table_artifacts(pages: list[dict[str, str]], artifacts: list[dict[st
     for artifact in artifacts:
         page_number = int(artifact.get("original_page_number", 0) or 0)
         by_page.setdefault(page_number, []).append(artifact)
-    for page_number, page_artifacts in by_page.items():
-        if 1 <= page_number <= len(pages):
-            pages[page_number - 1]["table_artifacts"] = page_artifacts  # type: ignore[assignment]
+    # Attach by matching each artifact's TRUE page number to the page dict
+    # carrying the same pdf_page_number, instead of indexing the filtered
+    # `pages` list positionally — those diverge once a blank page is dropped
+    # (H7). Fall back to positional for inputs without pdf_page_number.
+    for filtered_pos, page in enumerate(pages, start=1):
+        true_page = int(page.get("pdf_page_number") or filtered_pos)
+        page_artifacts = by_page.get(true_page)
+        if page_artifacts:
+            page["table_artifacts"] = page_artifacts  # type: ignore[assignment]
 
 
 def _extract_pdf_pypdf(path: Path) -> tuple[str, list[dict[str, str]], int, dict[str, str]]:
@@ -274,6 +285,12 @@ def _extract_pdf_pypdf(path: Path) -> tuple[str, list[dict[str, str]], int, dict
             pages.append(
                 {
                     "page_label": f"Page {index}",
+                    # True 1-based PDF page number. `pages` drops blank /
+                    # no-text pages, so a position in this filtered list is
+                    # NOT the physical page. Carry the real number so table
+                    # extraction reads the right page and labels citations
+                    # correctly (H7).
+                    "pdf_page_number": index,
                     "text": text,
                     "section_heading": _page_heading(text),
                     "extraction_backend": "pypdf",

@@ -82,3 +82,27 @@ def test_table_candidate_detection_is_corpus_agnostic():
     # Corpus words alone (no structure) no longer force a candidate —
     # confirms the allowlist is gone, not just shadowed.
     assert _looks_table_enrichment_candidate(prose_with_words) is False
+
+
+def test_attach_table_artifacts_uses_true_pdf_page_after_blank_dropped():
+    # H7: physical page 1 was blank (no extractable text) and dropped during
+    # extraction, so the filtered `pages` list starts at physical page 2 and
+    # the next surviving page is physical page 4. The artifact's
+    # original_page_number is the TRUE page (2). Attaching positionally
+    # (pages[2 - 1] = pages[1]) would wrongly land it on physical page 4.
+    pages = [
+        {"page_label": "Page 2", "pdf_page_number": 2, "text": "Table 1\nA B\n1 2"},
+        {"page_label": "Page 4", "pdf_page_number": 4, "text": "Other content"},
+    ]
+    artifact = {
+        "original_page_number": 2,
+        "original_page_label": "Page 2",
+        "text": "Extracted table:\n| A | B |\n| --- | --- |\n| 1 | 2 |",
+    }
+
+    _attach_table_artifacts(pages, [artifact])
+
+    # Lands on the dict whose true page is 2 (index 0), not positionally on
+    # the second dict (physical page 4).
+    assert pages[0]["table_artifacts"] == [artifact]
+    assert "table_artifacts" not in pages[1]
