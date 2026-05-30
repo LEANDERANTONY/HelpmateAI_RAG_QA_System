@@ -5393,9 +5393,13 @@ input[type="file"]:disabled::file-selector-button {
    individual selector if it breaks layout is safe.
 */
 @media (max-width: 900px) {
-  /* Citation pills — keep 20px visual height, extend tap target to
-     ~44px via an invisible pseudo so inline density (multiple pills
-     in a row inside an answer paragraph) survives intact. */
+  /* Citation pills (L12) — keep ~20px visual height, extend the tap target
+     to ~44px via an invisible pseudo so inline density (multiple pills in a
+     row inside an answer paragraph) survives intact. This is a stronger fix
+     than a min-height bump: it reaches the full 44px WCAG 2.5.5 target
+     without inflating the pill or breaking inline text flow, which a
+     min-height:32px (still < 44px) would do. The base .h-cite is already
+     inline-flex + align-items:center with padding. */
   .h-cite {
     position: relative;
   }
