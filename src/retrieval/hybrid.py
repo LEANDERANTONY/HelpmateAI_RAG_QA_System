@@ -211,7 +211,12 @@ class HybridRetriever:
             return "unsupported", 0.0, 0.0, 0.0
         self._stamp_candidate_strengths(candidates)
         self._stamp_highlight_terms(question, candidates)
-        best_score = self._evidence_score(candidates[0])
+        # Use the strongest fused score across ALL candidates, not just the
+        # one the reranker promoted to index 0. _evidence_score returns
+        # fused_score, and the reranker reorders by cross-encoder logits, so a
+        # genuinely strong fused candidate demoted to index 1+ must not trigger
+        # a false abstention (M5).
+        best_score = max(self._evidence_score(candidate) for candidate in candidates)
         max_lexical = max((candidate.lexical_score for candidate in candidates), default=0.0)
         content_overlap = self._content_overlap_ratio(question, candidates)
         section_kinds = {
