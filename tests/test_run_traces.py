@@ -1,6 +1,8 @@
 from datetime import datetime, timezone
 from pathlib import Path
 
+import pytest
+
 from src.config import Settings
 from src.pipeline import HelpmatePipeline
 from src.schemas import AnswerResult, CacheStatus, DocumentRecord, IndexRecord, RetrievalCandidate, RetrievalResult
@@ -74,6 +76,55 @@ def test_pipeline_builds_compact_ephemeral_run_trace(tmp_path):
     assert candidate_payload["preview"] == "A" * 240
     assert "full document text should not appear" not in str(trace.payload)
     assert "answer text should not be copied" not in str(trace.payload)
+
+
+def test_failed_qa_persists_error_trace(tmp_path, monkeypatch):
+    """L10: a /qa request that raises before producing an answer still
+    persists a minimal error trace (error marker + partial cost) and
+    re-raises the original exception, instead of vanishing from the store."""
+    settings = _settings(tmp_path)
+    pipeline = HelpmatePipeline(settings)
+    document = DocumentRecord(
+        document_id="doc-err",
+        file_name="paper.pdf",
+        file_type=".pdf",
+        source_path=str(tmp_path / "paper.pdf"),
+        fingerprint="fingerprint-err",
+        char_count=10,
+        page_count=1,
+    )
+    index_record = IndexRecord(
+        document_id="doc-err",
+        fingerprint="fingerprint-err",
+        collection_name="c",
+        storage_path=str(tmp_path / "idx"),
+        chunk_count=1,
+        section_count=1,
+        embedding_model="fake",
+        chunk_size=1,
+        chunk_overlap=0,
+        created_at="2026-01-01T00:00:00+00:00",
+    )
+
+    def explode(*_args, **_kwargs):
+        raise RuntimeError("retrieval exploded")
+
+    monkeypatch.setattr(pipeline.answer_cache, "get", lambda _: None)
+    monkeypatch.setattr(pipeline, "retrieve_evidence", explode)
+    saved: list = []
+    monkeypatch.setattr(pipeline.run_trace_store, "save_trace", saved.append)
+
+    with pytest.raises(RuntimeError, match="retrieval exploded"):
+        pipeline.answer_question(document, index_record, "What happened?")
+
+    # The failure was persisted, not swallowed: exactly one error trace,
+    # carrying the error marker and the originating question/document.
+    assert len(saved) == 1
+    trace = saved[0]
+    assert trace.document_id == "doc-err"
+    assert trace.question == "What happened?"
+    assert trace.payload["error"]["type"] == "RuntimeError"
+    assert "retrieval exploded" in trace.payload["error"]["message"]
 
 
 def test_trace_expiry_falls_back_to_retention_window(tmp_path):
