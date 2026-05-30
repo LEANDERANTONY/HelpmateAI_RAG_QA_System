@@ -9,6 +9,7 @@ from src.generation.prompts import (
 )
 from src.openai_service import (
     CostCollector,
+    DEFAULT_VERIFIER_MAX_COMPLETION_TOKENS,
     OpenAIService,
     StructuredOutputError,
 )
@@ -453,6 +454,7 @@ class AnswerGenerator:
                 task_name="support_verifier",
                 model=self.settings.answer_model,
                 response_model=SupportVerifierOutput,
+                max_completion_tokens=DEFAULT_VERIFIER_MAX_COMPLETION_TOKENS,
             )
             supported = verifier_output.supported
             reason = verifier_output.reason.strip()
@@ -515,6 +517,7 @@ class AnswerGenerator:
                 task_name="support_status_verifier",
                 model=self.settings.support_status_verifier_model,
                 response_model=SupportStatusVerifierOutput,
+                max_completion_tokens=DEFAULT_VERIFIER_MAX_COMPLETION_TOKENS,
             )
         except StructuredOutputError as exc:
             logger.warning(
