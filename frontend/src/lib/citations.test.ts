@@ -88,8 +88,27 @@ describe("visibleEvidence", () => {
 });
 
 describe("splitCitationSegments", () => {
-  it("marks an out-of-range citation with a null target (orphan pill)", () => {
+  it("demotes an out-of-range [Source N] to plain text, not an orphan pill (L2)", () => {
     const segments = splitCitationSegments("See [Source 9].", EVIDENCE);
+    // No citation segment is produced for the hallucinated source number.
+    expect(segments.some((segment) => segment.type === "citation")).toBe(false);
+    // The literal marker survives verbatim in the rendered text.
+    const text = segments
+      .map((segment) => (segment.type === "text" ? segment.text : ""))
+      .join("");
+    expect(text).toBe("See [Source 9].");
+  });
+
+  it("still emits a pill for an in-range [Source N]", () => {
+    const segments = splitCitationSegments("See [Source 1].", EVIDENCE);
+    const citation = segments.find((segment) => segment.type === "citation");
+    expect(
+      citation && citation.type === "citation" ? citation.target?.chunkId : null,
+    ).toBe("c1");
+  });
+
+  it("keeps an unresolved [Section X] as a pill with a null target", () => {
+    const segments = splitCitationSegments("See [Section Nonexistent].", EVIDENCE);
     const citation = segments.find((segment) => segment.type === "citation");
     expect(citation && citation.type === "citation" ? citation.target : "missing").toBeNull();
   });

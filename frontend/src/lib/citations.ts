@@ -96,25 +96,41 @@ export function splitCitationSegments(
   const segments: CitationSegment[] = [];
   let lastIndex = 0;
 
+  // Append text, coalescing with a preceding text segment so a demoted
+  // citation (below) never leaves two adjacent text runs.
+  const pushText = (chunk: string) => {
+    if (!chunk) return;
+    const last = segments[segments.length - 1];
+    if (last && last.type === "text") {
+      last.text += chunk;
+    } else {
+      segments.push({ type: "text", text: chunk });
+    }
+  };
+
   for (const match of text.matchAll(CITATION_PATTERN)) {
     const start = match.index ?? 0;
     const full = match[0];
     const raw = match[1].trim();
-    if (start > lastIndex) {
-      segments.push({ type: "text", text: text.slice(lastIndex, start) });
+    pushText(text.slice(lastIndex, start));
+
+    const target = resolveCitationTarget(raw, evidence);
+    // A `[Source N]` whose N exceeds the retrieved-evidence count cannot
+    // resolve to a chunk — the model hallucinated a source number past
+    // what it was given. Rendering it as a citation yields a dead,
+    // unclickable pill, so emit the literal `[Source N]` as plain text
+    // instead (L2). Unresolved Section/Page markers keep their pill: those
+    // are real references the metadata heuristic just couldn't line up, and
+    // they degrade to a non-navigating label rather than a wrong one.
+    if (target === null && /^Source\s+\d+$/i.test(raw)) {
+      pushText(full);
+    } else {
+      segments.push({ type: "citation", label: raw, raw: full, target });
     }
-    segments.push({
-      type: "citation",
-      label: raw,
-      raw: full,
-      target: resolveCitationTarget(raw, evidence),
-    });
     lastIndex = start + full.length;
   }
 
-  if (lastIndex < text.length) {
-    segments.push({ type: "text", text: text.slice(lastIndex) });
-  }
+  pushText(text.slice(lastIndex));
 
   return segments.length ? segments : [{ type: "text", text }];
 }
