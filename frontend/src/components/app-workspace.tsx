@@ -2520,7 +2520,18 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
         }
         return;
       }
-      // Normal mode: existing rail-flash behavior.
+      // Normal mode: this is a deliberate two-tier interaction, NOT a
+      // missing "open the PDF" step (L11). An inline pill is a LIGHTWEIGHT
+      // evidence preview — it highlights the cited chunk's card and scrolls
+      // it into view in the rail (visible in normal mode) so the reader can
+      // glance at the supporting text without leaving the answer-reading
+      // flow. Opening the source PDF is a separate, explicit action: the
+      // evidence card itself is the "open in source" affordance (it calls
+      // enterReadMode). Keeping these distinct lets a reader skim citations
+      // cheaply and only commit to the heavier Read Mode layout when they
+      // actually want the page. In Read Mode the same pill instead scrolls
+      // the already-open viewer to the chunk (the readModeActive branch
+      // above) — so a pill always points at its source, scaled to context.
       setAskFocused(false);
       setHighlightedChunkId(chunkId);
       setHighlightedCitationKey(`${turnId}:${chunkId}`);
