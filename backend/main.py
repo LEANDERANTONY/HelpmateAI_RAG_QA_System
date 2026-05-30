@@ -40,6 +40,7 @@ from backend.store import build_api_record_store
 from backend.tiers import RETENTION_UNBOUNDED, TIER_LIMITS, resolve_user_tier
 from src.config import get_settings
 from src.evals.report_loader import get_latest_benchmark_report
+from src.ingest.service import PdfExtractionError
 from src.pipeline import HelpmatePipeline
 from src.question_starters import get_question_starters
 from src.schemas import AnswerResult, DocumentRecord, IndexRecord
@@ -820,7 +821,13 @@ async def upload_document(
     if target_path.suffix.lower() != suffix:
         raise HTTPException(status_code=400, detail="Uploaded file extension mismatch.")
 
-    document = _pipeline().ingest_document(target_path)
+    try:
+        document = _pipeline().ingest_document(target_path)
+    except PdfExtractionError as exc:
+        # Clean up the rejected upload so it doesn't linger in uploads_dir,
+        # then surface a clear 422 to the client instead of an opaque 500.
+        target_path.unlink(missing_ok=True)
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     # Hand the ingested files off to the configured storage backend.
     # No-op for local; uploads to Supabase bucket and rewrites the

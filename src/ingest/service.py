@@ -10,6 +10,15 @@ from src.schemas import DocumentRecord
 from src.structure import enrich_pages_with_structure, infer_document_style
 
 
+class PdfExtractionError(RuntimeError):
+    """Upload-time extraction failure that should surface to the user as a
+    422 (the file can't be processed) rather than an opaque 500."""
+
+
+class EncryptedPdfError(PdfExtractionError):
+    """The uploaded PDF is password-protected and could not be decrypted."""
+
+
 def _file_fingerprint(path: Path) -> str:
     digest = hashlib.sha256()
     digest.update(path.read_bytes())
@@ -275,11 +284,26 @@ def _attach_table_artifacts(pages: list[dict[str, str]], artifacts: list[dict[st
 
 def _extract_pdf_pypdf(path: Path) -> tuple[str, list[dict[str, str]], int, dict[str, str]]:
     from pypdf import PdfReader
+    from pypdf.errors import FileNotDecryptedError
 
     reader = PdfReader(str(path))
+    if reader.is_encrypted:
+        # Many "encrypted" PDFs only carry an owner password and decrypt
+        # cleanly with an empty user password — try that before giving up.
+        try:
+            reader.decrypt("")
+        except Exception:
+            pass
     pages: list[dict[str, str]] = []
-    page_count = len(reader.pages)
-    for index, page in enumerate(reader.pages, start=1):
+    try:
+        page_count = len(reader.pages)
+        numbered_pages = list(enumerate(reader.pages, start=1))
+    except FileNotDecryptedError as exc:
+        raise EncryptedPdfError(
+            "This PDF is password-protected and can't be read. Remove the "
+            "password (or re-save it without one) and upload it again."
+        ) from exc
+    for index, page in numbered_pages:
         text = (page.extract_text() or "").strip()
         if text:
             pages.append(
