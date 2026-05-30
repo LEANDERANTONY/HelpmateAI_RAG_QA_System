@@ -4,6 +4,26 @@ import { withSentryConfig } from "@sentry/nextjs";
 const apiRewriteTarget =
   process.env.API_REWRITE_TARGET ?? "http://127.0.0.1:8001";
 
+// Content-Security-Policy (M2). Shipped Report-Only initially (see headers()
+// below) so violations are observed for the first week before enforcement.
+// Allowlisted origins: the API, Supabase (auth + storage + pgvector REST),
+// Sentry, PostHog EU, and Lemon Squeezy checkout. The pdf.js worker is
+// self-hosted, so worker-src stays 'self' (plus blob: for canvas/worker URLs).
+const contentSecurityPolicy = [
+  "default-src 'self'",
+  "script-src 'self' 'unsafe-inline' 'unsafe-eval' https://*.posthog.com https://*.sentry.io",
+  "style-src 'self' 'unsafe-inline'",
+  "img-src 'self' data: blob: https:",
+  "font-src 'self' data:",
+  "worker-src 'self' blob:",
+  "connect-src 'self' https://api.helpmateai.xyz https://*.supabase.co https://*.posthog.com https://eu.i.posthog.com https://*.sentry.io https://lemonsqueezy.com",
+  "frame-src 'self' https://lemonsqueezy.com",
+  "form-action 'self' https://lemonsqueezy.com",
+  "frame-ancestors 'none'",
+  "object-src 'none'",
+  "base-uri 'self'",
+].join("; ");
+
 const nextConfig: NextConfig = {
   allowedDevOrigins: ["localhost", "127.0.0.1", "192.168.1.7"],
   experimental: {
@@ -40,6 +60,27 @@ const nextConfig: NextConfig = {
       ],
       fallback: [],
     };
+  },
+  async headers() {
+    // Security headers on every route (M2). CSP ships as Report-Only for the
+    // first week so the violation reports can be reviewed before flipping it
+    // to enforcing; the clickjacking, MIME-sniffing, referrer and HSTS
+    // protections are enforced immediately.
+    return [
+      {
+        source: "/(.*)",
+        headers: [
+          { key: "Content-Security-Policy-Report-Only", value: contentSecurityPolicy },
+          { key: "X-Frame-Options", value: "DENY" },
+          { key: "X-Content-Type-Options", value: "nosniff" },
+          { key: "Referrer-Policy", value: "strict-origin-when-cross-origin" },
+          {
+            key: "Strict-Transport-Security",
+            value: "max-age=63072000; includeSubDomains; preload",
+          },
+        ],
+      },
+    ];
   },
 };
 
