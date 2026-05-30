@@ -1758,7 +1758,13 @@ input[type="file"]:disabled::file-selector-button {
   --fg: #f5f8ff;
   --fg-2: #c7cfdf;
   --fg-3: #8a93a8;
-  --fg-4: #5e6677;
+  --fg-4: #7b8499;
+  /* Decoration-only shade of --fg-4 (M19): #5e6677 fails WCAG 1.4.3
+     (~3.4:1) as small text, so --fg-4 itself was lightened to #7b8499 —
+     every text use rides that automatically. Non-text uses (the source
+     separator dot, the evidence skeleton shimmer, the PDF scrollbar thumb)
+     keep the darker tone via this token; contrast minimums don't apply. */
+  --fg-4-deco: #5e6677;
   --accent: #7fe0b0;
   --accent-strong: #98ecc1;
   --accent-soft: rgba(127, 224, 176, 0.10);
@@ -3479,7 +3485,7 @@ input[type="file"]:disabled::file-selector-button {
 }
 
 .h-source-dot {
-  color: var(--fg-4);
+  color: var(--fg-4-deco);
 }
 
 .h-source-row strong {
@@ -3527,7 +3533,7 @@ input[type="file"]:disabled::file-selector-button {
 }
 
 .h-evi-empty .stack span {
-  background: var(--fg-4);
+  background: var(--fg-4-deco);
   border-radius: 3px;
   opacity: 0.35;
 }
@@ -4482,7 +4488,9 @@ input[type="file"]:disabled::file-selector-button {
   --fg: #f5f8ff;
   --fg-2: #c7cfdf;
   --fg-3: #8a93a8;
-  --fg-4: #5e6677;
+  --fg-4: #7b8499;
+  /* M19: decoration shade; the sheet's PDF scrollbar thumb resolves it. */
+  --fg-4-deco: #5e6677;
   --accent: #7fe0b0;
   --accent-tint: rgba(127, 224, 176, 0.14);
   --radius-sm: 6px;
@@ -4691,7 +4699,7 @@ input[type="file"]:disabled::file-selector-button {
   scroll-behavior: smooth;
   /* Thin custom scrollbar so the right edge of the viewer reads as
      workspace chrome rather than OS-default thumb chunkiness. */
-  scrollbar-color: var(--fg-4) transparent;
+  scrollbar-color: var(--fg-4-deco) transparent;
   scrollbar-width: thin;
 }
 
