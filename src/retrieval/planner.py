@@ -6,6 +6,7 @@ from dataclasses import replace
 from typing import Any
 
 from src.config import Settings
+from src.openai_service import OpenAIService
 from src.query_analysis import QueryAnalyzer, QueryProfile
 from src.query_router import QueryRouter
 from src.schemas import RetrievalPlan, SectionSynopsisRecord
@@ -400,34 +401,33 @@ class RetrievalPlanner:
             return None
 
         try:
-            response = self.client.chat.completions.create(
+            # Route through OpenAIService so this gpt-5.x call records into
+            # the request-scoped CostCollector (cost_recorder=None -> reads
+            # the ContextVar), making it visible in the run-trace cost
+            # columns and the PostHog $ai_generation fan-out (H11).
+            service = OpenAIService(self.settings, client=self.client)
+            payload = service.run_json_prompt(
+                system=(
+                    "You are a retrieval orchestration manager. "
+                    "Return strict JSON only and never answer the user's question."
+                ),
+                user=self._orchestrator_prompt(
+                    question=question,
+                    baseline_profile=baseline_profile,
+                    deterministic_plan=deterministic_plan,
+                    metadata_filters=metadata_filters,
+                    synopses=synopses,
+                    previous_payload=previous_payload,
+                ),
+                task_name="retrieval_orchestrator",
                 model=self.settings.retrieval_orchestrator_model,
-                messages=[
-                    {
-                        "role": "system",
-                        "content": (
-                            "You are a retrieval orchestration manager. "
-                            "Return strict JSON only and never answer the user's question."
-                        ),
-                    },
-                    {
-                        "role": "user",
-                        "content": self._orchestrator_prompt(
-                            question=question,
-                            baseline_profile=baseline_profile,
-                            deterministic_plan=deterministic_plan,
-                            metadata_filters=metadata_filters,
-                            synopses=synopses,
-                            previous_payload=previous_payload,
-                        ),
-                    },
-                ],
-                response_format={"type": "json_object"},
             )
-            payload = json.loads(response.choices[0].message.content or "{}")
         except Exception:
             return None
-        return payload if isinstance(payload, dict) else None
+        # run_json_prompt returns {} on a JSON parse failure (cost already
+        # recorded); treat an empty payload as "no plan", matching the prior
+        # json.loads-raises -> return None behaviour.
+        return payload if isinstance(payload, dict) and payload else None
 
     @staticmethod
     def _coerce_float(value: Any, default: float) -> float:
@@ -728,24 +728,22 @@ class RetrievalPlanner:
             synopses=synopses,
         )
         try:
-            response = self.client.chat.completions.create(
+            # Route through OpenAIService so this gpt-5.x planner call records
+            # into the request-scoped CostCollector and the $ai_generation
+            # fan-out (H11).
+            service = OpenAIService(self.settings, client=self.client)
+            payload = service.run_json_prompt(
+                system=(
+                    "You produce structured retrieval plans for a grounded long-document QA system. "
+                    "Reply with strict JSON only."
+                ),
+                user=prompt,
+                task_name="retrieval_planner",
                 model=self.settings.planner_model,
-                messages=[
-                    {
-                        "role": "system",
-                        "content": (
-                            "You produce structured retrieval plans for a grounded long-document QA system. "
-                            "Reply with strict JSON only."
-                        ),
-                    },
-                    {"role": "user", "content": prompt},
-                ],
-                response_format={"type": "json_object"},
             )
-            payload = json.loads(response.choices[0].message.content or "{}")
         except Exception:
             return None
-        return payload if isinstance(payload, dict) else None
+        return payload if isinstance(payload, dict) and payload else None
 
     def _query_profile_from_payload(self, baseline_profile: QueryProfile, payload: dict[str, Any]) -> QueryProfile:
         intent_type = str(payload.get("intent_type", "")).strip().lower()

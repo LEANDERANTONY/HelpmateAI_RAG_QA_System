@@ -4,6 +4,7 @@ import { useMemo, useState } from "react";
 import { useRouter } from "next/navigation";
 
 import { openCookiePreferences } from "@/components/cookie-consent";
+import { capturePostHogEvent } from "@/components/posthog-provider";
 import type { AuthUserSummary } from "@/lib/auth";
 import type { WorkspaceQuotaResponse } from "@/lib/api-types";
 import { createClient } from "@/lib/supabase/client";
@@ -87,6 +88,7 @@ export function AuthSidebar({ user, quotaSnapshot }: AuthSidebarProps) {
           "Supabase auth is not configured yet. Add NEXT_PUBLIC_SUPABASE_URL and NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY to Vercel and local env files.",
         );
       }
+      capturePostHogEvent("sign_in_started", { provider: "google" });
       const supabase = createClient();
       const origin = window.location.origin;
       const { error: signInError } = await supabase.auth.signInWithOAuth({

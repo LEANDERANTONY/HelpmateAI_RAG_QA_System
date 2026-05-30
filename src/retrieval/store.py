@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextvars
 import json
 import shutil
 from dataclasses import asdict
@@ -9,6 +10,27 @@ from pathlib import Path
 from src.cloud import create_supabase_client, extract_supabase_rows
 from src.config import Settings
 from src.schemas import ChunkRecord, IndexRecord, SectionRecord, SectionSynopsisRecord, TopologyEdge
+
+
+# Per-request cache for the full artifact bundle. The pipeline binds a fresh
+# dict at the start of each /qa request (and resets it in a finally), so the
+# repeated load_chunks / load_sections / load_synopses / load_topology_edges
+# plus every dense_query's load_index_record within one retrieve() fetch the
+# Supabase row ONCE instead of 5-8x. Unbound (indexing, eval scripts) it stays
+# None and every call falls through to the store unchanged (H2). A ContextVar
+# (not an instance attribute) keeps concurrent /qa requests isolated, matching
+# the CostCollector design in src.openai_service.
+_request_bundle_cache: contextvars.ContextVar[dict | None] = contextvars.ContextVar(
+    "helpmate_request_bundle_cache", default=None
+)
+
+
+def bind_bundle_cache() -> contextvars.Token:
+    return _request_bundle_cache.set({})
+
+
+def reset_bundle_cache(token: contextvars.Token) -> None:
+    _request_bundle_cache.reset(token)
 
 
 class LocalArtifactStore:
@@ -268,8 +290,19 @@ class ChromaIndexStore:
         ]
         return "\n\n".join(part for part in parts if part).strip()
 
+    def _load_bundle_cached(self, fingerprint: str) -> dict | None:
+        """load_bundle, memoized for the current request when a cache is bound
+        (H2). Safe because a document isn't re-indexed mid-request, so the
+        bundle is stable for the request lifetime."""
+        cache = _request_bundle_cache.get()
+        if cache is None:
+            return self.artifact_store.load_bundle(fingerprint)
+        if fingerprint not in cache:
+            cache[fingerprint] = self.artifact_store.load_bundle(fingerprint)
+        return cache[fingerprint]
+
     def load_index_record(self, fingerprint: str) -> IndexRecord | None:
-        bundle = self.artifact_store.load_bundle(fingerprint)
+        bundle = self._load_bundle_cached(fingerprint)
         if bundle is None:
             return None
         payload = dict(bundle.get("index_record") or {})
@@ -279,22 +312,22 @@ class ChromaIndexStore:
         return IndexRecord(**payload)
 
     def load_chunks(self, fingerprint: str) -> list[ChunkRecord]:
-        bundle = self.artifact_store.load_bundle(fingerprint) or {}
+        bundle = self._load_bundle_cached(fingerprint) or {}
         payload = bundle.get("chunks") or []
         return [ChunkRecord(**item) for item in payload]
 
     def load_sections(self, fingerprint: str) -> list[SectionRecord]:
-        bundle = self.artifact_store.load_bundle(fingerprint) or {}
+        bundle = self._load_bundle_cached(fingerprint) or {}
         payload = bundle.get("sections") or []
         return [SectionRecord(**item) for item in payload]
 
     def load_synopses(self, fingerprint: str) -> list[SectionSynopsisRecord]:
-        bundle = self.artifact_store.load_bundle(fingerprint) or {}
+        bundle = self._load_bundle_cached(fingerprint) or {}
         payload = bundle.get("synopses") or []
         return [SectionSynopsisRecord(**item) for item in payload]
 
     def load_topology_edges(self, fingerprint: str) -> list[TopologyEdge]:
-        bundle = self.artifact_store.load_bundle(fingerprint) or {}
+        bundle = self._load_bundle_cached(fingerprint) or {}
         payload = bundle.get("topology_edges") or []
         return [TopologyEdge(**item) for item in payload]
 

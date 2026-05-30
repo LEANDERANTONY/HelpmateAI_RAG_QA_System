@@ -40,6 +40,7 @@ from backend.store import build_api_record_store
 from backend.tiers import RETENTION_UNBOUNDED, TIER_LIMITS, resolve_user_tier
 from src.config import get_settings
 from src.evals.report_loader import get_latest_benchmark_report
+from src.ingest.service import PdfExtractionError
 from src.pipeline import HelpmatePipeline
 from src.question_starters import get_question_starters
 from src.schemas import AnswerResult, DocumentRecord, IndexRecord
@@ -511,7 +512,10 @@ def _cleanup_if_expired(document: DocumentRecord) -> bool:
 
 def _find_active_workspace_document(user: AuthenticatedUser) -> DocumentRecord | None:
     active_documents: list[DocumentRecord] = []
-    for document in _store().list_documents():
+    # Scoped fetch (H3): pull only this user's documents via the indexed
+    # user_id column instead of deserializing every user's payload. The owner
+    # re-check below stays as defense-in-depth against column/metadata drift.
+    for document in _store().list_documents_for_user(user.id):
         if _document_owner_id(document) != user.id:
             continue
         if _cleanup_if_expired(document):
@@ -544,7 +548,8 @@ def _count_active_documents(user: AuthenticatedUser) -> int:
     indexed count query at the store layer.
     """
     active = 0
-    for document in _store().list_documents():
+    # Scoped fetch (H3) — see _find_active_workspace_document.
+    for document in _store().list_documents_for_user(user.id):
         if _document_owner_id(document) != user.id:
             continue
         expires_at = _document_expires_at(document)
@@ -704,23 +709,25 @@ def health() -> HealthResponse:
     )
 
 
-@app.get("/health/sentry-debug")
-def sentry_debug() -> None:
-    """Raise an unhandled exception so Sentry sees the issue end-to-end.
+# Registered ONLY outside production. The route is unauthenticated and always
+# raises, so leaving it live in prod lets anyone curl it in a loop to generate
+# 500s, burn the Sentry free-tier quota, and drown real issues. It exists only
+# as a one-time deploy smoke test; in production it simply 404s (M4).
+if settings.observability_environment != "production":
 
-    Used once at deploy time to confirm the DSN, environment, and
-    release tag are wired. The route returns no JSON — Sentry's
-    FastAPI integration catches the raise, ships the event, and
-    FastAPI's default 500 handler returns "Internal Server Error" to
-    the caller. There is intentionally no auth on this route: it must
-    be callable from anywhere with curl. Remove or gate it behind a
-    feature flag if your threat model objects.
-    """
-    # ``division by zero`` is the canonical Sentry-tutorial sample;
-    # keeping it deliberately recognizable so anyone reading the issue
-    # title in Sentry knows it's a smoke test, not a real bug.
-    division_by_zero = 1 / 0  # noqa: F841 — intentional crash for Sentry verification
-    return None
+    @app.get("/health/sentry-debug")
+    def sentry_debug() -> None:
+        """Raise an unhandled exception so Sentry sees the issue end-to-end.
+
+        Used once at deploy time to confirm the DSN, environment, and
+        release tag are wired. Gated to non-production environments so a
+        public caller can't abuse it on the live deployment.
+        """
+        # ``division by zero`` is the canonical Sentry-tutorial sample;
+        # keeping it deliberately recognizable so anyone reading the issue
+        # title in Sentry knows it's a smoke test, not a real bug.
+        division_by_zero = 1 / 0  # noqa: F841 — intentional crash for Sentry verification
+        return None
 
 
 def _quota_blocked(
@@ -820,12 +827,24 @@ async def upload_document(
     if target_path.suffix.lower() != suffix:
         raise HTTPException(status_code=400, detail="Uploaded file extension mismatch.")
 
-    document = _pipeline().ingest_document(target_path)
+    try:
+        # ingest_document is fully synchronous and slow (pdfplumber, a
+        # blocking LibreOffice DOCX->PDF subprocess, chunking, several OpenAI
+        # calls). Run it in a worker thread so a single upload doesn't stall
+        # the uvicorn event loop for every other concurrent request (H4).
+        document = await asyncio.to_thread(_pipeline().ingest_document, target_path, user.id)
+    except PdfExtractionError as exc:
+        # Clean up the rejected upload so it doesn't linger in uploads_dir,
+        # then surface a clear 422 to the client instead of an opaque 500.
+        target_path.unlink(missing_ok=True)
+        raise HTTPException(status_code=422, detail=str(exc)) from exc
 
     # Hand the ingested files off to the configured storage backend.
     # No-op for local; uploads to Supabase bucket and rewrites the
     # source_path / viewable_pdf_path fields to bucket keys otherwise.
-    _materialize_uploads_to_storage(document, user)
+    # Blocking Supabase Storage uploads on the supabase backend — also off
+    # the event loop (H4).
+    await asyncio.to_thread(_materialize_uploads_to_storage, document, user)
 
     document = _save_touched_document(document, user)
     existing_index = _store().get_index(document.document_id)
@@ -868,7 +887,7 @@ def load_sample_document(
     if existing_document is not None:
         _delete_workspace_records(existing_document)
 
-    document = _pipeline().ingest_document(sample_path)
+    document = _pipeline().ingest_document(sample_path, user.id)
     index_record = _pipeline().build_or_load_index(document)
     # Sample documents go through the same storage materialization as
     # uploads — on the supabase backend the sample's bytes end up in the
@@ -1462,6 +1481,7 @@ async def transcribe_audio(
             )
 
     response = None
+    transcribe_model = "whisper-1"
     primary_error: Exception | None = None
     try:
         try:
@@ -1474,6 +1494,7 @@ async def transcribe_audio(
                 exc.__class__.__name__,
             )
             primary_error = exc
+            transcribe_model = "gpt-4o-mini-transcribe"
             try:
                 response = await asyncio.to_thread(
                     _call_transcribe_sync, "gpt-4o-mini-transcribe"
@@ -1510,6 +1531,15 @@ async def transcribe_audio(
     if duration_value <= 0:
         elapsed = (datetime.now(timezone.utc) - started_at).total_seconds()
         duration_value = max(elapsed, 0.0)
+    # Whisper calls don't pass through OpenAIService (they're not chat
+    # completions), so they're invisible to the CostCollector and the LLM
+    # Analytics fan-out. Emit a server-side usage event so transcription
+    # spend stays observable (H11).
+    capture_event(
+        distinct_id=user.id,
+        event="audio_transcribed",
+        properties={"model": transcribe_model, "duration_seconds": round(duration_value, 3)},
+    )
     return TranscribeResponse(text=transcript, duration_seconds=round(duration_value, 3))
 
 

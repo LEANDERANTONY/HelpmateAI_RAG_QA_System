@@ -153,6 +153,26 @@ export function setPostHogTierGroup(tier: string | null): void {
   }
 }
 
+/**
+ * Capture a named funnel event. Mirrors the safety guards above — a no-op when
+ * posthog-js isn't loaded (consent pending/declined, key unset, ad blocker),
+ * so it respects the cookie-consent gate. Use for explicit funnel steps
+ * autocapture can't reliably key on: in-app citation clicks (no URL change),
+ * the upgrade CTA, and sign-in (M23).
+ */
+export function capturePostHogEvent(
+  event: string,
+  properties?: Record<string, unknown>,
+): void {
+  if (typeof window === "undefined") return;
+  if (!(posthog as unknown as { __loaded?: boolean }).__loaded) return;
+  try {
+    posthog.capture(event, properties);
+  } catch (err) {
+    console.warn("[posthog] capture failed", err);
+  }
+}
+
 export function PostHogProvider({ children }: PostHogProviderProps) {
   const consent = useCookieConsent();
   useEffect(() => {

@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useMemo, useRef, useState } from "react";
+import { memo, useCallback, useEffect, useMemo, useRef, useState } from "react";
 import type {
   ChangeEvent,
   KeyboardEvent as ReactKeyboardEvent,
@@ -12,6 +12,7 @@ import { AuthSidebar } from "@/components/auth-sidebar";
 import { ErrorState } from "@/components/error-state";
 import { FeedbackButtons } from "@/components/feedback-buttons";
 import {
+  capturePostHogEvent,
   identifyPostHogUser,
   setPostHogTierGroup,
 } from "@/components/posthog-provider";
@@ -1581,7 +1582,7 @@ function EvidenceEmpty({ document, pending }: { document: DocumentRecord | null;
   );
 }
 
-function EvidenceRail({
+const EvidenceRail = memo(function EvidenceRail({
   document,
   turns,
   pending,
@@ -1592,6 +1593,7 @@ function EvidenceRail({
   onDebugToggle,
   onEvidenceTagClick,
   registerEvidenceRef,
+  visibleByTurn,
 }: {
   document: DocumentRecord | null;
   turns: QATurn[];
@@ -1607,6 +1609,7 @@ function EvidenceRail({
     surface: "desktop" | "mobile",
     element: HTMLElement | null,
   ) => void;
+  visibleByTurn: Map<string, ReturnType<typeof visibleEvidence>>;
 }) {
   const groups = [...turns].reverse();
   // Filter each turn's retrieved evidence down to just the chunks the LLM
@@ -1615,22 +1618,8 @@ function EvidenceRail({
   // section below share the same filtered set.
   const groupsWithVisible = groups.map((turn) => ({
     turn,
-    visible: visibleEvidence(turn.answer.answer, turn.answer.evidence, {
-      // Show the top-2 retriever chunks when the model abstained on
-      // partial / weak grounding so the user can still see what was
-      // closest — useful for "the answer's partially supported, here's
-      // the relevant excerpt" cases.
-      //
-      // EXCEPT on a FULL abstention (support_status === "unsupported"):
-      // those neighbors are by definition not relevant to the question
-      // (e.g. "how to go to the moon?" against an FOMC doc returns
-      // ABSTAIN with nearest-neighbor chunks about inflation — pure
-      // noise that confuses the user into thinking the chunks are
-      // somehow related). Drop the fallback to 0 there so the
-      // evidence panel renders nothing for clean abstentions, matching
-      // the "no evidence" honesty of the answer itself.
-      fallbackCount: turn.answer.support_status === "unsupported" ? 0 : 2,
-    }),
+    // Precomputed once in AppWorkspace and shared with the mobile rail (M12).
+    visible: visibleByTurn.get(turn.id) ?? [],
   }));
   const evidenceCount = groupsWithVisible.reduce(
     (total, entry) => total + entry.visible.length,
@@ -1685,9 +1674,9 @@ function EvidenceRail({
       )}
     </aside>
   );
-}
+});
 
-function MobileEvidence({
+const MobileEvidence = memo(function MobileEvidence({
   turns,
   fileName,
   open,
@@ -1697,6 +1686,7 @@ function MobileEvidence({
   onToggle,
   onEvidenceTagClick,
   registerEvidenceRef,
+  visibleByTurn,
 }: {
   turns: QATurn[];
   open: boolean;
@@ -1711,6 +1701,7 @@ function MobileEvidence({
     surface: "desktop" | "mobile",
     element: HTMLElement | null,
   ) => void;
+  visibleByTurn: Map<string, ReturnType<typeof visibleEvidence>>;
 }) {
   // Single combined evidence panel for the whole session — mirrors the
   // desktop right-rail (which lists all turns' evidence grouped by Q).
@@ -1729,9 +1720,8 @@ function MobileEvidence({
   const groups = [...turns].reverse();
   const groupsWithVisible = groups.map((turn) => ({
     turn,
-    visible: visibleEvidence(turn.answer.answer, turn.answer.evidence, {
-      fallbackCount: turn.answer.support_status === "unsupported" ? 0 : 2,
-    }),
+    // Precomputed once in AppWorkspace and shared with the desktop rail (M12).
+    visible: visibleByTurn.get(turn.id) ?? [],
   }));
   const evidenceCount = groupsWithVisible.reduce(
     (total, entry) => total + entry.visible.length,
@@ -1781,7 +1771,7 @@ function MobileEvidence({
       ) : null}
     </div>
   );
-}
+});
 
 type PaletteAction = "focus-ask" | "reindex" | "replace";
 
@@ -2137,9 +2127,34 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
   const turnRefs = useRef<Record<string, HTMLElement | null>>({});
   const flashTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
   const streamTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
+  // Mirror the active document into a ref so in-flight async work (runAsk)
+  // can detect a document replacement that happened while it was awaiting and
+  // drop its now-stale result instead of committing it to the new doc (H12).
+  const docRef = useRef<DocumentRecord | null>(document);
+  useEffect(() => {
+    docRef.current = document;
+  }, [document]);
 
   const status = useMemo(() => docStatus(indexState, indexRecord, answer), [answer, indexRecord, indexState]);
   const evidencePending = answerState === "loading";
+
+  // Filter each turn's retrieved evidence down to the chunks the LLM cited
+  // (with the abstention fallback) ONCE per turns change, then share the
+  // result with both the desktop and mobile evidence rails. Previously each
+  // rail recomputed this regex-heavy pass for every turn on every render —
+  // including on each keystroke in the ask box (M12).
+  const visibleEvidenceByTurn = useMemo(() => {
+    const map = new Map<string, ReturnType<typeof visibleEvidence>>();
+    for (const turn of turns) {
+      map.set(
+        turn.id,
+        visibleEvidence(turn.answer.answer, turn.answer.evidence, {
+          fallbackCount: turn.answer.support_status === "unsupported" ? 0 : 2,
+        }),
+      );
+    }
+    return map;
+  }, [turns]);
 
   function applyDocumentBundle(bundle: DocumentBundleResponse) {
     setDocument(bundle.document);
@@ -2325,15 +2340,23 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
     // the next question defaults back to standard. The backend
     // re-validates eligibility — a free user with premium=true
     // gets a 402 here regardless of the UI state.
+    // The document this question is about. If the user replaces the document
+    // while the request is in flight, the stale result is dropped below rather
+    // than attached (with the old doc's evidence/citations) to the new thread.
+    const reqDocId = document!.document_id;
     const useThisTurnPremium = premiumActive;
     setPremiumActive(false);
 
     try {
       const response = await askQuestion(
-        document!.document_id,
+        reqDocId,
         submittedQuestion,
         { premium: useThisTurnPremium },
       );
+      if (docRef.current?.document_id !== reqDocId) {
+        // Document was replaced mid-flight — discard this answer (H12).
+        return;
+      }
       const turn: QATurn = {
         id: makeTurnId(),
         question: submittedQuestion,
@@ -2425,7 +2448,11 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
     await runAsk(submittedQuestion);
   }
 
-  function clearFlashLater() {
+  // The handlers below are useCallback-stabilized (M12) so the memoized
+  // EvidenceRail / MobileEvidence don't re-render on every keystroke. The
+  // ref-only helpers take [] deps; handleCitationClick depends on turns +
+  // document (which don't change on a keystroke) plus the stable helpers.
+  const clearFlashLater = useCallback(() => {
     if (flashTimer.current) {
       clearTimeout(flashTimer.current);
     }
@@ -2433,43 +2460,7 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
       setHighlightedChunkId(null);
       setHighlightedCitationKey(null);
     }, FLASH_MS);
-  }
-
-  function handleCitationClick(turnId: string, chunkId: string) {
-    // Branch on Read Mode WITHOUT subscribing — this function is called
-    // from event handlers, not render, so a one-shot getState() read
-    // keeps AppWorkspace out of the mode-flip subscription tree.
-    const readModeActive = useReadModeStore.getState().mode === "read";
-    if (readModeActive) {
-      // Read Mode citation behavior: scroll the source viewer to the
-      // clicked chunk. The evidence rail is hidden so there's nothing
-      // to flash, and the user is already looking at the source.
-      const targetTurn = turns.find((t) => t.id === turnId);
-      const candidate = targetTurn?.answer.evidence.find((c) => c.chunk_id === chunkId);
-      if (candidate && document) {
-        useReadModeStore
-          .getState()
-          .setCurrentChunk(buildReadModeChunk(candidate, document.file_name));
-      }
-      return;
-    }
-    // Normal mode: existing rail-flash behavior.
-    setAskFocused(false);
-    setHighlightedChunkId(chunkId);
-    setHighlightedCitationKey(`${turnId}:${chunkId}`);
-    setMobileEvidenceOpen(true);
-    // setTimeout(0) lets React commit the mobile combined-panel render
-    // so the relevant mobile card mounts and registers its ref before
-    // we scroll. The visibility-aware lookup picks the visible surface
-    // (mobile when this expansion is on, desktop on wider viewports).
-    window.setTimeout(() => {
-      getVisibleEvidenceElement(chunkId)?.scrollIntoView({
-        block: "center",
-        behavior: "smooth",
-      });
-    }, 0);
-    clearFlashLater();
-  }
+  }, []);
 
   // Desktop evidence rail and the mobile "Show evidence" dropdown both
   // render their own EvidenceCard instances for the same chunkId. Keyed
@@ -2477,15 +2468,14 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
   // we can pick the visible one at scroll time. (Desktop cards exist
   // even on mobile viewports — `.h-evi` is `display:none` but still
   // mounted — so we need offsetParent to decide which to scroll to.)
-  function registerEvidenceRef(
-    chunkId: string,
-    surface: "desktop" | "mobile",
-    element: HTMLElement | null,
-  ) {
-    evidenceRefs.current[`${chunkId}:${surface}`] = element;
-  }
+  const registerEvidenceRef = useCallback(
+    (chunkId: string, surface: "desktop" | "mobile", element: HTMLElement | null) => {
+      evidenceRefs.current[`${chunkId}:${surface}`] = element;
+    },
+    [],
+  );
 
-  function getVisibleEvidenceElement(chunkId: string): HTMLElement | null {
+  const getVisibleEvidenceElement = useCallback((chunkId: string): HTMLElement | null => {
     // Prefer mobile first — when the mobile dropdown is open it's the
     // one the user just expanded and is looking at. Falls through to
     // desktop on wider viewports where mobile chrome is CSS-hidden.
@@ -2497,11 +2487,60 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
       if (el && el.offsetParent !== null) return el;
     }
     return null;
-  }
+  }, []);
 
-  function registerTurnRef(turnId: string, element: HTMLElement | null) {
+  const registerTurnRef = useCallback((turnId: string, element: HTMLElement | null) => {
     turnRefs.current[turnId] = element;
-  }
+  }, []);
+
+  const handleCitationClick = useCallback(
+    (turnId: string, chunkId: string) => {
+      // Branch on Read Mode WITHOUT subscribing — this function is called
+      // from event handlers, not render, so a one-shot getState() read
+      // keeps AppWorkspace out of the mode-flip subscription tree.
+      const readModeActive = useReadModeStore.getState().mode === "read";
+      capturePostHogEvent("citation_clicked", {
+        chunk_id: chunkId,
+        read_mode: readModeActive,
+      });
+      if (readModeActive) {
+        // Read Mode citation behavior: scroll the source viewer to the
+        // clicked chunk. The evidence rail is hidden so there's nothing
+        // to flash, and the user is already looking at the source.
+        const targetTurn = turns.find((t) => t.id === turnId);
+        const candidate = targetTurn?.answer.evidence.find((c) => c.chunk_id === chunkId);
+        if (candidate && document) {
+          useReadModeStore
+            .getState()
+            .setCurrentChunk(buildReadModeChunk(candidate, document.file_name));
+        }
+        return;
+      }
+      // Normal mode: existing rail-flash behavior.
+      setAskFocused(false);
+      setHighlightedChunkId(chunkId);
+      setHighlightedCitationKey(`${turnId}:${chunkId}`);
+      setMobileEvidenceOpen(true);
+      // setTimeout(0) lets React commit the mobile combined-panel render
+      // so the relevant mobile card mounts and registers its ref before
+      // we scroll. The visibility-aware lookup picks the visible surface
+      // (mobile when this expansion is on, desktop on wider viewports).
+      window.setTimeout(() => {
+        getVisibleEvidenceElement(chunkId)?.scrollIntoView({
+          block: "center",
+          behavior: "smooth",
+        });
+      }, 0);
+      clearFlashLater();
+    },
+    [turns, document, getVisibleEvidenceElement, clearFlashLater],
+  );
+
+  const handleDebugToggle = useCallback(() => setDebugOpen((current) => !current), []);
+  const handleMobileEvidenceToggle = useCallback(
+    () => setMobileEvidenceOpen((current) => !current),
+    [],
+  );
 
   function handleMenuToggle(turnId: string) {
     setOpenMenuTurnId((current) => (current === turnId ? null : turnId));
@@ -2726,11 +2765,12 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
             document={document}
             highlightedChunkId={highlightedChunkId}
             highlightedCitationKey={highlightedCitationKey}
-            onDebugToggle={() => setDebugOpen((current) => !current)}
+            onDebugToggle={handleDebugToggle}
             onEvidenceTagClick={handleCitationClick}
             pending={evidencePending}
             registerEvidenceRef={registerEvidenceRef}
             turns={turns}
+            visibleByTurn={visibleEvidenceByTurn}
           />
           {/* SourcePaneMount is null in normal mode and renders the read-mode
               pane when entered. Mounting it inside .h-frame (rather than as
@@ -2745,10 +2785,11 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
             highlightedChunkId={highlightedChunkId}
             highlightedCitationKey={highlightedCitationKey}
             onEvidenceTagClick={handleCitationClick}
-            onToggle={() => setMobileEvidenceOpen((current) => !current)}
+            onToggle={handleMobileEvidenceToggle}
             open={mobileEvidenceOpen}
             registerEvidenceRef={registerEvidenceRef}
             turns={turns}
+            visibleByTurn={visibleEvidenceByTurn}
           />
         </div>
         <CommandPalette

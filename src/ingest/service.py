@@ -10,6 +10,20 @@ from src.schemas import DocumentRecord
 from src.structure import enrich_pages_with_structure, infer_document_style
 
 
+class PdfExtractionError(RuntimeError):
+    """Upload-time extraction failure that should surface to the user as a
+    422 (the file can't be processed) rather than an opaque 500."""
+
+
+class EncryptedPdfError(PdfExtractionError):
+    """The uploaded PDF is password-protected and could not be decrypted."""
+
+
+class UnextractablePdfError(PdfExtractionError):
+    """The document has pages but yielded no extractable text — typically a
+    scanned / image-only PDF with no text layer (needs OCR)."""
+
+
 def _file_fingerprint(path: Path) -> str:
     digest = hashlib.sha256()
     digest.update(path.read_bytes())
@@ -25,6 +39,25 @@ def file_fingerprint(path: Path) -> str:
     reaching into the private helper.
     """
     return _file_fingerprint(path)
+
+
+def derive_document_id(fingerprint: str, owner_id: str | None = None) -> str:
+    """Derive the persisted ``document_id`` from a content fingerprint.
+
+    With an ``owner_id`` the id is per-user (``sha256(owner_id:fingerprint)``
+    truncated to 16 chars), so two users uploading a byte-identical file get
+    DISTINCT ids and can't overwrite each other's workspace row (H1). The raw
+    content fingerprint stays on ``DocumentRecord.fingerprint`` and remains the
+    key for index / cache reuse, so identical content is still embedded once.
+
+    Owner-less callers (eval scripts, legacy paths) keep the original
+    content-only derivation — which is exactly how every pre-existing row was
+    keyed — so this is non-destructive: existing documents keep their ids and
+    only new owner-scoped uploads get the new derivation.
+    """
+    if owner_id:
+        return hashlib.sha256(f"{owner_id}:{fingerprint}".encode("utf-8")).hexdigest()[:16]
+    return fingerprint[:16]
 
 
 def _strip_invalid_storage_chars(value: Any) -> Any:
@@ -218,9 +251,14 @@ def _extract_pdfplumber_table_artifacts(path: Path, pages: list[dict[str, str]])
     except ImportError:
         return []
 
+    # Use the TRUE PDF page number (pdf_page_number), not the position in the
+    # filtered `pages` list. The two diverge whenever an earlier page had no
+    # extractable text and was dropped, which previously made pdfplumber open
+    # the wrong physical page and stamp the wrong citation label (H7). Fall
+    # back to the filtered position only if the field is somehow absent.
     candidate_page_numbers = [
-        index
-        for index, page in enumerate(pages, start=1)
+        int(page.get("pdf_page_number") or filtered_pos)
+        for filtered_pos, page in enumerate(pages, start=1)
         if _looks_table_enrichment_candidate(str(page.get("text", "")))
     ]
     max_pages = _table_extractor_max_pages()
@@ -257,23 +295,50 @@ def _attach_table_artifacts(pages: list[dict[str, str]], artifacts: list[dict[st
     for artifact in artifacts:
         page_number = int(artifact.get("original_page_number", 0) or 0)
         by_page.setdefault(page_number, []).append(artifact)
-    for page_number, page_artifacts in by_page.items():
-        if 1 <= page_number <= len(pages):
-            pages[page_number - 1]["table_artifacts"] = page_artifacts  # type: ignore[assignment]
+    # Attach by matching each artifact's TRUE page number to the page dict
+    # carrying the same pdf_page_number, instead of indexing the filtered
+    # `pages` list positionally — those diverge once a blank page is dropped
+    # (H7). Fall back to positional for inputs without pdf_page_number.
+    for filtered_pos, page in enumerate(pages, start=1):
+        true_page = int(page.get("pdf_page_number") or filtered_pos)
+        page_artifacts = by_page.get(true_page)
+        if page_artifacts:
+            page["table_artifacts"] = page_artifacts  # type: ignore[assignment]
 
 
 def _extract_pdf_pypdf(path: Path) -> tuple[str, list[dict[str, str]], int, dict[str, str]]:
     from pypdf import PdfReader
+    from pypdf.errors import FileNotDecryptedError
 
     reader = PdfReader(str(path))
+    if reader.is_encrypted:
+        # Many "encrypted" PDFs only carry an owner password and decrypt
+        # cleanly with an empty user password — try that before giving up.
+        try:
+            reader.decrypt("")
+        except Exception:
+            pass
     pages: list[dict[str, str]] = []
-    page_count = len(reader.pages)
-    for index, page in enumerate(reader.pages, start=1):
+    try:
+        page_count = len(reader.pages)
+        numbered_pages = list(enumerate(reader.pages, start=1))
+    except FileNotDecryptedError as exc:
+        raise EncryptedPdfError(
+            "This PDF is password-protected and can't be read. Remove the "
+            "password (or re-save it without one) and upload it again."
+        ) from exc
+    for index, page in numbered_pages:
         text = (page.extract_text() or "").strip()
         if text:
             pages.append(
                 {
                     "page_label": f"Page {index}",
+                    # True 1-based PDF page number. `pages` drops blank /
+                    # no-text pages, so a position in this filtered list is
+                    # NOT the physical page. Carry the real number so table
+                    # extraction reads the right page and labels citations
+                    # correctly (H7).
+                    "pdf_page_number": index,
                     "text": text,
                     "section_heading": _page_heading(text),
                     "extraction_backend": "pypdf",
@@ -476,6 +541,7 @@ def ingest_document(
     path: str | Path,
     *,
     docx_pdf_rendition: str | Path | None = None,
+    owner_id: str | None = None,
 ) -> DocumentRecord:
     """Extract a document into a ``DocumentRecord``.
 
@@ -501,11 +567,23 @@ def ingest_document(
     else:
         raise ValueError(f"Unsupported document type: {file_path.suffix}")
 
+    if page_count > 0 and not (full_text or "").strip():
+        # The document has pages but no extractable text — almost always a
+        # scanned / image-only PDF with no text layer. Without this guard the
+        # upload "succeeds" (200) into a silently empty index that abstains on
+        # every question, with no signal to the user (H6). Surface a 422 via
+        # the upload route's PdfExtractionError handler instead.
+        raise UnextractablePdfError(
+            "No readable text could be extracted from this document. If it is "
+            "a scanned or photographed PDF, it needs OCR before it can be "
+            "indexed — try uploading a text-based PDF."
+        )
+
     full_text = _strip_invalid_storage_chars(full_text)
     pages = _strip_invalid_storage_chars(pages)
     extraction_metadata = _strip_invalid_storage_chars(extraction_metadata)
     fingerprint = _file_fingerprint(file_path)
-    document_id = fingerprint[:16]
+    document_id = derive_document_id(fingerprint, owner_id)
     enriched_pages, outline = enrich_pages_with_structure(pages)
     enriched_pages = _strip_invalid_storage_chars(enriched_pages)
     outline = _strip_invalid_storage_chars(outline)

@@ -14,6 +14,7 @@ from src.generation import AnswerGenerator, EvidenceSelector
 from src.ingest import (
     DocxConversionError,
     convert_docx_to_pdf,
+    derive_document_id,
     file_fingerprint,
     ingest_document,
 )
@@ -24,6 +25,7 @@ from src.openai_service import (
     reset_cost_collector,
 )
 from src.retrieval import ChromaIndexStore, HybridRetriever
+from src.retrieval.store import bind_bundle_cache, reset_bundle_cache
 from src.sections import build_sections
 from src.sections.profiles import enrich_section_profiles
 from src.sections.repair import StructureRepairService
@@ -68,7 +70,7 @@ class HelpmatePipeline:
             shutil.copy2(source, target)
         return target
 
-    def _prepare_docx_rendition(self, persisted_path: Path) -> Path | None:
+    def _prepare_docx_rendition(self, persisted_path: Path, owner_id: str | None = None) -> Path | None:
         """Produce (or reuse) the LibreOffice PDF rendition for a DOCX
         upload *before* extraction, so ``ingest_document`` can extract
         from it instead of the python-docx flattener.
@@ -89,7 +91,7 @@ class HelpmatePipeline:
             return None
         if not self.settings.docx_pdf_conversion_enabled:
             return None
-        document_id = file_fingerprint(persisted_path)[:16]
+        document_id = derive_document_id(file_fingerprint(persisted_path), owner_id)
         rendition = persisted_path.parent / f"{document_id}.pdf"
         if rendition.exists() and rendition.is_file():
             return rendition
@@ -110,14 +112,14 @@ class HelpmatePipeline:
             return None
         return rendition
 
-    def ingest_document(self, file_path: str | Path) -> DocumentRecord:
+    def ingest_document(self, file_path: str | Path, owner_id: str | None = None) -> DocumentRecord:
         persisted_path = self._persist_upload(file_path)
         # For DOCX, stage the LibreOffice PDF rendition first and extract
         # from it (real Page N labels + pdfplumber tables, self-consistent
         # with the viewer). Falls back to python-docx when the rendition
         # can't be produced. PDF uploads pass rendition=None untouched.
-        docx_rendition = self._prepare_docx_rendition(persisted_path)
-        document = ingest_document(persisted_path, docx_pdf_rendition=docx_rendition)
+        docx_rendition = self._prepare_docx_rendition(persisted_path, owner_id)
+        document = ingest_document(persisted_path, docx_pdf_rendition=docx_rendition, owner_id=owner_id)
         # Normalize storage AFTER ingestion (which reads from disk) so the
         # extractor sees the original file at the original name. Once we know
         # the document_id we rename to `{id}{ext}` to dodge cross-user
@@ -316,6 +318,7 @@ class HelpmatePipeline:
             retrieval_version=self.settings.retrieval_version,
             generation_version=self.settings.generation_version,
             model_name=active_model,
+            document_id=document.document_id,
         )
         cached = self.answer_cache.get(cache_key)
         if cached is not None:
@@ -332,6 +335,11 @@ class HelpmatePipeline:
         # would mix records across concurrent requests.
         cost_collector = CostCollector()
         token = bind_cost_collector(cost_collector)
+        # Memoize the artifact bundle for the lifetime of this request so a
+        # single retrieve() (+ any abstention recovery) fetches the Supabase
+        # row once instead of 5-8x (H2). Reset in the finally so the next
+        # request that lands on this task starts clean.
+        bundle_token = bind_bundle_cache()
         try:
             return self._answer_question_inner(
                 document=document,
@@ -342,6 +350,7 @@ class HelpmatePipeline:
                 cost_collector=cost_collector,
             )
         finally:
+            reset_bundle_cache(bundle_token)
             reset_cost_collector(token)
 
     def _answer_question_inner(
