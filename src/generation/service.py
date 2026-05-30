@@ -215,8 +215,6 @@ class AnswerGenerator:
         the answer body is an honest "live model unavailable" message and
         the support flag is False so the abstention gate holds.
         """
-        citations = self._citations(evidence)
-        citation_details = self._citation_details(evidence)
         if not evidence:
             return AnswerResult(
                 question=question,
@@ -234,23 +232,26 @@ class AnswerGenerator:
                 query_used=question,
             )
 
-        # Evidence exists but the live model couldn't produce a
-        # grounded answer. Surface the retrieval pointers without
-        # fabricating a stitched-chunk "best local match" — the
-        # earlier path lied about supported status AND leaked mid-word
-        # chunk slices into the rendered answer. The UI will still
-        # show the citation pills + evidence panel; the user can
-        # navigate to source pages directly.
+        # Evidence exists but the live model couldn't produce a grounded
+        # answer. Abstain cleanly per the abstention contract (L3): an
+        # unsupported answer renders an empty evidence rail (the UI's
+        # visibleEvidence yields nothing on support_status="unsupported"),
+        # so populated citations here advertised sources the rail never
+        # showed. Return an honest "model unavailable" message with empty
+        # citation lists; we never fabricate a stitched-chunk "best local
+        # match" (the earlier path lied about supported status and leaked
+        # mid-word chunk slices into the rendered answer). The retrieved
+        # evidence stays on the result for tracing but isn't surfaced as
+        # support for the absent answer.
         answer = (
-            "The live answer model is currently unavailable. The strongest "
-            "retrieved passages are linked below in the citations, but they "
-            "have not been verified to actually answer the question — please "
-            "retry, or review the cited pages directly."
+            "The live answer model is currently unavailable, so this question "
+            "could not be answered from the document right now. Please retry "
+            "in a moment."
         )
         return AnswerResult(
             question=question,
             answer=answer,
-            citations=citations,
+            citations=[],
             evidence=evidence,
             supported=False,
             support_status="unsupported",
@@ -258,10 +259,11 @@ class AnswerGenerator:
             cache_status=CacheStatus(),
             model_name="fallback",
             note=(
-                "Returned retrieval pointers only because a live model response "
-                "was unavailable. The fallback path never claims supported status."
+                "Live model response was unavailable; abstained rather than "
+                "surfacing unverified retrieval pointers. The fallback path "
+                "never claims supported status."
             ),
-            citation_details=citation_details,
+            citation_details=[],
             retrieval_notes=[],
             query_used=question,
         )
