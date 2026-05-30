@@ -8,10 +8,10 @@
  * auth) emits page-view + autocapture events into the same project.
  *
  * Identity flow:
- *   1. On mount, ``posthog.init`` runs once. We use ``persistence:
- *      "localStorage+cookie"`` so the distinct_id survives a hard
- *      reload but a logged-out user is reset to anonymous on
- *      explicit ``posthog.reset()``.
+ *   1. On consent, ``initPostHog`` dynamically imports + inits the SDK
+ *      once. We use ``persistence: "localStorage+cookie"`` so the
+ *      distinct_id survives a hard reload but a logged-out user is reset
+ *      to anonymous on explicit ``posthog.reset()``.
  *   2. The workspace shell calls ``identifyPostHogUser`` once the
  *      Supabase user resolves; that's what pairs the anonymous
  *      pre-login session to the authenticated id (preserving the
@@ -33,7 +33,7 @@
 
 import { Suspense, useEffect } from "react";
 import { usePathname, useSearchParams } from "next/navigation";
-import posthog from "posthog-js";
+import type { PostHog } from "posthog-js";
 
 import { useCookieConsent } from "@/components/cookie-consent";
 
@@ -41,48 +41,49 @@ type PostHogProviderProps = {
   children: React.ReactNode;
 };
 
-function initPostHog(): void {
+// posthog-js (~50-60KB gzipped, with session replay) is dynamically imported
+// inside initPostHog — which only runs AFTER the user accepts the cookie
+// banner — so the SDK never lands in the landing/initial bundle that every
+// visitor downloads (M11). Every helper below guards on isLoaded().
+let posthog: PostHog | null = null;
+
+function isLoaded(): boolean {
+  return Boolean(posthog && (posthog as unknown as { __loaded?: boolean }).__loaded);
+}
+
+async function initPostHog(): Promise<void> {
   const key = process.env.NEXT_PUBLIC_POSTHOG_KEY;
   if (!key) return;
   if (typeof window === "undefined") return;
   // Re-init guard. React StrictMode mounts the effect twice in dev,
   // and a SPA navigation through layout.tsx would re-run useEffect on
-  // every route transition without this. The SDK's __loaded flag is
-  // the canonical "is this initialized?" check.
-  if ((posthog as unknown as { __loaded?: boolean }).__loaded) return;
+  // every route transition without this.
+  if (isLoaded()) return;
   try {
+    // Lazy-load the SDK only on consent, keeping it out of the initial bundle.
+    posthog = (await import("posthog-js")).default;
     posthog.init(key, {
       api_host: process.env.NEXT_PUBLIC_POSTHOG_HOST || "https://eu.i.posthog.com",
-      // Manual page-view capture via PostHogPageView below. The
-      // built-in capture_pageview path listens for ``popstate`` /
-      // ``hashchange`` which the App Router does NOT fire on
-      // navigation — that path would emit zero pageviews on a SPA
-      // navigation, leaving the Web Analytics dashboard empty.
+      // Manual page-view capture via PostHogPageView below. The built-in
+      // capture_pageview path listens for popstate/hashchange which the App
+      // Router does NOT fire on navigation — it would emit zero pageviews.
       capture_pageview: false,
-      // Capture form submits + clicks. Plenty for funnel building
-      // without the noise of every input change.
+      // Capture form submits + clicks. Plenty for funnel building.
       autocapture: true,
-      // Session replay is included in the PostHog free tier (5K
-      // replays/month). Useful for diagnosing failed /qa flows.
+      // Session replay is in the PostHog free tier (5K replays/month).
       session_recording: {
         maskAllInputs: true,
       },
-      // Honor Do-Not-Track. Cheap signal of intent + protects against
-      // a privacy-conscious user accidentally getting tracked.
+      // Honor Do-Not-Track.
       respect_dnt: true,
       persistence: "localStorage+cookie",
     });
-    // Register ``product: "helpmate"`` as a super-property so every
-    // event the SDK emits (pageviews, autocaptured clicks, manual
-    // captures from feedback-buttons etc.) carries the tag. PostHog's
-    // free tier caps at 1 project per org, so HelpmateAI and AI Job
-    // Agent share the same project; insight filters
-    // ``where product = 'helpmate'`` split the two products cleanly.
-    // The AI Job Agent provider registers ``product: "jobagent"``.
+    // Register ``product: "helpmate"`` so every event carries the tag (the
+    // PostHog free tier caps at 1 project per org; HelpmateAI + AI Job Agent
+    // share it and split via ``where product = '...'``).
     posthog.register({ product: "helpmate" });
   } catch (err) {
-    // Swallow — analytics must never break the page. The dev console
-    // surfaces the error for visibility.
+    // Swallow — analytics must never break the page.
     // eslint-disable-next-line no-console
     console.warn("[posthog] init failed", err);
   }
@@ -98,9 +99,9 @@ function PostHogPageView(): null {
   const searchParams = useSearchParams();
   useEffect(() => {
     if (typeof window === "undefined") return;
-    if (!(posthog as unknown as { __loaded?: boolean }).__loaded) return;
+    if (!isLoaded()) return;
     const url = pathname + (searchParams?.toString() ? `?${searchParams.toString()}` : "");
-    posthog.capture("$pageview", { $current_url: window.location.origin + url });
+    posthog?.capture("$pageview", { $current_url: window.location.origin + url });
   }, [pathname, searchParams]);
   return null;
 }
@@ -109,26 +110,20 @@ function PostHogPageView(): null {
  * Tie the current PostHog session to a Supabase user id. Safe to call
  * with the same id on every render — posthog-js dedupes identify
  * calls internally. Passing ``null`` resets the session to anonymous
- * (logout flow).
- *
- * The ``traits`` argument lets you attach a few user properties for
- * cohort building — we use ``tier`` and ``email`` from the app
- * workspace. Tier is also set via ``posthog.group('tier', tier)`` so
- * we can run group-level analytics (free vs pro funnels) in addition
- * to per-user properties.
+ * (logout flow). No-op until the SDK has loaded (consent granted).
  */
 export function identifyPostHogUser(
   userId: string | null,
   traits?: Record<string, unknown>,
 ): void {
   if (typeof window === "undefined") return;
-  if (!(posthog as unknown as { __loaded?: boolean }).__loaded) return;
+  if (!isLoaded()) return;
   try {
     if (!userId) {
-      posthog.reset();
+      posthog?.reset();
       return;
     }
-    posthog.identify(userId, traits);
+    posthog?.identify(userId, traits);
   } catch (err) {
     // eslint-disable-next-line no-console
     console.warn("[posthog] identify failed", err);
@@ -136,17 +131,15 @@ export function identifyPostHogUser(
 }
 
 /**
- * Attach the current user to a group for cohort analytics. We use
- * group_type="tier" with the user's plan as the key (e.g. "free",
- * "pro", "business"), which lets dashboards filter "free-tier funnel"
- * without manually filtering on a person property each time.
+ * Attach the current user to a group for cohort analytics
+ * (group_type="tier"). No-op until the SDK has loaded.
  */
 export function setPostHogTierGroup(tier: string | null): void {
   if (typeof window === "undefined") return;
-  if (!(posthog as unknown as { __loaded?: boolean }).__loaded) return;
+  if (!isLoaded()) return;
   if (!tier) return;
   try {
-    posthog.group("tier", tier);
+    posthog?.group("tier", tier);
   } catch (err) {
     // eslint-disable-next-line no-console
     console.warn("[posthog] group failed", err);
@@ -154,20 +147,19 @@ export function setPostHogTierGroup(tier: string | null): void {
 }
 
 /**
- * Capture a named funnel event. Mirrors the safety guards above — a no-op when
- * posthog-js isn't loaded (consent pending/declined, key unset, ad blocker),
- * so it respects the cookie-consent gate. Use for explicit funnel steps
- * autocapture can't reliably key on: in-app citation clicks (no URL change),
- * the upgrade CTA, and sign-in (M23).
+ * Capture a named funnel event. A no-op until the SDK has loaded
+ * (consent pending/declined, key unset, ad blocker), so it respects
+ * the cookie-consent gate. Use for explicit funnel steps autocapture
+ * can't reliably key on (M23).
  */
 export function capturePostHogEvent(
   event: string,
   properties?: Record<string, unknown>,
 ): void {
   if (typeof window === "undefined") return;
-  if (!(posthog as unknown as { __loaded?: boolean }).__loaded) return;
+  if (!isLoaded()) return;
   try {
-    posthog.capture(event, properties);
+    posthog?.capture(event, properties);
   } catch (err) {
     console.warn("[posthog] capture failed", err);
   }
@@ -176,29 +168,22 @@ export function capturePostHogEvent(
 export function PostHogProvider({ children }: PostHogProviderProps) {
   const consent = useCookieConsent();
   useEffect(() => {
-    // GDPR / ePrivacy: PostHog product analytics + session replay are
-    // not strictly necessary, so we only initialize after the user
-    // explicitly accepts the cookie banner. Declined / pending both
-    // bail — no events, no distinct_id cookie.
-    //
-    // If consent flips from accepted → declined later (user revoked
-    // via "Cookie preferences"), we call opt_out_capturing so any
-    // already-loaded SDK stops sending events without a page reload.
+    // GDPR / ePrivacy: PostHog analytics + session replay are not strictly
+    // necessary, so we only load + initialize after the user accepts the
+    // cookie banner. Declined / pending both bail — no events, no cookie.
     if (consent === "accepted") {
-      initPostHog();
-      try {
-        if ((posthog as unknown as { __loaded?: boolean }).__loaded) {
-          posthog.opt_in_capturing();
+      void initPostHog().then(() => {
+        try {
+          if (isLoaded()) posthog?.opt_in_capturing();
+        } catch {
+          // Older SDK versions might lack opt_in_capturing — init handles it.
         }
-      } catch {
-        // SDK opt-in helper is missing on older versions — init does
-        // the right thing on its own.
-      }
+      });
     } else if (consent === "declined") {
+      // If consent flips accepted → declined later, stop an already-loaded
+      // SDK from sending without a reload.
       try {
-        if ((posthog as unknown as { __loaded?: boolean }).__loaded) {
-          posthog.opt_out_capturing();
-        }
+        if (isLoaded()) posthog?.opt_out_capturing();
       } catch {
         // Same — older SDK versions might lack opt_out_capturing.
       }
