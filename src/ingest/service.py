@@ -19,6 +19,11 @@ class EncryptedPdfError(PdfExtractionError):
     """The uploaded PDF is password-protected and could not be decrypted."""
 
 
+class UnextractablePdfError(PdfExtractionError):
+    """The document has pages but yielded no extractable text — typically a
+    scanned / image-only PDF with no text layer (needs OCR)."""
+
+
 def _file_fingerprint(path: Path) -> str:
     digest = hashlib.sha256()
     digest.update(path.read_bytes())
@@ -541,6 +546,18 @@ def ingest_document(
         file_type = "docx"
     else:
         raise ValueError(f"Unsupported document type: {file_path.suffix}")
+
+    if page_count > 0 and not (full_text or "").strip():
+        # The document has pages but no extractable text — almost always a
+        # scanned / image-only PDF with no text layer. Without this guard the
+        # upload "succeeds" (200) into a silently empty index that abstains on
+        # every question, with no signal to the user (H6). Surface a 422 via
+        # the upload route's PdfExtractionError handler instead.
+        raise UnextractablePdfError(
+            "No readable text could be extracted from this document. If it is "
+            "a scanned or photographed PDF, it needs OCR before it can be "
+            "indexed — try uploading a text-based PDF."
+        )
 
     full_text = _strip_invalid_storage_chars(full_text)
     pages = _strip_invalid_storage_chars(pages)

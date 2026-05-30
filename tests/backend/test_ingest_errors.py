@@ -27,3 +27,22 @@ def test_encrypted_pdf_raises_encrypted_error(tmp_path):
     _write_encrypted_pdf(pdf_path)
     with pytest.raises(EncryptedPdfError):
         _extract_pdf_pypdf(pdf_path)
+
+
+def test_scanned_pdf_with_no_text_raises_unextractable(tmp_path, monkeypatch):
+    """H6: a PDF with pages but zero extractable text (scanned / image-only)
+    must raise rather than ingest into a silently empty index."""
+    from src.ingest import service as ingest_service
+
+    pdf_path = tmp_path / "scanned.pdf"
+    pdf_path.write_bytes(b"%PDF-1.4 dummy bytes")
+
+    # page_count > 0 but no text — the scanned-PDF degenerate case.
+    monkeypatch.setattr(
+        ingest_service,
+        "_extract_pdf",
+        lambda _p: ("", [], 3, {"extraction_backend": "pypdf"}),
+    )
+    with pytest.raises(ingest_service.UnextractablePdfError):
+        ingest_service.ingest_document(pdf_path)
+
