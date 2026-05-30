@@ -85,7 +85,11 @@ def test_premium_quota_business_at_cap_returns_402():
 # ─── /qa premium branch via TestClient ────────────────────────────────────
 
 
-_TEST_USER_ID = "00000000-0000-4000-8000-test-premium-answers"
+# Must be a syntactically valid UUID: the /workspace/quota path now scopes the
+# document read with .eq("user_id", user.id) (H3), and the Supabase user_id
+# column is a uuid, so a non-uuid placeholder is rejected by postgrest (22P02).
+# Production user ids are always Supabase-auth uuids.
+_TEST_USER_ID = "00000000-0000-4000-8000-000000000002"
 
 
 @pytest.fixture
