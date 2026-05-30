@@ -169,12 +169,18 @@ class ChromaIndexStore:
             SupabaseArtifactStore(settings) if settings.uses_supabase_state else LocalArtifactStore(settings.indexes_dir, settings.index_schema_version)
         )
 
-    def _embedding_function(self):
+    def _embedding_function(self, model_name: str | None = None):
         if not self.api_key:
             return None
         from chromadb.utils.embedding_functions import OpenAIEmbeddingFunction
 
-        return OpenAIEmbeddingFunction(api_key=self.api_key, model_name=self.embedding_model)
+        # Query-time callers pass the model the index was BUILT with (from
+        # IndexRecord.embedding_model). Without it, changing HELPMATE_EMBEDDING_
+        # MODEL without re-ingesting would silently embed the query with the new
+        # model against vectors written by the old one — degraded or dimension-
+        # mismatched dense retrieval that still reports success (M6). Build-time
+        # callers pass nothing and fall back to the live settings model.
+        return OpenAIEmbeddingFunction(api_key=self.api_key, model_name=model_name or self.embedding_model)
 
     @staticmethod
     def _client_settings():
@@ -462,7 +468,7 @@ class ChromaIndexStore:
         client = self._client(None if self.settings.uses_chroma_http else fingerprint)
         collection = client.get_collection(
             name=index.collection_name,
-            embedding_function=self._embedding_function(),
+            embedding_function=self._embedding_function(index.embedding_model),
         )
         results = collection.query(query_texts=[question], n_results=top_k)
         items: list[dict] = []
@@ -484,7 +490,7 @@ class ChromaIndexStore:
         client = self._client(None if self.settings.uses_chroma_http else fingerprint)
         collection = client.get_collection(
             name=f"{index.collection_name}-sections",
-            embedding_function=self._embedding_function(),
+            embedding_function=self._embedding_function(index.embedding_model),
         )
         results = collection.query(query_texts=[question], n_results=top_k)
         items: list[dict] = []
@@ -506,7 +512,7 @@ class ChromaIndexStore:
         client = self._client(None if self.settings.uses_chroma_http else fingerprint)
         collection = client.get_collection(
             name=f"{index.collection_name}-synopses",
-            embedding_function=self._embedding_function(),
+            embedding_function=self._embedding_function(index.embedding_model),
         )
         results = collection.query(query_texts=[question], n_results=top_k)
         items: list[dict] = []
