@@ -2224,6 +2224,21 @@ input[type="file"]:disabled::file-selector-button {
   .h-frame {
     transition: none;
   }
+  /* M20: five infinite animations escaped the per-container reduced-motion
+     blocks elsewhere in this file and kept looping for users who asked the
+     OS to minimize motion — the button spinner, the .h-pip status pulse,
+     the .h-progress indexing shimmer, the streaming-answer caret, and the
+     evidence-card skeleton shimmer. Stop all five here. !important beats
+     each animation shorthand regardless of source order; the element
+     freezes on its first keyframe, which for the spinner/shimmers/pulse is
+     a static, legible resting state and for the caret is simply solid. */
+  .button-spinner,
+  .h-pip.pulse::before,
+  .h-progress::after,
+  .h-caret,
+  .h-evi-skeleton {
+    animation: none !important;
+  }
 }
 
 .h-frame > * {
