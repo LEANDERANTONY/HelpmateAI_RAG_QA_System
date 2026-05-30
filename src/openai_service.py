@@ -60,6 +60,16 @@ from src.config import Settings
 logger = logging.getLogger(__name__)
 
 
+# Output-token ceilings (L7). Reasoning models (gpt-5.x) emit unbounded
+# reasoning tokens when uncapped — a cost risk, not a truncation one — so
+# every call sets max_completion_tokens above its realistic payload size.
+# Parsers return full JSON answers/plans (generous 6000); verifiers return a
+# tiny (supported, reason)-style verdict (2000). Sized to clear real payloads
+# while still bounding a runaway reasoning loop.
+DEFAULT_PARSER_MAX_COMPLETION_TOKENS = 6000
+DEFAULT_VERIFIER_MAX_COMPLETION_TOKENS = 2000
+
+
 # ContextVar holding the *current request's* CostCollector. The pipeline
 # binds a fresh collector here at the start of each ``/qa`` request and
 # resets it in a ``finally`` after ``_build_run_trace`` reads totals.
@@ -358,7 +368,7 @@ class OpenAIService:
         model: str,
         expected_keys: tuple[str, ...] = (),
         temperature: float = 0.0,
-        max_completion_tokens: int | None = None,
+        max_completion_tokens: int | None = DEFAULT_PARSER_MAX_COMPLETION_TOKENS,
     ) -> dict[str, Any]:
         """Legacy JSON-mode call. The model returns a JSON object that
         is parsed and lightly shape-checked via ``expected_keys`` but
@@ -423,7 +433,7 @@ class OpenAIService:
         model: str,
         response_model: type[T],
         temperature: float = 0.0,
-        max_completion_tokens: int | None = None,
+        max_completion_tokens: int | None = DEFAULT_PARSER_MAX_COMPLETION_TOKENS,
     ) -> T:
         """Schema-strict call. The OpenAI API is configured to constrain
         the generated content to a JSON shape matching ``response_model``

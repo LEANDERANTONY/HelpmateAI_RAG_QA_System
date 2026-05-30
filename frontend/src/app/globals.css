@@ -59,6 +59,20 @@ a {
   background: rgba(48, 100, 255, 0.34);
 }
 
+/* Global keyboard-focus ring (M18). Custom controls across the workspace
+   and the landing page either inherited inconsistent UA focus outlines on
+   this near-black theme or stripped them outright (bare `outline: none`),
+   failing WCAG 2.4.7. This one low-specificity :where() rule paints a
+   consistent ring on every focusable surface; any element-specific :focus
+   / :focus-visible rule keeps its higher specificity and overrides it
+   (e.g. .h-pdf-container's inset ring, .h-palette-close). --accent is
+   scoped to .h-shell, so the #7fe0b0 fallback — the same brand mint — keeps
+   the ring visible on the landing page, where --accent is undefined. */
+:where(button, a, [role="button"], input, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent, #7fe0b0);
+  outline-offset: 2px;
+}
+
 .eyebrow {
   color: var(--secondary);
   font-size: 0.72rem;
@@ -170,82 +184,6 @@ a {
     transform 180ms ease,
     border-color 180ms ease,
     background-color 180ms ease;
-}
-
-.landing-page {
-  position: relative;
-  isolation: isolate;
-  overflow: hidden;
-  background: linear-gradient(
-    180deg,
-    rgba(10, 15, 29, 0.94) 0%,
-    rgba(8, 12, 24, 0.72) 15rem,
-    rgba(2, 4, 10, 0.16) 30rem,
-    rgba(0, 0, 0, 0) 40rem
-  );
-}
-
-.landing-page::before {
-  content: "";
-  pointer-events: none;
-  position: absolute;
-  left: 50%;
-  top: -10.5rem;
-  width: min(144rem, 172vw);
-  height: 50rem;
-  transform: translateX(-50%);
-  background:
-    radial-gradient(
-      ellipse at center,
-      rgba(30, 46, 102, 0.68) 0%,
-      rgba(18, 28, 66, 0.5) 30%,
-      rgba(8, 13, 28, 0.18) 66%,
-      transparent 88%
-    ),
-    url("/cadence-hero-blur.png") center 24% / 82rem auto no-repeat;
-  filter: blur(34px) saturate(112%);
-  opacity: 0.98;
-  -webkit-mask-image: radial-gradient(
-    ellipse at center,
-    rgba(0, 0, 0, 1) 0%,
-    rgba(0, 0, 0, 1) 37%,
-    rgba(0, 0, 0, 0.88) 52%,
-    rgba(0, 0, 0, 0.46) 70%,
-    rgba(0, 0, 0, 0) 100%
-  );
-  mask-image: radial-gradient(
-    ellipse at center,
-    rgba(0, 0, 0, 1) 0%,
-    rgba(0, 0, 0, 1) 37%,
-    rgba(0, 0, 0, 0.88) 52%,
-    rgba(0, 0, 0, 0.46) 70%,
-    rgba(0, 0, 0, 0) 100%
-  );
-  z-index: -2;
-}
-
-.landing-page::after {
-  content: "";
-  pointer-events: none;
-  position: absolute;
-  inset: 0;
-  background:
-    radial-gradient(
-      ellipse at 50% 1rem,
-      rgba(24, 39, 90, 0.42) 0%,
-      rgba(12, 20, 48, 0.28) 34%,
-      rgba(5, 8, 19, 0.12) 58%,
-      transparent 80%
-    ),
-    linear-gradient(
-      180deg,
-      rgba(3, 5, 12, 0) 0%,
-      rgba(0, 0, 0, 0.1) 50%,
-      rgba(0, 0, 0, 0.82) 88%,
-      rgba(0, 0, 0, 1) 100%
-    );
-  opacity: 1;
-  z-index: -1;
 }
 
 .workspace-page {
@@ -1744,7 +1682,13 @@ input[type="file"]:disabled::file-selector-button {
   --fg: #f5f8ff;
   --fg-2: #c7cfdf;
   --fg-3: #8a93a8;
-  --fg-4: #5e6677;
+  --fg-4: #7b8499;
+  /* Decoration-only shade of --fg-4 (M19): #5e6677 fails WCAG 1.4.3
+     (~3.4:1) as small text, so --fg-4 itself was lightened to #7b8499 —
+     every text use rides that automatically. Non-text uses (the source
+     separator dot, the evidence skeleton shimmer, the PDF scrollbar thumb)
+     keep the darker tone via this token; contrast minimums don't apply. */
+  --fg-4-deco: #5e6677;
   --accent: #7fe0b0;
   --accent-strong: #98ecc1;
   --accent-soft: rgba(127, 224, 176, 0.10);
@@ -2204,6 +2148,21 @@ input[type="file"]:disabled::file-selector-button {
   .h-frame {
     transition: none;
   }
+  /* M20: five infinite animations escaped the per-container reduced-motion
+     blocks elsewhere in this file and kept looping for users who asked the
+     OS to minimize motion — the button spinner, the .h-pip status pulse,
+     the .h-progress indexing shimmer, the streaming-answer caret, and the
+     evidence-card skeleton shimmer. Stop all five here. !important beats
+     each animation shorthand regardless of source order; the element
+     freezes on its first keyframe, which for the spinner/shimmers/pulse is
+     a static, legible resting state and for the caret is simply solid. */
+  .button-spinner,
+  .h-pip.pulse::before,
+  .h-progress::after,
+  .h-caret,
+  .h-evi-skeleton {
+    animation: none !important;
+  }
 }
 
 .h-frame > * {
@@ -2610,7 +2569,6 @@ input[type="file"]:disabled::file-selector-button {
   font-size: 15px;
   line-height: 1.5;
   min-height: 72px;
-  outline: none;
   resize: vertical;
   width: 100%;
 }
@@ -2814,7 +2772,6 @@ input[type="file"]:disabled::file-selector-button {
 
 .h-feedback-comment-input:focus {
   border-color: var(--accent);
-  outline: none;
 }
 
 .h-feedback-comment-input::placeholder {
@@ -3467,7 +3424,7 @@ input[type="file"]:disabled::file-selector-button {
 }
 
 .h-source-dot {
-  color: var(--fg-4);
+  color: var(--fg-4-deco);
 }
 
 .h-source-row strong {
@@ -3515,7 +3472,7 @@ input[type="file"]:disabled::file-selector-button {
 }
 
 .h-evi-empty .stack span {
-  background: var(--fg-4);
+  background: var(--fg-4-deco);
   border-radius: 3px;
   opacity: 0.35;
 }
@@ -3904,7 +3861,6 @@ input[type="file"]:disabled::file-selector-button {
   flex: 1;
   font-family: var(--font-body);
   font-size: 15px;
-  outline: none;
 }
 
 .h-palette-input::placeholder {
@@ -4471,7 +4427,9 @@ input[type="file"]:disabled::file-selector-button {
   --fg: #f5f8ff;
   --fg-2: #c7cfdf;
   --fg-3: #8a93a8;
-  --fg-4: #5e6677;
+  --fg-4: #7b8499;
+  /* M19: decoration shade; the sheet's PDF scrollbar thumb resolves it. */
+  --fg-4-deco: #5e6677;
   --accent: #7fe0b0;
   --accent-tint: rgba(127, 224, 176, 0.14);
   --radius-sm: 6px;
@@ -4680,7 +4638,7 @@ input[type="file"]:disabled::file-selector-button {
   scroll-behavior: smooth;
   /* Thin custom scrollbar so the right edge of the viewer reads as
      workspace chrome rather than OS-default thumb chunkiness. */
-  scrollbar-color: var(--fg-4) transparent;
+  scrollbar-color: var(--fg-4-deco) transparent;
   scrollbar-width: thin;
 }
 
@@ -5130,7 +5088,6 @@ input[type="file"]:disabled::file-selector-button {
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.04em;
-  outline: none;
   padding: 4px 12px;
   /* Match the visible width of the pill at typical page counts (5
      chars = "9/200" or so). Centered to mirror the pill's centered
@@ -5436,9 +5393,13 @@ input[type="file"]:disabled::file-selector-button {
    individual selector if it breaks layout is safe.
 */
 @media (max-width: 900px) {
-  /* Citation pills — keep 20px visual height, extend tap target to
-     ~44px via an invisible pseudo so inline density (multiple pills
-     in a row inside an answer paragraph) survives intact. */
+  /* Citation pills (L12) — keep ~20px visual height, extend the tap target
+     to ~44px via an invisible pseudo so inline density (multiple pills in a
+     row inside an answer paragraph) survives intact. This is a stronger fix
+     than a min-height bump: it reaches the full 44px WCAG 2.5.5 target
+     without inflating the pill or breaking inline text flow, which a
+     min-height:32px (still < 44px) would do. The base .h-cite is already
+     inline-flex + align-items:center with padding. */
   .h-cite {
     position: relative;
   }

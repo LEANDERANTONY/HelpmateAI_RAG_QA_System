@@ -161,6 +161,13 @@ function categorizeError(err: unknown): PdfLoadError {
       if (status === 404) {
         return new PdfLoadError("Source no longer available", "missing", status);
       }
+      if (status === 410) {
+        // Workspace TTL expired (backend _require_document_for_user). Reuse the
+        // 'missing' banner ("workspace may have expired — reload to start
+        // fresh") rather than the generic transport error, whose "try closing
+        // and reopening Read Mode" advice just re-hits 410 in a loop (M17).
+        return new PdfLoadError("Source no longer available", "missing", status);
+      }
       if (status === 415) {
         return new PdfLoadError(
           "Viewer needs a PDF rendition",

@@ -1,6 +1,15 @@
 {$HELPMATE_API_DOMAIN} {
     encode gzip zstd
 
+    # Security headers (L8). nosniff stops a browser from MIME-sniffing a
+    # user-file response into executable content; HSTS pins HTTPS for a year
+    # (includeSubDomains, no preload) so a downgrade/MITM can't strip TLS.
+    # Caddy terminates TLS here but adds neither header by default.
+    header {
+        X-Content-Type-Options nosniff
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    }
+
     reverse_proxy api:8001
 }
 

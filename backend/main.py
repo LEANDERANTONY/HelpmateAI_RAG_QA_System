@@ -36,6 +36,7 @@ from backend.quota import (
     check_question_quota,
 )
 from backend.quota_store import QuotaStore, build_quota_store
+from backend.rate_limit import enforce_rate_limit
 from backend.store import build_api_record_store
 from backend.tiers import RETENTION_UNBOUNDED, TIER_LIMITS, resolve_user_tier
 from src.config import get_settings
@@ -1217,14 +1218,28 @@ def answer_question(
     # Increment AFTER successful generation. Pipeline raised → we
     # return here via the exception path with no increment.
     #
-    # Premium calls increment BOTH counters (per spec): the standard
-    # question counter still ticks because the LLM call happened, AND
-    # the premium counter gets one charge for using the upgraded
-    # model. This makes total spend transparent on a single counter
-    # while still letting the premium cap function as the smaller
-    # bound on premium-model use specifically.
+    # The standard question counter ticks for every answered question
+    # (cache hits and degraded fallbacks included) — the user got an
+    # answer. The premium counter is narrower: it charges only when the
+    # premium model ACTUALLY ran this request. ``llm_breakdown`` is the
+    # record of real LLM calls (None on cache hits), so when it holds no
+    # call against the premium model — the model was unavailable and
+    # generation fell back to a local answer, or the answer came from
+    # cache — premium is not charged even though payload.premium was set.
+    # This keeps the premium cap a bound on premium-MODEL use (L1).
     _quota_store().increment_questions(user.id)
-    if payload.premium:
+    llm_breakdown = getattr(answer, "llm_breakdown", None)
+    premium_model = limits["premium_model"]
+    premium_ran = bool(
+        payload.premium
+        and premium_model
+        and llm_breakdown
+        and any(
+            call.get("model_name") == premium_model
+            for call in (llm_breakdown.get("calls") or [])
+        )
+    )
+    if premium_ran:
         _quota_store().increment_premium(user.id)
 
     _save_touched_document(document, user)
@@ -1253,12 +1268,11 @@ def answer_question(
     # underlying LLM call so the LLM Analytics dashboard sees full
     # token / cost / model attribution per span. Trace_id ties the
     # spans together so the dashboard can group them per request.
-    # ``answer.llm_breakdown`` stays None on cache hits (so a cached
-    # answer doesn't replay events that never happened on this
-    # request) — bail in that case. The contract:
+    # ``answer.llm_breakdown`` (computed above for premium gating) stays
+    # None on cache hits, so a cached answer doesn't replay events that
+    # never happened on this request — bail in that case. The contract:
     #   PostHog LLM Analytics expects ``$ai_*`` property keys verbatim;
     #   missing them silently drops the event off the dashboard.
-    llm_breakdown = getattr(answer, "llm_breakdown", None)
     if llm_breakdown:
         for call in llm_breakdown.get("calls", []) or []:
             try:
@@ -1375,15 +1389,20 @@ async def transcribe_audio(
     transcript so the textarea can populate without the user typing a
     multi-paragraph question.
 
-    Free for every tier — no quota gate. The cost per call is tiny
-    (Whisper bills $0.006/min) and the feature is a UX win, not a
-    paid-tier hook. We still require auth so the route can't be
-    abused as an anonymous transcription API.
+    No monthly quota gate, but a per-user in-process rate limit (M1) bounds
+    abuse of the unmetered Whisper calls — without it a single authenticated
+    user could loop this endpoint for unbounded OpenAI spend. The cost per call
+    is tiny (Whisper bills $0.006/min) and the feature is a UX win, not a
+    paid-tier hook. We still require auth so the route can't be abused as an
+    anonymous transcription API.
 
     Validates upload type + size BEFORE touching OpenAI so a misfiled
     blob (or a 1 GB stream) gets a fast 400/413 instead of burning
     minutes of audio at the API edge.
     """
+    # ~30 transcriptions/min per user (burst 30) — far above the "speak your
+    # question" use case, but enough to stop a tight abuse loop (M1).
+    enforce_rate_limit(f"transcribe:{user.id}", capacity=30, refill_per_sec=0.5)
     settings = _settings()
     if not settings.openai_api_key:
         # The frontend gates the voice button on whether transcription

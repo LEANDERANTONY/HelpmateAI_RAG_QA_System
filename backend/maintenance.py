@@ -95,6 +95,11 @@ def sweep_local_workspace_storage(settings: Settings | None = None) -> SweepSumm
 
     active_upload_paths: set[Path] = set()
     active_fingerprints: set[str] = set()
+    # Batch-load every index row once instead of a get_index() round-trip per
+    # document (the N+1 the sweeper did on each 10-minute tick). The full
+    # document scan is retained because the orphan-file whitelist pass below
+    # needs every active doc's paths + fingerprint (M8).
+    indexes_by_doc = {index.document_id: index for index in store.list_indexes()}
 
     for document in store.list_documents():
         # expires_at is set by _touch_document_workspace using the
@@ -103,7 +108,7 @@ def sweep_local_workspace_storage(settings: Settings | None = None) -> SweepSumm
         # expires_at as "never delete" — Business-tier records flow
         # through to the active-set whitelist below.
         expires_at = _document_expires_at(document)
-        index_record = store.get_index(document.document_id)
+        index_record = indexes_by_doc.get(document.document_id)
         if expires_at is not None and expires_at <= now:
             pipeline.delete_workspace(document, index_record)
             # Storage cleanup AFTER pipeline.delete_workspace because

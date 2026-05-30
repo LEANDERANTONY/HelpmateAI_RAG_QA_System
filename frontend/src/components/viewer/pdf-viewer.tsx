@@ -120,6 +120,20 @@ function bannerKindFromLoadError(kind: PdfLoadError["kind"]): BannerKind {
 // enough on a fast laptop, doubled to be conservative.
 const HIGHLIGHT_PAINT_DELAY_MS = 60;
 
+// Bounded fallback for the textlayerrendered listener below — if the cited page
+// never renders (user navigated away mid-scroll), detach after this so the
+// listener can't leak or fire stale (M14).
+const SCROLL_LISTENER_TIMEOUT_MS = 4000;
+
+// The single pending textlayerrendered listener (+ its fallback timeout) per
+// eventBus. Repeated navigations off() the previous one instead of stacking
+// listeners, so a stale page rendering later can't yank the viewport back
+// (M14). Keyed weakly by the per-document eventBus so it's GC'd on unmount.
+const pendingScrollListeners = new WeakMap<
+  object,
+  { listener: (payload: { pageNumber: number }) => void; timeoutId: number }
+>();
+
 // Scroll a specific page's first match highlight into the centre of
 // the viewport. pdfjs's public scrollMatchIntoView requires both the
 // highlight DOM element and the controller's internal _selected state
@@ -167,15 +181,34 @@ function scrollToMatchOnPage(
 
   if (centerOnHighlight()) return;
 
-  // Listen once for textlayerrendered on this page, then try again
-  // after a paint buffer. The listener auto-removes itself on first
-  // matching event; if a different page renders first we ignore it.
+  // Cancel any pending listener from a prior navigation (rapid citation taps,
+  // doc-switch mid-scroll, or auto-jump on a new answer) so they don't
+  // accumulate and a stale page rendering later can't fight the user's current
+  // position (M14).
+  const previous = pendingScrollListeners.get(state.eventBus);
+  if (previous) {
+    state.eventBus.off("textlayerrendered", previous.listener);
+    window.clearTimeout(previous.timeoutId);
+    pendingScrollListeners.delete(state.eventBus);
+  }
+
+  // Listen once for textlayerrendered on this page, then try again after a
+  // paint buffer. Removes itself (and its fallback timeout) on the first
+  // matching event; a different page rendering first is ignored.
+  let timeoutId = 0;
   const onRendered = (payload: { pageNumber: number }) => {
     if (payload.pageNumber !== pageNumber) return;
     state.eventBus.off("textlayerrendered", onRendered);
+    window.clearTimeout(timeoutId);
+    pendingScrollListeners.delete(state.eventBus);
     window.setTimeout(centerOnHighlight, HIGHLIGHT_PAINT_DELAY_MS);
   };
+  timeoutId = window.setTimeout(() => {
+    state.eventBus.off("textlayerrendered", onRendered);
+    pendingScrollListeners.delete(state.eventBus);
+  }, SCROLL_LISTENER_TIMEOUT_MS);
   state.eventBus.on("textlayerrendered", onRendered);
+  pendingScrollListeners.set(state.eventBus, { listener: onRendered, timeoutId });
 }
 
 // D1: with highlightAll the find controller paints the anchor on

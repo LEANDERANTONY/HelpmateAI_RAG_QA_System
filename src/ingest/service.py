@@ -75,9 +75,34 @@ def _strip_invalid_storage_chars(value: Any) -> Any:
     return value
 
 
+def _looks_like_heading(line: str) -> bool:
+    """Heuristic for an isolated heading line: short, not a sentence, and not
+    a bare page number. Deliberately loose — it only needs to skip the
+    obvious non-headings (running body text, footers / page numbers) so the
+    FIRST plausible line wins instead of an arbitrary positional pick."""
+    if not line or len(line) > 80:
+        return False
+    if line[-1] in ".,;":
+        return False
+    if line.strip(".").isdigit():  # bare page number, e.g. "12" or "12."
+        return False
+    return True
+
+
 def _page_heading(text: str) -> str:
+    # Pick the first line that looks like a heading rather than an arbitrary
+    # positional line (this used to return lines[3] — the 4th non-empty line,
+    # which is meaningless since page structure varies wildly). This is only
+    # the per-page seed; enrich_pages_with_structure later refines real
+    # section structure. Fall back to the first non-empty line when nothing
+    # passes the check (L14).
     lines = [line.strip() for line in text.splitlines() if line.strip()]
-    return lines[3] if len(lines) > 3 else (lines[0] if lines else "")
+    if not lines:
+        return ""
+    for line in lines:
+        if _looks_like_heading(line):
+            return line
+    return lines[0]
 
 
 def _table_extractor_mode() -> str:

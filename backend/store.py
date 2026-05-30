@@ -66,6 +66,12 @@ class LocalApiRecordStore:
             return None
         return IndexRecord(**json.loads(path.read_text(encoding="utf-8")))
 
+    def list_indexes(self) -> list[IndexRecord]:
+        indexes: list[IndexRecord] = []
+        for path in sorted(self.indexes_dir.glob("*.json")):
+            indexes.append(IndexRecord(**json.loads(path.read_text(encoding="utf-8"))))
+        return indexes
+
     def list_documents(self) -> list[DocumentRecord]:
         documents: list[DocumentRecord] = []
         for path in sorted(self.documents_dir.glob("*.json")):
@@ -144,6 +150,11 @@ class SupabaseApiRecordStore:
             return None
         payload = rows[0].get("payload") or {}
         return IndexRecord(**payload)
+
+    def list_indexes(self) -> list[IndexRecord]:
+        response = self.client.table(self.indexes_table).select("payload").execute()
+        rows = extract_supabase_rows(response)
+        return [IndexRecord(**(row.get("payload") or {})) for row in rows if row.get("payload")]
 
     def list_documents(self) -> list[DocumentRecord]:
         response = self.client.table(self.documents_table).select("payload").execute()

@@ -40,18 +40,23 @@ class _FakeClient:
         self.chat = _FakeChat(content)
 
 
-def test_fallback_generation_surfaces_citations_but_never_claims_support():
+def test_fallback_generation_abstains_cleanly_with_empty_citations():
     """Fallback path (no API key / live model unreachable) must NEVER
-    return supported=True. The old implementation stitched the first
-    two retrieved chunks via candidate.text[:220] and stamped
-    supported=True via a brittle "does the fabricated text contain
-    'insufficient'?" heuristic — which almost always passed and broke
-    the abstention guarantee on off-topic questions (e.g. "price of
-    Bitcoin?" against FOMC minutes returned SUPPORTED · Best local
-    match). The fix: fallback surfaces citations + evidence (so the
-    user can navigate) but the answer body is an honest "live model
-    unavailable" message and supported=False so the abstention gate
-    holds.
+    return supported=True, and must abstain cleanly. The old
+    implementation stitched the first two retrieved chunks via
+    candidate.text[:220] and stamped supported=True via a brittle "does
+    the fabricated text contain 'insufficient'?" heuristic — which almost
+    always passed and broke the abstention guarantee on off-topic
+    questions (e.g. "price of Bitcoin?" against FOMC minutes returned
+    SUPPORTED · Best local match).
+
+    A later pass surfaced citations + evidence so the user could navigate,
+    but the evidence rail renders nothing on an unsupported answer, so the
+    populated citations advertised sources the UI never showed. The fix
+    (L3): the fallback returns empty citations / citation_details to match
+    the abstention contract — the answer body is an honest "live model
+    unavailable" message and supported=False so the abstention gate holds.
+    The retrieved evidence is retained on the result for tracing only.
     """
     settings = Settings(openai_api_key=None)
     generator = AnswerGenerator(settings)
@@ -68,11 +73,15 @@ def test_fallback_generation_surfaces_citations_but_never_claims_support():
 
     answer = generator.generate("What is the waiting period?", retrieval)
 
-    # Citation pointers still surface so the user can navigate to source.
-    assert answer.citations == ["Page 4"]
-    # But the answer body NEVER fabricates a grounded summary from
-    # stitched chunks, and the support flag is always False on this
-    # path so the abstention contract holds.
+    # Abstention contract: no citations are advertised, because the
+    # evidence rail renders empty on an unsupported answer (L3).
+    assert answer.citations == []
+    assert answer.citation_details == []
+    # The retrieved evidence is still retained on the result for tracing.
+    assert answer.evidence
+    # The answer body NEVER fabricates a grounded summary from stitched
+    # chunks, and the support flag is always False on this path so the
+    # abstention contract holds.
     assert answer.supported is False
     assert answer.support_status == "unsupported"
     assert answer.support_summary == "Live model unavailable"

@@ -83,7 +83,7 @@ def build_grounded_prompt(question: str, evidence: list[RetrievalCandidate], *, 
     """
     from backend.prompt_registry import get_prompt
 
-    template = get_prompt("answer_generation", "v1")
+    template = get_prompt("answer_generation", "v2")
     rendered = template.render(
         question=question,
         evidence=_join_evidence(evidence),

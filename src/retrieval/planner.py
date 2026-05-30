@@ -406,6 +406,18 @@ class RetrievalPlanner:
             # the ContextVar), making it visible in the run-trace cost
             # columns and the PostHog $ai_generation fan-out (H11).
             service = OpenAIService(self.settings, client=self.client)
+            # json_object here is deliberate, not an oversight (L6). This
+            # orchestration payload — and the sibling retrieval_planner call
+            # below — is an INTERNAL retrieval plan, not user-visible output,
+            # already guarded by field-level validation + safe defaults in
+            # _query_profile_from_payload (enum fallbacks, list sanitization).
+            # run_json_prompt also degrades gracefully to {} (-> "no plan",
+            # deterministic fallback) on drift. Migrating to schema-strict
+            # run_structured_prompt was evaluated and DEFERRED: it would need
+            # two large Pydantic schemas replicating that coercion, rewire the
+            # {}-on-drift degradation into raises, and disturb the retry loop —
+            # touching >2 files for no user-facing gain. Revisit if these
+            # payloads ever surface to users.
             payload = service.run_json_prompt(
                 system=(
                     "You are a retrieval orchestration manager. "
@@ -732,6 +744,9 @@ class RetrievalPlanner:
             # into the request-scoped CostCollector and the $ai_generation
             # fan-out (H11).
             service = OpenAIService(self.settings, client=self.client)
+            # json_object is deliberate here too (see the L6 note at the
+            # retrieval_orchestrator call): internal plan, lenient parsing,
+            # graceful {}-on-drift fallback.
             payload = service.run_json_prompt(
                 system=(
                     "You produce structured retrieval plans for a grounded long-document QA system. "

@@ -1,5 +1,6 @@
 from __future__ import annotations
 
+import contextvars
 from collections import defaultdict
 import re
 
@@ -12,6 +13,27 @@ from src.retrieval.store import ChromaIndexStore
 from src.retrieval.synopsis_retriever import SynopsisRetriever
 from src.schemas import ChunkRecord, RetrievalCandidate, RetrievalPlan, RetrievalResult, SectionSynopsisRecord, TopologyEdge
 from src.topology import DocumentTopologyService
+
+
+# Per-request cache of fitted TF-IDF state, keyed by corpus (tuple of record
+# ids). _rank_lexical otherwise refits a TfidfVectorizer over the whole chunk
+# (or synopsis) corpus on every call, and one retrieve() calls it 3-6x over the
+# same corpus (local + global fallback + synopsis + abstention recovery). The
+# pipeline binds this per /qa request so the fit happens once; unbound (eval
+# scripts) it falls through to a per-call fit. A ContextVar (not an instance
+# attribute) keeps concurrent /qa requests isolated — HybridRetriever is an
+# lru_cache singleton (M9).
+_lexical_cache: contextvars.ContextVar[dict | None] = contextvars.ContextVar(
+    "helpmate_lexical_cache", default=None
+)
+
+
+def bind_lexical_cache() -> contextvars.Token:
+    return _lexical_cache.set({})
+
+
+def reset_lexical_cache(token: contextvars.Token) -> None:
+    _lexical_cache.reset(token)
 
 
 class HybridRetriever:
@@ -211,7 +233,12 @@ class HybridRetriever:
             return "unsupported", 0.0, 0.0, 0.0
         self._stamp_candidate_strengths(candidates)
         self._stamp_highlight_terms(question, candidates)
-        best_score = self._evidence_score(candidates[0])
+        # Use the strongest fused score across ALL candidates, not just the
+        # one the reranker promoted to index 0. _evidence_score returns
+        # fused_score, and the reranker reorders by cross-encoder logits, so a
+        # genuinely strong fused candidate demoted to index 1+ must not trigger
+        # a false abstention (M5).
+        best_score = max(self._evidence_score(candidate) for candidate in candidates)
         max_lexical = max((candidate.lexical_score for candidate in candidates), default=0.0)
         content_overlap = self._content_overlap_ratio(question, candidates)
         section_kinds = {
@@ -309,11 +336,29 @@ class HybridRetriever:
         from sklearn.feature_extraction.text import TfidfVectorizer
         from sklearn.metrics.pairwise import cosine_similarity
 
+        # Fit the vectorizer over the corpus ONCE per (request, corpus) and
+        # reuse it for the repeated lexical scorings within one retrieve(),
+        # transforming only the query each call instead of refitting the whole
+        # corpus (M9). The corpus is immutable per request, so the cached fit is
+        # safe for the request lifetime.
+        corpus_key = tuple(record_id for record_id, _ in records)
+        cache = _lexical_cache.get()
+        fitted = cache.get(corpus_key) if cache is not None else None
+        if fitted is None:
+            try:
+                vectorizer = TfidfVectorizer(stop_words="english")
+                doc_matrix = vectorizer.fit_transform([text for _, text in records])
+            except ValueError:
+                return {}
+            fitted = (vectorizer, doc_matrix)
+            if cache is not None:
+                cache[corpus_key] = fitted
+        vectorizer, doc_matrix = fitted
         try:
-            matrix = TfidfVectorizer(stop_words="english").fit_transform([text for _, text in records] + [question])
+            query_matrix = vectorizer.transform([question])
         except ValueError:
             return {}
-        similarities = cosine_similarity(matrix[-1], matrix[:-1]).flatten()
+        similarities = cosine_similarity(query_matrix, doc_matrix).flatten()
         indices = similarities.argsort()[::-1][:top_k]
         return {records[index][0]: float(similarities[index]) for index in indices if similarities[index] > 0}
 

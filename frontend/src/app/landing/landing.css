@@ -1705,10 +1705,10 @@
 .l-pricing-card.is-featured .l-pricing-blurb,
 .l-pricing-card.is-featured .l-pricing-price .per,
 .l-pricing-card.is-featured .l-pricing-features li {
-  /* Dark-on-light needs a softer "secondary" color than the dark
-     theme's --fg-3. Mix --accent-fg toward transparent for the
-     muted-secondary feel without inventing a new token. */
-  color: color-mix(in srgb, var(--accent-fg) 78%, transparent);
+  /* Dark-on-light: the muted color-mix(--accent-fg 78%) blurb/per/features
+     came out ~3.4:1 on the mint gradient, failing WCAG 1.4.3 (M19). Use
+     solid --accent-fg (#04241a), which clears 4.5:1 against the gradient. */
+  color: var(--accent-fg);
 }
 .l-pricing-card.is-featured .l-pricing-features svg {
   color: var(--accent-fg);

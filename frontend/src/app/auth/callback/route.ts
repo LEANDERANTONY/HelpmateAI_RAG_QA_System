@@ -31,7 +31,16 @@ export async function GET(request: Request) {
 
   if (code && isSupabaseConfigured()) {
     const supabase = await createClient();
-    await supabase.auth.exchangeCodeForSession(code);
+    const { error } = await supabase.auth.exchangeCodeForSession(code);
+    if (error) {
+      // The code exchange failed (expired / already-used / invalid code, or
+      // a transient Supabase error). Don't drop the user back onto the app
+      // silently signed-out — redirect with ?auth_error=1 so AuthErrorToast
+      // surfaces a "sign-in failed" message instead of a no-op (L13).
+      const errorUrl = new URL(next, requestUrl.origin);
+      errorUrl.searchParams.set("auth_error", "1");
+      return NextResponse.redirect(errorUrl);
+    }
   }
 
   return NextResponse.redirect(new URL(next, requestUrl.origin));

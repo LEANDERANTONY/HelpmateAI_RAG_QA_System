@@ -25,6 +25,7 @@ from src.openai_service import (
     reset_cost_collector,
 )
 from src.retrieval import ChromaIndexStore, HybridRetriever
+from src.retrieval.hybrid import bind_lexical_cache, reset_lexical_cache
 from src.retrieval.store import bind_bundle_cache, reset_bundle_cache
 from src.sections import build_sections
 from src.sections.profiles import enrich_section_profiles
@@ -340,6 +341,8 @@ class HelpmatePipeline:
         # row once instead of 5-8x (H2). Reset in the finally so the next
         # request that lands on this task starts clean.
         bundle_token = bind_bundle_cache()
+        # Same request scope for the TF-IDF fit cache (M9).
+        lexical_token = bind_lexical_cache()
         try:
             return self._answer_question_inner(
                 document=document,
@@ -349,7 +352,29 @@ class HelpmatePipeline:
                 model_override=model_override,
                 cost_collector=cost_collector,
             )
+        except Exception as exc:
+            # A failed /qa used to vanish — no trace, no record of the partial
+            # LLM spend it already incurred (L10). Persist a minimal error
+            # trace (error marker + whatever cost was collected before the
+            # failure) here, while cost_collector still holds the request's
+            # records, then re-raise unchanged. The save is best-effort: a
+            # trace-store failure must never mask the original error.
+            try:
+                self.run_trace_store.save_trace(
+                    self._build_error_trace(
+                        document=document,
+                        question=question,
+                        error=exc,
+                        cost_collector=cost_collector,
+                    )
+                )
+            except Exception:
+                logger.warning(
+                    "Failed to persist error run-trace for /qa", exc_info=True
+                )
+            raise
         finally:
+            reset_lexical_cache(lexical_token)
             reset_bundle_cache(bundle_token)
             reset_cost_collector(token)
 
@@ -574,6 +599,52 @@ class HelpmatePipeline:
         }
         return RunTraceRecord(
             trace_id=trace_id,
+            document_id=document.document_id,
+            fingerprint=document.fingerprint,
+            question=question,
+            created_at=created_at.isoformat(),
+            expires_at=self._trace_expires_at(document, created_at),
+            retrieval_version=self.settings.retrieval_version,
+            generation_version=self.settings.generation_version,
+            payload=payload,
+            prompt_tokens=int(cost_totals.get("prompt_tokens", 0) or 0),
+            completion_tokens=int(cost_totals.get("completion_tokens", 0) or 0),
+            cost_usd=float(cost_totals.get("cost_usd", 0.0) or 0.0),
+            model_name=str(cost_totals.get("model_name", "") or ""),
+        )
+
+    def _build_error_trace(
+        self,
+        *,
+        document: DocumentRecord,
+        question: str,
+        error: BaseException,
+        cost_collector: CostCollector,
+    ) -> RunTraceRecord:
+        """Minimal trace for a /qa request that raised before producing an
+        answer (L10). Records the error class + message and whatever partial
+        LLM cost was collected before the failure, so a crashed request stays
+        visible and cost-attributable in the trace store instead of vanishing.
+        Mirrors the cost-column wiring of _build_run_trace."""
+        created_at = datetime.now(timezone.utc)
+        cost_totals = cost_collector.totals()
+        payload = {
+            "question": question,
+            "document": {
+                "document_id": document.document_id,
+                "file_name": document.file_name,
+                "fingerprint": document.fingerprint,
+            },
+            # Error marker — distinguishes a failed run from a normal one for
+            # any dashboard / reader that filters on payload.error.
+            "error": {
+                "type": error.__class__.__name__,
+                "message": str(error)[:2000],
+            },
+            "llm_calls": cost_collector.to_payload(),
+        }
+        return RunTraceRecord(
+            trace_id=f"trace-{uuid.uuid4().hex}",
             document_id=document.document_id,
             fingerprint=document.fingerprint,
             question=question,

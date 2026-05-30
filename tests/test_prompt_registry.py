@@ -58,7 +58,7 @@ def _reset_registry_cache():
 def test_get_prompt_resolves_active_version_from_registry():
     template = get_prompt("answer_generation")
     assert template.name == "answer_generation"
-    assert template.version == "v1"
+    assert template.version == "v2"
     assert template.system
     assert template.user
 
@@ -490,7 +490,7 @@ def test_query_router_v1_expected_placeholders():
 # A failure here with no such bump means a prompt drifted silently —
 # treat it as a release blocker, not a test to "just update".
 _FROZEN_PROMPT_DIGESTS = {
-    "answer_generation": "a7505645130045a0c998164f160af08a06d70500213a5a00ab63321a4be550b8",
+    "answer_generation": "6514a647bdd9872f296814826f6ab7c1236d5acfac2cf5d76cd1d915c2163d87",
     "document_landmarks": "c8ec8d14308168870ba75b81ae4990b617800753470b769e54484c9d79472e31",
     "planner": "73ea5174a07b7e7a651eb182294094b01edff814dccba042d15669c5b3b4b7a2",
     "query_router": "efe7541635ca37e51a24861a2f0a9aff0742a510b493e474372c73f29dcae8b6",

@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { DM_Sans, Geist_Mono, Space_Grotesk } from "next/font/google";
+import { AuthErrorToast } from "@/components/auth-error-toast";
 import { CookieConsentBanner } from "@/components/cookie-consent";
 import { PostHogProvider } from "@/components/posthog-provider";
 import { Toaster } from "@/components/toaster";
@@ -44,6 +45,7 @@ export default function RootLayout({
       <body className="min-h-full flex flex-col">
         <PostHogProvider>{children}</PostHogProvider>
         <Toaster />
+        <AuthErrorToast />
         <CookieConsentBanner />
         <Analytics />
         <SpeedInsights />

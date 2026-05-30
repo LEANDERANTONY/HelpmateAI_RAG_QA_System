@@ -18,14 +18,20 @@
 //   • mobileSnap: 'full' | 'split' | 'compact' — bottom-sheet posture
 //   • keyboardActive: true when soft keyboard is up (drives snap to COMPACT)
 //
-// Mobile state machine:
-//   FULL  ↔ drag ↔  SPLIT
-//                     ↕  (input focus / blur, or visualViewport size delta)
-//                  COMPACT
+// Mobile state machine — three snap points, all reachable by drag
+// (heights: COMPACT 25% < SPLIT 55% < FULL 100%):
+//   COMPACT  ↕ drag ↕  SPLIT  ↕ drag ↕  FULL
 //
-// Drag is constrained to FULL↔SPLIT — drag-to-COMPACT is intercepted in
-// the MobileSourceSheet and bounces back to SPLIT. COMPACT is reached
-// only via keyboard.
+// Transitions:
+//   • Drag — vaul resolves the nearest snap on release and whatever it
+//     lands on becomes mobileSnap directly, including COMPACT. (Bouncing
+//     drag-to-COMPACT back to SPLIT — an earlier design — opened a visible
+//     gap between the chat and the sheet mid-animation; see
+//     MobileSourceSheet.handleSetActiveSnapPoint.)
+//   • Keyboard — soft keyboard up forces COMPACT so the focused chat input
+//     stays visible above the sheet; keyboard down returns to SPLIT.
+//   • Handle tap / Enter / Space — toggles SPLIT ↔ FULL and returns to
+//     SPLIT from COMPACT (never COMPACT → FULL).
 //
 // Consumer pattern:
 //   const mode = useReadModeStatus();

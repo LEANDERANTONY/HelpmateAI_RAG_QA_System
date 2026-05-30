@@ -26,6 +26,7 @@ from __future__ import annotations
 import logging
 import shutil
 import subprocess
+import tempfile
 from pathlib import Path
 
 
@@ -75,68 +76,76 @@ def convert_docx_to_pdf(
 
     output_pdf.parent.mkdir(parents=True, exist_ok=True)
 
-    cmd = [
-        resolved,
-        "--headless",
-        "--norestore",
-        "--nologo",
-        "--nodefault",
-        "--nolockcheck",
-        "--convert-to",
-        "pdf",
-        "--outdir",
-        str(output_pdf.parent),
-        str(source_docx),
-    ]
-
+    # Convert into a private temp directory rather than the shared uploads dir.
+    # LibreOffice derives the output filename from the source stem, so two
+    # concurrent conversions of same-named files (e.g. two users' report.docx)
+    # would otherwise both write report.pdf into output_pdf.parent and clobber
+    # each other before the move into place (M13).
+    work_dir = Path(tempfile.mkdtemp(prefix="helpmate-docx-"))
     try:
-        completed = subprocess.run(
-            cmd,
-            capture_output=True,
-            text=True,
-            timeout=timeout,
-            check=False,
-        )
-    except subprocess.TimeoutExpired as exc:
-        raise DocxConversionError(
-            f"LibreOffice conversion timed out after {timeout}s for "
-            f"{source_docx.name}"
-        ) from exc
-    except FileNotFoundError as exc:
-        # Race: soffice was on PATH at shutil.which() time but disappeared.
-        raise DocxConversionError(
-            f"LibreOffice binary disappeared during conversion: {exc}"
-        ) from exc
+        cmd = [
+            resolved,
+            "--headless",
+            "--norestore",
+            "--nologo",
+            "--nodefault",
+            "--nolockcheck",
+            "--convert-to",
+            "pdf",
+            "--outdir",
+            str(work_dir),
+            str(source_docx),
+        ]
 
-    if completed.returncode != 0:
-        stderr_tail = (completed.stderr or "").strip().splitlines()[-3:]
-        logger.warning(
-            "LibreOffice exit %s for %s: %s",
-            completed.returncode,
-            source_docx.name,
-            " | ".join(stderr_tail),
-        )
-        raise DocxConversionError(
-            f"LibreOffice exited with code {completed.returncode} converting "
-            f"{source_docx.name}"
-        )
+        try:
+            completed = subprocess.run(
+                cmd,
+                capture_output=True,
+                text=True,
+                timeout=timeout,
+                check=False,
+            )
+        except subprocess.TimeoutExpired as exc:
+            raise DocxConversionError(
+                f"LibreOffice conversion timed out after {timeout}s for "
+                f"{source_docx.name}"
+            ) from exc
+        except FileNotFoundError as exc:
+            # Race: soffice was on PATH at shutil.which() time but disappeared.
+            raise DocxConversionError(
+                f"LibreOffice binary disappeared during conversion: {exc}"
+            ) from exc
 
-    # LibreOffice names the output `<source_stem>.pdf`. If the caller wants
-    # a different filename (e.g. `{document_id}.pdf`) rename it into place.
-    expected = output_pdf.parent / f"{source_docx.stem}.pdf"
-    if not expected.exists():
-        raise DocxConversionError(
-            f"LibreOffice reported success but no PDF was produced for "
-            f"{source_docx.name}"
-        )
+        if completed.returncode != 0:
+            stderr_tail = (completed.stderr or "").strip().splitlines()[-3:]
+            logger.warning(
+                "LibreOffice exit %s for %s: %s",
+                completed.returncode,
+                source_docx.name,
+                " | ".join(stderr_tail),
+            )
+            raise DocxConversionError(
+                f"LibreOffice exited with code {completed.returncode} converting "
+                f"{source_docx.name}"
+            )
 
-    if expected != output_pdf:
-        # Replace silently if a stale rendition exists.
+        # LibreOffice names the output `<source_stem>.pdf` inside work_dir.
+        expected = work_dir / f"{source_docx.stem}.pdf"
+        if not expected.exists():
+            raise DocxConversionError(
+                f"LibreOffice reported success but no PDF was produced for "
+                f"{source_docx.name}"
+            )
+
+        # Move the single produced PDF to the caller's canonical target
+        # (e.g. {document_id}.pdf). shutil.move (not rename) because the temp
+        # dir may be on a different filesystem. Replace a stale rendition.
         if output_pdf.exists():
             output_pdf.unlink()
-        expected.rename(output_pdf)
-
-    return output_pdf
+        shutil.move(str(expected), str(output_pdf))
+        return output_pdf
+    finally:
+        shutil.rmtree(work_dir, ignore_errors=True)
 
 
 __all__ = ["DocxConversionError", "convert_docx_to_pdf"]

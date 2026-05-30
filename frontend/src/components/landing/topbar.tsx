@@ -2,7 +2,7 @@
 
 import Link from "next/link";
 import { usePathname } from "next/navigation";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 import { useLandingHref } from "@/components/landing/use-landing-href";
 
 // Topbar — chrome.md §"Topbar". Two render shapes:
@@ -35,6 +35,10 @@ export function LandingTopbar() {
   const landingHref = useLandingHref();
 
   const [menuOpen, setMenuOpen] = useState(false);
+  // Focus-trap refs (M21): hand focus back to the burger when the dialog
+  // closes, and scope the Tab trap to the dialog subtree.
+  const burgerRef = useRef<HTMLButtonElement | null>(null);
+  const dialogRef = useRef<HTMLDivElement | null>(null);
 
   useEffect(() => {
     if (!menuOpen) return;
@@ -42,8 +46,54 @@ export function LandingTopbar() {
     const prevOverflow = document.body.style.overflow;
     document.body.style.overflow = "hidden";
 
+    // The mobile menu is role="dialog" aria-modal="true", so it must own
+    // focus while open (WCAG 2.4.3 + the aria-modal contract): move focus
+    // in on open, keep Tab inside, and hand it back to the burger on close.
+    // Without this, Tab walked straight out to the page controls sitting
+    // behind the overlay.
+    const dialog = dialogRef.current;
+    // Capture the trigger now; it's stable (always mounted in the header)
+    // so reading it in cleanup is safe, but copying satisfies the lint rule
+    // about refs changing before cleanup runs.
+    const burger = burgerRef.current;
+    const getFocusable = (): HTMLElement[] =>
+      dialog
+        ? Array.from(
+            dialog.querySelectorAll<HTMLElement>(
+              'a[href], button:not([disabled]), [tabindex]:not([tabindex="-1"])',
+            ),
+          )
+        : [];
+
+    // Move focus to the first menu item (fall back to the dialog itself,
+    // which carries tabIndex={-1}).
+    (getFocusable()[0] ?? dialog)?.focus();
+
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setMenuOpen(false);
+      if (e.key === "Escape") {
+        setMenuOpen(false);
+        return;
+      }
+      if (e.key !== "Tab") return;
+      const items = getFocusable();
+      if (items.length === 0) {
+        e.preventDefault();
+        return;
+      }
+      const first = items[0];
+      const last = items[items.length - 1];
+      const active = document.activeElement as HTMLElement | null;
+      // Wrap at both ends, and pull focus back in if it has somehow escaped
+      // the dialog (e.g. it started on the burger, which lives outside it).
+      if (e.shiftKey) {
+        if (active === first || !dialog?.contains(active)) {
+          e.preventDefault();
+          last.focus();
+        }
+      } else if (active === last || !dialog?.contains(active)) {
+        e.preventDefault();
+        first.focus();
+      }
     };
     const onResize = () => {
       if (window.matchMedia("(min-width: 901px)").matches) {
@@ -57,6 +107,9 @@ export function LandingTopbar() {
       document.body.style.overflow = prevOverflow;
       document.removeEventListener("keydown", onKey);
       window.removeEventListener("resize", onResize);
+      // Return focus to the trigger so a keyboard user lands back where
+      // they opened the menu (no-op on desktop, where the burger is hidden).
+      burger?.focus();
     };
   }, [menuOpen]);
 
@@ -113,6 +166,7 @@ export function LandingTopbar() {
             <span aria-hidden>→</span>
           </a>
           <button
+            ref={burgerRef}
             type="button"
             className="l-burger"
             aria-label={menuOpen ? "Close menu" : "Open menu"}
@@ -129,11 +183,13 @@ export function LandingTopbar() {
 
       {menuOpen && (
         <div
+          ref={dialogRef}
           className="l-mobile-menu"
           id="l-mobile-menu"
           role="dialog"
           aria-modal="true"
           aria-label="Site menu"
+          tabIndex={-1}
           onClick={(e) => {
             if (e.target === e.currentTarget) close();
           }}

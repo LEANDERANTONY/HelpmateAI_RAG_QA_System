@@ -126,8 +126,13 @@ for select
 to authenticated
 using (
     auth.uid() = user_id
-    and expires_at is not null
-    and expires_at > timezone('utc', now())
+    -- expires_at IS NULL means the workspace has no retention window
+    -- (Business tier keeps documents indefinitely); such rows must stay
+    -- visible. Only a SET, PAST expiry hides a row (L5).
+    and (
+        expires_at is null
+        or expires_at > timezone('utc', now())
+    )
 );
 
 drop policy if exists "users can insert own helpmate documents" on public.helpmate_documents;
@@ -163,8 +168,12 @@ using (
         from public.helpmate_documents d
         where d.document_id = helpmate_indexes.document_id
           and d.user_id = auth.uid()
-          and d.expires_at is not null
-          and d.expires_at > timezone('utc', now())
+          -- NULL d.expires_at = no retention window (Business tier);
+          -- keep visible. Only a set, past expiry hides the row (L5).
+          and (
+              d.expires_at is null
+              or d.expires_at > timezone('utc', now())
+          )
     )
 );
 
@@ -201,8 +210,12 @@ using (
         from public.helpmate_documents d
         where d.document_id = helpmate_index_artifacts.document_id
           and d.user_id = auth.uid()
-          and d.expires_at is not null
-          and d.expires_at > timezone('utc', now())
+          -- NULL d.expires_at = no retention window (Business tier);
+          -- keep visible. Only a set, past expiry hides the row (L5).
+          and (
+              d.expires_at is null
+              or d.expires_at > timezone('utc', now())
+          )
     )
 );
 
@@ -239,8 +252,12 @@ using (
         from public.helpmate_documents d
         where d.document_id = helpmate_run_traces.document_id
           and d.user_id = auth.uid()
-          and d.expires_at is not null
-          and d.expires_at > timezone('utc', now())
+          -- NULL d.expires_at = no retention window (Business tier);
+          -- keep visible. Only a set, past expiry hides the row (L5).
+          and (
+              d.expires_at is null
+              or d.expires_at > timezone('utc', now())
+          )
     )
 );
 
