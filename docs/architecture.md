@@ -78,6 +78,15 @@ After extraction, the ingestion path captures:
 
 This structure is inferred in `src/structure/` and attached to page metadata before chunking.
 
+The launch-readiness audit (DEVLOG Day 38–39) hardened four day-one failure modes on real documents that the ingest layer used to swallow silently:
+
+- **H5** — encrypted/password-protected PDF: `_extract_pdf_pypdf` checks `reader.is_encrypted`, tries `reader.decrypt("")` for empty-password PDFs, wraps page access in `try/except (FileNotDecryptedError, DependencyError)`, raises a typed error mapped to **HTTP 422 "password-protected PDF not supported"** instead of bubbling a raw 500.
+- **H6** — scanned/no-text-layer PDF: detect `page_count > 0 && char_count == 0` and raise a handled error mapped to **422 "no extractable text — scanned PDF?"** instead of indexing an empty document that "uploaded successfully" but silently abstains on every question.
+- **H7** — pdfplumber table-artifact page labels: each page dict now carries a `pdf_page_number` field (the true 1-based position from `_extract_pdf_pypdf`) used for both `pdf.pages[n-1]` AND the `original_page_number/label` stamp, so a table card no longer says "Page 1" while pdfplumber actually read Page 2 (the bug fired whenever an earlier page had no text — e.g. a cover image or blank separator).
+- **H4** — `upload_document` is now a regular `def` (FastAPI runs it in the threadpool, matching `load_sample_document`) instead of an `async def` that called the fully synchronous `_pipeline().ingest_document` and `_materialize_uploads_to_storage` on the event loop. One upload no longer stalls every other concurrent request on the worker.
+
+Plus two ingest-hygiene polish items from the cleanup PR: **M13** the DOCX→PDF intermediate filename now lands in a per-request `tempfile.mkdtemp()` (was writing `{stem}.pdf` into the shared `uploads_dir` flat, so concurrent same-name uploads could overwrite each other's PDF in the pre-rename window on the local storage backend); **L14** `_page_heading` now picks the first line that passes a heading check, rather than the arbitrary 4th non-empty line.
+
 ## Chunking And Section Layer
 
 Chunking started as deterministic page-window chunking and now includes semantic enrichment.
@@ -288,7 +297,14 @@ Index cache:
 Answer cache:
 
 - keyed by fingerprint, normalized question, retrieval version, generation version, and model
+- **also scoped by the owning user since DEVLOG Day 38** (M22, bundled with H1) — closes the cross-user cache hit where two users uploading identical document content and asking the same question would share one entry; a premium answer paid for by A is no longer served to B
 - reuses only safe matching answers
+
+Per-user `document_id` (H1, DEVLOG Day 38):
+
+- the persisted `document_id` is derived as `hash(user_id + content_fingerprint)[:16]` rather than `SHA-256(file_bytes)[:16]` — the content fingerprint stays on the row as a separate column for cache/index reuse, but is no longer the cross-user-shared ownership key
+- closes the integrity/availability failure where User B loading a bundled sample doc via `/samples/load` would `upsert` over User A's row (the doc was byte-identical for both, so `on_conflict="document_id"` collided), evicting A from their own workspace
+- **migration is non-destructive** — existing rows keep their content-only `document_id`; only new owner-scoped uploads get the per-user derivation. Bulk migration of historical rows is a follow-up (parked in `report.md`)
 
 Workflow traces:
 
@@ -404,6 +420,8 @@ Backend (`backend/observability.py`):
 - A `_running_under_pytest()` guard skips **both Sentry and PostHog** init when `PYTEST_CURRENT_TEST` is set, so local test runs neither pollute the production issue feed nor ship events into the analytics project
 - PostHog Python client emits server-side product-funnel events — `document_uploaded`, `document_indexed`, `qa_answered`, `quota_blocked`, `feedback_submitted` — keyed on `user.id` and tagged with `product: "helpmate"` so the shared free-tier project can split events by product; the upload → index → ask funnel is surfaced on the "Helpmate AI — Product Health" dashboard
 - Per-LLM-call `$ai_generation` events stream into PostHog's LLM Analytics dashboard with the full `$ai_*` property schema (trace_id, span_name, provider, model, tokens, cost), pulled off `cost_collector.to_payload()` after the answer cache write so cache hits don't replay events
+- **Anonymous attribution (M21, DEVLOG Day 39):** unauthenticated callers now pass the browser's PostHog distinct id to the backend via a new `X-PostHog-Distinct-Id` request header, which `capture_event` honors instead of collapsing onto the literal `"anonymous"`. The frontend `apiFetch` wrapper sends the header automatically when PostHog is initialized. Closes the funnel hole where every anon visitor mapped to one PostHog person and made anonymous → signup conversion uncomputable.
+- **Pipeline + export enrichment (M23, DEVLOG Day 39):** `src/agents/orchestrator.py`'s stage-boundary callback now sets `Sentry.set_tag("pipeline_stage", …)` + `add_breadcrumb(category="agent", …)` for each agent stage, and the export route sets `Sentry.set_context("export", …)`; `set_user({"id": user_id})` fires once auth resolves. A 5xx mid-pipeline is now localizable to the failing agent from the Sentry issue page — defeats the AI-Agents-Monitoring blind spot ADR-018 was adopted for.
 
 Frontend (`instrumentation-client.ts`, `posthog-provider.tsx`, `cookie-consent.tsx`):
 
@@ -415,7 +433,7 @@ Frontend (`instrumentation-client.ts`, `posthog-provider.tsx`, `cookie-consent.t
 Operational surface:
 
 - An uptime monitor pings `https://api.helpmateai.xyz/health` every 5 minutes from the Sentry Crons surface; failure thresholds are 3 consecutive misses to alert, 1 success to recover
-- A `/health/sentry-debug` route deliberately raises a `ZeroDivisionError` for end-to-end DSN verification on first deploy — `HELPMATE-BACKEND-1` in the issue feed is the deliberate smoke-test issue
+- A `/health/sentry-debug` route deliberately raises a `ZeroDivisionError` for end-to-end DSN verification on first deploy — `HELPMATE-BACKEND-1` in the issue feed is the deliberate smoke-test issue. Since DEVLOG Day 38 the route is **registered only when `HELPMATE_ENVIRONMENT != "production"`** (M4) so an unauthenticated probe in prod returns 404 instead of generating a billable 500 / burning Sentry quota
 - The `nightly_eval` Sentry Crons monitor is env-gated (`HELPMATE_NIGHTLY_EVAL_MONITOR_ENABLED`) so manual runs from a shell don't fire false missed-heartbeat alerts; see [ADR-020](adr/ADR-020-manual-only-nightly-eval-at-pre-revenue-stage.md)
 - The every-10-minute VPS workspace sweeper (`python -m backend.maintenance`) is wrapped in a Sentry Crons check-in (`helpmate-workspace-sweeper`); the sweeper keeps local disk from filling with expired uploads/indexes/cache, and a missed or errored check-in surfaces a silently-dead sweep. Unlike the `nightly_eval` monitor it is not env-gated — the sweeper cron runs unconditionally
 - `backend.healthcheck` runs daily (`helpmate-healthcheck` Sentry Crons monitor) as a read-only backstop — it asserts the retention pipeline is *keeping up*: the expired-document backlog is small and the upload directory hasn't outgrown the active-document count. The sweeper's own monitor proves it *ran*; the healthcheck proves it *worked*. A degraded result is reported to Sentry as an error-level message, distinct from a missed check-in
@@ -424,6 +442,20 @@ Source maps:
 
 - Vercel's Sentry-Vercel marketplace integration auto-provisions `SENTRY_AUTH_TOKEN` so `withSentryConfig` uploads source maps on every build, making frontend stack traces readable rather than minified gibberish
 - The org + project values are hardcoded in `frontend/next.config.ts` (`org: "leander-antony-a"`, `project: "helpmate-frontend"`) so the upload destination doesn't depend on env state
+
+## Browser security baseline
+
+A fixed set of response headers ships on every route, layered at both the **Next frontend** (`frontend/next.config.ts` via `headers()`) and the **Caddy API ingress** (`deploy/vps/Caddyfile`):
+
+- **`X-Frame-Options: DENY`** + **CSP `frame-ancestors 'none'`** (Next) — clickjacking defense. The workspace can't be framed and overlaid to trick a signed-in user (SameSite=Lax cookies would otherwise ride along on top-level navigation).
+- **`Strict-Transport-Security`** — Next sends `max-age=63072000; includeSubDomains; preload` (two years, preload-eligible); Caddy sends `max-age=31536000; includeSubDomains` on the API ingress (one year, no-preload — the API subdomain doesn't need preload-list inclusion).
+- **`X-Content-Type-Options: nosniff`** on both layers — disables MIME-type sniffing on responses (resource loaders honor the declared `Content-Type`). Caddy adds it on user-file responses where it matters most.
+- **`Referrer-Policy: strict-origin-when-cross-origin`** (Next) — strips path + query from the Referer on cross-origin navigation while keeping it intact within the site.
+- **`Content-Security-Policy`** as **Report-Only** for the first weeks of public traffic — same-origin defaults plus the actual allowlist (`'self'` + `https://api.helpmateai.xyz` + `*.supabase.co` + `*.sentry.io` + `eu.i.posthog.com` + lemonsqueezy.com). Tuning to enforce-mode tracks violation reports in Sentry.
+
+The launch-readiness pass that introduced the Next headers is DEVLOG Day 38 (M2); the Caddy `nosniff`+HSTS pair came from Day 39 (L8). The PDF.js renderer is also constructed with `getDocument({ isEvalSupported: false })` so the worker's optional `eval`/`Function` paths are disabled while parsing arbitrary user uploads — defense-in-depth backstop while CSP is still Report-Only (M3, Day 38).
+
+**Cloudflare sits in front of Caddy on `api.helpmateai.xyz`.** Cloudflare does NOT auto-add HSTS or `nosniff` on free-tier zones, so the origin-side headers above are the source of truth. Verified post-Day-39: the headers traverse Cloudflare to the client intact (`x-content-type-options: nosniff`, `strict-transport-security: max-age=31536000; includeSubDomains`).
 
 ## Current Strengths
 
