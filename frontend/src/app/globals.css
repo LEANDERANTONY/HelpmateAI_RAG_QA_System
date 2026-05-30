@@ -59,6 +59,20 @@ a {
   background: rgba(48, 100, 255, 0.34);
 }
 
+/* Global keyboard-focus ring (M18). Custom controls across the workspace
+   and the landing page either inherited inconsistent UA focus outlines on
+   this near-black theme or stripped them outright (bare `outline: none`),
+   failing WCAG 2.4.7. This one low-specificity :where() rule paints a
+   consistent ring on every focusable surface; any element-specific :focus
+   / :focus-visible rule keeps its higher specificity and overrides it
+   (e.g. .h-pdf-container's inset ring, .h-palette-close). --accent is
+   scoped to .h-shell, so the #7fe0b0 fallback — the same brand mint — keeps
+   the ring visible on the landing page, where --accent is undefined. */
+:where(button, a, [role="button"], input, textarea, [tabindex]):focus-visible {
+  outline: 2px solid var(--accent, #7fe0b0);
+  outline-offset: 2px;
+}
+
 .eyebrow {
   color: var(--secondary);
   font-size: 0.72rem;
@@ -2610,7 +2624,6 @@ input[type="file"]:disabled::file-selector-button {
   font-size: 15px;
   line-height: 1.5;
   min-height: 72px;
-  outline: none;
   resize: vertical;
   width: 100%;
 }
@@ -2814,7 +2827,6 @@ input[type="file"]:disabled::file-selector-button {
 
 .h-feedback-comment-input:focus {
   border-color: var(--accent);
-  outline: none;
 }
 
 .h-feedback-comment-input::placeholder {
@@ -3904,7 +3916,6 @@ input[type="file"]:disabled::file-selector-button {
   flex: 1;
   font-family: var(--font-body);
   font-size: 15px;
-  outline: none;
 }
 
 .h-palette-input::placeholder {
@@ -5130,7 +5141,6 @@ input[type="file"]:disabled::file-selector-button {
   font-family: var(--font-mono);
   font-size: 11px;
   letter-spacing: 0.04em;
-  outline: none;
   padding: 4px 12px;
   /* Match the visible width of the pill at typical page counts (5
      chars = "9/200" or so). Centered to mirror the pill's centered
