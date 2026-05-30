@@ -5,6 +5,7 @@ import logging
 from dataclasses import replace
 
 from src.config import Settings
+from src.openai_service import OpenAIService
 from src.schemas import RetrievalCandidate, RetrievalResult
 
 
@@ -212,17 +213,22 @@ class EvidenceSelector:
         candidates = original_candidates[: self.settings.evidence_selector_top_k]
         prompt = self._selection_prompt(question, candidates, retrieval_result)
         try:
-            response = self.client.chat.completions.create(
+            # Route through OpenAIService so this gpt-5.x reranker call records
+            # into the request-scoped CostCollector and the $ai_generation
+            # fan-out (H11).
+            service = OpenAIService(self.settings, client=self.client)
+            payload = service.run_json_prompt(
+                system="You select the most direct evidence chunks for grounded document QA.",
+                user=prompt,
+                task_name="evidence_selector",
                 model=self.settings.evidence_selector_model,
-                messages=[
-                    {"role": "system", "content": "You select the most direct evidence chunks for grounded document QA."},
-                    {"role": "user", "content": prompt},
-                ],
-                response_format={"type": "json_object"},
             )
-            payload = json.loads(response.choices[0].message.content or "{}")
         except Exception as exc:
             logger.warning("Evidence selector call failed; keeping retrieval order (%s)", exc.__class__.__name__)
+            return retrieval_result
+        if not payload:
+            # Parse failure or empty response (cost already recorded by the
+            # wrapper) — keep retrieval order, matching the prior behaviour.
             return retrieval_result
 
         llm_scores_raw = payload.get("candidate_scores", {})

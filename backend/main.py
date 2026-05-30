@@ -1475,6 +1475,7 @@ async def transcribe_audio(
             )
 
     response = None
+    transcribe_model = "whisper-1"
     primary_error: Exception | None = None
     try:
         try:
@@ -1487,6 +1488,7 @@ async def transcribe_audio(
                 exc.__class__.__name__,
             )
             primary_error = exc
+            transcribe_model = "gpt-4o-mini-transcribe"
             try:
                 response = await asyncio.to_thread(
                     _call_transcribe_sync, "gpt-4o-mini-transcribe"
@@ -1523,6 +1525,15 @@ async def transcribe_audio(
     if duration_value <= 0:
         elapsed = (datetime.now(timezone.utc) - started_at).total_seconds()
         duration_value = max(elapsed, 0.0)
+    # Whisper calls don't pass through OpenAIService (they're not chat
+    # completions), so they're invisible to the CostCollector and the LLM
+    # Analytics fan-out. Emit a server-side usage event so transcription
+    # spend stays observable (H11).
+    capture_event(
+        distinct_id=user.id,
+        event="audio_transcribed",
+        properties={"model": transcribe_model, "duration_seconds": round(duration_value, 3)},
+    )
     return TranscribeResponse(text=transcript, duration_seconds=round(duration_value, 3))
 
 
