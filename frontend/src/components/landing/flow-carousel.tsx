@@ -42,6 +42,16 @@ const FLOW_STEPS = [
 
 export function LandingFlow() {
   const [active, setActive] = useState(0);
+  // Lazy-load each step's mockup only once it has been viewed, so the heavy
+  // tab-04 screenshot (~600 KB) isn't fetched on first paint when the visitor
+  // may never open it. Once loaded the image stays mounted, so the cross-fade
+  // between already-seen tabs still works (H13).
+  const [loaded, setLoaded] = useState<Set<number>>(() => new Set([0]));
+
+  const activate = (i: number) => {
+    setActive(i);
+    setLoaded((prev) => (prev.has(i) ? prev : new Set(prev).add(i)));
+  };
 
   return (
     <section className="l-sec" id="how-it-works">
@@ -60,7 +70,7 @@ export function LandingFlow() {
               aria-selected={i === active}
               aria-controls={`flow-step-${i}`}
               className={i === active ? "l-flow-tab active" : "l-flow-tab"}
-              onClick={() => setActive(i)}
+              onClick={() => activate(i)}
             >
               <span className="num">{step.n}</span>
               <span>{step.tab}</span>
@@ -83,7 +93,7 @@ export function LandingFlow() {
                 className="l-flow-mockup"
                 role="img"
                 aria-label={`${step.tab} workspace screenshot`}
-                style={{ backgroundImage: `url(${step.img})` }}
+                style={loaded.has(i) ? { backgroundImage: `url(${step.img})` } : undefined}
               />
               <div className="l-flow-claim">
                 <div className="step">
