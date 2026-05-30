@@ -2409,6 +2409,10 @@ export function AppWorkspace({ user }: AppWorkspaceProps) {
         streamTimer.current = null;
       }, dur);
     } catch (answerError) {
+      // Restore the user's text so a failed ask — especially the 402 quota
+      // wall, the exact moment we're prompting them to upgrade — doesn't force
+      // a retype; handleAsk cleared the textarea before the call (M16).
+      setQuestion(submittedQuestion);
       setAnswerState("idle");
       notifyApiError(answerError, "ask", {
         onRetry: () => {
