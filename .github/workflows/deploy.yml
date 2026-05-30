@@ -20,9 +20,36 @@ env:
   VPS_APP_DIR: /home/ubuntu/HelpmateAI_RAG_QA_System
 
 jobs:
+  test:
+    name: Run backend test suite
+    # Release gate: the image is only built + shipped to the VPS after
+    # the backend test suite passes for this exact commit. Without this,
+    # a push to main that breaks the backend would build and deploy even
+    # while CI is red, because ci.yml runs as an independent workflow with
+    # no relationship to this pipeline. The container health check only
+    # catches a container that fails to *start*, not a logic regression
+    # that still boots (e.g. a broken abstention path or auth check).
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v5
+      - name: Set up Python
+        uses: actions/setup-python@v6
+        with:
+          python-version: "3.11"
+      - name: Install uv
+        uses: astral-sh/setup-uv@v3
+      - name: Verify uv.lock is in sync with pyproject.toml
+        run: uv lock --check
+      - name: Sync dependencies
+        run: uv sync --dev
+      - name: Run tests
+        run: uv run pytest
+
   build-and-push:
     name: Build Docker image to GHCR
     runs-on: ubuntu-latest
+    needs: test
     permissions:
       contents: read
       packages: write
