@@ -25,6 +25,7 @@ from src.openai_service import (
     reset_cost_collector,
 )
 from src.retrieval import ChromaIndexStore, HybridRetriever
+from src.retrieval.hybrid import bind_lexical_cache, reset_lexical_cache
 from src.retrieval.store import bind_bundle_cache, reset_bundle_cache
 from src.sections import build_sections
 from src.sections.profiles import enrich_section_profiles
@@ -340,6 +341,8 @@ class HelpmatePipeline:
         # row once instead of 5-8x (H2). Reset in the finally so the next
         # request that lands on this task starts clean.
         bundle_token = bind_bundle_cache()
+        # Same request scope for the TF-IDF fit cache (M9).
+        lexical_token = bind_lexical_cache()
         try:
             return self._answer_question_inner(
                 document=document,
@@ -350,6 +353,7 @@ class HelpmatePipeline:
                 cost_collector=cost_collector,
             )
         finally:
+            reset_lexical_cache(lexical_token)
             reset_bundle_cache(bundle_token)
             reset_cost_collector(token)
 
