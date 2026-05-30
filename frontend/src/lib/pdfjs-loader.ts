@@ -206,6 +206,11 @@ export async function loadPdfDocument(url: string): Promise<PDFDocumentProxy> {
       // withCredentials would also send Supabase cookies, but our auth
       // is bearer-only — explicit token in the header is enough.
       withCredentials: false,
+      // PDFs are arbitrary user uploads. Disable the worker's eval/Function
+      // path used for some embedded font/JS programs — the documented pdfjs
+      // hardening flag for untrusted input, with no impact on text/highlight
+      // rendering (M3).
+      isEvalSupported: false,
     }).promise;
   };
 
