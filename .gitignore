@@ -40,6 +40,12 @@ docs/history/HelpmateAI_RAG_project_Cleaned.ipynb
 # doesn't belong in the public README story.
 AGENT.md
 
+# Working scratchpad for self-contained, cold-resumable parked plans
+# (the differentiation play, audit deferrals, etc.). Local-only by the
+# docs/README.md governance policy — kept out of git so it can't be
+# committed by accident.
+report.md
+
 # Claude Code worktrees + per-machine launch config
 .claude/worktrees/
 .claude/launch.json
