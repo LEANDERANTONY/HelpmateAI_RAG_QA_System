@@ -19,15 +19,15 @@ The live stack:
 
 ## Recommended Hosting
 
-- Vercel for [frontend](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\frontend) (single project handles both the apex and the `app` subdomain via host-based rewrites)
+- Vercel for [frontend](../frontend) (single project handles both the apex and the `app` subdomain via host-based rewrites)
 - a Linux VPS for the FastAPI backend container
 
 The repo includes:
 
-- [Dockerfile](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\Dockerfile) for backend deployment, which installs `libreoffice-core` and `libreoffice-writer` for the DOCX rendition path
-- [deploy/vps/docker-compose.yml](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\deploy\vps\docker-compose.yml) for the standard VPS deployment
-- [deploy/vps/Caddyfile](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\deploy\vps\Caddyfile) for TLS and reverse proxying on a VPS
-- [.github/workflows/deploy.yml](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\.github\workflows\deploy.yml) builds the backend image on every `main` push and SSHes to the VPS to pull + recreate the container
+- [Dockerfile](../Dockerfile) for backend deployment, which installs `libreoffice-core` and `libreoffice-writer` for the DOCX rendition path
+- [deploy/vps/docker-compose.yml](../deploy/vps/docker-compose.yml) for the standard VPS deployment
+- [deploy/vps/Caddyfile](../deploy/vps/Caddyfile) for TLS and reverse proxying on a VPS
+- [.github/workflows/deploy.yml](../.github/workflows/deploy.yml) builds the backend image on every `main` push and SSHes to the VPS to pull + recreate the container
 
 ## Deployment Flow
 
@@ -235,9 +235,9 @@ If Cloudflare is active in front of the domain:
 
 Files included for that path:
 
-- [deploy/vps/docker-compose.yml](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\deploy\vps\docker-compose.yml)
-- [deploy/vps/Caddyfile](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\deploy\vps\Caddyfile)
-- [deploy/vps/.env.example](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\deploy\vps\.env.example)
+- [deploy/vps/docker-compose.yml](../deploy/vps/docker-compose.yml)
+- [deploy/vps/Caddyfile](../deploy/vps/Caddyfile)
+- [deploy/vps/.env.example](../deploy/vps/.env.example)
 
 Suggested first host size:
 
@@ -252,7 +252,7 @@ Suggested VPS rollout:
 4. Copy the repo onto the VPS.
 5. Copy `deploy/vps/.env.example` to `deploy/vps/.env` and fill in your real secrets.
 6. Set `HELPMATE_API_DOMAIN` to your API hostname.
-7. Run `docker compose up -d --build` from [deploy/vps](C:\Users\Leander%20Antony%20A\Documents\Projects\HelpmateAI_RAG_QA_System\deploy\vps).
+7. Run `docker compose up -d --build` from [deploy/vps](../deploy/vps).
 8. Wait for Caddy to provision TLS automatically.
 9. Verify `https://api.yourdomain.com/health`.
 10. Update the frontend proxy target if needed.
@@ -456,6 +456,6 @@ Why:
 Local defaults stay simple:
 
 - backend: `uv run uvicorn backend.main:app --reload --port 8001`
-- frontend: `npm run dev` inside [frontend](C:\Users\Leander Antony A\Documents\Projects\HelpmateAI_RAG_QA_System\frontend)
+- frontend: `npm run dev` inside [frontend](../frontend)
 
 The frontend rewrite defaults to `http://127.0.0.1:8001` locally, so local development still works without extra setup.
