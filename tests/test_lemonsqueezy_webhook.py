@@ -22,7 +22,7 @@ from __future__ import annotations
 import hashlib
 import hmac
 import json
-from datetime import datetime, timezone
+from datetime import datetime, timedelta, timezone
 
 import pytest
 from fastapi.testclient import TestClient
@@ -92,11 +92,19 @@ def _build_payload(
     subscription_id: str = "sub-12345",
     customer_id: str = "cust-67890",
     status: str = "active",
-    renews_at: str = "2026-06-14T19:14:21.000000Z",
+    renews_at: str | None = None,
     ends_at: str | None = None,
     cancelled: bool = False,
     webhook_id: str = "evt-aaa",
 ) -> dict:
+    if renews_at is None:
+        # Default to ~30 days in the future relative to test-run time so the
+        # seeded subscription always reads as active. A hardcoded date here
+        # is a time-bomb: once it goes past, current_period_end (mapped from
+        # renews_at) expires and resolve_user_tier correctly returns "free".
+        renews_at = (
+            datetime.now(timezone.utc) + timedelta(days=30)
+        ).strftime("%Y-%m-%dT%H:%M:%S.%f") + "Z"
     return {
         "meta": {
             "event_name": event_name,
