@@ -1,16 +1,88 @@
 from __future__ import annotations
 
 import json
+import logging
+import time
 from datetime import datetime, timezone
 from pathlib import Path
+from typing import Any
+
+import httpx
 
 from src.cloud import create_supabase_client, extract_supabase_rows
 from src.config import Settings
 from src.schemas import DocumentRecord, IndexRecord
 
+try:  # pragma: no cover - optional dependency in local fallback mode
+    from postgrest.exceptions import APIError
+except ImportError:  # pragma: no cover
+    APIError = None  # type: ignore[assignment, misc]
+
+logger = logging.getLogger(__name__)
+
 WORKSPACE_OWNER_KEY = "_workspace_owner_user_id"
 WORKSPACE_LAST_ACTIVITY_KEY = "_workspace_last_activity_at"
 WORKSPACE_EXPIRES_AT_KEY = "_workspace_expires_at"
+
+# Transient transport-layer errors: a momentary DNS/connection/read hiccup
+# (e.g. HELPMATE-BACKEND-D's "ConnectError: No address associated with
+# hostname"). These are worth a bounded retry — the next attempt usually
+# succeeds once the blip clears — rather than crashing an idempotent cron run.
+_TRANSIENT_HTTPX_ERRORS: tuple[type[Exception], ...] = (
+    httpx.ConnectError,
+    httpx.ConnectTimeout,
+    httpx.ReadTimeout,
+    httpx.RemoteProtocolError,
+    httpx.PoolTimeout,
+)
+
+
+def _is_transient_jwt_error(exc: Exception) -> bool:
+    """Narrowly match the transient postgrest clock-skew auth glitch.
+
+    HELPMATE-BACKEND-C paged on a momentary "JWT issued at future" APIError:
+    a clock-skew blip that self-heals on the next call. We retry ONLY that
+    specific message — a real auth misconfig ("invalid JWT", "JWT expired",
+    missing authorization, any 4xx) still fails fast so it isn't masked.
+    """
+    if APIError is None or not isinstance(exc, APIError):
+        return False
+    message = str(getattr(exc, "message", "") or "").lower()
+    return "jwt" in message and "future" in message
+
+
+def _is_transient_error(exc: Exception) -> bool:
+    return isinstance(exc, _TRANSIENT_HTTPX_ERRORS) or _is_transient_jwt_error(exc)
+
+
+def _execute_with_retry(query: Any, *, attempts: int = 3) -> Any:
+    """Run ``query.execute()`` with a bounded retry on transient infra blips.
+
+    Retries only transient network/transport errors (and the narrow
+    clock-skew JWT glitch) with exponential backoff (~0.5s, 1s; capped at
+    ``attempts`` tries). Real errors — a genuine 4xx, auth misconfig, or a
+    sustained outage — re-raise immediately (or after exhaustion) so the
+    traceback still reaches Sentry.
+    """
+    for attempt in range(attempts):
+        try:
+            return query.execute()
+        except Exception as exc:  # noqa: BLE001 - re-raised below unless transient
+            if not _is_transient_error(exc) or attempt >= attempts - 1:
+                raise
+            backoff = 0.5 * (2**attempt)
+            logger.warning(
+                "Transient Supabase read error (%s: %s); retrying in %.1fs "
+                "(attempt %d/%d)",
+                type(exc).__name__,
+                exc,
+                backoff,
+                attempt + 1,
+                attempts,
+            )
+            time.sleep(backoff)
+    # Unreachable: the final attempt either returns or re-raises above.
+    raise RuntimeError("retry loop exited without returning")
 
 
 def _workspace_row_fields(document: DocumentRecord) -> dict[str, str]:
@@ -124,12 +196,11 @@ class SupabaseApiRecordStore:
         self.client.table(self.indexes_table).upsert(payload, on_conflict="document_id").execute()
 
     def get_document(self, document_id: str) -> DocumentRecord | None:
-        response = (
+        response = _execute_with_retry(
             self.client.table(self.documents_table)
             .select("payload")
             .eq("document_id", document_id)
             .limit(1)
-            .execute()
         )
         rows = extract_supabase_rows(response)
         if not rows:
@@ -138,12 +209,11 @@ class SupabaseApiRecordStore:
         return DocumentRecord(**payload)
 
     def get_index(self, document_id: str) -> IndexRecord | None:
-        response = (
+        response = _execute_with_retry(
             self.client.table(self.indexes_table)
             .select("payload")
             .eq("document_id", document_id)
             .limit(1)
-            .execute()
         )
         rows = extract_supabase_rows(response)
         if not rows:
@@ -152,12 +222,12 @@ class SupabaseApiRecordStore:
         return IndexRecord(**payload)
 
     def list_indexes(self) -> list[IndexRecord]:
-        response = self.client.table(self.indexes_table).select("payload").execute()
+        response = _execute_with_retry(self.client.table(self.indexes_table).select("payload"))
         rows = extract_supabase_rows(response)
         return [IndexRecord(**(row.get("payload") or {})) for row in rows if row.get("payload")]
 
     def list_documents(self) -> list[DocumentRecord]:
-        response = self.client.table(self.documents_table).select("payload").execute()
+        response = _execute_with_retry(self.client.table(self.documents_table).select("payload"))
         rows = extract_supabase_rows(response)
         return [DocumentRecord(**(row.get("payload") or {})) for row in rows if row.get("payload")]
 
@@ -166,11 +236,10 @@ class SupabaseApiRecordStore:
         # deserializing every user's document payload on every workspace read
         # (H3). The backend runs as service-role (RLS bypassed), so this
         # explicit .eq is what actually constrains the query to one user.
-        response = (
+        response = _execute_with_retry(
             self.client.table(self.documents_table)
             .select("payload")
             .eq("user_id", user_id)
-            .execute()
         )
         rows = extract_supabase_rows(response)
         return [DocumentRecord(**(row.get("payload") or {})) for row in rows if row.get("payload")]
